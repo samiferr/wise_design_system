@@ -1,0 +1,552 @@
+{% load static wise_autocomplete_icons %}
+
+<div>
+    <div class="relative">
+        <input id="id_{{ widget.name }}_fake" placeholder="--------" autocomplete="off"
+               autocorrect="off" autocapitalize="none" spellcheck="false" role="presentation"
+               class="h-10 w-full border border-divider bg-surface px-3 pr-10 py-1.5 text-sm text-gray-900 outline-none focus:border-action-500"
+               oninput="document.getElementById('id_{{ widget.name }}').value=this.value"
+        >
+        <span type="button" class="btn-icon absolute right-1 top-1/2 -translate-y-1/2"
+              onclick="document.getElementById('id_{{ widget.name }}_fake').click();document.getElementById('id_{{ widget.name }}_fake').focus();"
+        >
+            {% lucide "chevron-down" size=16 %}
+        </span>
+
+
+    </div>
+    <input id="id_{{ widget.name }}" class="hidden" type="{{ widget.type }}" name="{{ widget.name }}" data-parent=""
+           autocomplete="off"
+            {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}" {% endif %}
+            {% include "wise_autocomplete/widgets/attrs.html" %}
+           tabindex="-1">
+
+    <div class="relative">
+        <div id="progress-bar" class="absolute left-0 top-0 h-[3px] w-0 rounded bg-action-500 transition-all"></div>
+        <div class="autocomplete-panel hidden"
+             id='{{ widget.name }}_autocomplete_container'>
+            <header class="flex items-center gap-2 border-b border-divider bg-gray-50 p-2">
+                <div class="btn-icon" id="id_{{ widget.name }}_previous">
+                    {% lucide "chevron-left" size=14 %}
+                </div>
+                <span class="text-xs font-medium text-gray-600" id="id_{{ widget.name }}_pageNumber">
+                    Page 1
+                </span>
+                <div class="btn-icon" id="id_{{ widget.name }}_next">
+                    {% lucide "chevron-right" size=14 %}
+                </div>
+                <div class="ml-auto">
+                    <a id="id_{{ widget.name }}_create" target="_blank"
+                       tabindex="-2" onmousedown="this.click()"
+                       class="btn btn-secondary py-1 text-xs"
+                    >{% lucide "plus" size=16 %}
+                        <span class="hidden sm:inline">Nouveau</span></a></div>
+
+            </header>
+            <div class="max-h-72 overflow-auto">
+                <table id="{{ widget.name }}_autocomplete_table" class="autocomplete-table"></table>
+                <div id="{{ widget.name }}_autocomplete_cards" class="divide-y divide-gray-100"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="application/ecmascript">
+    document.addEventListener("DOMContentLoaded", function () {
+
+        let _fake_input = document.getElementById('id_{{widget.name}}_fake')
+        let _original_input = document.getElementById('id_{{widget.name}}')
+        let _progress_bar = document.getElementById('progress-bar')
+        let _table
+        if (window.screen.width > 600) {
+            _table = document.getElementById('{{ widget.name }}_autocomplete_table')
+        } else {
+            _table = document.getElementById('{{ widget.name }}_autocomplete_cards')
+        }
+        let _container = document.getElementById('{{ widget.name }}_autocomplete_container')
+        let _create_object_link = document.getElementById('id_{{ widget.name }}_create')
+
+        class Autocomplete {
+            constructor(original_input, fake_input, progress_bar, datatable, dataContainer, create_object_link) {
+                this.original_input = original_input
+                this.fake_input = fake_input
+                this.progress_bar = progress_bar
+                this.datatable = _table
+                this.data_container = dataContainer
+                this.data_container_is_visible = false
+                this.url = this.original_input.dataset.url
+                if (this.original_input.dataset.hasOwnProperty('hidden_fields')) {
+                    this.hidden_fields = this.original_input.dataset.hidden_fields.replaceAll(' ', '').replaceAll('"', '').replaceAll("'", "").replace('[', '').replace(']', '').split(',')
+                } else {
+                    this.hidden_fields = []
+                }
+                this.header = []
+                this.empty_msg = 'Aucun objet trouvé !'
+                this.text_field = this.original_input.dataset.text_field
+                this.is_loading = false
+                this.current_index = 1
+                this.current_elm = undefined
+                this.selected_item = {}
+                this.timer = undefined
+                this.min_index = 1
+                this.max_index = 1
+                this.q = ''
+                this.current_page = 1
+                this.previous_page_link = null
+                this.next_page_link = null
+                this.data_count = 0
+
+                // if element has parent
+                this.parent = document.getElementById('parent')
+                this.parent_id = this.parent ? this.parent.dataset.parent : false
+                this.create_object_link = create_object_link
+            }
+
+            set_create_new_link() {
+                if (this.original_input.dataset.create_object_url !== '') {
+                    this.create_object_link.href = this.original_input.dataset.create_object_url
+                } else {
+                    this.create_object_link.parentElement.classList.add('hidden')
+                }
+            }
+
+            set_fake_input_required() {
+                if (this.original_input.required) {
+                    this.fake_input.required = true
+                }
+            }
+
+            set_fake_input_value() {
+                // set value when the original input contains an initial value
+                let self = this
+                if (self.original_input.value !== '') {
+                    self.startLoading()
+                    axios.get(this.url + self.original_input.value + '?parent_id=' + this.parent_id).then(function (response) {
+                        self.fake_input.value = response.data[self.text_field]
+                        self.selected_item = response.data
+                        self.stopLoading()
+
+                        // fire selected item event
+                        const event = new CustomEvent('item_selected', {detail: self.selected_item});
+                        self.original_input.dispatchEvent(event)
+                    }).catch(function (err) {
+                        console.log('error:  ' + err)
+                        self.stopLoading()
+                    })
+                }
+            }
+
+            get_headers() {
+                let self = this
+                this.startLoading()
+                axios.options(self.url).then(function (response) {
+                    self.headers = response.data.actions.POST
+                    self.stopLoading()
+                }).catch(function (e) {
+                        console.log('error: ' + e)
+                        self.stopLoading()
+                    }
+                )
+            }
+
+            get_visible_headers() {
+                return Object.keys(this.headers).filter(header => !this.hidden_fields.includes(header))
+            }
+
+            get_data() {
+                let self = this
+                self.startLoading()
+
+                // add pagination
+                axios.get(self.url, {
+                    'params': {
+                        'q': this.q,
+                        'page': self.current_page,
+                        'parent_id': this.parent_id
+                    }
+                }).then(function (response) {
+                        self.stopLoading()
+                        self.reset_indexes()
+
+                        let results = response.data.results
+                        if (results.length !== 0) {
+
+
+                            self.remove_autocomplete_list()
+                            // navigation data
+                            self.previous_page_link = response.data.previous
+                            self.next_page_link = response.data.next
+                            self.data_count = response.data.count
+
+                            self.update_page_number()
+
+
+                            {# Create Headers #}
+
+                            if (self.original_input.dataset.headers === 'on' && window.screen.width > 600) {
+                                self.max_index = results.length
+
+                                const _thead = document.createElement('THEAD')
+                                const _tr = document.createElement('TR')
+                                const visible_headers = self.get_visible_headers()
+                                visible_headers.forEach((header, index) => {
+                                    let new_th = document.createElement('TH')
+                                    new_th.innerHTML = self.headers[header].label
+                                    if (index === visible_headers.length - 1) {
+                                        new_th.classList.add('w-full')
+                                    } else {
+                                        new_th.classList.add('w-px')
+                                    }
+                                    _tr.appendChild(new_th)
+                                })
+                                _thead.appendChild(_tr)
+
+                                self.datatable.appendChild(_thead)
+                            } else {
+                                // no headers to display
+                                self.min_index = 0
+                                self.max_index = results.length - 1
+                                self.current_index = 0
+                            }
+                            // Table or cards depending on the screen width
+                            if (window.screen.width > 600) {
+                                self.populate_lines(self, results)
+
+                            } else {
+                                // no headers to display
+                                self.min_index = 0
+                                self.max_index = results.length - 1
+                                self.current_index = 0
+                                self.populate_cards(self, results)
+                            }
+
+                        } else {
+                            {# if empty data #}
+                            let new_tr = document.createElement('TR')
+                            let new_td = document.createElement('TD')
+                            new_td.innerHTML = self.empty_msg
+                            new_tr.appendChild(new_td)
+                            self.remove_autocomplete_list()
+                            self.datatable.appendChild(new_tr)
+
+                        }
+                    }
+                )
+                    .catch(function (error) {
+                        self.stopLoading()
+                        console.log('error:  ' + error);
+                    });
+
+            }
+
+            populate_lines(self, results) {
+                const tbody = document.createElement('TBODY')
+                const visible_headers = self.get_visible_headers()
+                for (let i = 0, l = results.length; i < l; i++) {
+
+                    {# populate Lines #}
+
+                    const new_tr = document.createElement('TR')
+                    visible_headers.forEach((header, index) => {
+                        const new_td = document.createElement('TD')
+                        new_td.innerHTML = results[i][header]
+                        new_td.classList.add('font-normal')
+                        if (index === visible_headers.length - 1) {
+                            new_td.classList.add('w-full')
+                        } else {
+                            new_td.classList.add('w-px')
+                        }
+                        new_tr.appendChild(new_td)
+                    })
+                    new_tr.dataset.object = results[i]
+
+
+                    {# Handle click #}
+                    new_tr.addEventListener('mousedown', function (e) {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        self.selected_item = results[i]
+                        // todo: input value can be other then id
+                        self.original_input.value = self.selected_item.id
+                        self.fake_input.value = self.selected_item[self.text_field]
+                        const event = new CustomEvent('item_selected', {detail: self.selected_item});
+                        self.original_input.dispatchEvent(event)
+
+                        self.unselect_element(self.current_index)
+                        let _elements = self.datatable.rows || self.datatable.children
+                        self.current_index = Array.from(_elements).indexOf(new_tr)
+                        self.select_element(self.current_index)
+                        self.hide_autocomplete_container()
+                    })
+
+                    //Finally,  append the row
+                    tbody.appendChild(new_tr)
+                }
+                self.datatable.appendChild(tbody)
+                self.select_element(self.current_index)
+            }
+
+            populate_cards(self, results) {
+                for (let i = 0, l = results.length; i < l; i++) {
+
+                    {# populate Lines #}
+
+                    const new_contaner = document.createElement('DIV')
+                    new_contaner.classList.add('rounded-md', 'p-2', 'border-b', 'border-gray-100', 'cursor-pointer', 'hover:bg-gray-100')
+                    const new_table = document.createElement('TABLE')
+                    for (const header in self.headers) {
+                        const new_tr = document.createElement('TR')
+                        const new_th = document.createElement('TH')
+                        const new_td = document.createElement('TD')
+
+                        new_th.innerHTML = self.headers[header].label
+                        new_td.innerHTML = results[i][header]
+
+                        new_contaner.appendChild(new_table)
+                        new_table.appendChild(new_tr)
+                        new_tr.appendChild(new_th)
+                        new_tr.appendChild(new_td)
+
+                        {# Assign Object #}
+                        new_contaner.dataset.object = results[i]
+                    }
+
+
+                    {# Handle click #}
+                    new_contaner.addEventListener('mousedown', function (e) {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        self.selected_item = results[i]
+                        // todo: input value can be other then id
+                        self.original_input.value = self.selected_item.id
+                        self.fake_input.value = self.selected_item[self.text_field]
+                        const event = new CustomEvent('item_selected', {detail: self.selected_item});
+                        self.original_input.dispatchEvent(event)
+
+                        self.unselect_element(self.current_index)
+                        let _elements = self.datatable.rows || self.datatable.children
+                        self.current_index = Array.from(_elements).indexOf(new_contaner)
+                        self.select_element(self.current_index)
+                        self.hide_autocomplete_container()
+                    })
+
+                    //Finally,  append the row
+                    self.datatable.appendChild(new_contaner)
+                }
+                self.select_element(self.current_index)
+            }
+
+            load_next_page_data() {
+                if (!this.is_loading && this.next_page_link) {
+                    this.startLoading()
+                    this.current_page++
+                    this.get_data()
+                }
+
+            }
+
+            load_previous_page_data() {
+                if (!this.is_loading && this.previous_page_link) {
+                    this.startLoading()
+                    this.current_page--
+                    if (this.current_page < 1) {
+                        this.current_page = 1
+                    }
+                    this.get_data()
+                }
+
+            }
+
+            handlePageNavigation() {
+                let self = this
+                let next_elm = document.getElementById('id_{{ widget.name }}_next')
+                let previous_elm = document.getElementById('id_{{ widget.name }}_previous')
+
+                next_elm.addEventListener('mousedown', function (e) {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    self.load_next_page_data()
+                })
+                previous_elm.addEventListener('mousedown', function (e) {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    self.load_previous_page_data()
+
+                })
+            }
+
+            update_page_number() {
+                document.getElementById("id_{{ widget.name }}_pageNumber").innerText = 'Page ' + this.current_page
+                let next_elm = document.getElementById('id_{{ widget.name }}_next')
+                let previous_elm = document.getElementById('id_{{ widget.name }}_previous')
+                if (this.next_page_link === null) {
+                    next_elm.classList.add('disabled')
+                } else {
+                    next_elm.classList.remove('disabled')
+                }
+                if (this.previous_page_link == null) {
+                    previous_elm.classList.add('disabled')
+                } else {
+                    previous_elm.classList.remove('disabled')
+
+                }
+            }
+
+            remove_autocomplete_list() {
+                {# Remove all table elements #}
+                while (this.datatable.firstChild) {
+                    this.datatable.removeChild(_table.firstChild);
+
+                }
+                this.reset_indexes()
+
+            }
+
+            startLoading() {
+                this.is_loading = true
+                this.progress_bar.classList.add('progress-bar')
+            }
+
+            stopLoading() {
+                this.is_loading = false
+                this.progress_bar.classList.remove('progress-bar')
+            }
+
+            reset_indexes() {
+                if (this.original_input.dataset.headers === 'on') {
+                    this.current_index = 1
+                    this.max_index = 1
+                    this.min_index = 1
+                } else {
+                    this.current_index = 0
+                    this.max_index = 0
+                    this.min_index = 0
+                }
+                this.current_elm = undefined
+
+            }
+
+            increase_index() {
+                if (this.current_index < this.max_index) {
+                    this.current_index++
+                } else if (this.current_index === this.max_index) {
+                    this.load_next_page_data()
+                }
+            }
+
+            decrease_index() {
+                if (this.current_index > this.min_index) {
+                    this.current_index--
+                } else if (this.current_index === this.min_index) {
+                    this.load_previous_page_data()
+                }
+            }
+
+            select_element(index) {
+                let _elements = this.datatable.rows || this.datatable.children
+                if (_elements.length > index) {
+                    this.current_elm = _elements[index]
+                    _elements[index].classList.add('selected')
+                    _elements[index].scrollIntoView({ block: 'nearest' })
+                }
+            }
+
+            unselect_element(index) {
+                let _elements = this.datatable.rows || this.datatable.children
+                if (_elements.length > index) {
+                    _elements[index].classList.remove('selected')
+                }
+            }
+
+            show_autocomplete_container() {
+                this.data_container.classList.remove('hidden')
+                this.data_container_is_visible = true
+                // console.log(this.current_index + ' current' + this.max_index + ' max index' + this.min_index + ' min index')
+
+            }
+
+            hide_autocomplete_container() {
+                this.data_container.classList.add('hidden')
+                this.data_container_is_visible = false
+            }
+
+            handle_fake_input_click() {
+                let self = this
+                this.fake_input.addEventListener('click', function () {
+                    if (self.data_container.classList.contains('hidden')) {
+                        self.show_autocomplete_container()
+                    } else {
+                        self.hide_autocomplete_container()
+                    }
+                })
+            }
+
+            handle_keyboard_navigation() {
+                let self = this
+                self.fake_input.addEventListener('keydown', function (e) {
+                    if (e.code === 'Enter' && self.current_elm !== undefined && !self.is_loading) {
+                        self.current_elm.dispatchEvent(new Event('mousedown'))
+                        e.preventDefault()
+                        e.stopPropagation()
+                    } else if (e.code === 'ArrowUp' && !self.is_loading) {
+
+                        self.unselect_element(self.current_index)
+                        self.decrease_index()
+                        self.select_element(self.current_index)
+                        // console.log(self.current_index + ' current' + self.max_index + ' max index' + self.min_index + ' min index')
+
+                    } else if (e.code === 'ArrowDown' && !self.is_loading) {
+
+                        self.unselect_element(self.current_index)
+                        self.increase_index()
+                        self.select_element(self.current_index)
+                        // console.log(self.current_index + ' current' + self.max_index + ' max index' + self.min_index + ' min index')
+
+
+                    } else if (e.key === "Escape") {
+                        self.hide_autocomplete_container()
+                    } else if (e.key === " ") {
+                        self.show_autocomplete_container()
+                    }
+                })
+            }
+
+
+            handle_input() {
+                let self = this
+                self.fake_input.addEventListener('input', function () {
+                    clearTimeout(self.timer)
+                    self.timer = setTimeout(function () {
+                        self.q = self.fake_input.value.trim()
+                        self.current_page = 1
+                        self.get_data()
+                        self.show_autocomplete_container()
+                    }, 500)
+
+                })
+                self.fake_input.addEventListener('blur', e => {
+                    self.hide_autocomplete_container()
+                })
+            }
+        }
+
+        let a = new Autocomplete(
+            _original_input,
+            _fake_input,
+            _progress_bar,
+            _table,
+            _container,
+            _create_object_link
+        )
+        a.set_create_new_link()
+        a.reset_indexes()
+        a.set_fake_input_required()
+        a.set_fake_input_value()
+        a.handlePageNavigation()
+        a.handle_fake_input_click()
+        a.get_headers()
+        a.get_data()
+        a.handle_input()
+        a.handle_keyboard_navigation()
+    });
+</script>
