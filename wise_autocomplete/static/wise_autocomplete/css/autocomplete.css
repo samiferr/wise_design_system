@@ -1,0 +1,78 @@
+/*
+ * Styles for wise_autocomplete's AutocompleteInputWidget / AutoSuggestInputWidget.
+ *
+ * Extracted verbatim from DCMS7's core/static/core/css/input.css (the `.btn-icon`, autocomplete
+ * panel/table, progress-bar and `.disabled` rules). This is a Tailwind v4 partial, not standalone
+ * CSS: `@apply` only works when this file is pulled into a Tailwind build via `@import`, and the
+ * classes below assume the host project's Tailwind `@theme` defines these custom color tokens
+ * (DCMS7's values shown for reference):
+ *
+ *   --color-action-500: #16a34a;
+ *   --color-action-600: #15803d;
+ *   --color-divider:    rgba(29, 31, 32, 0.16);
+ *   --color-surface:    #e9e9ea;
+ *   --shadow-blueprint-lg: 0 12px 32px rgba(43, 43, 45, 0.22);
+ *
+ * See docs/autocomplete-widget.md for the full integration checklist. If your project already
+ * has its own `.btn-icon` / `.disabled` component classes (as DCMS7 does), skip importing this
+ * file and just make sure the autocomplete-specific rules below exist somewhere in your build.
+ */
+
+@layer components {
+    .btn-icon {
+        @apply w-9 h-9 p-0 border-divider;
+    }
+
+    /* Autocomplete widget - starts hidden via a literal `hidden` class on the element (toggled by JS) */
+    .autocomplete-panel, .autocomplete-container {
+        @apply absolute z-10 w-full min-w-max border border-divider bg-white p-0
+        shadow-[var(--shadow-blueprint-lg)];
+    }
+
+    .progress-bar {
+        width: 10%;
+        animation: progress-bar-loading 1s ease-in-out infinite;
+    }
+
+    @keyframes progress-bar-loading {
+        0% {
+            width: 10%;
+        }
+        50% {
+            width: 80%;
+        }
+        100% {
+            width: 100%;
+        }
+    }
+
+    .autocomplete-table {
+        @apply w-full border-collapse bg-white text-sm table-auto;
+    }
+
+    .autocomplete-table th, .autocomplete-table td {
+        @apply whitespace-nowrap border-b border-r border-divider px-3 py-2 last:border-r-0;
+    }
+
+    .autocomplete-table tr:last-child td {
+        @apply border-b-0;
+    }
+
+    .autocomplete-table th {
+        @apply bg-gray-100 text-xs font-semibold uppercase tracking-wide text-gray-600;
+    }
+
+    .autocomplete-table tr:hover {
+        @apply cursor-pointer bg-gray-900/5;
+    }
+
+    .autocomplete-table tr.selected {
+        @apply bg-action-600 text-white;
+    }
+}
+
+@layer utilities {
+    .disabled {
+        @apply pointer-events-none opacity-30;
+    }
+}

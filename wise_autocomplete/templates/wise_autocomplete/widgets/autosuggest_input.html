@@ -1,0 +1,384 @@
+{% load static wise_autocomplete_icons %}
+
+<div>
+    <div class="relative">
+        <input id="id_{{ widget.name }}_fake" autocomplete="off"
+               autocorrect="off" autocapitalize="none" spellcheck="false" role="presentation"
+               class="h-10 w-full border border-divider bg-surface px-3 pr-10 py-1.5 text-sm text-gray-900 outline-none focus:border-action-500"
+               oninput="document.getElementById('id_{{ widget.name }}').value=this.value"
+        >
+        <span type="button" class="btn-icon absolute right-1 top-1/2 -translate-y-1/2"
+              onclick="document.getElementById('id_{{ widget.name }}_fake').click();
+                      document.getElementById('id_{{ widget.name }}_fake').focus();"
+        >
+            {% lucide "chevron-down" size=16 %}
+        </span>
+
+
+    </div>
+    <input id="id_{{ widget.name }}" class="hidden" type="{{ widget.type }}" name="{{ widget.name }}" data-parent=""
+           autocomplete="off"
+            {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}" {% endif %}
+            {% include "wise_autocomplete/widgets/attrs.html" %}
+           tabindex="-1">
+
+    <div class="relative">
+        <div id="progress-bar" class="absolute left-0 top-0 h-[3px] w-0 rounded bg-action-500 transition-all"></div>
+        <div class="autocomplete-panel hidden"
+             id='{{ widget.name }}_autocomplete_container'>
+            <div class="max-h-72 overflow-auto">
+                <table id="{{ widget.name }}_autocomplete_table" class="autocomplete-table"></table>
+                <div id="{{ widget.name }}_autocomplete_cards" class="divide-y divide-gray-100"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="application/ecmascript">
+    document.addEventListener("DOMContentLoaded", function () {
+
+        let _fake_input = document.getElementById('id_{{widget.name}}_fake')
+        let _original_input = document.getElementById('id_{{widget.name}}')
+        let _progress_bar = document.getElementById('progress-bar')
+        let _table
+        if (window.screen.width > 600) {
+            _table = document.getElementById('{{ widget.name }}_autocomplete_table')
+        } else {
+            _table = document.getElementById('{{ widget.name }}_autocomplete_cards')
+        }
+        let _container = document.getElementById('{{ widget.name }}_autocomplete_container')
+        let _create_object_link = document.getElementById('id_{{ widget.name }}_create')
+
+        class Autosuggest {
+            constructor(original_input, fake_input, progress_bar, datatable, dataContainer, create_object_link) {
+                this.original_input = original_input
+                this.fake_input = fake_input
+                this.progress_bar = progress_bar
+                this.datatable = _table
+                this.data_container = dataContainer
+                this.data_container_is_visible = false
+                this.url = this.original_input.dataset.url
+                this.empty_msg = 'Aucun objet trouvé !'
+                this.text_field = this.original_input.dataset.text_field
+                this.is_loading = false
+                this.current_index = 1
+                this.current_elm = undefined
+                this.selected_item = {}
+                this.timer = undefined
+                this.min_index = 1
+                this.max_index = 1
+                this.q = ''
+                this.data_count = 0
+
+                // if element has parent
+                this.parent = document.getElementById('parent')
+                this.parent_id = this.parent ? this.parent.dataset.parent : false
+            }
+
+            set_fake_input_required() {
+                if (this.original_input.required) {
+                    this.fake_input.required = true
+                }
+            }
+
+            set_fake_input_value() {
+                // set value when the original input contains an initial value
+                let self = this
+                if (self.original_input.value !== '') {
+                    self.startLoading()
+                    axios.get(this.url + self.original_input.value + '?parent_id=' + this.parent_id).then(function (response) {
+                        self.fake_input.value = response.data[self.text_field]
+                        self.selected_item = response.data
+                        self.stopLoading()
+
+                        // fire selected item event
+                        const event = new CustomEvent('item_selected', {detail: self.selected_item});
+                        self.original_input.dispatchEvent(event)
+                    }).catch(function (err) {
+                        console.log('error:  ' + err)
+                        self.stopLoading()
+                    })
+                }
+            }
+
+            get_data() {
+                if (_original_input.arr) {
+
+
+                    let self = this
+                    self.startLoading()
+                    let val = self.q.split(' ')
+                    let arr = _original_input.arr
+                    let results = []
+                    for (let i = 0, l = val.length; i < l; i++) {
+                        arr = arr.filter(str => str.toUpperCase().includes(val[i].toUpperCase()));
+                    }
+                    results = arr
+
+                    self.stopLoading()
+                    self.reset_indexes()
+                    if (results.length !== 0) {
+                        self.remove_autocomplete_list()
+                        // navigation data
+                        self.data_count = results.length
+
+                        {# Create Headers #}
+
+                        // Table or cards depending on the screen width
+                        if (window.screen.width > 600) {
+                            self.min_index = 0
+                            self.max_index = results.length - 1
+                            self.current_index = 0
+                            self.populate_lines(self, results)
+
+                        } else {
+                            // no headers to display
+                            self.min_index = 0
+                            self.max_index = results.length - 1
+                            self.current_index = 0
+                            self.populate_cards(self, results)
+                        }
+
+                    } else {
+
+                        self.remove_autocomplete_list()
+                        self.hide_autocomplete_container()
+
+                    }
+
+                }
+            }
+
+            populate_lines(self, results) {
+                for (let i = 0, l = results.length; i < l; i++) {
+
+                    {# populate Lines #}
+
+                    const new_tr = document.createElement('TR')
+
+                    const new_td = document.createElement('TD')
+                    /*make the matching letters bold:*/
+                    let val = self.q
+                    let response = results[i]
+                    let regex = new RegExp(val, 'gi')
+                    response = response.replace(regex, function (str) {
+                        return "<span class='font-bold bg-yellow-100'>" + str + "</span>"
+                    })
+
+                    new_td.innerHTML = response;
+
+
+                    new_tr.appendChild(new_td)
+
+                    {# Assign Object #}
+                    new_tr.dataset.object = results[i]
+
+
+                    {# Handle click #}
+                    new_tr.addEventListener('mousedown', function (e) {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        self.selected_item = results[i]
+                        // todo: input value can be other then id
+                        self.original_input.value = self.selected_item
+                        self.fake_input.value = self.selected_item
+                        const event = new CustomEvent('item_selected', {detail: self.selected_item});
+                        self.original_input.dispatchEvent(event)
+
+                        self.unselect_element(self.current_index)
+                        self.current_index = Array.from(_table.children).indexOf(new_tr)
+                        self.select_element(self.current_index)
+                        self.hide_autocomplete_container()
+                    })
+
+                    //Finally,  append the row and select the first one
+                    self.datatable.appendChild(new_tr)
+                    self.select_element(self.current_index)
+                }
+            }
+
+            populate_cards(self, results) {
+                for (let i = 0, l = results.length; i < l; i++) {
+
+                    {# populate Lines #}
+
+                    const new_container = document.createElement('DIV')
+                    new_container.classList.add('rounded-md', 'p-2', 'border-b', 'border-gray-100', 'cursor-pointer', 'hover:bg-gray-100')
+
+
+                    const new_p = document.createElement('div')
+                    new_p.innerHTML = results[i]
+                    new_container.appendChild(new_p)
+                    {# Assign Object #}
+                    new_container.dataset.object = results[i]
+
+
+                    {# Handle click #}
+                    new_container.addEventListener('mousedown', function (e) {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        self.selected_item = results[i]
+                        // todo: input value can be other then id
+                        self.original_input.value = self.selected_item.id
+                        self.fake_input.value = self.selected_item[self.text_field]
+                        const event = new CustomEvent('item_selected', {detail: self.selected_item});
+                        self.original_input.dispatchEvent(event)
+
+                        self.unselect_element(self.current_index)
+                        self.current_index = Array.from(_table.children).indexOf(new_container)
+                        self.select_element(self.current_index)
+                        self.hide_autocomplete_container()
+                    })
+
+                    //Finally,  append the row and select the first one
+                    self.datatable.appendChild(new_container)
+                    self.select_element(self.current_index)
+
+                }
+            }
+
+            remove_autocomplete_list() {
+                {# Remove all table elements #}
+                while (this.datatable.firstChild) {
+                    this.datatable.removeChild(_table.firstChild);
+
+                }
+                this.reset_indexes()
+
+            }
+
+            startLoading() {
+                this.is_loading = true
+                this.progress_bar.classList.add('progress-bar')
+            }
+
+            stopLoading() {
+                this.is_loading = false
+                this.progress_bar.classList.remove('progress-bar')
+            }
+
+            reset_indexes() {
+                this.current_index = 0
+                this.max_index = 0
+                this.min_index = 0
+                this.current_elm = undefined
+            }
+
+            increase_index() {
+                if (this.current_index < this.max_index) {
+                    this.current_index++
+                } else if (this.current_index === this.max_index) {
+                }
+            }
+
+            decrease_index() {
+                if (this.current_index > this.min_index) {
+                    this.current_index--
+                } else if (this.current_index === this.min_index) {
+                }
+            }
+
+            select_element(index) {
+                if (this.datatable.children.length > this.min_index) {
+                    let _elements = this.datatable.children
+                    this.current_elm = _elements[index]
+                    _elements[index].classList.add('selected')
+                }
+            }
+
+
+            unselect_element(index) {
+                if (this.datatable.children.length > this.min_index) {
+                    let _elements = this.datatable.children
+                    _elements[index].classList.remove('selected')
+                }
+            }
+
+            show_autocomplete_container() {
+                this.data_container.classList.remove('hidden')
+                this.data_container_is_visible = true
+                // console.log(this.current_index + ' current' + this.max_index + ' max index' + this.min_index + ' min index')
+
+            }
+
+            hide_autocomplete_container() {
+                this.data_container.classList.add('hidden')
+                this.data_container_is_visible = true
+            }
+
+            handle_fake_input_click() {
+                let self = this
+                this.fake_input.addEventListener('click', function () {
+                    self.data_container.classList.toggle('hidden')
+                })
+            }
+
+            handle_keyboard_navigation() {
+                let self = this
+                self.fake_input.addEventListener('keydown', function (e) {
+                    if (e.code === 'Enter' && self.current_elm !== undefined && !self.is_loading) {
+                        self.current_elm.dispatchEvent(new Event('mousedown'))
+                        e.preventDefault()
+                        e.stopPropagation()
+                    } else if (e.code === 'ArrowUp' && !self.is_loading) {
+
+                        self.unselect_element(self.current_index)
+                        self.decrease_index()
+                        self.select_element(self.current_index)
+                        // console.log(self.current_index + ' current' + self.max_index + ' max index' + self.min_index + ' min index')
+
+                    } else if (e.code === 'ArrowDown' && !self.is_loading) {
+
+                        self.unselect_element(self.current_index)
+                        self.increase_index()
+                        self.select_element(self.current_index)
+                        // console.log(self.current_index + ' current' + self.max_index + ' max index' + self.min_index + ' min index')
+
+
+                    } else if (e.key === "Escape") {
+                        self.hide_autocomplete_container()
+                    } else if (e.key === " ") {
+                        self.show_autocomplete_container()
+                    }
+                })
+            }
+
+            handle_input() {
+                let self = this
+                self.fake_input.addEventListener('input', function () {
+                    clearTimeout(self.timer)
+                    self.timer = setTimeout(function () {
+                        self.q = self.fake_input.value.trim()
+                        self.get_data()
+                        self.show_autocomplete_container()
+                    }, 100)
+
+                })
+                self.fake_input.addEventListener('blur', e => {
+                    self.hide_autocomplete_container()
+                })
+            }
+        }
+
+
+        let a = new Autosuggest(
+            _original_input,
+            _fake_input,
+            _progress_bar,
+            _table,
+            _container,
+            _create_object_link
+        )
+        //let coutries = ["Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Anguilla", "Antigua & Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia & Herzegovina", "Botswana", "Brazil", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central Arfrican Republic", "Chad", "Chile", "China", "Colombia", "Congo", "Cook Islands", "Costa Rica", "Cote D Ivoire", "Croatia", "Cuba", "Curacao", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands", "Faroe Islands", "Fiji", "Finland", "France", "French Polynesia", "French West Indies", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea Bissau", "Guyana", "Haiti", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau", "Macedonia", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauro", "Nepal", "Netherlands", "Netherlands Antilles", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Puerto Rico", "Qatar", "Reunion", "Romania", "Russia", "Rwanda", "Saint Pierre & Miquelon", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka", "St Kitts & Nevis", "St Lucia", "St Vincent", "Sudan", "Suriname", "Swaziland", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor L'Este", "Togo", "Tonga", "Trinidad & Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks & Caicos", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States of America", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Virgin Islands (US)", "Yemen", "Zambia", "Zimbabwe"];
+        //a.data_arr = coutries
+
+        a.reset_indexes()
+        a.set_fake_input_required()
+        a.set_fake_input_value()
+        a.handle_fake_input_click()
+        a.get_data()
+        a.handle_input()
+        a.handle_keyboard_navigation()
+        _original_input.autocsuggest = a
+    });
+</script>
