@@ -1,8 +1,10 @@
 {% load i18n wise_icons %}
-{# Renders wise_nav_sections (see wise_core/context_processors.py + WISE_NAV_SECTIONS
-   in docs/getting-started.md). Each section: {"title": ..., "items": [...]}.
-   Each item: {"label", "url_name", "url_kwargs" (optional), "icon" (lucide name),
-   "match" (substring of request.resolver_match.url_name that marks it selected)}. #}
+{% comment %}
+Renders wise_nav_sections (see wise_core/context_processors.py + WISE_NAV_SECTIONS
+in docs/getting-started.md). Each section: {"title": ..., "items": [...]}.
+Each item: {"label", "url_name", "url_kwargs" (optional), "icon" (lucide name),
+"match" (substring of request.resolver_match.url_name that marks it selected)}.
+{% endcomment %}
 {% if request.user.is_authenticated %}
     <a class="menu-link {% if request.resolver_match.url_name == 'home' %}selected{% endif %}" href="{% url 'home' %}">
         {% lucide "house" size=20 %}
