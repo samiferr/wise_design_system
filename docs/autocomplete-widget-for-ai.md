@@ -4,14 +4,17 @@ Read this before wiring `wise_autocomplete` into a form. It assumes you've alrea
 `docs/autocomplete-widget.md` for the prose version; this file is the compressed fact sheet plus a
 list of things that look like bugs but are intentional/inherited behavior — do not "fix" them as a
 side effect of an unrelated task unless the user explicitly asks you to change this widget's behavior.
+(A batch of formerly-listed items *was* fixed on an explicit request — see "Fixes applied on top of
+the extraction" in `docs/autocomplete-widget.md` and the "Things already fixed" section below before
+assuming something here is still broken.)
 
 ## Origin and fidelity
 
 Extracted verbatim from DCMS7 (`samiferr/DCMS7`, `core/widgets.py` +
 `core/templates/core/widgets/{autocomplete_input,autosuggest_input,attrs}.html` +
 `core/templatetags/icons.py` + `core/static/core/{js/axios.min.js,icons/lucide/*.svg}` + the
-autocomplete-related rules in `core/static/core/css/input.css`). Only two files were adapted, both
-mechanically, both documented inline with a comment where the change was made:
+autocomplete-related rules in `core/static/core/css/input.css`). The extraction itself only adapted
+two files mechanically:
 
 1. `templatetags/wise_autocomplete_icons.py` — icon directory resolved relative to the file
    (`Path(__file__)`) instead of `settings.BASE_DIR`, because this app no longer lives inside a
@@ -19,9 +22,11 @@ mechanically, both documented inline with a comment where the change was made:
 2. Templates' `{% load %}` / `{% include %}` paths — repointed at the new `wise_autocomplete/...`
    namespace instead of `core/...`.
 
-Everything else — Python widget classes, JS state machines, CSS rules, id-naming scheme, French UI
-strings — is byte-identical to DCMS7. If you diff this against DCMS7's `core` app, the only
-diffs should be the two items above plus path renames.
+On top of that byte-identical extraction, a later, explicitly-requested pass fixed five inherited bugs
+in both widget templates (namespaced `progress-bar` id, live `parent_id` scoping, the `list` attr, the
+detail-lookup URL join, and a mobile-card handler bug in `AutoSuggestInputWidget`) — see "Things
+already fixed" below. Everything else — Python widget classes, the rest of the JS state machines, CSS
+rules, id-naming scheme, French UI strings — is still byte-identical to DCMS7.
 
 ## File map
 
@@ -68,44 +73,58 @@ type".
 1. No backend route needed.
 2. Form: `SomeField: AutoSuggestInputWidget()`.
 3. In page JS (not in this widget), set `document.getElementById('id_<field>').arr = [...]` and call
-   `.autocsuggest.get_data()` whenever the array should change (typically inside another field's
+   `.autosuggest.get_data()` whenever the array should change (typically inside another field's
    `item_selected` handler — see DCMS7's `transactions/templates/transactions/patient/
    patient__prescription/detail.html` for the canonical two-field pairing: a `drug`
    `AutocompleteInputWidget` whose `item_selected` populates a `drug_usage`/`drug_quantity` pair of
    `AutoSuggestInputWidget`s from `event.detail.dosages`/`event.detail.quantities`).
-4. Property name is **`.autocsuggest`** (typo preserved from source), not `.autosuggest`. Getting
-   this wrong fails silently (`undefined.get_data()` throws, swallowed by nothing — check the
-   browser console, not a Django error page).
+4. Property name is **`.autosuggest`** (correctly spelled). `.autocsuggest` (the original typo) still
+   points at the same instance for backward compatibility, but prefer `.autosuggest` in new code.
+   Getting either name wrong fails silently (`undefined.get_data()` throws, swallowed by nothing —
+   check the browser console, not a Django error page).
 
-## Things that look like bugs — do not silently "fix" these
+## Things already fixed — do not reintroduce these
 
-- `id="progress-bar"` is unnamespaced (unlike every other id in the template) — a second widget
-  instance on the same page shares/steals the first one's progress bar element. Real limitation, not
-  something to patch as a drive-by fix.
-- `parent_id` is always sent as the literal string `"false"` in every real DCMS7 usage today, because
-  the widget's "parent scoping" only activates if the page defines an element with `id="parent"`
-  carrying a `data-parent` value, and no current template does. The mechanism is intentionally kept
-  (it's dead-but-wired, not removed) — don't delete it under the assumption it's unused cruft, and
-  don't assume a backend `q`/`page` param without also handling an incoming `parent_id` param it may
-  send.
-- `AutoSuggestInputWidget`'s `list` HTML attribute is inert — the JS never reads it. Suggestion data
-  only ever comes from the runtime `.arr` assignment. If a user's `attrs={'list': '...'}` doesn't seem
-  to do anything, that's expected; point them at the `.arr` pattern instead.
-- Detail-lookup requests concatenate `data-url + pk` with no separator logic beyond what's already in
-  `data-url` (must end in `/`) and no `reverse()` call — this is deliberate (matches DCMS7's router
-  URL shape), not a missed `reverse()`.
+These were genuine bugs in the DCMS7 original, fixed on an explicit request. Both widget templates
+(`autocomplete_input.html` and `autosuggest_input.html`) share the same JS patterns, so all five were
+fixed in both, not just in `AutoSuggestInputWidget`:
+
+- `id="progress-bar"` used to be unnamespaced — two widget instances on the same page collided on it.
+  It's now `id="{{ widget.name }}_progress_bar"`; keep it namespaced if you touch this markup.
+- `parent_id` used to always be sent as the literal string `"false"`, because the widget looked for a
+  page-global `document.getElementById('parent')` that no template ever defined. It's now a
+  `data-parent` attribute (an id reference to another field's real input) on the widget's own hidden
+  input, read live via a `parent_id` getter on each request. Don't reintroduce the global-`#parent`
+  lookup pattern — the backend `q`/`page` handler must still tolerate an incoming `parent_id` param
+  (now `false` by default, or the referenced field's live value when `data-parent` is set).
+- `AutoSuggestInputWidget`'s `list` HTML attribute (`data-list` in JS) now seeds `.arr` from a matching
+  `<datalist>`'s `<option>` values on init, when `.arr` hasn't already been set by page JS. Page JS
+  assignment still always wins.
+- Detail-lookup requests now build the URL via `build_detail_url(pk)` (normalizes `data-url` to end in
+  exactly one `/`, URL-encodes the pk, appends a trailing `/`) instead of raw `data-url + pk`
+  concatenation. Still no `reverse()` — this is client-side JS, it has no access to Django's URL
+  resolver — but the "get the trailing slash wrong and it breaks" footgun is gone.
+- `AutoSuggestInputWidget`'s mobile card click handler (`populate_cards()`) used to read
+  `self.selected_item.id` / `self.selected_item[self.text_field]`, treating results as objects — but
+  `.arr` entries are plain strings (unlike `AutocompleteInputWidget`'s DRF-serialized-object results).
+  It now assigns the string directly, matching the desktop table handler (`populate_lines()`).
+
+## Things that still look like bugs — do not silently "fix" these
+
 - `hide_autocomplete_container()` in `autosuggest_input.html` sets `data_container_is_visible = true`
   (not `false`) — inconsistent with `AutocompleteInputWidget`'s version of the same method, and with
   the variable's own name. This is inherited from the DCMS7 source verbatim; the variable isn't read
   anywhere that would make the inconsistency externally observable today, but don't use
   `AutoSuggestInputWidget`'s `data_container_is_visible` as a reliable visibility check if you extend
-  this widget later.
+  this widget later. Not part of the fix set above — flag it rather than fixing it as a drive-by.
+- `AutoSuggestInputWidget.set_fake_input_value()` still calls the same `data-url` detail endpoint as
+  `AutocompleteInputWidget` to resolve a pre-filled initial value, even though `AutoSuggestInputWidget`
+  is otherwise described as having no backend dependency. If you rely on that initial-value resolution,
+  `data-url` still needs to point at a working detail endpoint. Not part of the fix set above.
 
 ## Extending this widget
 
-If a task asks you to add a feature (multi-select, a different pagination shape, namespaced
-`progress-bar` ids, etc.), that is new work, not part of this extraction — implement it as a change on
-top of this baseline and say so, rather than blending it silently into "the extraction." Keep this
-file and `docs/autocomplete-widget.md` in sync with any such change so the "verbatim from DCMS7"
-framing above stays accurate (or gets explicitly revised once this package's widget diverges from the
-DCMS7 original).
+If a task asks you to add a feature (multi-select, a different pagination shape, etc.), that is new
+work, not part of this extraction — implement it as a change on top of this baseline and say so,
+rather than blending it silently into "the extraction." Keep this file and
+`docs/autocomplete-widget.md` in sync with any such change so the framing above stays accurate.
