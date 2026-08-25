@@ -1,0 +1,96 @@
+{% extends 'wise_core/base.html' %}
+{% load wise_icons %}
+
+{% block body %}
+    <div class="page-panel max-w-4xl">
+        <h1>Components</h1>
+        <p class="mt-2 text-gray-700">Class names are the design system's public API — stable across token changes. Source: <code>wise_core/static/wise_core/css/tokens.css</code>.</p>
+
+        <h2 class="mt-8">Buttons</h2>
+        <div class="mt-4 flex flex-wrap items-center gap-3 border border-divider bg-white p-6">
+            <button class="btn btn-primary">Primary</button>
+            <button class="btn btn-brand">Brand</button>
+            <button class="btn btn-secondary">Secondary</button>
+            <button class="btn btn-danger">Danger</button>
+            <button class="btn btn-ghost">Ghost</button>
+            <button class="btn btn-primary" disabled>Disabled</button>
+            <button class="btn btn-icon btn-secondary">{% lucide "plus" size=16 %}</button>
+        </div>
+
+        <h2 class="mt-8">Badges</h2>
+        <div class="mt-4 flex flex-wrap items-center gap-2 border border-divider bg-white p-6">
+            <span class="badge">Default</span>
+            <span class="badge badge-action">Action</span>
+            <span class="badge badge-brand">Brand</span>
+            <span class="badge badge-grey">Draft</span>
+            <span class="badge badge-orange">Pending</span>
+            <span class="badge badge-green">Confirmed</span>
+            <span class="badge badge-red">Cancelled</span>
+            <span class="badge badge-blue">Invoiced</span>
+        </div>
+
+        <h2 class="mt-8">Cards</h2>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div class="card">
+                <div class="card-kicker">Kicker</div>
+                <h3 class="card-title mt-1">Card title</h3>
+                <p class="card-content mt-2">Card body copy sits at 0.85em relative to the surrounding text.</p>
+                <div class="card-meta mt-3">{% lucide "clock" size=13 %} Updated 2 days ago</div>
+            </div>
+            <a class="card" href="#">
+                <div class="card-kicker">Linked</div>
+                <h3 class="card-title mt-1">A clickable card</h3>
+                <p class="card-content mt-2">`.card` on an `&lt;a&gt;` gets a hover tint and no underline.</p>
+            </a>
+        </div>
+
+        <h2 class="mt-8">Tabs</h2>
+        <div class="tab-bar mt-4 border-b border-divider bg-white px-4">
+            <span class="bar-item selected">Overview</span>
+            <span class="bar-item">History</span>
+            <span class="bar-item">Settings</span>
+        </div>
+
+        <h2 class="mt-8">Forms</h2>
+        <div class="detail-panel mt-4 max-w-lg">
+            <div class="form-stack">
+                <div class="form-field">
+                    <label class="form-label">Name<span class="form-required">*</span></label>
+                    <input type="text" placeholder="Ada Lovelace">
+                    <span class="helptext">Shown to other members of your team.</span>
+                </div>
+                <div class="form-field form-field-error">
+                    <label class="form-label">Email<span class="form-required">*</span></label>
+                    <input type="text" value="not-an-email">
+                    <ul class="errorlist"><li>Enter a valid email address.</li></ul>
+                </div>
+                <div class="form-field form-field-checkbox">
+                    <label class="form-checkbox-label">
+                        <input type="checkbox" checked>
+                        <span>Subscribe to updates</span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary">Save</button>
+            </div>
+        </div>
+
+        <h2 class="mt-8">Flash messages</h2>
+        <div class="mt-4 flex flex-col gap-2 border border-divider bg-page p-6" style="max-width: 320px;">
+            <div class="border px-4 py-3 text-sm leading-snug border-emerald-700 bg-emerald-50 text-emerald-800">Saved successfully.</div>
+            <div class="border px-4 py-3 text-sm leading-snug border-warning-500 bg-warning-50 text-warning-600">Something needs your attention.</div>
+        </div>
+
+        <h2 class="mt-8">Pagination</h2>
+        <p class="text-gray-700">Rendered automatically by <code>wise_core/components/_pagination.html</code> against Django's <code>Paginator</code> — see it live on the <a class="text-action-600 underline" href="{% url 'category_list_view' %}">Categories</a> datatable.</p>
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-1 border border-divider bg-white p-4">
+            <a href="#" class="pagination-link disabled">{% lucide "chevrons-left" size=16 %}</a>
+            <a href="#" class="pagination-link disabled">{% lucide "chevron-left" size=16 %}Prev.</a>
+            <div class="px-2 text-sm text-gray-600">Page 1 / 3</div>
+            <a href="#" class="pagination-link">Next{% lucide "chevron-right" size=16 %}</a>
+            <a href="#" class="pagination-link">{% lucide "chevrons-right" size=16 %}</a>
+        </div>
+    </div>
+{% endblock %}

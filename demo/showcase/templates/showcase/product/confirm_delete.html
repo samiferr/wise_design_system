@@ -1,0 +1,7 @@
+{% extends 'wise_core/generic/confirm_generic.html' %}
+
+{% block confirm_back_url %}{% url 'product_list_view' %}{% endblock %}
+{% block confirm_rows %}
+    <tr><th>Name</th><td>{{ object.name }}</td></tr>
+    <tr><th>Category</th><td>{{ object.category }}</td></tr>
+{% endblock %}

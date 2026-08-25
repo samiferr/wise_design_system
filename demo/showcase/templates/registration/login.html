@@ -1,0 +1,17 @@
+{% extends 'wise_core/base.html' %}
+
+{% block body %}
+    <div class="page-panel flex items-center justify-center" style="min-height: calc(100vh - 40px);">
+        <div class="detail-panel w-full max-w-sm">
+            <h2>Sign in</h2>
+            <form method="post" class="form-stack mt-4">
+                {% csrf_token %}
+                {% include 'wise_core/components/_form_fields.html' %}
+                <div class="form-actions">
+                    <input type="submit" class="btn btn-primary large-button" value="Sign in">
+                </div>
+            </form>
+            <p class="mt-4 text-xs text-gray-600">Demo account: <code>demo</code> / <code>wise-demo-2026</code> (created by <code>python manage.py seed_demo</code>).</p>
+        </div>
+    </div>
+{% endblock %}

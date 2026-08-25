@@ -1,0 +1,8 @@
+{% extends 'wise_core/generic/form_generic.html' %}
+
+{% block form_back_url %}{% url 'product_list_view' %}{% endblock %}
+{% block form_title %}{% if object %}Edit {{ object }}{% else %}New product{% endif %}{% endblock %}
+
+{% block extra_head %}
+    {{ form.media }}
+{% endblock %}

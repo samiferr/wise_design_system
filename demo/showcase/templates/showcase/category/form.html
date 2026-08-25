@@ -1,0 +1,5 @@
+{% extends 'wise_core/generic/form_generic.html' %}
+
+{% block form_back_url %}{% url 'category_list_view' %}{% endblock %}
+{% block form_title %}{% if object %}Edit {{ object }}{% else %}New category{% endif %}{% endblock %}
+{% block form_width %}max-w-lg{% endblock %}

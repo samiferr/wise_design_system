@@ -60,9 +60,11 @@ all of that on by using this widget, not just the widget itself.
    assumes a particular install mechanism yet).
 2. Add `"wise_autocomplete"` to `INSTALLED_APPS` (needed for the app's templates and
    `{% load wise_autocomplete_icons %}` tag to be discoverable).
-3. Make sure `static/wise_autocomplete/js/axios.min.js` is loaded on every page that uses the widget
-   (e.g. a `<script src="{% static 'wise_autocomplete/js/axios.min.js' %}"></script>` in your base
-   template, the same way DCMS7's `templates/base.html` loads it globally).
+3. Make sure `static/wise_autocomplete/js/axios.min.js` is loaded on every page that uses the widget,
+   *before* the widget's own inline `<script>` runs. Both widgets now declare a Django form
+   `Media` class listing this file, so `{{ form.media }}` in your template's `<head>` is enough —
+   or add `<script src="{% static 'wise_autocomplete/js/axios.min.js' %}"></script>` to your base
+   template directly, the same way DCMS7's `templates/base.html` loads it globally.
 4. Pull `static/wise_autocomplete/css/autocomplete.css` into your Tailwind entry file with
    `@import`, **and** make sure your `@theme` defines the color tokens listed above (or already has
    your own equivalents — adjust the widget's utility classes if your token names differ, since

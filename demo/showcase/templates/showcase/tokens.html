@@ -1,0 +1,81 @@
+{% extends 'wise_core/base.html' %}
+
+{% block body %}
+    <div class="page-panel max-w-4xl">
+        <h1>Design tokens</h1>
+        <p class="mt-2 text-gray-700">Defined once in <code>wise_core/static/wise_core/css/tokens.css</code>'s <code>@theme</code> block. Swap the hex values there and every component below follows.</p>
+
+        <h2 class="mt-8">Color</h2>
+        <div class="mt-4 space-y-6">
+            <div>
+                <h5 class="mb-2">brand / action <span class="font-body font-normal text-gray-500 normal-case">— the one accent color, used for chrome, links, buttons</span></h5>
+                <div class="flex flex-wrap gap-2">
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-brand-50);width:64px;">50</div>
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-brand-100);width:64px;">100</div>
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-brand-300);width:64px;">300</div>
+                    <div class="border border-divider p-2 text-center text-xs text-white" style="background:var(--color-brand-500);width:64px;">500</div>
+                    <div class="border border-divider p-2 text-center text-xs text-white" style="background:var(--color-brand-600);width:64px;">600</div>
+                    <div class="border border-divider p-2 text-center text-xs text-white" style="background:var(--color-brand-700);width:64px;">700</div>
+                    <div class="border border-divider p-2 text-center text-xs text-white" style="background:var(--color-brand-900);width:64px;">900</div>
+                </div>
+            </div>
+            <div>
+                <h5 class="mb-2">accent <span class="font-body font-normal text-gray-500 normal-case">— destructive-only red</span></h5>
+                <div class="flex flex-wrap gap-2">
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-accent-50);width:64px;">50</div>
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-accent-400);width:64px;">400</div>
+                    <div class="border border-divider p-2 text-center text-xs text-white" style="background:var(--color-accent-500);width:64px;">500</div>
+                    <div class="border border-divider p-2 text-center text-xs text-white" style="background:var(--color-accent-600);width:64px;">600</div>
+                </div>
+            </div>
+            <div>
+                <h5 class="mb-2">warning <span class="font-body font-normal text-gray-500 normal-case">— status/caution use only</span></h5>
+                <div class="flex flex-wrap gap-2">
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-warning-50);width:64px;">50</div>
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-warning-400);width:64px;">400</div>
+                    <div class="border border-divider p-2 text-center text-xs text-white" style="background:var(--color-warning-500);width:64px;">500</div>
+                    <div class="border border-divider p-2 text-center text-xs text-white" style="background:var(--color-warning-600);width:64px;">600</div>
+                </div>
+            </div>
+            <div>
+                <h5 class="mb-2">gray <span class="font-body font-normal text-gray-500 normal-case">— overrides Tailwind's built-in scale</span></h5>
+                <div class="flex flex-wrap gap-2">
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-gray-50);width:64px;">50</div>
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-gray-100);width:64px;">100</div>
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-gray-300);width:64px;">300</div>
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-gray-500);width:64px;color:white;">500</div>
+                    <div class="border border-divider p-2 text-center text-xs text-white" style="background:var(--color-gray-700);width:64px;">700</div>
+                    <div class="border border-divider p-2 text-center text-xs text-white" style="background:var(--color-gray-900);width:64px;">900</div>
+                </div>
+            </div>
+            <div>
+                <h5 class="mb-2">surface tokens <span class="font-body font-normal text-gray-500 normal-case">— page background, card surface, hairline borders</span></h5>
+                <div class="flex flex-wrap gap-2">
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-page);width:96px;">page</div>
+                    <div class="border border-divider p-2 text-center text-xs" style="background:var(--color-surface);width:96px;">surface</div>
+                    <div class="border p-2 text-center text-xs bg-white" style="border-color:var(--color-divider);width:96px;">divider</div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="mt-10">Typography</h2>
+        <p class="text-gray-700">Headings use <code>--font-heading</code> (Barlow Condensed, semibold, tight leading); body text uses <code>--font-body</code> (Barlow).</p>
+        <div class="mt-4 space-y-1 border border-divider bg-white p-6">
+            <h1>Heading 1 / 42px</h1>
+            <h2>Heading 2 / 32px</h2>
+            <h3>Heading 3 / 25px</h3>
+            <h4>Heading 4 / 20px</h4>
+            <h5>Heading 5 / 16px</h5>
+            <h6>Heading 6 / 13px uppercase</h6>
+            <p class="pt-2 text-base">Body text (Barlow, 16px default) — the quick brown fox jumps over the lazy dog.</p>
+        </div>
+
+        <h2 class="mt-10">Shadows &amp; radius</h2>
+        <p class="text-gray-700">Three elevation levels (<code>--shadow-blueprint-sm/md/lg</code>), used by the flash-message stack and the filter/autocomplete panels. The radius scale is zeroed globally — square corners everywhere.</p>
+        <div class="mt-4 flex flex-wrap gap-6">
+            <div class="bg-white p-4 text-xs" style="box-shadow: var(--shadow-blueprint-sm)">blueprint-sm</div>
+            <div class="bg-white p-4 text-xs" style="box-shadow: var(--shadow-blueprint-md)">blueprint-md</div>
+            <div class="bg-white p-4 text-xs" style="box-shadow: var(--shadow-blueprint-lg)">blueprint-lg</div>
+        </div>
+    </div>
+{% endblock %}

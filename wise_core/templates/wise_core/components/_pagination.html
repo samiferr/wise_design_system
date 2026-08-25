@@ -1,0 +1,25 @@
+{% load i18n wise_icons %}
+<div class="flex justify-center">
+    <div class="flex flex-wrap items-center justify-center gap-1">
+        {% if page_obj.has_previous %}
+            <a href="?page=1&q={{ request.GET.q }}" class="pagination-link">{% lucide "chevrons-left" size=16 %}</a>
+            <a href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}" class="pagination-link">{% lucide "chevron-left" size=16 %}{% trans "Prev." %}</a>
+        {% else %}
+            <a href="#" class="pagination-link disabled">{% lucide "chevrons-left" size=16 %}</a>
+            <a href="#" class="pagination-link disabled">{% lucide "chevron-left" size=16 %}{% trans "Prev." %}</a>
+        {% endif %}
+
+        <div class="px-2 text-sm text-gray-600">
+            {% trans "Page" %} {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </div>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}" class="pagination-link">
+                {% trans "Next" %}{% lucide "chevron-right" size=16 %}</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&q={{ request.GET.q }}" class="pagination-link">{% lucide "chevrons-right" size=16 %}</a>
+        {% else %}
+            <a href="#" class="pagination-link disabled">{% trans "Next" %} {% lucide "chevron-right" size=16 %}</a>
+            <a href="#" class="pagination-link disabled">{% lucide "chevrons-right" size=16 %}</a>
+        {% endif %}
+    </div>
+</div>

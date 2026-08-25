@@ -1,0 +1,19 @@
+{% if messages %}
+    <ul class="flash-messages" id="messages-area">
+        {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {{ message }}
+            </li>
+        {% endfor %}
+    </ul>
+    <script type="text/javascript">
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                let messages = document.getElementById('messages-area')
+                if (messages) {
+                    messages.classList.add('hidden')
+                }
+            }, 6000)
+        })
+    </script>
+{% endif %}

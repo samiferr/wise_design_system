@@ -1,0 +1,26 @@
+{% extends 'wise_core/generic/list_generic.html' %}
+{% load wise_icons %}
+
+{% block list_icon %}{% lucide "pill" size=28 cls="text-brand-600" %}{% endblock %}
+{% block list_title %}Products{% endblock %}
+
+{% block list_actions %}
+    {% include 'wise_core/components/filter_button.html' %}
+    {% if perms.showcase.add_product %}
+        <a class="btn btn-primary" href="{% url 'product_create_view' %}">
+            {% lucide "plus" size=16 %}
+            <span>New</span>
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block card_item %}
+    <a class="card flex items-center gap-3" href="{{ item.get_absolute_url }}">
+        <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center border border-divider text-xs font-semibold"
+              style="background-color: {{ item.category.color }}; color: white;">{{ item.category.name|slice:":1" }}</span>
+        <div class="min-w-0 flex-1">
+            <h4 class="card-title truncate">{{ item.name }}</h4>
+            <p class="card-meta mt-1">{{ item.category.name }}</p>
+        </div>
+    </a>
+{% endblock %}

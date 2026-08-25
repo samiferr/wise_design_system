@@ -1,0 +1,36 @@
+{% extends 'wise_core/generic/detail_generic.html' %}
+{% load wise_icons wise_tags %}
+
+{% block detail_actions %}
+    <div class="top-actions-header">
+        <a class="top-nav-item inline-flex" href="{% url 'category_list_view' %}">
+            {% lucide "arrow-left" size=20 %}<div class="text-sm">Back</div>
+        </a>
+        {% if perms.showcase.change_category %}
+            <a class="top-nav-item inline-flex" href="{% url 'category_update_view' pk=object.pk %}">
+                {% lucide "pencil" size=20 %}<div class="text-sm">Edit</div>
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block detail_title %}{{ object.name }}{% endblock %}
+
+{% block detail_rows %}
+    <tr>
+        <th>{% get_field_verbose_name object "name" %}</th>
+        <td>{{ object.name }}</td>
+    </tr>
+    <tr>
+        <th>{% get_field_verbose_name object "color" %}</th>
+        <td><span class="inline-block h-4 w-4 border border-divider align-middle" style="background:{{ object.color }}"></span> {{ object.color }}</td>
+    </tr>
+    <tr>
+        <th>{% get_field_verbose_name object "description" %}</th>
+        <td>{{ object.description|default:"—" }}</td>
+    </tr>
+    <tr>
+        <th>Products</th>
+        <td>{{ object.products.count }}</td>
+    </tr>
+{% endblock %}

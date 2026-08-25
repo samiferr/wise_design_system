@@ -1,0 +1,649 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Wise Design System — design tokens & component layer (Tailwind CSS v4).
+
+   Ported from the DCMS7 project's own Tailwind theme: brand-green on a
+   light technical ground, Barlow Condensed headings over Barlow body text,
+   square corners, hairline borders. Component *class names* (.card,
+   .detail-panel, .badge, .top-nav-item, .menu-link, .data-table, ...) are
+   the system's public API — keep them stable across token changes.
+
+   This file is a partial, not an entry point: it has no `@import
+   "tailwindcss"` and no `@source` directives of its own, because those
+   depend on where YOUR project's templates live. Your project's own
+   `input.css` imports Tailwind, declares `@source` for every app's
+   templates (including this design system's), and then `@import`s this
+   file. See docs/getting-started.md for the exact recipe.
+   ══════════════════════════════════════════════════════════════════════ */
+
+@theme {
+    --font-heading: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Barlow", ui-sans-serif, system-ui, sans-serif;
+    --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
+
+    /* Brand color - the system's one accent. `brand` (chrome, links, tags)
+       and `action` (buttons) both draw from it. Swap these ramps for your
+       own brand and every component below follows automatically. */
+    --color-brand-50: #f0fdf4;
+    --color-brand-100: #dcfce7;
+    --color-brand-200: #bbf7d0;
+    --color-brand-300: #86efac;
+    --color-brand-400: #4ade80;
+    --color-brand-500: #22c55e;
+    --color-brand-600: #16a34a;
+    --color-brand-700: #15803d;
+    --color-brand-800: #166534;
+    --color-brand-900: #14532d;
+    --color-brand-950: #052e16;
+
+    --color-action-50: #f0fdf4;
+    --color-action-100: #dcfce7;
+    --color-action-400: #4ade80;
+    --color-action-500: #16a34a;
+    --color-action-600: #15803d;
+    --color-action-700: #166534;
+
+    /* Destructive-only red, desaturated to sit quietly next to the accent
+       rather than compete with it. */
+    --color-accent-50: #fbeeee;
+    --color-accent-400: #c98686;
+    --color-accent-500: #a65959;
+    --color-accent-600: #8a4747;
+
+    /* Caution amber - status/warning use only. 500/600 are tuned so
+       warning text clears WCAG AA (2.89:1/4.16:1 on white both fail the
+       3:1/4.5:1 large-/normal-text minimums at lighter tones). 400 is
+       decorative-only (chart bars). */
+    --color-warning-50: #fdf6e8;
+    --color-warning-400: #d9b15c;
+    --color-warning-500: #a97e2e;
+    --color-warning-600: #7c5a1e;
+
+    --color-divider: rgba(29, 31, 32, 0.16);
+    --color-surface: #e9e9ea;
+    --color-page: #f2f2f3;
+
+    /* Override Tailwind's built-in gray scale with the system's own
+       neutral ramp, so every gray-* utility (border-gray-200,
+       text-gray-600, bg-gray-100, ...) picks up the right tone with no
+       template changes. */
+    --color-gray-50: #f9f9fb;
+    --color-gray-100: #f5f5f8;
+    --color-gray-200: #e7e7ea;
+    --color-gray-300: #d4d4d7;
+    --color-gray-400: #b7b7ba;
+    --color-gray-500: #717174;
+    --color-gray-600: #525255;
+    --color-gray-700: #3f3f42;
+    --color-gray-800: #2b2b2d;
+    --color-gray-900: #18181a;
+    --color-gray-950: #000000;
+
+    /* Square corners everywhere: zero the whole radius scale so every
+       rounded-md/lg/xl/full utility resolves to 0 with no template
+       changes. Set these back to Tailwind's defaults in your own project
+       if you want rounded corners instead - the component layer below
+       never hardcodes a radius, it only relies on these variables. */
+    --radius-xs: 0px;
+    --radius-sm: 0px;
+    --radius-md: 0px;
+    --radius-lg: 0px;
+    --radius-xl: 0px;
+    --radius-2xl: 0px;
+    --radius-3xl: 0px;
+    --radius-4xl: 0px;
+
+    --shadow-blueprint-sm: 0 1px 2px rgba(43, 43, 45, 0.14);
+    --shadow-blueprint-md: 0 3px 10px rgba(43, 43, 45, 0.16);
+    --shadow-blueprint-lg: 0 12px 32px rgba(43, 43, 45, 0.22);
+}
+
+@font-face {
+    font-family: "Barlow";
+    src: url("../font/Barlow-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Barlow";
+    src: url("../font/Barlow-Medium.woff2") format("woff2");
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Barlow";
+    src: url("../font/Barlow-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Barlow Condensed";
+    src: url("../font/BarlowCondensed-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Barlow Condensed";
+    src: url("../font/BarlowCondensed-SemiBold.woff2") format("woff2");
+    font-weight: 600;
+    font-display: swap;
+}
+
+@layer base {
+    html, body {
+        font-family: var(--font-body);
+        background: var(--color-page);
+        color: #000000;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        line-height: 1.12;
+        letter-spacing: 0.01em;
+    }
+
+    h1 {
+        font-size: 42px;
+    }
+
+    h2 {
+        font-size: 32px;
+    }
+
+    h3 {
+        font-size: 25px;
+    }
+
+    h4 {
+        font-size: 20px;
+    }
+
+    h5 {
+        font-size: 16px;
+    }
+
+    h6 {
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    ::selection {
+        background: color-mix(in srgb, var(--color-action-500) 30%, transparent);
+    }
+}
+
+@layer components {
+    /* Buttons - always pair `.btn` with one modifier, e.g. class="btn btn-primary" */
+    .btn {
+        @apply inline-flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-heading font-semibold
+        border border-transparent transition-colors duration-150 cursor-pointer no-underline select-none
+        disabled:cursor-not-allowed disabled:opacity-45;
+    }
+
+    /* action-600, not action-500: white-on-action-500 only hits 3.3:1 (fails
+       the 4.5:1 normal-text minimum) - action-600 clears it at 5:1. */
+    .btn-primary {
+        @apply bg-action-600 text-white border-action-600 hover:bg-action-700;
+    }
+
+    .btn-brand {
+        @apply bg-brand-700 text-white border-brand-700 hover:bg-brand-800;
+    }
+
+    .btn-secondary {
+        @apply border-divider text-gray-900 hover:bg-gray-900/5;
+    }
+
+    .btn-danger {
+        @apply bg-accent-500 text-white border-accent-500 hover:bg-accent-600;
+    }
+
+    .btn-ghost {
+        @apply border-transparent text-action-600 px-1 hover:bg-action-500/10;
+    }
+
+    .btn-icon {
+        @apply w-9 h-9 p-0 border-divider;
+    }
+
+    .btn[disabled], a.btn-disabled {
+        @apply pointer-events-none opacity-45;
+    }
+
+    /* Layout panels */
+    .page-panel {
+        @apply bg-transparent p-3 sm:p-4 text-gray-900;
+        min-height: calc(100vh - 40px);
+    }
+
+    .side-panel {
+        @apply bg-transparent;
+        height: calc(100vh - 90px);
+        overflow: auto;
+        max-height: calc(100vh - 90px);
+    }
+
+    /* Cards */
+    .card {
+        @apply block border border-divider bg-white p-6 text-gray-900 no-underline
+        transition-colors duration-150 hover:bg-gray-900/[0.03];
+    }
+
+    .card-kicker {
+        @apply text-[10px] font-semibold uppercase tracking-[0.1em] text-action-600;
+    }
+
+    .card-title {
+        @apply font-heading font-semibold leading-tight;
+    }
+
+    .card-content, .card-body {
+        @apply text-[0.85em] text-gray-800;
+    }
+
+    .card-meta {
+        @apply flex items-center gap-1.5 text-[11px] text-gray-600;
+    }
+
+    /* Badge / tag */
+    .badge {
+        @apply inline-flex items-center px-2.5 py-0.5 text-[11px] tracking-wide bg-gray-100 text-gray-800;
+    }
+
+    .badge-action {
+        @apply bg-action-100 font-semibold text-action-700;
+    }
+
+    .badge-brand {
+        @apply bg-brand-100 font-semibold text-brand-800;
+    }
+
+    /* Neutral state/status color modifiers, e.g. for a workflow-state field */
+    .badge-grey {
+        @apply bg-gray-200 text-gray-700;
+    }
+
+    .badge-orange {
+        @apply bg-warning-50 text-warning-600;
+    }
+
+    .badge-green {
+        @apply bg-emerald-50 text-emerald-700;
+    }
+
+    .badge-red {
+        @apply bg-accent-50 text-accent-600;
+    }
+
+    .badge-blue {
+        @apply bg-action-100 text-action-700;
+    }
+
+    /* Compact filter side-panel form - dense by design (many fields in a
+       narrow 400px drawer), so it keeps its own smaller label-above-input
+       rhythm rather than the roomier .form-stack rules below. */
+    .filter-container {
+        @apply w-full;
+    }
+
+    .filter-container label {
+        @apply mb-1 block text-xs text-gray-600;
+    }
+
+    .filter-container input:not([type="submit"]):not([type="button"]):not(.btn),
+    .filter-container select {
+        @apply h-9 w-full border border-divider bg-surface px-2.5 py-1.5 text-sm text-gray-900
+        outline-none focus:border-action-500;
+    }
+
+    .language-switcher select {
+        @apply h-8 w-full border border-divider bg-surface px-2 text-xs text-gray-700
+        outline-none focus:border-action-500 cursor-pointer;
+    }
+
+    .helptext {
+        @apply block font-body text-xs font-normal text-gray-600;
+    }
+
+    .errorlist {
+        @apply m-0 list-none p-0 text-sm font-normal text-accent-500;
+    }
+
+    /* ── Page forms ────────────────────────────────────────────────────
+       Every record create/update form renders as a single-column stack of
+       labeled fields instead of a <table>: one field per line reads
+       top-to-bottom without the eye jumping between a narrow label column
+       and a value column, and it holds up at any viewport with no
+       horizontal-scroll fallback. wise_core/components/_form_fields.html
+       is the one partial every form template includes to get this markup. */
+    .form-stack {
+        @apply flex flex-col gap-5;
+    }
+
+    .form-field {
+        @apply flex flex-col gap-1.5;
+    }
+
+    .form-label {
+        @apply text-sm font-medium text-gray-800;
+    }
+
+    .form-required {
+        @apply ml-0.5 text-accent-500;
+    }
+
+    .form-field input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="hidden"]):not([type="file"]):not(.btn),
+    .form-field select,
+    .form-field textarea {
+        @apply h-10 w-full border border-divider bg-surface px-3 py-2 text-sm text-gray-900
+        outline-none transition-colors duration-150 focus:border-action-500 focus:bg-white;
+    }
+
+    .form-field textarea {
+        height: auto;
+        min-height: 7rem;
+        resize: vertical;
+    }
+
+    .form-field input[type="file"] {
+        @apply block w-full cursor-pointer text-sm text-gray-700
+        file:mr-3 file:cursor-pointer file:border file:border-divider file:bg-white
+        file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-gray-800;
+    }
+
+    .form-field input:required:not([type="checkbox"]):not([type="radio"]),
+    .form-field select:required,
+    .form-field textarea:required {
+        @apply bg-warning-50;
+    }
+
+    .form-field-error input:not([type="checkbox"]):not([type="radio"]),
+    .form-field-error select,
+    .form-field-error textarea {
+        @apply border-accent-500 bg-accent-50;
+    }
+
+    .form-field-checkbox {
+        @apply flex-row items-center;
+    }
+
+    .form-checkbox-label {
+        @apply inline-flex cursor-pointer items-center gap-2 text-sm text-gray-800;
+    }
+
+    .form-checkbox-label input[type="checkbox"] {
+        @apply h-4 w-4 border-divider accent-action-600;
+    }
+
+    .form-alert {
+        @apply flex items-start gap-2 border border-accent-500 bg-accent-50 px-3 py-2.5 text-sm text-accent-600;
+    }
+
+    .form-actions {
+        @apply mt-2 flex flex-wrap items-center justify-end gap-3 border-t border-divider pt-5;
+    }
+
+    /* Dense 2-col variant of .form-stack, for compact modal forms. Fields
+       opt into spanning the full row via [data-field="..."] (set by
+       _form_fields.html) - list the field names that need it as a
+       comma-separated selector, e.g.
+       `.form-stack-compact .form-field[data-field="notes"] { @apply col-span-2; }`
+       in your own project's CSS if a given form needs it. */
+    .form-stack-compact {
+        @apply grid grid-cols-2 gap-x-3 gap-y-3;
+    }
+
+    .form-stack-compact .form-field {
+        @apply gap-1;
+    }
+
+    .form-stack-compact .form-label {
+        @apply text-xs;
+    }
+
+    .form-stack-compact .form-field input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="hidden"]):not([type="file"]):not(.btn),
+    .form-stack-compact .form-field select {
+        @apply h-9 py-1.5 text-sm;
+    }
+
+    .form-stack-compact .form-field textarea {
+        min-height: 4rem;
+    }
+
+    /* Read-only detail table - a wide, uppercase-label / larger-value
+       plain <table> for a record's detail page. */
+    .detail-panel {
+        @apply w-full border border-divider bg-white p-6 text-left font-body;
+    }
+
+    .detail-panel table {
+        @apply w-full border-collapse;
+    }
+
+    .detail-panel tr {
+        @apply border-b border-gray-900/[0.12] transition-colors duration-150 last:border-0;
+    }
+
+    .detail-panel tr:hover {
+        @apply bg-gray-900/[0.02];
+    }
+
+    .detail-panel th {
+        @apply w-40 py-3.5 pr-4 text-left align-top text-xs font-semibold uppercase tracking-wide
+        text-gray-600 sm:w-52;
+    }
+
+    .detail-panel td {
+        @apply py-3.5 px-3 text-base font-semibold text-gray-900;
+    }
+
+    /* Data table (the "datatable" component - list views rendered as a
+       table, normally driven by WiseListView + django-filter; see
+       docs/generic-views-and-mixins.md). */
+    .data-table {
+        @apply w-full border-collapse text-sm;
+    }
+
+    .data-table th {
+        @apply border-b border-divider px-3 py-2 text-left text-[11px] font-semibold uppercase
+        tracking-wider text-gray-600;
+    }
+
+    .data-table td {
+        @apply border-b border-gray-900/[0.08] px-3 py-2;
+    }
+
+    .data-table tr:hover td {
+        @apply bg-gray-900/[0.04];
+    }
+
+    /* Top bar (mobile-only strip; desktop chrome lives entirely in the sidebar) */
+    .top-bar {
+        @apply relative z-[99] border-b border-divider bg-page;
+    }
+
+    .top-bar-logo {
+        @apply p-2 text-lg font-heading font-semibold uppercase tracking-wide;
+    }
+
+    /* Reused both for the sidebar's own quick-nav row and for every CRUD
+       page's back/edit/delete action bar. */
+    .top-nav-item {
+        @apply flex items-center gap-2 px-3 py-2 no-underline text-gray-800
+        transition-colors duration-150 hover:bg-gray-900/5;
+    }
+
+    .top-actions-header {
+        @apply flex flex-wrap items-center justify-between gap-2 p-2 bg-gray-200 text-gray-900 mb-6 border-b border-gray-300;
+    }
+
+    .top-actions-header .top-nav-item {
+        @apply flex items-center gap-2 px-4 py-2 rounded text-gray-800 hover:bg-gray-900/10 transition-colors;
+    }
+
+    .top-actions-header .top-nav-item .lucide,
+    .top-actions-header .top-nav-item i {
+        @apply text-action-600;
+    }
+
+    .top-nav-item.selected {
+        @apply border border-action-500 bg-action-50;
+    }
+
+    /* Tab bar (underline tabs, not filled boxes) */
+    .tab-bar {
+        @apply flex items-center gap-0 overflow-x-auto whitespace-nowrap;
+    }
+
+    .tab-bar .bar-item {
+        @apply inline-flex h-auto w-auto shrink-0 cursor-pointer items-center px-1 py-3 mr-6
+        text-center font-heading text-sm font-semibold uppercase tracking-wide text-gray-600
+        no-underline border-b-2 border-transparent bg-transparent;
+    }
+
+    .tab-bar .bar-item.selected {
+        @apply border-action-700 text-action-700;
+    }
+
+    /* Sidebar / navigation menu */
+    .menu-node h3 {
+        @apply mt-5 border-b border-divider pb-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-600;
+    }
+
+    .menu-link {
+        @apply flex items-center gap-2.5 px-3.5 py-2 text-sm text-gray-800 no-underline
+        transition-colors duration-150 hover:bg-gray-900/5;
+    }
+
+    .menu-link.selected {
+        @apply bg-action-100 font-semibold text-action-700;
+    }
+
+    /* Flash messages */
+    .flash-messages {
+        @apply fixed bottom-4 right-6 z-[99] m-0 w-64 list-none space-y-2 p-0 sm:right-6;
+    }
+
+    .flash-messages li {
+        @apply w-full border px-4 py-3 text-sm leading-snug shadow-[var(--shadow-blueprint-md)];
+    }
+
+    .flash-messages li.success {
+        @apply border-emerald-700 bg-emerald-50 text-emerald-800;
+    }
+
+    .flash-messages li.error {
+        @apply border-warning-500 bg-warning-50 text-warning-600;
+    }
+
+    /* Filter side panel - starts hidden via a literal `hidden` class on the element (toggled by JS) */
+    .filter-panel {
+        @apply fixed inset-y-0 right-0 z-20 w-full max-w-[400px] overflow-y-auto border-l border-divider
+        bg-white shadow-[var(--shadow-blueprint-lg)];
+    }
+
+    /* Autocomplete / autosuggest widget panel - see the wise_autocomplete app */
+    .autocomplete-panel {
+        @apply absolute z-10 w-full min-w-max border border-divider bg-white p-0
+        shadow-[var(--shadow-blueprint-lg)];
+    }
+
+    .progress-bar {
+        width: 10%;
+        animation: progress-bar-loading 1s ease-in-out infinite;
+    }
+
+    @keyframes progress-bar-loading {
+        0% {
+            width: 10%;
+        }
+        50% {
+            width: 80%;
+        }
+        100% {
+            width: 100%;
+        }
+    }
+
+    .autocomplete-table {
+        @apply w-full border-collapse bg-white text-sm table-auto;
+    }
+
+    .autocomplete-table th, .autocomplete-table td {
+        @apply whitespace-nowrap border-b border-r border-divider px-3 py-2 last:border-r-0;
+    }
+
+    .autocomplete-table tr:last-child td {
+        @apply border-b-0;
+    }
+
+    .autocomplete-table th {
+        @apply bg-gray-100 text-xs font-semibold uppercase tracking-wide text-gray-600;
+    }
+
+    .autocomplete-table tr:hover {
+        @apply cursor-pointer bg-gray-900/5;
+    }
+
+    .autocomplete-table tr.selected {
+        @apply bg-action-600 text-white;
+    }
+
+    /* Pagination */
+    .pagination-link {
+        @apply inline-flex items-center gap-1 border border-transparent px-2.5 py-1.5 text-sm text-gray-700
+        no-underline hover:border-divider;
+    }
+
+    .pagination-link.disabled {
+        @apply pointer-events-none opacity-30;
+    }
+
+    .large-button {
+        min-width: 250px;
+    }
+
+    .section-title {
+        @apply text-center text-black;
+    }
+
+    .section-title-border {
+        @apply mx-auto h-1 w-20 bg-action-500;
+    }
+}
+
+@layer utilities {
+    .scrollbar-thin {
+        scrollbar-width: thin;
+    }
+
+    .disabled {
+        @apply pointer-events-none opacity-30;
+    }
+}
+
+@media (min-width: 601px) {
+    ::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #d4d4d7;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-action-500);
+    }
+}
+
+@media print {
+    .hidden-print {
+        display: none !important;
+    }
+}

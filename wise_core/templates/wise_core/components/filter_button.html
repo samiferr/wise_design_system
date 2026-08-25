@@ -1,0 +1,8 @@
+{% load wise_icons %}
+<div onclick="document.getElementById('modal_1').classList.remove('hidden')"
+     class="btn btn-secondary btn-icon relative">
+    {% lucide "filter" size=16 %}
+    {% if filter_kwargs_count != 0 %}
+        <span class="badge badge-red absolute -left-2 -top-1 shadow">{{ filter_kwargs_count }}</span>
+    {% endif %}
+</div>
