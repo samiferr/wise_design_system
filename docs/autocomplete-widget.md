@@ -5,10 +5,11 @@ and `AutoSuggestInputWidget` (client-side filter over a plain JS array) — extr
 [DCMS7](https://github.com/samiferr/DCMS7)'s `core` app (`core/widgets.py` +
 `core/templates/core/widgets/*.html`).
 
-This is a **straight extraction**, not a rewrite: the Python, the templates, and the vendored JS/CSS
-are byte-for-byte the same behavior as the DCMS7 original, down to its quirks (see "Known
-limitations" below). The only changes made were the ones required for the code to work outside of
-DCMS7's own file layout — see "What changed during extraction".
+This started as a **straight extraction** of DCMS7's `core/widgets.py` +
+`core/templates/core/widgets/*.html`, byte-for-byte identical down to its quirks. A follow-up pass
+then fixed a set of those inherited quirks explicitly flagged as bugs — see "Fixes applied on top of
+the extraction" below for what changed and why; "What changed during extraction" still covers the
+purely mechanical renames from the original extraction.
 
 ## What's included
 
@@ -102,11 +103,12 @@ class PatientSessionForm(forms.ModelForm):
 
 | attr | required | meaning |
 |---|---|---|
-| `data-url` | yes | DRF list endpoint, **with trailing slash** (e.g. `/api/patients/`). Also used for the per-item detail lookup by string concatenation: `url + pk` — see "Known limitations". |
+| `data-url` | yes | DRF list endpoint, **with or without a trailing slash** — the per-item detail lookup joins `data-url` and the pk itself (`build_detail_url()`), normalizing the slash rather than requiring the caller to get it exactly right. |
 | `data-text_field` | yes | key in the serialized object to show in the input once an item is selected (e.g. `'name'`, `'designation'`). |
 | `data-headers` | no | literal string `'on'` to render a header row (desktop/table view only — headers are skipped on the mobile card view and skipped entirely if this attr is anything else/absent). |
 | `data-create_object_url` | no | if set (and not `False`), the panel's "Nouveau" link points here (opens in a new tab). If omitted/`False`, the link is hidden. |
 | `data-hidden_fields` | no | a Python list literal, e.g. `['dosages', 'quantities']` — columns to exclude from the header/table even though DRF's OPTIONS metadata includes them. |
+| `data-parent` | no | the DOM `id` of another field's real (non-`_fake`) input to scope this widget's requests to — its current `.value` is read live and sent as `parent_id` on every list/search and detail-lookup call. Omit for unscoped lookups (`parent_id` is sent as `false`). |
 
 The widget fires a `item_selected` `CustomEvent` on the **real** (hidden) input whenever an item is
 picked (by click or Enter) or when the field's initial value is resolved on page load — `event.detail`
@@ -121,12 +123,20 @@ document.getElementById('id_patient').addEventListener('item_selected', function
 ### `AutoSuggestInputWidget`
 
 A lighter widget with **no backend call** — it filters a plain JS array you assign to the hidden
-input's `.arr` property at runtime, then re-renders by calling `.autocsuggest.get_data()` (note: the
-JS instance is stored as `.autocsuggest`, not `.autosuggest` — this typo is preserved from the
-original and is load-bearing, don't "fix" it without updating every call site).
+input's `.arr` property at runtime, then re-renders by calling `.autosuggest.get_data()`. The JS
+instance is stored on the hidden input under two properties: `.autocsuggest` (the original typo'd
+name, kept so existing call sites don't break) and `.autosuggest` (a correctly-spelled alias to the
+same instance — prefer this one in new code).
 
 ```python
 'drug_usage': AutoSuggestInputWidget(attrs={'list': 'drug_dosages'}),
+```
+
+```html
+<datalist id="drug_dosages">
+    <option value="1 comprimé matin et soir">
+    <option value="2 comprimés le soir">
+</datalist>
 ```
 
 ```js
@@ -134,11 +144,16 @@ original and is load-bearing, don't "fix" it without updating every call site).
 // AutocompleteInputWidget's item_selected:
 let usageInput = document.getElementById('id_drug_usage')
 usageInput.arr = ['1 comprimé matin et soir', '2 comprimés le soir', ...]
-usageInput.autocsuggest.get_data()
+usageInput.autosuggest.get_data()
 ```
 
-If `.arr` is never set, the widget renders an (empty, functional) input and dropdown shell that never
-shows suggestions — this is the widget's actual, intended idle state, not a bug.
+`attrs={'list': '<datalist id>'}` is the other way to seed `.arr`: on init, if `.arr` hasn't already
+been set by page JS, the widget looks up the `<datalist>` with that id and populates `.arr` from its
+`<option value="...">` list. Page JS assigning `.arr` directly always takes priority.
+
+If `.arr` is never set (no `list` attr, and no page JS assignment), the widget renders an (empty,
+functional) input and dropdown shell that never shows suggestions — this is the widget's intended
+idle state, not a bug.
 
 ## Backend contract for `AutocompleteInputWidget`
 
@@ -149,9 +164,10 @@ the widget relies on DRF's default behavior for three different calls to that sa
    default `PageNumberPagination` shape: `{"count": N, "next": url|null, "previous": url|null,
    "results": [...]}`. Your `ViewSet.get_queryset()` should filter on `request.query_params.get('q')`
    (treat `None`/`'all'` as "no filter" — that's what DCMS7's own viewsets do).
-2. **Detail lookup** (to resolve an initial/pre-filled value) — `GET <data-url><pk>?parent_id=<...>`
-   (string concatenation of the URL and the field's current value, not a reversed URL — depends on
-   Django's `APPEND_SLASH` redirect behavior to land on the real `<data-url><pk>/` route).
+2. **Detail lookup** (to resolve an initial/pre-filled value) — `GET <data-url><pk>/?parent_id=<...>`.
+   The widget builds this URL itself (`build_detail_url()`): it normalizes `data-url` to end in
+   exactly one `/` before appending the (URL-encoded) pk and a trailing `/`, so it lands directly on
+   the real DRF detail route without depending on Django's `APPEND_SLASH` redirect.
 3. **Column headers** (only when `data-headers="on"`) — `OPTIONS <data-url>`, reading
    `response.data.actions.POST` for `{field_name: {label: "..."}}` — this is DRF's built-in
    `OPTIONS` metadata response for any writable `ModelViewSet`/`ModelSerializer`, nothing custom to
@@ -184,30 +200,49 @@ router.register('api/drugs', DrugViewSet, basename='drug-api')
 urlpatterns += router.urls
 ```
 
-## Known limitations (preserved as-is, not bugs to fix here)
+## Fixes applied on top of the extraction
 
-These are genuine, observed behaviors of the DCMS7 original. They were kept intact because the task
-was a faithful extraction, not a redesign:
+The items below were genuine bugs inherited from the DCMS7 original, not intentional behavior, and
+were corrected (both `AutocompleteInputWidget` and `AutoSuggestInputWidget`, since the two templates
+share the same JS patterns):
 
-- **Duplicate DOM ids across multiple widget instances.** Both templates render an element with the
-  literal id `progress-bar` (not namespaced by field name, unlike every other id in the template,
-  which *is* namespaced with `{{ widget.name }}`). Two `AutocompleteInputWidget`/`AutoSuggestInputWidget`
-  fields on the same page will collide on this id — only the first one in the DOM gets a working
-  progress indicator. If you need more than one instance per page, this is the one spot you may need
-  to patch locally.
-- **The "parent" scoping feature is effectively dead code.** Both widgets look for `document.
-  getElementById('parent')` and, if found, read a `data-parent` attribute off it to send as
-  `parent_id` on every request. No template in DCMS7 actually defines an element with `id="parent"`,
-  so in practice `parent_id` is always sent as the literal string `false`. The mechanism exists (for
-  nested/scoped lookups, e.g. "cities in this department") but nothing wires it up today.
-- **`AutoSuggestInputWidget`'s `list` attr does nothing.** `attrs={'list': 'drug_dosages'}` renders a
-  plain HTML `list="drug_dosages"` attribute (via `attrs.html`) but the widget's JS never reads it —
-  suggestion data only ever comes from the `.arr` property set by page-specific JS. This looks like a
-  leftover from an earlier `<datalist>`-based implementation.
-- **`data-url` needs a trailing slash**, and the detail-lookup URL is built by raw string
-  concatenation (`url + pk`), not `reverse()`. Get the trailing slash on `data-url` wrong and both the
-  list call and (especially) the detail call will misbehave.
+- **Namespaced the `progress-bar` id.** Both templates used the literal id `progress-bar` (unlike
+  every other id, which *is* namespaced with `{{ widget.name }}`), so two widget instances on the
+  same page collided and only the first got a working progress indicator. The element is now
+  `id="{{ widget.name }}_progress_bar"` in both templates.
+- **`parent_id` scoping now actually works.** The widgets used to look for a page-global
+  `document.getElementById('parent')` that no template ever defined, so `parent_id` was always sent
+  as the literal string `false`. It's now a per-field `data-parent` attribute on the widget's own
+  hidden input, naming the DOM id of another field to scope against; its live `.value` is read on
+  every request via a `parent_id` getter. See the `data-parent` row in the attrs table above.
+- **`AutoSuggestInputWidget`'s `list` attr now does something.** `attrs={'list': 'drug_dosages'}` used
+  to render an inert `list="drug_dosages"` HTML attribute. The widget now reads `data-list` on init
+  and, if `.arr` hasn't already been set by page JS, seeds it from the named `<datalist>`'s `<option>`
+  values.
+- **Detail-lookup URL building is now robust to the trailing slash**, via `build_detail_url()`
+  (normalizes `data-url` to end in exactly one `/`, URL-encodes the pk, and appends a trailing `/`)
+  instead of raw `url + pk` string concatenation. There's still no `reverse()` involved — this is
+  client-side JS with no access to Django's URL resolver — but the previous footgun (get the trailing
+  slash on `data-url` wrong and the detail call breaks) is gone.
+- **Mobile card click handler in `AutoSuggestInputWidget` fixed.** `populate_cards()`'s click handler
+  read `self.selected_item.id` / `self.selected_item[self.text_field]`, treating `.arr` entries as
+  objects — but `AutoSuggestInputWidget`'s results are plain strings (unlike
+  `AutocompleteInputWidget`, whose results are DRF-serialized objects). It now assigns the string
+  directly, matching the desktop table handler (`populate_lines()`).
+
+## Known limitations (still preserved as-is)
+
 - **`.selected`/`.autocomplete-table tr.selected` styling is hardcoded**, not themeable through attrs.
+- **`.autocsuggest` typo is still the primary property name** on `AutoSuggestInputWidget`'s hidden
+  input, for backward compatibility with existing call sites (`usageInput.autocsuggest.get_data()`
+  still works). A correctly-spelled `.autosuggest` alias to the same instance was added — prefer it in
+  new code.
+- **`AutoSuggestInputWidget.set_fake_input_value()` still calls the same `data-url` detail endpoint as
+  `AutocompleteInputWidget`**, even though the "Dependencies" section above describes
+  `AutoSuggestInputWidget` as having no backend dependency. In practice, if you rely on
+  `AutoSuggestInputWidget` resolving an initial value from a pre-filled hidden input, `data-url` still
+  needs to point at a working detail endpoint — this wasn't part of the requested fix set and is
+  called out here rather than silently changed.
 
 ## What changed during extraction
 

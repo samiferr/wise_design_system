@@ -15,14 +15,14 @@
 
 
     </div>
-    <input id="id_{{ widget.name }}" class="hidden" type="{{ widget.type }}" name="{{ widget.name }}" data-parent=""
+    <input id="id_{{ widget.name }}" class="hidden" type="{{ widget.type }}" name="{{ widget.name }}"
            autocomplete="off"
             {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}" {% endif %}
             {% include "wise_autocomplete/widgets/attrs.html" %}
            tabindex="-1">
 
     <div class="relative">
-        <div id="progress-bar" class="absolute left-0 top-0 h-[3px] w-0 rounded bg-action-500 transition-all"></div>
+        <div id="{{ widget.name }}_progress_bar" class="absolute left-0 top-0 h-[3px] w-0 rounded bg-action-500 transition-all"></div>
         <div class="autocomplete-panel hidden"
              id='{{ widget.name }}_autocomplete_container'>
             <header class="flex items-center gap-2 border-b border-divider bg-gray-50 p-2">
@@ -56,7 +56,7 @@
 
         let _fake_input = document.getElementById('id_{{widget.name}}_fake')
         let _original_input = document.getElementById('id_{{widget.name}}')
-        let _progress_bar = document.getElementById('progress-bar')
+        let _progress_bar = document.getElementById('{{ widget.name }}_progress_bar')
         let _table
         if (window.screen.width > 600) {
             _table = document.getElementById('{{ widget.name }}_autocomplete_table')
@@ -96,10 +96,22 @@
                 this.next_page_link = null
                 this.data_count = 0
 
-                // if element has parent
-                this.parent = document.getElementById('parent')
-                this.parent_id = this.parent ? this.parent.dataset.parent : false
+                // scoped to a parent field: attrs={'data-parent': '<parent field's real input id>'}
+                this.parent_field_id = this.original_input.dataset.parent || false
                 this.create_object_link = create_object_link
+            }
+
+            get parent_id() {
+                if (!this.parent_field_id) {
+                    return false
+                }
+                let parent_elm = document.getElementById(this.parent_field_id)
+                return parent_elm ? parent_elm.value : false
+            }
+
+            build_detail_url(pk) {
+                let base = this.url.endsWith('/') ? this.url : this.url + '/'
+                return base + encodeURIComponent(pk) + '/'
             }
 
             set_create_new_link() {
@@ -121,7 +133,7 @@
                 let self = this
                 if (self.original_input.value !== '') {
                     self.startLoading()
-                    axios.get(this.url + self.original_input.value + '?parent_id=' + this.parent_id).then(function (response) {
+                    axios.get(self.build_detail_url(self.original_input.value) + '?parent_id=' + self.parent_id).then(function (response) {
                         self.fake_input.value = response.data[self.text_field]
                         self.selected_item = response.data
                         self.stopLoading()
