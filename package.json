@@ -1,0 +1,14 @@
+{
+  "name": "wise-design-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Build tooling for the Wise Design System's demo/docs site.",
+  "scripts": {
+    "build:css": "tailwindcss -i ./demo/static_src/input.css -o ./wise_core/static/wise_core/css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./demo/static_src/input.css -o ./wise_core/static/wise_core/css/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

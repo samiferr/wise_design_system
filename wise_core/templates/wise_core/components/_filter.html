@@ -1,0 +1,48 @@
+{% load wise_icons i18n %}
+<div id="filter_form">
+    <div>
+        <header class="flex items-center gap-2 bg-action-700 px-4 py-3 text-page">
+            {% lucide "filter" size=17 cls="text-page" %}
+            <span class="font-heading text-lg font-semibold uppercase tracking-wide">{% trans "Filter" %}</span>
+            <div onclick="document.getElementById('modal_1').classList.add('hidden')"
+                 class="btn-icon ml-auto border-transparent text-page hover:bg-white/20">
+                {% lucide "x" size=20 cls="text-page" %}
+            </div>
+        </header>
+        {% if filter_kwargs_count != 0 %}
+            <div class="p-4">
+                <h4 class="font-bold">{% trans "Applied filters" %}
+                    <span class="badge badge-action">{{ filter_kwargs_count }}</span>
+                </h4>
+                <div class="mt-2 flex flex-wrap gap-2">
+                    {% for key_word, value in filter_kwarg.items %}
+                        <div class="badge">{{ key_word }}: {{ value }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        <div class="p-4">
+            <div>
+                <h4 class="mb-2 font-bold">{% trans "Filter" %}</h4>
+                <form method="get" id="filterForm" class="filter-container [&_p]:mb-3">
+                    {{ filter.form.as_p }}
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <input id="submitFilter" class="btn btn-primary large-button" type="submit" value="{% trans "Apply" %}"/>
+                        <input class="btn btn-secondary" type="button" value="{% trans "Reset filter" %}"
+                               onclick="resetForm()"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function resetForm() {
+        let form = document.getElementById('filterForm')
+        let form_inputs = form.querySelectorAll('INPUT, SELECT, TEXTAREA')
+        for (let i = 0, l = form_inputs.length; i < l; i++) {
+            form_inputs[i].value = ''
+        }
+        document.getElementById('submitFilter').click()
+    }
+</script>

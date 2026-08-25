@@ -1,0 +1,49 @@
+{% comment %}
+Shared field renderer for every record form in the app: one label-above-input
+block per field instead of a <table> row. Include inside a `.form-stack`
+wrapper (form_generic.html does this already); pass `form=<the form>`.
+Extra bespoke fields (e.g. a gallery file input tacked on next to a
+ModelForm) can follow this include as sibling `.form-field` divs inside the
+same `.form-stack`.
+{% endcomment %}
+{% load wise_icons %}
+{% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+{% if form.non_field_errors %}
+    <div class="form-alert">
+        {% lucide "alert-triangle" size=16 cls="mt-0.5 shrink-0" %}
+        <div>
+            {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+{% for field in form.visible_fields %}
+    {% if field.field.widget.input_type == 'checkbox' %}
+        <div class="form-field form-field-checkbox{% if field.errors %} form-field-error{% endif %}" data-field="{{ field.name }}">
+            <label class="form-checkbox-label" for="{{ field.id_for_label }}">
+                {{ field }}
+                <span>{{ field.label }}{% if field.field.required %}<span class="form-required">*</span>{% endif %}</span>
+            </label>
+            {% if field.help_text %}<span class="helptext">{{ field.help_text|safe }}</span>{% endif %}
+            {% if field.errors %}
+                <ul class="errorlist">
+                    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="form-field{% if field.errors %} form-field-error{% endif %}" data-field="{{ field.name }}">
+            <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %}<span class="form-required">*</span>{% endif %}
+            </label>
+            {{ field }}
+            {% if field.help_text %}<span class="helptext">{{ field.help_text|safe }}</span>{% endif %}
+            {% if field.errors %}
+                <ul class="errorlist">
+                    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endfor %}

@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Node (demo/docs site Tailwind build tooling)
+node_modules/
+

@@ -1,0 +1,50 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'wise_core/css/tailwind.css' %}">
+    {% block extra_head %}{% endblock %}
+    <title>{% block title %}{{ project_name|default:"Wise" }}{% endblock %}</title>
+</head>
+<body class="bg-page text-gray-900">
+{% include 'wise_core/components/_messages.html' %}
+{% block sidebar %}{% include 'wise_core/components/sidebar.html' %}{% endblock %}
+{% block topBar %}{% include 'wise_core/components/topbar.html' %}{% endblock %}
+{% block content %}
+    <div class="flex">
+        {% if request.user.is_authenticated %}
+            <aside class="hidden md:sticky md:top-0 md:flex md:h-screen md:w-[232px] md:flex-shrink-0
+                md:flex-col md:border-r md:border-divider">
+                <a href="{% url 'home' %}" class="flex items-center gap-2 px-6 py-6 no-underline text-gray-900 font-heading font-semibold uppercase tracking-wide">
+                    {% block brand %}{{ project_name|default:"Wise" }}{% endblock %}
+                </a>
+                <div class="min-h-0 flex-1 overflow-y-auto px-3 pb-4">
+                    {% include 'wise_core/components/nav_menu.html' %}
+                </div>
+            </aside>
+        {% endif %}
+        <main class="min-w-0 flex-1">
+            <div class="relative">
+                <div id="modal_1" class="filter-panel hidden">
+                    {% block filter_panel %}{% include 'wise_core/components/_filter.html' %}{% endblock %}
+                </div>
+                {% block body %}{% endblock %}
+            </div>
+        </main>
+    </div>
+{% endblock %}
+
+{% block modal %}{% endblock %}
+{% block footer %}{% endblock %}
+
+<script src="{% static 'wise_core/js/common.js' %}"></script>
+{% block extra_js %}{% endblock %}
+<script type="application/javascript">
+    window.onload = function () {
+        if (typeof closeSideBar === 'function') closeSideBar()
+    }
+</script>
+</body>
+</html>

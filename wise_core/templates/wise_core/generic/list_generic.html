@@ -1,0 +1,33 @@
+{% extends 'wise_core/base.html' %}
+{% load i18n %}
+
+{% block body %}
+    <div class="page-panel">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    {% block list_icon %}{% endblock %}
+                    <h2 class="uppercase">{% block list_title %}{% endblock %}</h2>
+                </div>
+                <p class="mt-1 text-sm text-gray-600">{% block list_count %}{{ paginator.count }} {% trans "record(s)" %}{% endblock %}</p>
+            </div>
+            <div class="flex items-center gap-2">
+                {% block list_actions %}
+                    {% include 'wise_core/components/filter_button.html' %}
+                {% endblock %}
+            </div>
+        </div>
+        {% block list_body %}
+            <div class="mt-5 space-y-2">
+                {% for item in object_list %}
+                    {% block card_item %}{% endblock %}
+                {% empty %}
+                    {% include 'wise_core/components/_no_data.html' %}
+                {% endfor %}
+                <div class="pt-2">
+                    {% include 'wise_core/components/_pagination.html' %}
+                </div>
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

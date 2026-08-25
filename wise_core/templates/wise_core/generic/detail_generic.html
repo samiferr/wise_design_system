@@ -1,0 +1,18 @@
+{% extends 'wise_core/base.html' %}
+
+{% block body %}
+    <div class="page-panel">
+        {% block detail_actions %}{% endblock %}
+        <h2 class="mt-3">{% block detail_title %}{{ object }}{% endblock %}</h2>
+        {% block detail_tabs %}{% endblock %}
+        {% block detail_content %}
+            <div class="mt-4">
+                <div class="detail-panel">
+                    <table>
+                        {% block detail_rows %}{% endblock %}
+                    </table>
+                </div>
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

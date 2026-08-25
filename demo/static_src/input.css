@@ -1,0 +1,13 @@
+/* Tailwind entry point for the demo/docs site. This is the pattern any
+ * consuming project follows: import Tailwind, tell it where your
+ * templates live (including every wise_* app's own templates, since their
+ * component markup uses utility classes too), then pull in the design
+ * system's token partial. See docs/getting-started.md. */
+@import "tailwindcss";
+
+@source "../showcase/templates";
+@source "../../wise_core/templates";
+@source "../../wise_autocomplete/templates";
+@source "../../wise_richtext/templates";
+
+@import "../../wise_core/static/wise_core/css/tokens.css";

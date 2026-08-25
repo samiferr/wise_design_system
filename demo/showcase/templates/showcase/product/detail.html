@@ -1,0 +1,32 @@
+{% extends 'wise_core/generic/detail_generic.html' %}
+{% load wise_icons wise_tags %}
+
+{% block detail_actions %}
+    <div class="top-actions-header">
+        <a class="top-nav-item inline-flex" href="{% url 'product_list_view' %}">
+            {% lucide "arrow-left" size=20 %}<div class="text-sm">Back</div>
+        </a>
+        {% if perms.showcase.change_product %}
+            <a class="top-nav-item inline-flex" href="{% url 'product_update_view' pk=object.pk %}">
+                {% lucide "pencil" size=20 %}<div class="text-sm">Edit</div>
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block detail_title %}{{ object.name }}{% endblock %}
+
+{% block detail_rows %}
+    <tr>
+        <th>{% get_field_verbose_name object "category" %}</th>
+        <td><a class="text-action-600 no-underline hover:underline" href="{{ object.category.get_absolute_url }}">{{ object.category }}</a></td>
+    </tr>
+    <tr>
+        <th>{% get_field_verbose_name object "notes" %}</th>
+        <td class="font-normal text-sm">{{ object.notes|safe }}</td>
+    </tr>
+    <tr>
+        <th>Created by</th>
+        <td>{{ object.created_by|default:"—" }}</td>
+    </tr>
+{% endblock %}

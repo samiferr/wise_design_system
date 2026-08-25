@@ -1,0 +1,31 @@
+<div>
+    <div id="id_{{ widget.name }}_fake" style="min-height: 150px; font-size: 16px; font-weight: normal"></div>
+    <textarea id="id_{{ widget.name }}" class="hidden" type="{{ widget.type }}" name="{{ widget.name }}"
+            {% include "wise_richtext/widgets/attrs.html" %} tabindex="-1">{% if widget.value != None %}{{ widget.value }}{% endif %}</textarea>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const original_input = document.getElementById("id_{{ widget.name }}")
+        const toolbarOptions = [
+            ['bold', 'italic', 'underline'],
+            [{'list': 'ordered'}, {'list': 'bullet'}],
+            [{'indent': '-1'}, {'indent': '+1'}],
+            [{'direction': 'rtl'}],
+            [{'header': [1, 2, 3, 4, 5, 6, false]}],
+            [{'color': []}],
+            [{'align': []}],
+        ];
+        const rich_input = new Quill('#id_{{ widget.name }}_fake', {
+            modules: {toolbar: toolbarOptions},
+            theme: 'snow'
+        });
+        rich_input.on('text-change', (delta, oldDelta, source) => {
+            original_input.value = rich_input.getSemanticHTML();
+        });
+        const widget_content = '{{ widget.value|escapejs }}'.trim()
+        if (widget_content !== "None" && widget_content !== "") {
+            rich_input.clipboard.dangerouslyPasteHTML(0, widget_content, 'user')
+        }
+    })
+</script>
