@@ -11,3 +11,34 @@
 @source "../../wise_richtext/templates";
 
 @import "../../wise_core/static/wise_core/css/tokens.css";
+
+/* Docs-site-only chrome for the component pages (preview + source code
+ * blocks). Not part of the design system's own component layer above -
+ * consuming projects never see this, only this demo/docs site does. */
+@layer components {
+    .doc-preview {
+        @apply border border-divider bg-white p-6;
+    }
+
+    .doc-code {
+        @apply m-0 overflow-x-auto border border-t-0 border-divider bg-gray-900 p-4 text-[12.5px]
+        leading-relaxed text-gray-100;
+    }
+
+    .doc-code code {
+        @apply font-mono whitespace-pre;
+    }
+
+    .doc-props th {
+        @apply border-b border-divider px-3 py-2 text-left text-[11px] font-semibold uppercase
+        tracking-wider text-gray-600;
+    }
+
+    .doc-props td {
+        @apply border-b border-gray-900/[0.08] px-3 py-2 align-top text-sm;
+    }
+
+    .doc-props td code, .doc-code-inline {
+        @apply bg-gray-100 px-1 py-0.5 text-[0.85em];
+    }
+}

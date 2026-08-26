@@ -1,0 +1,85 @@
+{% extends 'showcase/components/_base.html' %}
+{% load wise_icons %}
+
+{% block title %}Cards – Components{% endblock %}
+{% block component_title %}Cards{% endblock %}
+{% block component_intro %}
+    A bordered content block used for grid-of-links home pages, dashboard summary tiles, and list
+    items that don't need a full datatable.
+{% endblock %}
+
+{% block component_body %}
+    <h2 class="mt-8">Basic card</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="card">
+            <div class="card-kicker">Kicker</div>
+            <h3 class="card-title mt-1">Card title</h3>
+            <p class="card-content mt-2">Card body copy sits at 0.85em relative to the surrounding text.</p>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="card">
+    <div class="card-kicker">Kicker</div>
+    <h3 class="card-title mt-1">Card title</h3>
+    <p class="card-content mt-2">Card body copy sits at 0.85em relative to the surrounding text.</p>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Clickable card</h2>
+    <p class="text-gray-700"><code>.card</code> works directly on an <code>&lt;a&gt;</code> — it already strips the underline and adds a hover tint, so no extra wrapper is needed.</p>
+    <div class="doc-preview mt-4 max-w-sm">
+        <a class="card" href="#">
+            <div class="card-kicker">Linked</div>
+            <h3 class="card-title mt-1">A clickable card</h3>
+            <p class="card-content mt-2">The whole card is the hit target.</p>
+        </a>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="card" href="{% url 'category_detail_view' pk=category.pk %}">
+    <div class="card-kicker">Linked</div>
+    <h3 class="card-title mt-1">{{ category.name }}</h3>
+    <p class="card-content mt-2">{{ category.description }}</p>
+</a>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Card with meta row</h2>
+    <p class="text-gray-700"><code>.card-meta</code> is a small flex row for an icon + a timestamp or secondary detail, placed after the body copy.</p>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="card">
+            <div class="card-kicker">Kicker</div>
+            <h3 class="card-title mt-1">Card title</h3>
+            <p class="card-content mt-2">Body copy.</p>
+            <div class="card-meta mt-3">{% lucide "clock" size=13 %} Updated 2 days ago</div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="card-meta mt-3">{% lucide "clock" size=13 %} Updated {{ object.updated_at|timesince }} ago</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Grid of cards</h2>
+    <p class="text-gray-700">This is the pattern the home page itself uses: a responsive grid of link cards.</p>
+    <div class="doc-preview mt-4 grid gap-4 sm:grid-cols-2">
+        <a class="card" href="#">
+            <div class="card-kicker">Foundations</div>
+            <h3 class="card-title mt-1">Design tokens</h3>
+            <p class="card-content mt-2">Color, type, spacing and shadow tokens.</p>
+        </a>
+        <a class="card" href="#">
+            <div class="card-kicker">Foundations</div>
+            <h3 class="card-title mt-1">Components</h3>
+            <p class="card-content mt-2">Buttons, badges, cards, forms, tabs.</p>
+        </a>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="mt-8 grid gap-4 sm:grid-cols-2">
+    <a class="card" href="{% url 'tokens' %}">...</a>
+    <a class="card" href="{% url 'components' %}">...</a>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-white">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>card</code></td><td>Container — works on a <code>&lt;div&gt;</code> or an <code>&lt;a&gt;</code>.</td></tr>
+                <tr><td><code>card-kicker</code></td><td>Small uppercase eyebrow label above the title.</td></tr>
+                <tr><td><code>card-title</code></td><td>Heading — pair with an <code>&lt;h3&gt;</code> (or similar) for correct semantics.</td></tr>
+                <tr><td><code>card-content</code> / <code>card-body</code></td><td>Body copy, rendered slightly smaller than surrounding text.</td></tr>
+                <tr><td><code>card-meta</code></td><td>Small flex row for an icon + secondary detail (timestamp, count, ...).</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

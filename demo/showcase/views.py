@@ -26,6 +26,42 @@ class ComponentsView(TemplateView):
     template_name = 'showcase/components.html'
 
 
+class ButtonsComponentView(TemplateView):
+    template_name = 'showcase/components/buttons.html'
+
+
+class BadgesComponentView(TemplateView):
+    template_name = 'showcase/components/badges.html'
+
+
+class CardsComponentView(TemplateView):
+    template_name = 'showcase/components/cards.html'
+
+
+class TabsComponentView(TemplateView):
+    template_name = 'showcase/components/tabs.html'
+
+
+class FormsComponentView(TemplateView):
+    template_name = 'showcase/components/forms.html'
+
+
+class DataTableComponentView(TemplateView):
+    template_name = 'showcase/components/data-table.html'
+
+
+class PaginationComponentView(TemplateView):
+    template_name = 'showcase/components/pagination.html'
+
+
+class FilterPanelComponentView(TemplateView):
+    template_name = 'showcase/components/filter-panel.html'
+
+
+class FlashMessagesComponentView(TemplateView):
+    template_name = 'showcase/components/flash-messages.html'
+
+
 class IconsView(TemplateView):
     template_name = 'showcase/icons.html'
 
