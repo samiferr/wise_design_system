@@ -1,15 +1,21 @@
 import re
 from functools import lru_cache
+from pathlib import Path
 
-from django.conf import settings
 from django.template import Library
 from django.utils.safestring import mark_safe
 
 register = Library()
 
+# Resolved relative to this file (wise_core/templatetags/wise_icons.py), not
+# settings.BASE_DIR: BASE_DIR is the *host* project's root, which is not
+# necessarily wise_core's parent directory (e.g. the demo project's BASE_DIR
+# is demo/, one level below the repo root where wise_core actually lives).
+_ICON_DIR = Path(__file__).resolve().parent.parent / 'static' / 'wise_core' / 'icons' / 'lucide'
+
 
 def _icon_dir():
-    return settings.BASE_DIR / 'wise_core' / 'static' / 'wise_core' / 'icons' / 'lucide'
+    return _ICON_DIR
 
 
 @lru_cache(maxsize=None)
