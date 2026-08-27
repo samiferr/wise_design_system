@@ -1,0 +1,71 @@
+{% extends 'showcase/components/_base.html' %}
+{% load wise_icons %}
+
+{% block title %}Topbar – Components{% endblock %}
+{% block component_title %}Topbar{% endblock %}
+{% block component_intro %}
+    A mobile-only strip (<code>wise_core/components/topbar.html</code>, included once from
+    <code>base.html</code>) — desktop chrome lives entirely in the
+    <a class="text-action-600 underline" href="{% url 'component_sidebar' %}">sidebar</a> instead, so
+    this only renders below the <code>md</code> breakpoint. It holds the hamburger toggle, the brand,
+    and the signed-in user's name.
+{% endblock %}
+
+{% block component_body %}
+    <h2 class="mt-8">Signed in</h2>
+    <div class="doc-preview mt-4 p-0">
+        <div class="top-bar">
+            <div class="flex items-center px-2 py-1.5">
+                <div class="pr-1">
+                    <div class="btn-icon border-transparent">{% lucide "menu" size=20 %}</div>
+                </div>
+                <div class="top-bar-logo">
+                    <a class="flex items-center gap-2 no-underline text-gray-900" href="#">Wise</a>
+                </div>
+                <div class="ml-auto truncate text-sm text-gray-600">Ada Lovelace</div>
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="top-bar md:hidden">
+    <div class="flex items-center px-2 py-1.5">
+        {% if user.is_authenticated %}
+            <div class="pr-1">
+                <div id="open_sidebar_icon" class="btn-icon border-transparent" onclick="openSideBar()">
+                    {% lucide "menu" size=20 %}
+                </div>
+                <div id="close_sidebar_icon" class="btn-icon hidden border-transparent" onclick="closeSideBar()">
+                    {% lucide "x" size=20 %}
+                </div>
+            </div>
+        {% endif %}
+        <div class="top-bar-logo">
+            <a class="flex items-center gap-2 no-underline text-gray-900" href="{% url 'home' %}">
+                {{ project_name|default:"Wise" }}
+            </a>
+        </div>
+        <div class="ml-auto truncate text-sm text-gray-600">
+            {% if request.user.is_authenticated %}{{ request.user.get_full_name }}{% endif %}
+        </div>
+    </div>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">How the toggle works</h2>
+    <p class="text-gray-700">
+        No framework, just two small functions in <code>common.js</code>: <code>openSideBar()</code>
+        shows <code>#mySidebar</code> (the mobile drawer rendered by
+        <code>wise_core/components/sidebar.html</code>) and swaps the hamburger icon for a close icon;
+        <code>closeSideBar()</code> reverses it, and also fires on <code>window.onscroll</code> so the
+        drawer doesn't stay open while browsing underneath it.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-white">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>top-bar</code></td><td>Container — pair with <code>md:hidden</code> so desktop uses the sidebar instead.</td></tr>
+                <tr><td><code>top-bar-logo</code></td><td>Brand/logo slot.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

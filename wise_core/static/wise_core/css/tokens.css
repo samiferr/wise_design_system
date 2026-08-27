@@ -314,6 +314,29 @@
         @apply m-0 list-none p-0 text-sm font-normal text-accent-500;
     }
 
+    /* ── Inputs ──────────────────────────────────────────────────────────
+       Bare atomic controls, independent of the labeled `.form-field`
+       wrapper below - use these directly for a standalone control (an
+       inline search box, a filter row) that doesn't need a label/help/
+       error treatment of its own. */
+    .input,
+    .select {
+        @apply h-10 w-full border border-divider bg-surface px-3 py-2 text-sm text-gray-900
+        outline-none transition-colors duration-150 focus:border-action-500 focus:bg-white;
+    }
+
+    .textarea {
+        @apply w-full border border-divider bg-surface px-3 py-2 text-sm text-gray-900
+        outline-none transition-colors duration-150 focus:border-action-500 focus:bg-white;
+        min-height: 7rem;
+        resize: vertical;
+    }
+
+    .checkbox,
+    .radio {
+        @apply h-4 w-4 border-divider accent-action-600;
+    }
+
     /* ── Page forms ────────────────────────────────────────────────────
        Every record create/update form renders as a single-column stack of
        labeled fields instead of a <table>: one field per line reads
@@ -460,6 +483,53 @@
 
     .data-table tr:hover td {
         @apply bg-gray-900/[0.04];
+    }
+
+    /* Calendar - a month-view grid for scheduling/booking pages. Render the
+       6x7 day grid server-side (a `weeks` list of day dicts, each day
+       carrying `number`, `is_outside`, `is_today`, `events`) - no JS is
+       needed for display; wire prev/next-month navigation as plain links
+       with a `?month=` query param, the same way pagination does. */
+    .calendar {
+        @apply border border-divider bg-white;
+    }
+
+    .calendar-header {
+        @apply flex items-center justify-between border-b border-divider px-4 py-3;
+    }
+
+    .calendar-weekdays {
+        @apply grid grid-cols-7 border-b border-divider text-center text-[11px] font-semibold
+        uppercase tracking-wider text-gray-600;
+    }
+
+    .calendar-weekdays > div {
+        @apply py-2;
+    }
+
+    .calendar-grid {
+        @apply grid grid-cols-7;
+    }
+
+    .calendar-day {
+        @apply relative flex h-24 flex-col gap-1 border-b border-r border-divider p-1.5
+        text-gray-800 [&:nth-child(7n)]:border-r-0;
+    }
+
+    .calendar-day-number {
+        @apply text-xs font-semibold;
+    }
+
+    .calendar-day.is-outside {
+        @apply bg-page text-gray-400;
+    }
+
+    .calendar-day.is-today .calendar-day-number {
+        @apply inline-flex h-5 w-5 items-center justify-center bg-action-600 text-white;
+    }
+
+    .calendar-event {
+        @apply truncate bg-action-100 px-1 py-0.5 text-[10px] font-medium text-action-700;
     }
 
     /* Top bar (mobile-only strip; desktop chrome lives entirely in the sidebar) */
@@ -614,6 +684,64 @@
 
     .section-title-border {
         @apply mx-auto h-1 w-20 bg-action-500;
+    }
+
+    /* Charts - lightweight, JS-free primitives, not a charting library.
+       Feed real values through the `--value` custom property (set inline,
+       per element, from your view) rather than utility classes, since
+       Tailwind can't express an arbitrary runtime number as a class. A
+       trend line has no equivalent primitive here - hand-author it as an
+       inline <svg><polyline> instead, the same way vendored icons are
+       inline SVG (see docs/design-tokens.md). */
+    .bar-chart {
+        @apply flex h-40 items-end gap-3;
+    }
+
+    .bar-chart-bar {
+        @apply flex h-full flex-1 flex-col items-center justify-end gap-2;
+    }
+
+    .bar-chart-bar-fill {
+        @apply w-full bg-action-600;
+        height: var(--value, 0%);
+    }
+
+    .bar-chart-bar-label {
+        @apply text-center text-[11px] leading-tight text-gray-600;
+    }
+
+    /* A ring built from a conic-gradient, not an SVG - `--value` is a plain
+       0-100 number (no unit). Bypasses the zeroed radius scale with an
+       explicit `border-radius: 9999px`, the same escape hatch used for a
+       true circle elsewhere in this file (see the radius section of
+       docs/design-tokens.md). */
+    .donut-chart {
+        @apply relative inline-flex h-32 w-32 shrink-0 items-center justify-center;
+        border-radius: 9999px;
+        background: conic-gradient(var(--color-action-600) calc(var(--value, 0) * 1%), var(--color-gray-200) 0);
+    }
+
+    .donut-chart::before {
+        content: '';
+        @apply absolute inset-2.5 bg-white;
+        border-radius: 9999px;
+    }
+
+    .donut-chart-label {
+        @apply relative text-sm font-semibold text-gray-900;
+    }
+
+    .chart-legend {
+        @apply flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-700;
+    }
+
+    .chart-legend-item {
+        @apply inline-flex items-center gap-1.5;
+    }
+
+    .chart-legend-dot {
+        @apply inline-block h-2.5 w-2.5 shrink-0;
+        border-radius: 9999px;
     }
 }
 

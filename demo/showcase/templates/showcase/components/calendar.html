@@ -1,0 +1,170 @@
+{% extends 'showcase/components/_base.html' %}
+{% load wise_icons %}
+
+{% block title %}Calendar – Components{% endblock %}
+{% block component_title %}Calendar{% endblock %}
+{% block component_intro %}
+    A month-view grid for scheduling/booking pages. Like pagination, it's rendered entirely
+    server-side — no JS is needed to display it, and prev/next-month navigation is a plain link with
+    a <code>?month=</code> query param.
+{% endblock %}
+
+{% block component_body %}
+    <h2 class="mt-8">Month view</h2>
+    <div class="doc-preview mt-4 p-0">
+        <div class="calendar">
+            <div class="calendar-header">
+                <div class="font-heading text-lg font-semibold uppercase tracking-wide">August 2026</div>
+                <div class="flex items-center gap-1">
+                    <a href="#" class="btn-icon border-transparent">{% lucide "chevron-left" size=18 %}</a>
+                    <a href="#" class="btn-icon border-transparent">{% lucide "chevron-right" size=18 %}</a>
+                </div>
+            </div>
+            <div class="calendar-weekdays">
+                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+            </div>
+            <div class="calendar-grid">
+                <div class="calendar-day is-outside"><span class="calendar-day-number">26</span></div>
+                <div class="calendar-day is-outside"><span class="calendar-day-number">27</span></div>
+                <div class="calendar-day is-outside"><span class="calendar-day-number">28</span></div>
+                <div class="calendar-day is-outside"><span class="calendar-day-number">29</span></div>
+                <div class="calendar-day is-outside"><span class="calendar-day-number">30</span></div>
+                <div class="calendar-day is-outside"><span class="calendar-day-number">31</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">1</span></div>
+
+                <div class="calendar-day"><span class="calendar-day-number">2</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">3</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">4</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">5</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">6</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">7</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">8</span></div>
+
+                <div class="calendar-day"><span class="calendar-day-number">9</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">10</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">11</span></div>
+                <div class="calendar-day">
+                    <span class="calendar-day-number">12</span>
+                    <span class="calendar-event">Renewal due</span>
+                </div>
+                <div class="calendar-day"><span class="calendar-day-number">13</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">14</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">15</span></div>
+
+                <div class="calendar-day"><span class="calendar-day-number">16</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">17</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">18</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">19</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">20</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">21</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">22</span></div>
+
+                <div class="calendar-day"><span class="calendar-day-number">23</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">24</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">25</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">26</span></div>
+                <div class="calendar-day is-today">
+                    <span class="calendar-day-number">27</span>
+                    <span class="calendar-event">Team sync</span>
+                </div>
+                <div class="calendar-day"><span class="calendar-day-number">28</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">29</span></div>
+
+                <div class="calendar-day"><span class="calendar-day-number">30</span></div>
+                <div class="calendar-day"><span class="calendar-day-number">31</span></div>
+                <div class="calendar-day is-outside"><span class="calendar-day-number">1</span></div>
+                <div class="calendar-day is-outside"><span class="calendar-day-number">2</span></div>
+                <div class="calendar-day is-outside"><span class="calendar-day-number">3</span></div>
+                <div class="calendar-day is-outside"><span class="calendar-day-number">4</span></div>
+                <div class="calendar-day is-outside"><span class="calendar-day-number">5</span></div>
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="calendar">
+    <div class="calendar-header">
+        <div class="font-heading text-lg font-semibold uppercase tracking-wide">{{ month_label }}</div>
+        <div class="flex items-center gap-1">
+            <a class="btn-icon border-transparent" href="?month={{ prev_month }}">{% lucide "chevron-left" size=18 %}</a>
+            <a class="btn-icon border-transparent" href="?month={{ next_month }}">{% lucide "chevron-right" size=18 %}</a>
+        </div>
+    </div>
+    <div class="calendar-weekdays">
+        {% for label in weekday_labels %}<div>{{ label }}</div>{% endfor %}
+    </div>
+    <div class="calendar-grid">
+        {% for week in weeks %}
+            {% for day in week %}
+                <div class="calendar-day{% if day.is_outside %} is-outside{% endif %}{% if day.is_today %} is-today{% endif %}">
+                    <span class="calendar-day-number">{{ day.number }}</span>
+                    {% for event in day.events %}
+                        <a class="calendar-event" href="{{ event.get_absolute_url }}">{{ event.title }}</a>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Building the <code>weeks</code> grid</h2>
+    <p class="text-gray-700">
+        Python's own <code>calendar</code> module already produces the 6×7 day grid — no extra
+        dependency needed. Group your events by date, then annotate each day in the view:
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}import calendar
+from datetime import date
+
+class ScheduleView(TemplateView):
+    template_name = 'showcase/schedule.html'
+
+    def get_context_data(self, **kwargs):
+        today = date.today()
+        year, month = today.year, today.month
+        events_by_day = {e.date.day: [] for e in Event.objects.filter(date__year=year, date__month=month)}
+        for e in Event.objects.filter(date__year=year, date__month=month):
+            events_by_day.setdefault(e.date.day, []).append(e)
+
+        cal = calendar.Calendar(firstweekday=6)  # Sunday first
+        weeks = [
+            [
+                {
+                    'number': day or '',
+                    'is_outside': day == 0,
+                    'is_today': day == today.day and month == today.month,
+                    'events': events_by_day.get(day, []),
+                }
+                for day in week
+            ]
+            for week in cal.monthdayscalendar(year, month)
+        ]
+        return {**super().get_context_data(**kwargs), 'weeks': weeks}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Just picking a date?</h2>
+    <p class="text-gray-700">
+        The full grid above is for a scheduling/booking view. For a plain "pick a date" field on a
+        form, don't build a calendar at all — a native <code>&lt;input type="date"&gt;</code> already
+        gets the standard <a class="text-action-600 underline" href="{% url 'component_inputs' %}">Input</a>
+        treatment and the browser's own date picker for free.
+    </p>
+    <div class="doc-preview mt-4 max-w-xs">
+        <input class="input" type="date" value="2026-08-27">
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="date" name="due_date">{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-white">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>calendar</code></td><td>Outer container.</td></tr>
+                <tr><td><code>calendar-header</code></td><td>Month label + prev/next navigation row.</td></tr>
+                <tr><td><code>calendar-weekdays</code></td><td>7-column header row of weekday labels.</td></tr>
+                <tr><td><code>calendar-grid</code></td><td>The 7-column day grid.</td></tr>
+                <tr><td><code>calendar-day</code></td><td>One day cell.</td></tr>
+                <tr><td><code>calendar-day.is-outside</code></td><td>A leading/trailing day from the previous/next month.</td></tr>
+                <tr><td><code>calendar-day.is-today</code></td><td>Highlights the day number for today.</td></tr>
+                <tr><td><code>calendar-day-number</code></td><td>The day-of-month number.</td></tr>
+                <tr><td><code>calendar-event</code></td><td>A small tinted event chip inside a day cell.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

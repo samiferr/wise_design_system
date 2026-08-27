@@ -34,6 +34,10 @@ class BadgesComponentView(TemplateView):
     template_name = 'showcase/components/badges.html'
 
 
+class InputsComponentView(TemplateView):
+    template_name = 'showcase/components/inputs.html'
+
+
 class CardsComponentView(TemplateView):
     template_name = 'showcase/components/cards.html'
 
@@ -44,6 +48,14 @@ class TabsComponentView(TemplateView):
 
 class FormsComponentView(TemplateView):
     template_name = 'showcase/components/forms.html'
+
+
+class TopbarComponentView(TemplateView):
+    template_name = 'showcase/components/topbar.html'
+
+
+class SidebarComponentView(TemplateView):
+    template_name = 'showcase/components/sidebar.html'
 
 
 class DataTableComponentView(TemplateView):
@@ -60,6 +72,14 @@ class FilterPanelComponentView(TemplateView):
 
 class FlashMessagesComponentView(TemplateView):
     template_name = 'showcase/components/flash-messages.html'
+
+
+class CalendarComponentView(TemplateView):
+    template_name = 'showcase/components/calendar.html'
+
+
+class ChartsComponentView(TemplateView):
+    template_name = 'showcase/components/charts.html'
 
 
 class IconsView(TemplateView):
