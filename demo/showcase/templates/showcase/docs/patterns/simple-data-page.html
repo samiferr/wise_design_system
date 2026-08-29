@@ -1,0 +1,135 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Simple Data Page{% endblock %}
+{% block doc_section %}Patterns{% endblock %}
+{% block doc_title %}Simple Data Page{% endblock %}
+{% block doc_intro %}
+    The workhorse screen: a title bar with actions, a search box, a filter drawer, summary tiles and
+    a paginated table. Almost every list view in an application is this pattern, which is why the
+    generic templates render most of it for you.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">The whole thing</h2>
+    <div class="doc-preview mt-4 p-0">
+        <div class="p-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h2 class="flex items-center gap-2">{% lucide "tag" size=24 cls="text-brand-600" %}Categories</h2>
+                <div class="flex items-center gap-2">
+                    <div class="input-group max-w-[14rem]">
+                        <span class="input-group-addon">{% lucide "search" size=15 %}</span>
+                        <input class="input" placeholder="Search">
+                    </div>
+                    <div class="btn btn-secondary btn-icon relative">{% lucide "filter" size=16 %}<span class="badge badge-red absolute -left-2 -top-1 shadow">2</span></div>
+                    <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>New</span></a>
+                </div>
+            </div>
+
+            <div class="mt-4 grid gap-3 sm:grid-cols-3">
+                <div class="card"><div class="card-kicker">Total</div><div class="mt-1 font-heading text-2xl font-semibold">48</div></div>
+                <div class="card"><div class="card-kicker">Active</div><div class="mt-1 font-heading text-2xl font-semibold text-action-600">41</div></div>
+                <div class="card"><div class="card-kicker">Archived</div><div class="mt-1 font-heading text-2xl font-semibold text-gray-500">7</div></div>
+            </div>
+
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+                <span class="text-xs uppercase tracking-wider text-gray-600">Filtering by</span>
+                <span class="tag">name: hub</span>
+                <span class="tag">products: &gt; 5</span>
+                <a class="text-xs text-action-600 underline" href="#">Clear all</a>
+            </div>
+
+            <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+                <table class="data-table">
+                    <thead><tr><th>Name</th><th>Products</th><th>Status</th><th class="w-px"></th></tr></thead>
+                    <tbody>
+                        <tr><td><a class="font-semibold text-action-700 no-underline" href="#">Electronics</a></td><td>12</td><td><span class="badge badge-green">Active</span></td><td class="whitespace-nowrap"><a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a></td></tr>
+                        <tr><td><a class="font-semibold text-action-700 no-underline" href="#">Stationery</a></td><td>34</td><td><span class="badge badge-green">Active</span></td><td class="whitespace-nowrap"><a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a></td></tr>
+                        <tr><td><a class="font-semibold text-action-700 no-underline" href="#">Furniture</a></td><td>2</td><td><span class="badge badge-grey">Archived</span></td><td class="whitespace-nowrap"><a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 flex flex-wrap items-center justify-center gap-1">
+                <a href="#" class="pagination-link disabled">{% lucide "chevron-left" size=16 %}Prev.</a>
+                <div class="px-2 text-sm text-gray-600">Page 1 / 3</div>
+                <a href="#" class="pagination-link">Next{% lucide "chevron-right" size=16 %}</a>
+            </div>
+        </div>
+    </div>
+    <p class="mt-2 text-gray-700">
+        The live version is
+        <a class="text-action-600 underline" href="{% url 'category_list_view' %}">Categories</a>.
+    </p>
+
+    <h2 class="mt-8">The view</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# filters.py
+class CategoryFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_expr="icontains")
+
+    class Meta:
+        model = Category
+        fields = ["name"]
+
+# views.py
+class CategoryListView(WiseListView):
+    model = Category
+    filterset_class = CategoryFilter
+    template_name = "showcase/category/list.html"
+    paginate_by = 10
+
+    def get_queryset(self):
+        # annotate once, in SQL - never count in the template
+        return super().get_queryset().annotate(product_count=Count("products"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["totals"] = Category.objects.aggregate(
+            total=Count("pk"),
+            active=Count("pk", filter=Q(is_active=True)),
+        )
+        return context{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Aggregate over the whole queryset, not the page</div>
+            Summary tiles should describe the filtered set, not the ten rows on screen. Compute them
+            with <code>aggregate()</code> on the filtered queryset before pagination slices it.
+        </div>
+    </div>
+
+    <h2 class="mt-8">The template</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/list_generic.html' %}
+{% load wise_icons %}
+
+{% block list_icon %}{% lucide "tag" size=28 cls="text-brand-600" %}{% endblock %}
+{% block list_title %}Categories{% endblock %}
+
+{% block list_actions %}
+    {% include 'wise_core/components/filter_button.html' %}
+    {% if perms.showcase.add_category %}
+        <a class="btn btn-primary" href="{% url 'category_create_view' %}">
+            {% lucide "plus" size=16 %}<span>New</span>
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block list_body %}
+    <div class="mt-5 overflow-x-auto border border-divider bg-panel">
+        <table class="data-table">…</table>
+    </div>
+    <div class="pt-4">{% include 'wise_core/components/_pagination.html' %}</div>
+{% endblock %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">What you get for free</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Piece</th><th>Comes from</th></tr></thead>
+            <tbody>
+                <tr><td>Filter drawer</td><td><code>base.html</code> renders it; <code>WiseListView</code> supplies <code>filter</code>.</td></tr>
+                <tr><td>Applied-filter count</td><td><code>filter_kwargs_count</code> in the context.</td></tr>
+                <tr><td>Pagination</td><td><code>paginate_by</code> + the <code>_pagination.html</code> partial.</td></tr>
+                <tr><td>Flash messages</td><td><code>success_message</code> on the CRUD views.</td></tr>
+                <tr><td>Empty state</td><td><code>_no_data.html</code>.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

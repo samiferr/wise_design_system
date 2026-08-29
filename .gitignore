@@ -61,6 +61,9 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
+# User uploads from the demo site (FileField targets under MEDIA_ROOT).
+demo/media/
+
 # Flask stuff:
 instance/
 .webassets-cache

@@ -1,0 +1,82 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Pagination{% endblock %}
+{% block doc_section %}Navigation{% endblock %}
+{% block doc_title %}Pagination{% endblock %}
+{% block doc_intro %}
+    Rendered by <code>wise_core/components/_pagination.html</code> against Django's own
+    <code>Paginator</code>. You include the partial; you do not write pagination markup.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Appearance</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center justify-center gap-1">
+        <a href="#" class="pagination-link disabled">{% lucide "chevrons-left" size=16 %}</a>
+        <a href="#" class="pagination-link disabled">{% lucide "chevron-left" size=16 %}Prev.</a>
+        <div class="px-2 text-sm text-gray-600">Page 1 / 3</div>
+        <a href="#" class="pagination-link">Next{% lucide "chevron-right" size=16 %}</a>
+        <a href="#" class="pagination-link">{% lucide "chevrons-right" size=16 %}</a>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="pt-4">
+    {% include 'wise_core/components/_pagination.html' %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">What it needs</h2>
+    <p class="text-gray-700">
+        <code>page_obj</code> — the standard name Django's <code>ListView</code> puts in the context.
+        <code>WiseListView</code> supplies it as soon as you set <code>paginate_by</code>. The partial
+        also carries the current search parameter across page links, so paging through filtered
+        results does not silently reset the filter.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class CategoryListView(WiseListView):
+    model = Category
+    filterset_class = CategoryFilter
+    template_name = 'showcase/category/list.html'
+    paginate_by = 10{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        See it against a real queryset on
+        <a class="text-action-600 underline" href="{% url 'category_list_view' %}">Categories</a>.
+    </p>
+
+    <h2 class="mt-8">Boundaries</h2>
+    <p class="text-gray-700">
+        Prev./Next are disabled in place rather than removed, so the control keeps its width and the
+        page does not shift as you move between pages.
+    </p>
+
+    <h2 class="mt-8">Preserving other query parameters</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            If you add your own query parameters — a sort column, a tab — carry them onto the page
+            links too, or page 2 will silently drop them. A small template filter that merges the
+            current <code>request.GET</code> with the new page number is the tidiest fix.
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}@register.simple_tag(takes_context=True)
+def query_replace(context, **kwargs):
+    """{% query_replace page=3 %} -> keeps every other param intact."""
+    query = context['request'].GET.copy()
+    for key, value in kwargs.items():
+        query[key] = value
+    return query.urlencode(){% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="pagination-link" href="?{% query_replace page=page_obj.next_page_number %}">Next</a>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Large tables</h2>
+    <p class="text-gray-700">
+        <code>Paginator</code> issues a <code>COUNT(*)</code> per page, which gets expensive on very
+        large tables. If that becomes a problem, keyset ("seek") pagination — <code>WHERE id &lt;
+        last_seen ORDER BY id LIMIT n</code> — is the usual answer; the same
+        <code>.pagination-link</code> markup still applies.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>pagination-link</code></td><td>One page-nav link.</td></tr>
+                <tr><td><code>pagination-link.disabled</code></td><td>Inert boundary link.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

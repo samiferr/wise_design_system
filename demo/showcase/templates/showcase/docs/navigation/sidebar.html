@@ -1,16 +1,17 @@
-{% extends 'showcase/components/_base.html' %}
+{% extends 'showcase/docs/_base.html' %}
 {% load wise_icons %}
 
-{% block title %}Sidebar – Components{% endblock %}
-{% block component_title %}Sidebar{% endblock %}
-{% block component_intro %}
+{% block doc_title_tag %}Sidebar{% endblock %}
+{% block doc_section %}Navigation{% endblock %}
+{% block doc_title %}Sidebar{% endblock %}
+{% block doc_intro %}
     The persistent desktop navigation column, built from <code>wise_core/components/nav_menu.html</code>
     — a "Home" link, then one section per entry in <code>wise_nav_sections</code> (a context
     processor value your project supplies, see <code>docs/getting-started.md</code>), then the
     signed-in user's name pinned to the bottom.
 {% endblock %}
 
-{% block component_body %}
+{% block doc_body %}
     <h2 class="mt-8">Navigation menu</h2>
     <div class="doc-preview mt-4 max-w-xs p-0">
         <div class="flex flex-col px-3 py-3">
@@ -66,7 +67,7 @@
         <code>base.html</code> renders this same <code>nav_menu.html</code> twice: once inside a fixed
         <code>md:sticky</code> column for desktop, and once inside
         <code>wise_core/components/sidebar.html</code> — a full-screen overlay toggled by the
-        <a class="text-action-600 underline" href="{% url 'component_topbar' %}">topbar's</a> hamburger
+        <a class="text-action-600 underline" href="{% url 'docs_navigation_topbar' %}">topbar's</a> hamburger
         button — for mobile. The menu markup itself doesn't change between the two.
     </p>
 

@@ -1,0 +1,97 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Toast{% endblock %}
+{% block doc_section %}Feedback{% endblock %}
+{% block doc_title %}Toast{% endblock %}
+{% block doc_intro %}
+    Transient confirmation of something that just happened. In a Django app you almost never build
+    these by hand — <code>django.contrib.messages</code> plus
+    <code>wise_core/components/_messages.html</code> already renders them, and the
+    <code>Wise*View</code> mixins already emit the messages.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Appearance</h2>
+    <div class="doc-preview mt-4 flex flex-col gap-2" style="max-width:20rem">
+        <div class="toast toast-success">{% lucide "check" size=15 cls="toast-icon" %}<div><div class="toast-title">Saved</div>Category "Electronics" created.</div></div>
+        <div class="toast toast-error">{% lucide "circle-x" size=15 cls="toast-icon" %}<div><div class="toast-title">Failed</div>Enter a valid email address.</div></div>
+        <div class="toast toast-warning">{% lucide "alert-triangle" size=15 cls="toast-icon" %}<div>Two products had no category and were skipped.</div></div>
+        <div class="toast">{% lucide "info" size=15 cls="toast-icon" %}<div>Export queued — you'll get an email when it's ready.</div><button class="toast-close" aria-label="Dismiss">{% lucide "x" size=14 %}</button></div>
+    </div>
+
+    <h2 class="mt-8">The Django way</h2>
+    <p class="text-gray-700">
+        <code>_messages.html</code> is included once in <code>base.html</code>, so every page already
+        renders whatever messages are pending. You only emit them.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from django.contrib import messages
+
+def publish(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    product.publish()
+    messages.success(request, 'Product "%s" published.' % product.name)
+    return redirect(product.get_absolute_url()){% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The CRUD mixins do it for you from a <code>success_message</code> attribute — create or edit a
+        <a class="text-action-600 underline" href="{% url 'category_create_view' %}">Category</a> to
+        see one fire.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class CategoryCreateView(WiseCreateView):
+    model = Category
+    form_class = CategoryForm
+    success_message = 'Category "%(name)s" created.'{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Message tags map to variants</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Django call</th><th>Renders as</th></tr></thead>
+            <tbody>
+                <tr><td><code>messages.success(...)</code></td><td><code>.success</code> — green</td></tr>
+                <tr><td><code>messages.error(...)</code></td><td><code>.error</code> — red</td></tr>
+                <tr><td><code>messages.warning(...)</code></td><td><code>.warning</code> — amber</td></tr>
+                <tr><td><code>messages.info(...)</code></td><td>neutral</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Building one by hand</h2>
+    <p class="text-gray-700">Only needed outside the messages framework — a client-side action with no page reload:</p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<ul class="toast-stack" id="toasts"></ul>
+
+<script>
+function showToast(text, variant) {
+    var stack = document.getElementById('toasts')
+    var item = document.createElement('li')
+    item.className = 'toast toast-' + (variant || 'success')
+    item.setAttribute('role', 'status')
+    item.textContent = text
+    stack.appendChild(item)
+    setTimeout(function () { item.remove() }, 6000)
+}
+</script>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Auto-dismiss and accessibility</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Don't put irreplaceable information in a toast</div>
+            It disappears after six seconds and cannot be recalled. Validation errors belong on the
+            field; anything the user may need to act on later belongs in the page. Add
+            <code>role="status"</code> so screen readers announce it, and give error toasts no
+            auto-dismiss at all.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>toast-stack</code></td><td>Fixed bottom-right container at <code>--z-toast</code>.</td></tr>
+                <tr><td><code>toast</code></td><td>One message.</td></tr>
+                <tr><td><code>toast-success</code> / <code>-error</code> / <code>-warning</code></td><td>Tone.</td></tr>
+                <tr><td><code>toast-icon</code> / <code>toast-title</code> / <code>toast-close</code></td><td>Leading icon, bold first line, dismiss button.</td></tr>
+                <tr><td><code>flash-messages</code></td><td>The Django-messages binding of this component.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

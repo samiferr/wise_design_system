@@ -1,0 +1,105 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Badge{% endblock %}
+{% block doc_section %}Feedback{% endblock %}
+{% block doc_title %}Badge{% endblock %}
+{% block doc_intro %}
+    A small inline label for a workflow state or a count. Badges describe <em>state the system
+    knows</em>; a <a class="text-action-600 underline" href="{% url 'docs_feedback_tag' %}">tag</a>
+    labels a value a user supplied.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Colors</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
+        <span class="badge">Default</span>
+        <span class="badge badge-action">Action</span>
+        <span class="badge badge-brand">Brand</span>
+        <span class="badge badge-grey">Grey</span>
+        <span class="badge badge-orange">Orange</span>
+        <span class="badge badge-green">Green</span>
+        <span class="badge badge-red">Red</span>
+        <span class="badge badge-blue">Blue</span>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="badge badge-green">Confirmed</span>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Workflow states</h2>
+    <p class="text-gray-700">
+        The grey/orange/green/red/blue set is deliberately <em>not</em> named
+        "success"/"error" — that keeps it mappable onto any domain's status field without the names
+        lying about what they mean.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
+        <span class="badge badge-grey">Draft</span>
+        <span class="badge badge-orange">Pending</span>
+        <span class="badge badge-green">Confirmed</span>
+        <span class="badge badge-red">Cancelled</span>
+        <span class="badge badge-blue">Invoiced</span>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class Order(models.Model):
+    class Status(models.TextChoices):
+        DRAFT = "draft", "Draft"
+        PENDING = "pending", "Pending"
+        CONFIRMED = "confirmed", "Confirmed"
+
+    status = models.CharField(max_length=20, choices=Status.choices)
+
+    @property
+    def status_badge(self):
+        return {
+            self.Status.DRAFT: "badge-grey",
+            self.Status.PENDING: "badge-orange",
+            self.Status.CONFIRMED: "badge-green",
+        }[self.status]{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="badge {{ order.status_badge }}">{{ order.get_status_display }}</span>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            Map the status to a class on the model, not in the template. A template that builds the
+            class by string concatenation (<code>badge-{{ status }}</code>) produces classes Tailwind
+            never sees at build time, so they get tree-shaken out and the badge renders unstyled.
+        </div>
+    </div>
+
+    <h2 class="mt-8">As a counter</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-4">
+        <div class="btn btn-secondary btn-icon relative">
+            {% lucide "filter" size=16 %}
+            <span class="badge badge-red absolute -left-2 -top-1 shadow">3</span>
+        </div>
+        <a class="bar-item inline-flex items-center gap-1.5" href="#">Products <span class="badge badge-grey">12</span></a>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="btn btn-secondary btn-icon relative">
+    {% lucide "filter" size=16 %}
+    {% if filter_kwargs_count %}
+        <span class="badge badge-red absolute -left-2 -top-1 shadow">{{ filter_kwargs_count }}</span>
+    {% endif %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">In a datatable</h2>
+    <div class="doc-preview mt-4 p-0">
+        <table class="data-table">
+            <thead><tr><th>Order</th><th>Status</th></tr></thead>
+            <tbody>
+                <tr><td>#1042</td><td><span class="badge badge-green">Confirmed</span></td></tr>
+                <tr><td>#1043</td><td><span class="badge badge-orange">Pending</span></td></tr>
+                <tr><td>#1044</td><td><span class="badge badge-red">Cancelled</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>badge</code></td><td>Base, neutral grey.</td></tr>
+                <tr><td><code>badge-action</code> / <code>badge-brand</code></td><td>Accent-colored, bold.</td></tr>
+                <tr><td><code>badge-grey</code></td><td>Neutral status.</td></tr>
+                <tr><td><code>badge-orange</code></td><td>Attention / pending.</td></tr>
+                <tr><td><code>badge-green</code></td><td>Positive / confirmed.</td></tr>
+                <tr><td><code>badge-red</code></td><td>Negative / cancelled, or a count.</td></tr>
+                <tr><td><code>badge-blue</code></td><td>Informational.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

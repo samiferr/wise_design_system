@@ -1,0 +1,82 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Video{% endblock %}
+{% block doc_section %}Media{% endblock %}
+{% block doc_title %}Video{% endblock %}
+{% block doc_intro %}
+    A fixed-ratio frame for a <code>&lt;video&gt;</code> or an embedded player. The frame holds its
+    aspect ratio at any width, so the page does not jump when the media loads.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Frame</h2>
+    <div class="doc-preview mt-4 max-w-lg">
+        <div class="aspect-video-frame">
+            <svg viewBox="0 0 320 180" role="img" aria-label="Video placeholder">
+                <rect width="320" height="180" fill="var(--color-gray-800)"/>
+                <circle cx="160" cy="90" r="26" fill="var(--color-action-600)" opacity="0.9"/>
+                <path d="M152 78 L152 102 L174 90 Z" fill="var(--color-on-action)"/>
+            </svg>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="aspect-video-frame">
+    <video controls preload="metadata" poster="{{ clip.poster.url }}">
+        <source src="{{ clip.file.url }}" type="video/mp4">
+        <track kind="captions" src="{{ clip.captions.url }}" srclang="en" label="English" default>
+    </video>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Embedded player</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="aspect-video-frame">
+    <iframe src="https://player.example.com/embed/{{ clip.external_id }}"
+            title="{{ clip.title }}" allowfullscreen loading="lazy"></iframe>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The frame positions its child absolutely and fills it, so the iframe needs no width/height
+        attributes and no inline styles.
+    </p>
+
+    <h2 class="mt-8">Other ratios</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<!-- the class is 16/9; override for anything else -->
+<div class="aspect-video-frame" style="aspect-ratio: 4 / 3">…</div>
+<div class="aspect-video-frame" style="aspect-ratio: 1 / 1">…</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Practicalities</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Attribute</th><th>Why</th></tr></thead>
+            <tbody>
+                <tr><td><code>preload="metadata"</code></td><td>Fetches duration and dimensions, not the whole file.</td></tr>
+                <tr><td><code>poster</code></td><td>Something to show before playback — otherwise a black rectangle.</td></tr>
+                <tr><td><code>&lt;track kind="captions"&gt;</code></td><td>Captions. Required for most accessibility obligations.</td></tr>
+                <tr><td><code>loading="lazy"</code></td><td>On an iframe embed, so an off-screen player costs nothing.</td></tr>
+                <tr><td><code>muted</code> + <code>playsinline</code></td><td>Needed together for autoplay to work at all on mobile.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            Never autoplay with sound. Browsers block it, and where they don't, users hate it. If
+            motion is decorative, add <code>muted playsinline loop</code> and respect
+            <code>prefers-reduced-motion</code>.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Serving uploads</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class Clip(models.Model):
+    file = models.FileField(upload_to="clips/")
+    poster = models.ImageField(upload_to="clips/posters/", blank=True)
+
+# Video files are large - serve them from storage or a CDN, never through
+# Django. MEDIA_ROOT via runserver is for development only.{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>aspect-video-frame</code></td><td>16:9 frame; fills its child absolutely.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

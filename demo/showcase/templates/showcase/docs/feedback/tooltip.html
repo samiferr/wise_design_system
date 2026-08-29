@@ -1,0 +1,72 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Tooltip{% endblock %}
+{% block doc_section %}Feedback{% endblock %}
+{% block doc_title %}Tooltip{% endblock %}
+{% block doc_intro %}
+    A short label on hover or focus, from a <code>data-tooltip</code> attribute. Pure CSS — no
+    positioning library, no script.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Try it</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-6 py-10">
+        <span class="tooltip" data-tooltip="Edit this record"><button class="btn btn-icon btn-secondary" aria-label="Edit">{% lucide "pencil" size=15 %}</button></span>
+        <span class="tooltip" data-tooltip="Delete permanently"><button class="btn btn-icon btn-secondary" aria-label="Delete">{% lucide "trash-2" size=15 %}</button></span>
+        <span class="tooltip tooltip-bottom" data-tooltip="Appears below instead"><button class="btn btn-secondary">Below</button></span>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="tooltip" data-tooltip="Edit this record">
+    <button class="btn btn-icon btn-secondary" aria-label="Edit">{% lucide "pencil" size=15 %}</button>
+</span>
+
+<!-- flip it below the trigger when there's no room above -->
+<span class="tooltip tooltip-bottom" data-tooltip="Appears below">…</span>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">A tooltip is not a label</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">It is decoration, not an accessible name</div>
+            <code>data-tooltip</code> renders through a CSS <code>::after</code>, which assistive
+            technology does not reliably announce, and it never appears on touch devices. The icon
+            button above still needs its own <code>aria-label</code> — the tooltip is a sighted-mouse
+            convenience on top.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Keyboard</h2>
+    <p class="text-gray-700">
+        The tooltip shows on <code>:focus-within</code> too, so tabbing to the button reveals it —
+        try tabbing through the examples above.
+    </p>
+
+    <h2 class="mt-8">Keep it short</h2>
+    <p class="text-gray-700">
+        The bubble is <code>whitespace-nowrap</code>, so a long string runs off the side of the
+        screen. Anything longer than a few words belongs in
+        <a class="text-action-600 underline" href="{% url 'docs_forms_form_layout' %}">help text</a>
+        or a <a class="text-action-600 underline" href="{% url 'docs_feedback_callout' %}">callout</a>.
+    </p>
+    <div class="doc-preview mt-4 flex items-center gap-4 py-8">
+        <span class="tooltip" data-tooltip="Good: short"><span class="badge badge-green">Good</span></span>
+        <span class="tooltip" data-tooltip="Bad: this sentence is far too long to sit comfortably in a tooltip bubble and will overflow"><span class="badge badge-red">Too long</span></span>
+    </div>
+
+    <h2 class="mt-8">Native title as a fallback</h2>
+    <p class="text-gray-700">
+        For plain text where styling does not matter, the browser's own <code>title</code> attribute
+        needs no component at all — and it does get announced.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<abbr title="Value Added Tax">VAT</abbr>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class / attribute</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>tooltip</code></td><td>On a wrapper around the trigger.</td></tr>
+                <tr><td><code>data-tooltip</code></td><td>The text to show.</td></tr>
+                <tr><td><code>tooltip-bottom</code></td><td>Position below rather than above.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Tree{% endblock %}
+{% block doc_section %}Navigation{% endblock %}
+{% block doc_title %}Tree{% endblock %}
+{% block doc_intro %}
+    Nestable disclosure navigation. Every branch is a <code>&lt;details&gt;</code>, so the whole
+    thing expands and collapses with no JavaScript, and a server-rendered page can mark branches
+    <code>open</code> to reveal the current node. The sidebar you are looking at is this component.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Real data</h2>
+    <p class="text-gray-700">Rendered from the demo's <code>Department</code> model — an actual self-referencing table, not hand-written markup:</p>
+    <div class="doc-preview mt-4 max-w-xs">
+        <nav class="tree">
+            {% for root in departments %}
+                <details class="tree-item" {% if forloop.first %}open{% endif %}>
+                    <summary class="tree-item-label">
+                        {% lucide "chevron-right" size=14 cls="tree-item-chevron" %}
+                        {% lucide root.icon size=15 cls="shrink-0" %}
+                        <span class="truncate">{{ root.name }}</span>
+                    </summary>
+                    <div class="tree-item-children">
+                        {% for child in root.children.all %}
+                            <a class="tree-leaf" href="#"><span class="truncate">{{ child.name }}</span></a>
+                        {% endfor %}
+                    </div>
+                </details>
+            {% endfor %}
+        </nav>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<nav class="tree">
+    {% for root in departments %}
+        <details class="tree-item" {% if root.contains_current %}open{% endif %}>
+            <summary class="tree-item-label">
+                {% lucide "chevron-right" size=14 cls="tree-item-chevron" %}
+                {% lucide root.icon size=15 cls="shrink-0" %}
+                <span class="truncate">{{ root.name }}</span>
+            </summary>
+            <div class="tree-item-children">
+                {% for child in root.children.all %}
+                    <a class="tree-leaf" href="{{ child.get_absolute_url }}">{{ child.name }}</a>
+                {% endfor %}
+            </div>
+        </details>
+    {% endfor %}
+</nav>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">The model</h2>
+    <p class="text-gray-700">
+        A plain adjacency list — a <code>parent</code> foreign key to <code>self</code>. No tree
+        package needed: rendering only ever walks <em>down</em> from the roots, which a
+        <code>prefetch_related</code> handles in two queries.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class Department(models.Model):
+    name = models.CharField(max_length=100)
+    parent = models.ForeignKey(
+        "self", null=True, blank=True,
+        on_delete=models.CASCADE, related_name="children",
+    )
+    icon = models.CharField(max_length=40, default="building-2")
+
+# In the view - two queries for the whole two-level tree:
+Department.objects.filter(parent=None).prefetch_related("children"){% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Depth costs queries</div>
+            <code>prefetch_related("children")</code> covers one level. For a deep or unbounded tree,
+            chain <code>children__children</code>, or fetch the table once and assemble the nesting in
+            Python — anything is better than a query per node inside the template loop.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Arbitrary depth</h2>
+    <p class="text-gray-700">
+        Nest <code>.tree-item</code> inside <code>.tree-item-children</code> for deeper levels — the
+        indent guide line comes from a left border, so it stays continuous at every depth. A
+        recursive include keeps the template flat.
+    </p>
+    <div class="doc-preview mt-4 max-w-xs">
+        <nav class="tree">
+            <details class="tree-item" open>
+                <summary class="tree-item-label">{% lucide "chevron-right" size=14 cls="tree-item-chevron" %}{% lucide "building-2" size=15 %}<span>Engineering</span></summary>
+                <div class="tree-item-children">
+                    <a class="tree-leaf" href="#">Platform</a>
+                    <details class="tree-item" open>
+                        <summary class="tree-item-label">{% lucide "chevron-right" size=14 cls="tree-item-chevron" %}{% lucide "clipboard-list" size=15 %}<span>Frontend</span></summary>
+                        <div class="tree-item-children">
+                            <a class="tree-leaf selected" href="#">Design system</a>
+                            <a class="tree-leaf" href="#">Web app</a>
+                        </div>
+                    </details>
+                    <a class="tree-leaf" href="#">Data</a>
+                </div>
+            </details>
+        </nav>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{# _tree_node.html - includes itself for each child #}
+{% load wise_icons %}
+{% if node.children.all %}
+    <details class="tree-item" {% if node.is_open %}open{% endif %}>
+        <summary class="tree-item-label">
+            {% lucide "chevron-right" size=14 cls="tree-item-chevron" %}
+            <span class="truncate">{{ node.name }}</span>
+        </summary>
+        <div class="tree-item-children">
+            {% for child in node.children.all %}
+                {% include "showcase/_tree_node.html" with node=child %}
+            {% endfor %}
+        </div>
+    </details>
+{% else %}
+    <a class="tree-leaf {% if node.is_current %}selected{% endif %}" href="{{ node.get_absolute_url }}">
+        {{ node.name }}
+    </a>
+{% endif %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Marking the current node</h2>
+    <p class="text-gray-700">
+        Selection is server-side: add <code>.selected</code> to the current leaf, and
+        <code>open</code> to each ancestor so it is visible on load. This site's sidebar does exactly
+        that by comparing the section and page slugs.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="tree-leaf {% if item.slug == current_page_slug %}selected{% endif %}"
+   href="{% url item.url_name %}">{{ item.title }}</a>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>tree</code></td><td>Container; use a <code>&lt;nav&gt;</code> with an <code>aria-label</code>.</td></tr>
+                <tr><td><code>tree-item</code></td><td>A branch — on a <code>&lt;details&gt;</code>.</td></tr>
+                <tr><td><code>tree-item-label</code></td><td>The <code>&lt;summary&gt;</code> row.</td></tr>
+                <tr><td><code>tree-item-chevron</code></td><td>Icon that rotates when the branch is open.</td></tr>
+                <tr><td><code>tree-item-children</code></td><td>Nested container; draws the indent guide.</td></tr>
+                <tr><td><code>tree-leaf</code></td><td>A leaf node — usually an <code>&lt;a&gt;</code>.</td></tr>
+                <tr><td><code>tree-leaf.selected</code></td><td>The current node.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

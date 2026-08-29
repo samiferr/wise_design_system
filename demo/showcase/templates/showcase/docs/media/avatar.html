@@ -1,0 +1,90 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Avatar{% endblock %}
+{% block doc_section %}Media{% endblock %}
+{% block doc_title %}Avatar{% endblock %}
+{% block doc_intro %}
+    A person or entity's picture, with initials as the fallback. Initials are the default rather than
+    a generic silhouette — they identify someone at a glance, and most users never upload a photo.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Initials</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <span class="avatar avatar-sm">AL</span>
+        <span class="avatar">AL</span>
+        <span class="avatar avatar-lg">AL</span>
+        <span class="avatar avatar-circle">AL</span>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="avatar">AL</span>
+<span class="avatar avatar-lg avatar-circle">AL</span>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">From a user</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="avatar">
+    {{ user.first_name|default:user.username|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
+</span>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">This is exactly what the sidebar's account row renders.</p>
+
+    <h2 class="mt-8">With an image</h2>
+    <p class="text-gray-700">
+        The image fills the box with <code>object-cover</code>, so a non-square upload crops rather
+        than distorting.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="avatar avatar-circle">
+    {% if user.profile.photo %}
+        <img src="{{ user.profile.photo.url }}" alt="{{ user.get_full_name }}">
+    {% else %}
+        {{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
+    {% endif %}
+</span>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Groups</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-6">
+        <div class="avatar-group">
+            <span class="avatar avatar-circle">AL</span>
+            <span class="avatar avatar-circle">BM</span>
+            <span class="avatar avatar-circle">CK</span>
+            <span class="avatar avatar-circle">+4</span>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="avatar-group">
+    {% for member in team.members.all|slice:":3" %}
+        <span class="avatar avatar-circle">{{ member.initials }}</span>
+    {% endfor %}
+    {% if team.members.count > 3 %}
+        <span class="avatar avatar-circle">+{{ team.members.count|add:"-3" }}</span>
+    {% endif %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">In a table</h2>
+    <div class="doc-preview mt-4 p-0">
+        <table class="data-table">
+            <thead><tr><th>Member</th><th>Role</th></tr></thead>
+            <tbody>
+                <tr><td><span class="inline-flex items-center gap-2"><span class="avatar avatar-sm avatar-circle">AL</span>Ada Lovelace</span></td><td><span class="badge badge-action">Admin</span></td></tr>
+                <tr><td><span class="inline-flex items-center gap-2"><span class="avatar avatar-sm avatar-circle">BM</span>Bram Moolenaar</span></td><td><span class="badge badge-grey">Viewer</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Accessibility</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            When the name is already beside the avatar, use <code>alt=""</code> on the image so it is
+            not announced twice. Give it a real <code>alt</code> only when the avatar stands alone.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>avatar</code></td><td>36×36 square with initials or an image.</td></tr>
+                <tr><td><code>avatar-sm</code> / <code>avatar-lg</code></td><td>24px / 56px.</td></tr>
+                <tr><td><code>avatar-circle</code></td><td>Round — bypasses the zeroed radius scale.</td></tr>
+                <tr><td><code>avatar-group</code></td><td>Overlapping row.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Pie Chart{% endblock %}
+{% block doc_section %}Data Viz{% endblock %}
+{% block doc_title %}Pie Chart{% endblock %}
+{% block doc_intro %}
+    Parts of a whole, as SVG wedges. Readable at three or four slices; past that the wedges get too
+    similar to compare and a <a class="text-action-600 underline" href="{% url 'docs_data_viz_bar_chart' %}">bar chart</a>
+    does the job better.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-8">
+        <svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px" role="img" aria-label="Revenue by month">
+            {% for slice in pie_slices %}<path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}"/>{% endfor %}
+        </svg>
+        <div class="chart-legend" style="flex-direction:column;align-items:flex-start">
+            {% for slice in pie_slices %}
+                <span class="chart-legend-item"><span class="chart-legend-dot" style="background:{{ slice.color }}"></span>{{ slice.label }} — {{ slice.percent }}%</span>
+            {% endfor %}
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+context["pie_slices"] = charts.pie(revenue, labels=months){% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px"
+     role="img" aria-label="Revenue by month">
+    {% for slice in pie_slices %}
+        <path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}"/>
+    {% endfor %}
+</svg>
+
+<div class="chart-legend">
+    {% for slice in pie_slices %}
+        <span class="chart-legend-item">
+            <span class="chart-legend-dot" style="background:{{ slice.color }}"></span>
+            {{ slice.label }} — {{ slice.percent }}%
+        </span>
+    {% endfor %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">What each slice carries</h2>
+    <p class="text-gray-700">
+        <code>charts.pie()</code> returns everything the wedge <em>and</em> its legend entry need, so
+        the template loops once over one list rather than zipping several together.
+    </p>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Key</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td><code>path</code></td><td>The wedge, as an SVG <code>d</code>.</td></tr>
+                <tr><td><code>color</code></td><td>A <code>var(--color-*)</code> reference from the series palette.</td></tr>
+                <tr><td><code>label</code></td><td>The matching label, if you passed any.</td></tr>
+                <tr><td><code>value</code> / <code>percent</code></td><td>The raw value and its share, rounded to one decimal.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Edge cases handled for you</h2>
+    <p class="text-gray-700">
+        A single value covering the whole circle cannot be drawn as one arc — the start and end points
+        coincide and browsers render nothing. <code>_arc_path</code> detects that and emits two half
+        arcs instead. Zero and negative values are skipped rather than producing inverted wedges.
+    </p>
+    <div class="doc-preview mt-4 flex items-center gap-6">
+        <svg class="chart-svg" viewBox="0 0 100 100" style="width:90px;height:90px" role="img" aria-label="Single full slice">
+            <path class="chart-slice" d="M 50.00 5.00 A 45.00 45.00 0 1 1 50.00 95.00 Z M 50.00 95.00 A 45.00 45.00 0 1 1 50.00 5.00 Z" fill="var(--color-action-600)"/>
+        </svg>
+        <span class="text-sm text-gray-600">100% — two arcs, not one.</span>
+    </div>
+
+    <h2 class="mt-8">Accessibility</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            Colour alone should never be the only way to tell slices apart. The legend carries the
+            labels and percentages, so keep it — and give the <code>&lt;svg&gt;</code> a
+            <code>role="img"</code> with a summarising <code>aria-label</code>.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>API / class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>charts.pie(values, labels, cx, cy, radius, inner_radius)</code></td><td>Slice dicts.</td></tr>
+                <tr><td><code>chart-slice</code></td><td>Wedge stroke, so adjacent slices separate cleanly.</td></tr>
+                <tr><td><code>chart-legend</code> / <code>-item</code> / <code>-dot</code></td><td>The legend.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

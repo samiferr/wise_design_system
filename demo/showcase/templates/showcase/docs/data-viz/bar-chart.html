@@ -1,0 +1,81 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Bar Chart{% endblock %}
+{% block doc_section %}Data Viz{% endblock %}
+{% block doc_title %}Bar Chart{% endblock %}
+{% block doc_intro %}
+    Comparing a value across categories. The only chart here that needs no SVG at all — it is divs
+    with a height driven by a <code>--value</code> custom property.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 max-w-md">
+        <div class="bar-chart">
+            {% for label, percent in revenue_pairs %}
+                <div class="bar-chart-bar">
+                    <div class="bar-chart-bar-fill" style="--value: {{ percent }}%"></div>
+                    <div class="bar-chart-bar-label">{{ label }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+from wise_core import charts
+
+context["revenue_pairs"] = list(zip(months, charts.percentages(revenue))){% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="bar-chart">
+    {% for label, percent in revenue_pairs %}
+        <div class="bar-chart-bar">
+            <div class="bar-chart-bar-fill" style="--value: {{ percent }}%"></div>
+            <div class="bar-chart-bar-label">{{ label }}</div>
+        </div>
+    {% endfor %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        <code>charts.percentages()</code> scales each value against the series maximum, so the tallest
+        bar fills the chart. It handles the awkward cases: an all-zero series returns zeros rather
+        than dividing by zero, and a flat series renders as equal full-height bars.
+    </p>
+
+    <h2 class="mt-8">From the template</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_charts %}
+{% chart_percentages revenue as percents %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Recoloring</h2>
+    <p class="text-gray-700">The fill is a plain utility class — swap it, or use the dedicated decorative chart tone.</p>
+    <div class="doc-preview mt-4 max-w-md">
+        <div class="bar-chart">
+            <div class="bar-chart-bar"><div class="bar-chart-bar-fill" style="--value:45%;background:var(--color-warning-400)"></div><div class="bar-chart-bar-label">Q1</div></div>
+            <div class="bar-chart-bar"><div class="bar-chart-bar-fill" style="--value:70%;background:var(--color-warning-400)"></div><div class="bar-chart-bar-label">Q2</div></div>
+            <div class="bar-chart-bar"><div class="bar-chart-bar-fill" style="--value:95%;background:var(--color-warning-400)"></div><div class="bar-chart-bar-label">Q3</div></div>
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reading it accessibly</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            A chart made of coloured boxes conveys nothing to a screen reader. Give the container a
+            summary, or — better — put the same numbers in a table nearby. A visually hidden
+            <code>&lt;table&gt;</code> is often the most honest fallback.
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="bar-chart" role="img"
+     aria-label="Monthly revenue: Mar 42, Apr 58, May 35, Jun 74, Jul 91, Aug 66">
+    …
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class / API</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>bar-chart</code></td><td>Fixed-height flex row.</td></tr>
+                <tr><td><code>bar-chart-bar</code></td><td>One bar + label column.</td></tr>
+                <tr><td><code>bar-chart-bar-fill</code></td><td>The bar; height from <code>--value</code> (a percentage).</td></tr>
+                <tr><td><code>bar-chart-bar-label</code></td><td>Label beneath.</td></tr>
+                <tr><td><code>charts.percentages(values)</code></td><td>Scales a series to 0–100 against its max.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

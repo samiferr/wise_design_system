@@ -1,15 +1,16 @@
-{% extends 'showcase/components/_base.html' %}
+{% extends 'showcase/docs/_base.html' %}
 {% load wise_icons %}
 
-{% block title %}Calendar – Components{% endblock %}
-{% block component_title %}Calendar{% endblock %}
-{% block component_intro %}
+{% block doc_title_tag %}Calendar{% endblock %}
+{% block doc_section %}Patterns{% endblock %}
+{% block doc_title %}Calendar{% endblock %}
+{% block doc_intro %}
     A month-view grid for scheduling/booking pages. Like pagination, it's rendered entirely
     server-side — no JS is needed to display it, and prev/next-month navigation is a plain link with
     a <code>?month=</code> query param.
 {% endblock %}
 
-{% block component_body %}
+{% block doc_body %}
     <h2 class="mt-8">Month view</h2>
     <div class="doc-preview mt-4 p-0">
         <div class="calendar">
@@ -142,7 +143,7 @@ class ScheduleView(TemplateView):
     <p class="text-gray-700">
         The full grid above is for a scheduling/booking view. For a plain "pick a date" field on a
         form, don't build a calendar at all — a native <code>&lt;input type="date"&gt;</code> already
-        gets the standard <a class="text-action-600 underline" href="{% url 'component_inputs' %}">Input</a>
+        gets the standard <a class="text-action-600 underline" href="{% url 'docs_forms_input' %}">Input</a>
         treatment and the browser's own date picker for free.
     </p>
     <div class="doc-preview mt-4 max-w-xs">

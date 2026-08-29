@@ -1,0 +1,97 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Card{% endblock %}
+{% block doc_section %}Layout{% endblock %}
+{% block doc_title %}Card{% endblock %}
+{% block doc_intro %}
+    A bordered content block for grids of links, dashboard tiles, and list items that don't warrant
+    a full datatable.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="card">
+            <div class="card-kicker">Kicker</div>
+            <h3 class="card-title mt-1">Card title</h3>
+            <p class="card-content mt-2">Card body copy sits at 0.85em relative to the surrounding text.</p>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="card">
+    <div class="card-kicker">Kicker</div>
+    <h3 class="card-title mt-1">Card title</h3>
+    <p class="card-content mt-2">Card body copy.</p>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Clickable</h2>
+    <p class="text-gray-700">
+        <code>.card</code> works directly on an <code>&lt;a&gt;</code> — it already strips the
+        underline and adds a hover tint. Making the whole card the link, rather than nesting one
+        inside, keeps the hit target large and the markup honest.
+    </p>
+    <div class="doc-preview mt-4 max-w-sm">
+        <a class="card" href="#">
+            <div class="card-kicker">Linked</div>
+            <h3 class="card-title mt-1">A clickable card</h3>
+            <p class="card-content mt-2">The whole card is the hit target.</p>
+        </a>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="card" href="{% url 'category_detail_view' pk=category.pk %}">
+    <div class="card-kicker">Linked</div>
+    <h3 class="card-title mt-1">{{ category.name }}</h3>
+</a>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">With a meta row</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="card">
+            <div class="card-kicker">Kicker</div>
+            <h3 class="card-title mt-1">Card title</h3>
+            <p class="card-content mt-2">Body copy.</p>
+            <div class="card-meta mt-3">{% lucide "clock" size=13 %} Updated 2 days ago</div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="card-meta mt-3">
+    {% lucide "clock" size=13 %} Updated {{ object.updated_at|timesince }} ago
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Stat tiles</h2>
+    <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-3">
+        <div class="card">
+            <div class="card-kicker">Orders</div>
+            <div class="mt-1 font-heading text-3xl font-semibold text-action-600">1,284</div>
+            <div class="card-meta mt-2">{% lucide "activity" size=13 %} +12% this month</div>
+        </div>
+        <div class="card">
+            <div class="card-kicker">On time</div>
+            <div class="mt-1 font-heading text-3xl font-semibold text-action-600">96%</div>
+        </div>
+        <div class="card">
+            <div class="card-kicker">Open issues</div>
+            <div class="mt-1 font-heading text-3xl font-semibold text-accent-500">18</div>
+        </div>
+    </div>
+
+    <h2 class="mt-8">Grid</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {% for category in categories %}
+        <a class="card" href="{{ category.get_absolute_url }}">
+            <div class="card-kicker">{{ category.products.count }} products</div>
+            <h3 class="card-title mt-1">{{ category.name }}</h3>
+            <p class="card-content mt-2">{{ category.description|truncatechars:80 }}</p>
+        </a>
+    {% endfor %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>card</code></td><td>Container — <code>&lt;div&gt;</code> or <code>&lt;a&gt;</code>.</td></tr>
+                <tr><td><code>card-kicker</code></td><td>Small uppercase eyebrow above the title.</td></tr>
+                <tr><td><code>card-title</code></td><td>Heading — pair with a real <code>&lt;h3&gt;</code>.</td></tr>
+                <tr><td><code>card-content</code> / <code>card-body</code></td><td>Body copy, slightly smaller.</td></tr>
+                <tr><td><code>card-meta</code></td><td>Icon + secondary detail row.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

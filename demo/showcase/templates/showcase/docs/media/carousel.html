@@ -1,0 +1,106 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Carousel{% endblock %}
+{% block doc_section %}Media{% endblock %}
+{% block doc_title %}Carousel{% endblock %}
+{% block doc_intro %}
+    A horizontally scrolling gallery with snap points. Built on CSS scroll-snap, so swiping works
+    natively on touch, the scrollbar works on desktop, and the dots are plain anchors to
+    <code>#id</code>s — no carousel library, no autoplay timer.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4">
+        <div class="carousel">
+            <div class="carousel-track">
+                <div class="carousel-item" id="doc_slide_1">
+                    <div class="flex h-40 items-center justify-center border border-divider" style="background:var(--color-action-100)">
+                        <span class="font-heading text-2xl font-semibold">Slide one</span>
+                    </div>
+                </div>
+                <div class="carousel-item" id="doc_slide_2">
+                    <div class="flex h-40 items-center justify-center border border-divider" style="background:var(--color-warning-50)">
+                        <span class="font-heading text-2xl font-semibold">Slide two</span>
+                    </div>
+                </div>
+                <div class="carousel-item" id="doc_slide_3">
+                    <div class="flex h-40 items-center justify-center border border-divider" style="background:var(--color-panel-alt)">
+                        <span class="font-heading text-2xl font-semibold">Slide three</span>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-nav">
+                <a class="carousel-dot selected" href="#doc_slide_1" aria-label="Slide 1"></a>
+                <a class="carousel-dot" href="#doc_slide_2" aria-label="Slide 2"></a>
+                <a class="carousel-dot" href="#doc_slide_3" aria-label="Slide 3"></a>
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="carousel">
+    <div class="carousel-track">
+        {% for photo in product.photos.all %}
+            <div class="carousel-item" id="photo_{{ photo.pk }}">
+                <img class="image" src="{{ photo.image.url }}" alt="{{ photo.caption }}" loading="lazy">
+            </div>
+        {% endfor %}
+    </div>
+    <div class="carousel-nav">
+        {% for photo in product.photos.all %}
+            <a class="carousel-dot {% if forloop.first %}selected{% endif %}"
+               href="#photo_{{ photo.pk }}" aria-label="Photo {{ forloop.counter }}"></a>
+        {% endfor %}
+    </div>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        Anchor navigation means the dots work with JavaScript disabled, and
+        <code>scroll-behavior: smooth</code> on the track animates the jump.
+    </p>
+
+    <h2 class="mt-8">Multiple items in view</h2>
+    <p class="text-gray-700">Narrow the items and several fit at once — a product shelf rather than a hero slider.</p>
+    <div class="doc-preview mt-4">
+        <div class="carousel-track gap-3">
+            <div class="carousel-item w-40"><div class="card"><div class="card-kicker">SKU 1</div><h3 class="card-title mt-1">Pen</h3></div></div>
+            <div class="carousel-item w-40"><div class="card"><div class="card-kicker">SKU 2</div><h3 class="card-title mt-1">Hub</h3></div></div>
+            <div class="carousel-item w-40"><div class="card"><div class="card-kicker">SKU 3</div><h3 class="card-title mt-1">Desk</h3></div></div>
+            <div class="carousel-item w-40"><div class="card"><div class="card-kicker">SKU 4</div><h3 class="card-title mt-1">Chair</h3></div></div>
+            <div class="carousel-item w-40"><div class="card"><div class="card-kicker">SKU 5</div><h3 class="card-title mt-1">Lamp</h3></div></div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="carousel-track gap-3">
+    {% for product in featured %}
+        <div class="carousel-item w-40">…</div>
+    {% endfor %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Think twice</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Carousels hide content</div>
+            Anything past the first slide is rarely seen. For a handful of items a
+            <a class="text-action-600 underline" href="{% url 'docs_layout_card' %}">card grid</a> shows
+            everything at once and is easier to scan. Reserve the carousel for genuinely sequential
+            media — photos of one product, say.
+        </div>
+    </div>
+    <p class="mt-2 text-gray-700">
+        If you do add autoplay, provide a pause control and stop under
+        <code>prefers-reduced-motion</code>: content moving on its own is a serious accessibility
+        problem for some users.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>carousel</code></td><td>Outer wrapper.</td></tr>
+                <tr><td><code>carousel-track</code></td><td>The scrolling, snapping row.</td></tr>
+                <tr><td><code>carousel-item</code></td><td>One slide; full width by default.</td></tr>
+                <tr><td><code>carousel-nav</code></td><td>Dot row beneath.</td></tr>
+                <tr><td><code>carousel-dot</code> / <code>.selected</code></td><td>One dot; the current one.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

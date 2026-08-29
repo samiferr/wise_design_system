@@ -1,0 +1,80 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Scroller{% endblock %}
+{% block doc_section %}Layout{% endblock %}
+{% block doc_title %}Scroller{% endblock %}
+{% block doc_intro %}
+    A constrained scroll region with snap points. It is the substrate the
+    <a class="text-action-600 underline" href="{% url 'docs_media_carousel' %}">carousel</a> is built
+    on, and useful on its own for a wide toolbar or a row of tiles that must not wrap.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Horizontal</h2>
+    <div class="doc-preview mt-4">
+        <div class="scroller">
+            <div class="card w-48">
+                <div class="card-kicker">Tile 1</div><h3 class="card-title mt-1">Orders</h3>
+            </div>
+            <div class="card w-48">
+                <div class="card-kicker">Tile 2</div><h3 class="card-title mt-1">Revenue</h3>
+            </div>
+            <div class="card w-48">
+                <div class="card-kicker">Tile 3</div><h3 class="card-title mt-1">Returns</h3>
+            </div>
+            <div class="card w-48">
+                <div class="card-kicker">Tile 4</div><h3 class="card-title mt-1">Stock</h3>
+            </div>
+            <div class="card w-48">
+                <div class="card-kicker">Tile 5</div><h3 class="card-title mt-1">Suppliers</h3>
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="scroller">
+    {% for tile in tiles %}
+        <div class="card w-48">…</div>
+    {% endfor %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        Children are automatically <code>shrink-0</code> and get a snap alignment, so items keep
+        their width and scrolling settles on an item boundary rather than mid-card.
+    </p>
+
+    <h2 class="mt-8">Vertical</h2>
+    <div class="doc-preview mt-4">
+        <div class="scroller scroller-vertical max-h-40 border border-divider bg-panel p-2">
+            <div class="p-2 text-sm">Logistics</div>
+            <div class="p-2 text-sm">Facilities</div>
+            <div class="p-2 text-sm">Platform</div>
+            <div class="p-2 text-sm">Frontend</div>
+            <div class="p-2 text-sm">Data</div>
+            <div class="p-2 text-sm">Sales</div>
+            <div class="p-2 text-sm">Support</div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="scroller scroller-vertical max-h-40 border border-divider bg-panel p-2">…</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">A wide table is not a scroller</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            For a datatable that overflows, wrap it in a plain
+            <code>overflow-x-auto</code> container instead. Snap points on table columns fight the
+            user — they expect free scrolling there.
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="overflow-x-auto border border-divider bg-panel">
+    <table class="data-table">…</table>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>scroller</code></td><td>Horizontal snap-scrolling flex row.</td></tr>
+                <tr><td><code>scroller-vertical</code></td><td>Modifier — scrolls and snaps on the y axis.</td></tr>
+                <tr><td><code>scrollbar-thin</code></td><td>Applied already; a narrow scrollbar.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

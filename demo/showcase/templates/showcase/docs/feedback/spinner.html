@@ -1,0 +1,77 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Spinner{% endblock %}
+{% block doc_section %}Feedback{% endblock %}
+{% block doc_title %}Spinner{% endblock %}
+{% block doc_intro %}
+    An indeterminate busy indicator for a short wait of unknown length. If you know how much work
+    remains, a <a class="text-action-600 underline" href="{% url 'docs_feedback_progress_bar' %}">progress bar</a>
+    tells the user far more.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Sizes</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-6">
+        <span class="spinner spinner-sm"></span>
+        <span class="spinner"></span>
+        <span class="spinner spinner-lg"></span>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="spinner spinner-sm"></span>
+<span class="spinner"></span>
+<span class="spinner spinner-lg"></span>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">In a button</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <button class="btn btn-primary" disabled><span class="spinner spinner-sm"></span><span>Saving…</span></button>
+        <button class="btn btn-secondary" disabled><span class="spinner spinner-sm"></span><span>Loading</span></button>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" disabled>
+    <span class="spinner spinner-sm"></span><span>Saving…</span>
+</button>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        Disable the button while it spins — otherwise an impatient double-click submits the form
+        twice.
+    </p>
+
+    <h2 class="mt-8">Filling a region</h2>
+    <div class="doc-preview mt-4">
+        <div class="flex items-center justify-center gap-3 border border-divider bg-panel p-8 text-sm text-gray-600">
+            <span class="spinner"></span> Loading details…
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="flex items-center justify-center gap-3 p-8 text-sm text-gray-600"
+     role="status" aria-live="polite">
+    <span class="spinner"></span> Loading details…
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Announcing it</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            A bare spinning border is invisible to a screen reader. Pair it with text — visible, or
+            <code>.sr-only</code> — inside a <code>role="status"</code> region so the wait is
+            announced.
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="spinner" role="status"><span class="sr-only">Loading…</span></span>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reduced motion</h2>
+    <p class="text-gray-700">
+        Under <code>prefers-reduced-motion</code> the spin slows from 0.7s to 2s rather than stopping
+        — a frozen spinner reads as a hung page, which is worse than a slow one.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}@media (prefers-reduced-motion: reduce) {
+    .spinner { animation-duration: 2s; }
+}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>spinner</code></td><td>20px default.</td></tr>
+                <tr><td><code>spinner-sm</code></td><td>14px — fits inside a button.</td></tr>
+                <tr><td><code>spinner-lg</code></td><td>32px — for a whole region.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

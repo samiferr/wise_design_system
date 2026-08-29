@@ -1,0 +1,192 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Parent / Child CRUD{% endblock %}
+{% block doc_section %}Patterns{% endblock %}
+{% block doc_title %}Parent / Child CRUD{% endblock %}
+{% block doc_intro %}
+    Managing records that only make sense inside a parent — a category's products, an order's lines,
+    a project's tasks. The parent's primary key lives in the URL, which is what keeps the child views
+    scoped, secure and able to redirect back where the user came from.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">The URL shape</h2>
+    <p class="text-gray-700">
+        Nest the child routes under the parent. This single decision does most of the work: the
+        parent is always available, the queryset is always scoped, and "back" is always obvious.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}urlpatterns = [
+    path('categories/<int:pk>/',                    CategoryDetailView.as_view(),  name='category_detail_view'),
+
+    # children, always under their parent
+    path('categories/<int:parent_pk>/products/',                 ProductListView.as_view(),    name='category_product_list'),
+    path('categories/<int:parent_pk>/products/create/',          ProductCreateView.as_view(),  name='category_product_create'),
+    path('categories/<int:parent_pk>/products/<int:pk>/',        ProductDetailView.as_view(),  name='category_product_detail'),
+    path('categories/<int:parent_pk>/products/<int:pk>/update/', ProductUpdateView.as_view(),  name='category_product_update'),
+    path('categories/<int:parent_pk>/products/<int:pk>/delete/', ProductDeleteView.as_view(),  name='category_product_delete'),
+]{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">One mixin does the scoping</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ChildOfCategoryMixin:
+    """Resolves the parent once and scopes every child query to it."""
+
+    @cached_property
+    def parent(self):
+        return get_object_or_404(Category, pk=self.kwargs['parent_pk'])
+
+    def get_queryset(self):
+        # Scoping here means /categories/1/products/99/ 404s when product 99
+        # belongs to another category - rather than quietly editing it.
+        return super().get_queryset().filter(category=self.parent)
+
+    def get_context_data(self, **kwargs):
+        return {**super().get_context_data(**kwargs), 'parent': self.parent}
+
+    def get_success_url(self):
+        return reverse('category_product_list', args=[self.parent.pk]){% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Scope the queryset, not just the template</div>
+            Filtering by the parent in <code>get_queryset()</code> is what makes the child views
+            secure. Looking the child up by <code>pk</code> alone and only <em>displaying</em> the
+            parent lets anyone edit any record by guessing an id.
+        </div>
+    </div>
+
+    <h2 class="mt-8">The five views</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ProductListView(ChildOfCategoryMixin, WiseListView):
+    model = Product
+    template_name = 'showcase/product/list.html'
+    paginate_by = 10
+
+class ProductDetailView(ChildOfCategoryMixin, WiseDetailView):
+    model = Product
+    template_name = 'showcase/product/detail.html'
+
+class ProductCreateView(ChildOfCategoryMixin, WiseCreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'showcase/product/form.html'
+    success_message = 'Product "%(name)s" created.'
+
+    def form_valid(self, form):
+        form.instance.category = self.parent   # the parent is never user input
+        return super().form_valid(form)
+
+class ProductUpdateView(ChildOfCategoryMixin, WiseUpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'showcase/product/form.html'
+    success_message = 'Product "%(name)s" updated.'
+
+class ProductDeleteView(ChildOfCategoryMixin, WiseDeleteView):
+    model = Product
+    template_name = 'showcase/product/confirm_delete.html'
+    success_message = 'Product deleted.'{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        Setting <code>form.instance.category</code> in <code>form_valid</code> — rather than exposing
+        a category field on the form — means the parent cannot be reassigned by posting a different
+        value.
+    </p>
+
+    <h2 class="mt-8">Parent detail with a child list</h2>
+    <div class="doc-preview mt-4 p-0">
+        <div class="p-4">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a class="breadcrumb-item" href="#">Categories</a>
+                <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+                <span class="breadcrumb-item" aria-current="page">Electronics</span>
+            </nav>
+            <h2 class="mt-2">Electronics</h2>
+            <div class="tab-bar mt-3 border-b border-divider">
+                <a class="bar-item" href="#">Overview</a>
+                <a class="bar-item selected" href="#">Products <span class="badge badge-grey">3</span></a>
+            </div>
+            <div class="mt-4 flex justify-end">
+                <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>New product</span></a>
+            </div>
+            <div class="mt-3 overflow-x-auto border border-divider bg-panel">
+                <table class="data-table">
+                    <thead><tr><th>Name</th><th>Rating</th><th class="w-px"></th></tr></thead>
+                    <tbody>
+                        <tr><td><a class="font-semibold text-action-700 no-underline" href="#">USB-C hub</a></td><td><span class="rating">{% lucide "star" size=14 cls="rating-star is-on" %}{% lucide "star" size=14 cls="rating-star is-on" %}{% lucide "star" size=14 cls="rating-star is-on" %}{% lucide "star" size=14 cls="rating-star is-on" %}{% lucide "star" size=14 cls="rating-star is-on" %}</span></td><td class="whitespace-nowrap"><a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a><a class="btn-ghost" href="#">{% lucide "trash-2" size=14 %}</a></td></tr>
+                        <tr><td><a class="font-semibold text-action-700 no-underline" href="#">Cable tidy</a></td><td><span class="rating">{% lucide "star" size=14 cls="rating-star is-on" %}{% lucide "star" size=14 cls="rating-star is-on" %}{% lucide "star" size=14 cls="rating-star is-on" %}{% lucide "star" size=14 cls="rating-star" %}{% lucide "star" size=14 cls="rating-star" %}</span></td><td class="whitespace-nowrap"><a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a><a class="btn-ghost" href="#">{% lucide "trash-2" size=14 %}</a></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/list_generic.html' %}
+
+{% block list_title %}{{ parent.name }}{% endblock %}
+
+{% block list_actions %}
+    <a class="btn btn-primary" href="{% url 'category_product_create' parent_pk=parent.pk %}">
+        {% lucide "plus" size=16 %}<span>New product</span>
+    </a>
+{% endblock %}
+
+{% block list_body %}
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a class="breadcrumb-item" href="{% url 'category_list_view' %}">Categories</a>
+        <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+        <span class="breadcrumb-item" aria-current="page">{{ parent.name }}</span>
+    </nav>
+    …
+{% endblock %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Deleting the parent</h2>
+    <p class="text-gray-700">
+        Say what will be destroyed. <code>on_delete=CASCADE</code> quietly removing dozens of children
+        is the kind of surprise that costs trust.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/confirm_generic.html' %}
+
+{% block confirm_rows %}
+    <tr><th>Name</th><td>{{ object.name }}</td></tr>
+    <tr><th>Products</th><td>{{ object.products.count }}</td></tr>
+{% endblock %}{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="doc-preview mt-4 max-w-md">
+        <div class="callout callout-danger">
+            {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+            <div><div class="callout-title">This also deletes 12 products</div>They cannot be recovered.</div>
+        </div>
+    </div>
+
+    <h2 class="mt-8">Editing children inline</h2>
+    <p class="text-gray-700">
+        When children are small and always edited together — order lines, say — a Django
+        <code>inlineformset_factory</code> avoids a page per row. Render each form as a
+        <code>.form-stack-compact</code> inside a table row.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}ProductFormSet = inlineformset_factory(
+    Category, Product, form=ProductForm, extra=1, can_delete=True,
+)
+
+class CategoryUpdateView(WiseUpdateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['formset'] = ProductFormSet(self.request.POST or None, instance=self.object)
+        return context
+
+    def form_valid(self, form):
+        formset = ProductFormSet(self.request.POST, instance=form.instance)
+        if not formset.is_valid():
+            return self.form_invalid(form)
+        response = super().form_valid(form)
+        formset.save()
+        return response{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Concern</th><th>Where it belongs</th></tr></thead>
+            <tbody>
+                <tr><td>Scoping children to the parent</td><td><code>get_queryset()</code> on the mixin.</td></tr>
+                <tr><td>Assigning the parent on create</td><td><code>form_valid()</code>, never a form field.</td></tr>
+                <tr><td>Where to go after saving</td><td><code>get_success_url()</code> → the parent's list.</td></tr>
+                <tr><td>Showing the hierarchy</td><td><a class="text-action-600 underline" href="{% url 'docs_navigation_breadcrumb' %}">Breadcrumb</a> + <a class="text-action-600 underline" href="{% url 'docs_navigation_tab_group' %}">tabs</a>.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

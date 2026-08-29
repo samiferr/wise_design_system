@@ -17,12 +17,19 @@
  * consuming projects never see this, only this demo/docs site does. */
 @layer components {
     .doc-preview {
-        @apply border border-divider bg-white p-6;
+        @apply border border-divider bg-panel p-6;
     }
 
+    /* Literal colors, not gray-900/gray-100: the neutral ramp inverts under
+     * data-theme="dark", which would flip the code block to light-on-dark in
+     * light mode and dark-on-light in dark mode. A code block reads as a
+     * terminal in both themes, so it opts out of theming deliberately. */
     .doc-code {
-        @apply m-0 overflow-x-auto border border-t-0 border-divider bg-gray-900 p-4 text-[12.5px]
-        leading-relaxed text-gray-100;
+        @apply m-0 overflow-x-auto border border-t-0 border-divider p-4 text-[12.5px]
+        leading-relaxed;
+        background: #18181a;
+        color: #e7e7ea;
+        border-color: #18181a;
     }
 
     .doc-code code {

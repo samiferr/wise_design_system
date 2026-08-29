@@ -1,0 +1,113 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Drawer{% endblock %}
+{% block doc_section %}Layout{% endblock %}
+{% block doc_title %}Drawer{% endblock %}
+{% block doc_intro %}
+    An edge-anchored panel that slides over the page. Use it for work done <em>alongside</em> the
+    page — filters, a record preview, a long form — where a
+    <a class="text-action-600 underline" href="{% url 'docs_layout_dialog' %}">dialog</a> would feel
+    like an interruption.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Try it</h2>
+    <div class="doc-preview mt-4 flex flex-wrap gap-3">
+        <button class="btn btn-secondary" onclick="wiseOpenDrawer('demo_drawer')">{% lucide "filter" size=15 %}<span>Open drawer</span></button>
+    </div>
+
+    <div class="drawer-backdrop hidden" id="demo_drawer_backdrop" onclick="wiseCloseDrawer('demo_drawer')"></div>
+    <div class="drawer hidden" id="demo_drawer" role="dialog" aria-label="Details">
+        <div class="drawer-header">
+            <h3 class="dialog-title">Details</h3>
+            <button class="btn btn-icon btn-ghost" onclick="wiseCloseDrawer('demo_drawer')" aria-label="Close">{% lucide "x" size=18 %}</button>
+        </div>
+        <div class="drawer-body">
+            <table class="detail-panel">
+                <tbody>
+                    <tr><th>Name</th><td>Electronics</td></tr>
+                    <tr><th>Products</th><td>12</td></tr>
+                    <tr><th>Updated</th><td>2 days ago</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="drawer-footer">
+            <button class="btn btn-secondary" onclick="wiseCloseDrawer('demo_drawer')">Close</button>
+            <a class="btn btn-primary" href="#">Edit</a>
+        </div>
+    </div>
+
+    <h2 class="mt-8">Markup</h2>
+    <p class="text-gray-700">
+        The backdrop is a sibling, and its id is the drawer's id plus <code>_backdrop</code> — that
+        convention is how <code>wiseOpenDrawer</code>/<code>wiseCloseDrawer</code> find it, so the
+        pair opens and closes together.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-secondary" onclick="wiseOpenDrawer('details_drawer')">Details</button>
+
+<div class="drawer-backdrop hidden" id="details_drawer_backdrop"
+     onclick="wiseCloseDrawer('details_drawer')"></div>
+
+<div class="drawer hidden" id="details_drawer" role="dialog" aria-label="Details">
+    <div class="drawer-header">
+        <h3 class="dialog-title">Details</h3>
+        <button class="btn btn-icon btn-ghost" onclick="wiseCloseDrawer('details_drawer')" aria-label="Close">
+            {% lucide "x" size=18 %}
+        </button>
+    </div>
+    <div class="drawer-body">…</div>
+    <div class="drawer-footer">
+        <button class="btn btn-secondary" onclick="wiseCloseDrawer('details_drawer')">Close</button>
+    </div>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Left-anchored</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="drawer drawer-left hidden" id="nav_drawer">…</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">The filter panel is a drawer</h2>
+    <p class="text-gray-700">
+        <code>.filter-panel</code> is this same mechanic with a fixed job, already wired into
+        <code>base.html</code> and every <code>WiseListView</code>. If you want a filter drawer, use
+        that rather than building one — see
+        <a class="text-action-600 underline" href="{% url 'docs_patterns_simple_data_page' %}">Simple Data Page</a>.
+    </p>
+
+    <h2 class="mt-8">Loading content on demand</h2>
+    <p class="text-gray-700">
+        For a preview drawer, fetch a server-rendered fragment rather than duplicating the record's
+        markup into every row of the table.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}async function openPreview(url) {
+    const body = document.querySelector('#details_drawer .drawer-body')
+    body.innerHTML = '<div class="flex justify-center p-6"><span class="spinner"></span></div>'
+    wiseOpenDrawer('details_drawer')
+    const response = await fetch(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+    body.innerHTML = await response.text()
+}{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class CategoryPreviewView(WiseDetailView):
+    model = Category
+    template_name = 'showcase/category/_preview.html'   # fragment, no base.html{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Accessibility</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            Unlike <code>&lt;dialog&gt;</code>, a drawer gets no focus trapping for free. Give it
+            <code>role="dialog"</code> and an <code>aria-label</code>, move focus into it on open, and
+            return focus to the trigger on close — or use a dialog if the interaction really is modal.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class / API</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>drawer</code></td><td>Right-anchored panel at <code>--z-drawer</code>.</td></tr>
+                <tr><td><code>drawer-left</code></td><td>Anchors it to the left edge.</td></tr>
+                <tr><td><code>drawer-header</code> / <code>-body</code> / <code>-footer</code></td><td>The regions; body scrolls.</td></tr>
+                <tr><td><code>drawer-backdrop</code></td><td>Dimmed overlay; id must be <code>&lt;drawer-id&gt;_backdrop</code>.</td></tr>
+                <tr><td><code>wiseOpenDrawer(id)</code> / <code>wiseCloseDrawer(id)</code></td><td>Toggle the pair.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

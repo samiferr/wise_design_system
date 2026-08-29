@@ -1,17 +1,18 @@
-{% extends 'showcase/components/_base.html' %}
+{% extends 'showcase/docs/_base.html' %}
 {% load wise_icons %}
 
-{% block title %}Topbar – Components{% endblock %}
-{% block component_title %}Topbar{% endblock %}
-{% block component_intro %}
+{% block doc_title_tag %}Topbar{% endblock %}
+{% block doc_section %}Navigation{% endblock %}
+{% block doc_title %}Topbar{% endblock %}
+{% block doc_intro %}
     A mobile-only strip (<code>wise_core/components/topbar.html</code>, included once from
     <code>base.html</code>) — desktop chrome lives entirely in the
-    <a class="text-action-600 underline" href="{% url 'component_sidebar' %}">sidebar</a> instead, so
+    <a class="text-action-600 underline" href="{% url 'docs_navigation_sidebar' %}">sidebar</a> instead, so
     this only renders below the <code>md</code> breakpoint. It holds the hamburger toggle, the brand,
     and the signed-in user's name.
 {% endblock %}
 
-{% block component_body %}
+{% block doc_body %}
     <h2 class="mt-8">Signed in</h2>
     <div class="doc-preview mt-4 p-0">
         <div class="top-bar">
