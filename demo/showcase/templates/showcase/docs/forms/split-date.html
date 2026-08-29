@@ -1,0 +1,74 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Split Date{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Split Date{% endblock %}
+{% block doc_intro %}
+    Three separate day / month / year selects instead of one date field. Django ships this as
+    <code>SelectDateWidget</code> — there is nothing to add.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Rendered by Django</h2>
+    <div class="doc-preview mt-4">
+        <div class="form-field">
+            <label class="form-label">{{ sink_form.birthday.label }}</label>
+            <div class="flex flex-wrap gap-2">{{ sink_form.birthday }}</div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}birthday = forms.DateField(
+    widget=forms.SelectDateWidget(years=range(1950, 2031)),
+){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">When to prefer it</h2>
+    <p class="text-gray-700">
+        For a date far from today — a birth date, an expiry year — a native picker makes the user
+        page back through decades of calendar. Three selects jump straight to the year. For a date
+        near today, the native picker wins; use
+        <a class="text-action-600 underline" href="{% url 'docs_forms_date_input' %}">Date Input</a> there.
+    </p>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Case</th><th>Better choice</th></tr></thead>
+            <tbody>
+                <tr><td>Date of birth</td><td>Split date — the year is the hard part.</td></tr>
+                <tr><td>Card expiry</td><td>Split date (month + year only).</td></tr>
+                <tr><td>Delivery date, appointment</td><td>Native <code>type="date"</code>.</td></tr>
+                <tr><td>Filtering a report</td><td>Native <code>type="date"</code>, two of them.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Layout</h2>
+    <p class="text-gray-700">
+        The widget emits three bare <code>&lt;select&gt;</code> elements; wrap them in a flex row so
+        they sit side by side rather than stacking to full width.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="form-field">
+    <label class="form-label">{{ form.birthday.label }}</label>
+    <div class="flex flex-wrap gap-2">{{ form.birthday }}</div>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Month and year only</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class CardForm(forms.Form):
+    expires = forms.DateField(
+        widget=forms.SelectDateWidget(
+            years=range(2026, 2037),
+            empty_label=("Year", "Month", "Day"),
+        ),
+    )
+
+# For a true month/year field, hide the day select in CSS and default it to 1
+# in clean() - a card expiry has no meaningful day.{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Argument</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>years</code></td><td>Iterable of selectable years — always set it; the default is a narrow window around today.</td></tr>
+                <tr><td><code>months</code></td><td>Dict of month number to label, for custom naming.</td></tr>
+                <tr><td><code>empty_label</code></td><td>String, or a 3-tuple of (year, month, day) placeholders.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

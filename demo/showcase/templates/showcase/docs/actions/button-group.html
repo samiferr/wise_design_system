@@ -1,0 +1,74 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Button Group{% endblock %}
+{% block doc_section %}Actions{% endblock %}
+{% block doc_title %}Button Group{% endblock %}
+{% block doc_intro %}
+    Joins related buttons into one control, collapsing the shared borders between them. Use it for a
+    segmented choice or a cluster of actions on the same object — not as a general toolbar.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-4">
+        <div class="btn-group">
+            <button class="btn btn-secondary">Day</button>
+            <button class="btn btn-secondary">Week</button>
+            <button class="btn btn-secondary">Month</button>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="btn-group">
+    <button class="btn btn-secondary">Day</button>
+    <button class="btn btn-secondary">Week</button>
+    <button class="btn btn-secondary">Month</button>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Selected segment</h2>
+    <p class="text-gray-700">
+        Add <code>.selected</code> to the active button. Like tabs, the server decides which one that
+        is — there is no client-side state.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-4">
+        <div class="btn-group">
+            <a class="btn btn-secondary" href="#">Day</a>
+            <a class="btn btn-secondary selected" href="#">Week</a>
+            <a class="btn btn-secondary" href="#">Month</a>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="btn-group">
+    {% for option in ranges %}
+        <a class="btn btn-secondary {% if option.slug == current %}selected{% endif %}"
+           href="?range={{ option.slug }}">{{ option.label }}</a>
+    {% endfor %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Icon group</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-4">
+        <div class="btn-group">
+            <button class="btn btn-icon btn-secondary selected" aria-label="List view">{% lucide "menu" size=15 %}</button>
+            <button class="btn btn-icon btn-secondary" aria-label="Grid view">{% lucide "layout-dashboard" size=15 %}</button>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="btn-group">
+    <button class="btn btn-icon btn-secondary selected" aria-label="List view">{% lucide "menu" size=15 %}</button>
+    <button class="btn btn-icon btn-secondary" aria-label="Grid view">{% lucide "layout-dashboard" size=15 %}</button>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>btn-group</code></td><td>Wrapper; pulls adjacent buttons together so borders don't double up.</td></tr>
+                <tr><td><code>btn.selected</code></td><td>The active segment. Set it server-side.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="callout callout-info mt-6">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            Buttons in a group keep their own variant classes, so a group can mix
+            <code>.btn-secondary</code> with a single <code>.btn-primary</code> for the default
+            action.
+        </div>
+    </div>
+{% endblock %}

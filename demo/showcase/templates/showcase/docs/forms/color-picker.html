@@ -1,0 +1,85 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Color Picker{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Color Picker{% endblock %}
+{% block doc_intro %}
+    <code>&lt;input type="color"&gt;</code> — the operating system supplies the picker, including
+    eyedroppers and recent-color memory that no custom widget will match.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <input class="color-input" type="color" value="#16a34a">
+        <input class="color-input" type="color" value="#2563eb">
+        <input class="color-input" type="color" value="#a65959">
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="color-input" type="color" value="#16a34a">{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Rendered by Django</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-stack">
+            <div class="form-field">
+                <label class="form-label" for="{{ sink_form.brand_color.id_for_label }}">{{ sink_form.brand_color.label }}</label>
+                {{ sink_form.brand_color }}
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.widgets import ColorInput
+
+brand_color = forms.CharField(initial="#16a34a", widget=ColorInput)
+
+# On a ModelForm - this is what the demo's Category form uses:
+class Meta:
+    model = Category
+    fields = ["name", "color"]
+    widgets = {"color": ColorInput()}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">With a text field</h2>
+    <p class="text-gray-700">
+        The native control cannot be typed into. Pair it with a text input when users need to paste
+        a brand hex.
+    </p>
+    <div class="doc-preview mt-4 max-w-xs">
+        <div class="input-group">
+            <span class="input-group-addon" style="padding:0"><input class="color-input" type="color" value="#16a34a" style="border:0;height:100%;width:2.5rem" aria-label="Pick color"></span>
+            <input class="input" type="text" value="#16a34a" pattern="#[0-9A-Fa-f]{6}" aria-label="Hex color">
+        </div>
+    </div>
+
+    <h2 class="mt-8">Storing it</h2>
+    <p class="text-gray-700">
+        A <code>CharField(max_length=7)</code> holds <code>#rrggbb</code>. Validate it — the input
+        always posts a well-formed value, but a crafted request will not.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from django.core.validators import RegexValidator
+
+color = models.CharField(
+    max_length=7,
+    default="#16a34a",
+    validators=[RegexValidator(r"^#[0-9A-Fa-f]{6}$", "Enter a hex color like #16a34a.")],
+){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Rendering the stored color</h2>
+    <p class="text-gray-700">
+        A user-chosen color is data, so it belongs in an inline style — it cannot be a Tailwind class,
+        which must exist at build time. This is the pattern the Categories datatable uses.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="inline-block h-4 w-4 border border-divider align-middle"
+      style="background:{{ category.color }}"></span>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="doc-preview mt-4 flex items-center gap-2">
+        <span class="inline-block h-4 w-4 border border-divider align-middle" style="background:#16a34a"></span>
+        <span class="text-sm">Electronics</span>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class / widget</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>color-input</code></td><td>Styles the native swatch control.</td></tr>
+                <tr><td><code>wise_core.widgets.ColorInput</code></td><td>Django widget emitting <code>type="color"</code>.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

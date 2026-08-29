@@ -1,0 +1,87 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Date Input{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Date Input{% endblock %}
+{% block doc_intro %}
+    <code>&lt;input type="date"&gt;</code>. The browser renders its own calendar, formats the value
+    for the user's locale, and always posts ISO <code>YYYY-MM-DD</code> — so what the user sees and
+    what Django parses are cleanly separated.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 flex flex-wrap gap-3">
+        <input class="input max-w-[12rem]" type="date" value="2026-08-27">
+        <input class="input max-w-[12rem]" type="month" value="2026-08">
+        <input class="input max-w-[12rem]" type="week" value="2026-W35">
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="date" value="2026-08-27">
+<input class="input" type="month" value="2026-08">{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Rendered by Django</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-stack">
+            <div class="form-field">
+                <label class="form-label" for="{{ sink_form.starts_on.id_for_label }}">{{ sink_form.starts_on.label }}</label>
+                {{ sink_form.starts_on }}
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}starts_on = forms.DateField(widget=forms.DateInput(attrs={"type": "date"})){% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Django's DateInput does not emit type="date" by default</div>
+            It renders <code>type="text"</code>, so you get no calendar. Passing
+            <code>attrs={"type": "date"}</code> is required — and on an <em>update</em> form you also
+            need <code>format="%Y-%m-%d"</code>, or the existing value renders in a locale format the
+            input cannot parse and the field appears empty.
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ["name", "available_from"]
+        widgets = {
+            "available_from": forms.DateInput(
+                attrs={"type": "date"},
+                format="%Y-%m-%d",       # required for edit forms to prefill
+            ),
+        }{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Ranges</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-end gap-3">
+        <div><label class="form-label mb-1 block text-xs">From</label><input class="input max-w-[11rem]" type="date" value="2026-08-01"></div>
+        <div><label class="form-label mb-1 block text-xs">To</label><input class="input max-w-[11rem]" type="date" value="2026-08-31"></div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# django-filter gives you both ends of a range from one declaration
+class ProductFilter(django_filters.FilterSet):
+    available_from = django_filters.DateFromToRangeFilter(
+        widget=django_filters.widgets.RangeWidget(attrs={"type": "date"}),
+    ){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Datetime and time</h2>
+    <div class="doc-preview mt-4 flex flex-wrap gap-3">
+        <input class="input max-w-[14rem]" type="datetime-local" value="2026-08-27T09:30">
+        <input class="input max-w-[8rem]" type="time" value="09:30">
+    </div>
+    <p class="mt-2 text-gray-700">
+        With <code>USE_TZ = True</code>, a <code>datetime-local</code> value has no timezone. Django
+        interprets it in <code>TIME_ZONE</code> and stores UTC — so always render stored values
+        through <code>localtime</code> rather than assuming they round-trip.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Type</th><th>Posts</th></tr></thead>
+            <tbody>
+                <tr><td><code>date</code></td><td><code>2026-08-27</code></td></tr>
+                <tr><td><code>month</code></td><td><code>2026-08</code></td></tr>
+                <tr><td><code>week</code></td><td><code>2026-W35</code></td></tr>
+                <tr><td><code>time</code></td><td><code>09:30</code></td></tr>
+                <tr><td><code>datetime-local</code></td><td><code>2026-08-27T09:30</code> (no timezone)</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

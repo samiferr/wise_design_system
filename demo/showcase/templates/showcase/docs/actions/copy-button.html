@@ -1,0 +1,86 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Copy Button{% endblock %}
+{% block doc_section %}Actions{% endblock %}
+{% block doc_title %}Copy Button{% endblock %}
+{% block doc_intro %}
+    Copies a value to the clipboard and swaps its icon to a check mark to confirm, then reverts.
+    The feedback matters more than the copy itself — without it, users click repeatedly because
+    nothing appeared to happen.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Try it</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <code class="doc-code-inline">WISE-2026-0042</code>
+        <button class="btn btn-icon btn-secondary copy-button" data-copy="WISE-2026-0042" aria-label="Copy reference">
+            <span class="copy-button-idle">{% lucide "link" size=15 %}</span>
+            <span class="copy-button-done">{% lucide "check" size=15 %}</span>
+        </button>
+        <button class="btn btn-secondary copy-button" data-copy="pip install wise-design-system">
+            <span class="copy-button-idle">{% lucide "link" size=15 %}<span>Copy command</span></span>
+            <span class="copy-button-done">{% lucide "check" size=15 %}<span>Copied</span></span>
+        </button>
+    </div>
+
+    <h2 class="mt-8">Markup</h2>
+    <p class="text-gray-700">
+        Both states ship in the markup and CSS shows one at a time — the same approach the theme
+        toggle uses. The script only toggles a class, so there is no innerHTML rewriting and the
+        button's width does not jump.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-icon btn-secondary copy-button"
+        data-copy="{{ object.reference }}" aria-label="Copy reference">
+    <span class="copy-button-idle">{% lucide "link" size=15 %}</span>
+    <span class="copy-button-done">{% lucide "check" size=15 %}</span>
+</button>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Copying another element's text</h2>
+    <p class="text-gray-700">
+        Point <code>data-copy-target</code> at a selector instead of inlining the value — useful for
+        a code block whose content is long or generated.
+    </p>
+    <div class="doc-preview mt-4 flex items-center gap-3">
+        <code class="doc-code-inline" id="copy-sample">python manage.py migrate</code>
+        <button class="btn btn-icon btn-secondary copy-button" data-copy-target="#copy-sample" aria-label="Copy">
+            <span class="copy-button-idle">{% lucide "link" size=15 %}</span>
+            <span class="copy-button-done">{% lucide "check" size=15 %}</span>
+        </button>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<code id="install-cmd">python manage.py migrate</code>
+<button class="btn btn-icon btn-secondary copy-button" data-copy-target="#install-cmd" aria-label="Copy">
+    <span class="copy-button-idle">{% lucide "link" size=15 %}</span>
+    <span class="copy-button-done">{% lucide "check" size=15 %}</span>
+</button>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">How it works</h2>
+    <p class="text-gray-700">
+        <code>common.js</code> binds one delegated listener, so buttons added to the page later
+        (in a drawer, a dialog, an HTMX swap) work without re-binding.
+        <code>navigator.clipboard</code> needs a secure context; over plain HTTP the handler falls
+        back to selecting the text so the user can copy manually.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}document.addEventListener('click', function (e) {
+    var button = e.target.closest('.copy-button')
+    if (!button) return
+    var text = button.dataset.copy
+    if (!text && button.dataset.copyTarget) {
+        var el = document.querySelector(button.dataset.copyTarget)
+        text = el ? (el.innerText || el.textContent) : ''
+    }
+    wiseCopy(button, text)
+}){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Attribute / class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>copy-button</code></td><td>Marks the button; combine with any <code>.btn</code> variant.</td></tr>
+                <tr><td><code>data-copy</code></td><td>The literal text to copy.</td></tr>
+                <tr><td><code>data-copy-target</code></td><td>A CSS selector whose text is copied instead.</td></tr>
+                <tr><td><code>copy-button-idle</code></td><td>Shown normally.</td></tr>
+                <tr><td><code>copy-button-done</code></td><td>Shown for ~1.5s after a successful copy.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

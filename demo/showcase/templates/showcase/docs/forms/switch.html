@@ -1,0 +1,83 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Switch{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Switch{% endblock %}
+{% block doc_intro %}
+    A checkbox restyled as a toggle — so it posts, validates and reads to assistive technology
+    exactly like a checkbox, with no ARIA needed. Use it for a setting that reads as "on/off";
+    use a <a class="text-action-600 underline" href="{% url 'docs_forms_checkbox' %}">checkbox</a> for
+    something being selected or agreed to.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 flex flex-col gap-3">
+        <label class="form-checkbox-label"><input class="switch" type="checkbox" checked><span>Email notifications</span></label>
+        <label class="form-checkbox-label"><input class="switch" type="checkbox"><span>Weekly digest</span></label>
+        <label class="form-checkbox-label"><input class="switch" type="checkbox" disabled><span>Managed by your admin</span></label>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
+    <input class="switch" type="checkbox" checked>
+    <span>Email notifications</span>
+</label>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Rendered by Django</h2>
+    <p class="text-gray-700"><code>SwitchInput</code> is a <code>CheckboxInput</code> subclass that adds the class:</p>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-field form-field-checkbox">
+            <label class="form-checkbox-label" for="{{ sink_form.notifications.id_for_label }}">
+                {{ sink_form.notifications }}<span>{{ sink_form.notifications.label }}</span>
+            </label>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.widgets import SwitchInput
+
+notifications = forms.BooleanField(
+    required=False, initial=True, label="Email notifications", widget=SwitchInput,
+){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Settings row</h2>
+    <div class="doc-preview mt-4 max-w-md">
+        <div class="border border-divider bg-panel">
+            <div class="flex items-center justify-between gap-4 border-b border-divider px-4 py-3">
+                <div><div class="text-sm font-semibold">Email notifications</div><div class="text-xs text-gray-600">Order updates and receipts.</div></div>
+                <input class="switch" type="checkbox" checked aria-label="Email notifications">
+            </div>
+            <div class="flex items-center justify-between gap-4 px-4 py-3">
+                <div><div class="text-sm font-semibold">Weekly digest</div><div class="text-xs text-gray-600">A summary every Monday.</div></div>
+                <input class="switch" type="checkbox" aria-label="Weekly digest">
+            </div>
+        </div>
+    </div>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            When the switch is not wrapped in a visible <code>&lt;label&gt;</code> — as in the row
+            layout above — give it an <code>aria-label</code>, or it is announced as an unnamed
+            checkbox.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Applying immediately</h2>
+    <p class="text-gray-700">
+        A switch usually implies the change takes effect at once. Post it rather than waiting for a
+        Save button — and keep it a real form post so it works without JS.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<form method="post" action="{% url 'toggle_setting' key='digest' %}">
+    {% csrf_token %}
+    <input class="switch" type="checkbox" name="enabled" onchange="this.form.submit()"
+           {% if settings.digest %}checked{% endif %} aria-label="Weekly digest">
+    <noscript><button class="btn btn-secondary" type="submit">Save</button></noscript>
+</form>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class / widget</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>switch</code></td><td>On an <code>&lt;input type="checkbox"&gt;</code>.</td></tr>
+                <tr><td><code>wise_core.widgets.SwitchInput</code></td><td>Django widget that applies the class.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Built-in Themes{% endblock %}
+{% block doc_section %}Theming &amp; Utilities{% endblock %}
+{% block doc_title %}Built-in Themes{% endblock %}
+{% block doc_intro %}
+    Light and dark, shipped. Dark mode is not a tint pass over the light theme — the neutral ramp
+    inverts, surfaces get their own values, and filled controls swap their foreground so labels stay
+    legible.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Switch</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <button class="btn btn-primary" onclick="wiseSetTheme('light')">{% lucide "zap" size=16 %}<span>Light</span></button>
+        <button class="btn btn-primary" onclick="wiseSetTheme('dark')">{% lucide "star" size=16 %}<span>Dark</span></button>
+        <button class="btn btn-secondary" onclick="wiseToggleTheme()">Toggle</button>
+    </div>
+
+    <h2 class="mt-8">What actually changes</h2>
+    <p class="text-gray-700">
+        The trick that makes dark mode cheap is <strong>inverting the neutral ramp</strong>:
+        <code>gray-50</code> becomes the darkest tone and <code>gray-950</code> the lightest. Every
+        existing <code>text-gray-600</code> or <code>bg-gray-100</code> in the component layer
+        <em>and in your own templates</em> then lands the right way up with no markup changes.
+    </p>
+    <div class="doc-preview mt-4">
+        <div class="grid grid-cols-6 gap-1 text-[10px] sm:grid-cols-11">
+            <div class="swatch" style="background:var(--color-gray-50)">50</div>
+            <div class="swatch" style="background:var(--color-gray-100)">100</div>
+            <div class="swatch" style="background:var(--color-gray-200)">200</div>
+            <div class="swatch" style="background:var(--color-gray-300)">300</div>
+            <div class="swatch" style="background:var(--color-gray-400)">400</div>
+            <div class="swatch" style="background:var(--color-gray-500)">500</div>
+            <div class="swatch" style="background:var(--color-gray-600)">600</div>
+            <div class="swatch" style="background:var(--color-gray-700)">700</div>
+            <div class="swatch" style="background:var(--color-gray-800)">800</div>
+            <div class="swatch" style="background:var(--color-gray-900)">900</div>
+            <div class="swatch" style="background:var(--color-gray-950)">950</div>
+        </div>
+        <p class="mt-2 text-xs text-gray-600">Toggle the theme above — this ramp reverses in place.</p>
+    </div>
+
+    <h2 class="mt-8">The on-colors</h2>
+    <p class="text-gray-700">
+        A primary button in light mode is white text on dark green. Dark mode lightens the fill for
+        contrast against a near-black page — at which point white text would fail. So components
+        paint their label with <code>--color-on-action</code> rather than a hardcoded
+        <code>text-white</code>, and the theme flips it to a near-black.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-brand">Brand</button>
+        <button class="btn btn-danger">Danger</button>
+        <span class="badge badge-action">Badge</span>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}.btn-primary {
+    @apply bg-action-600 border-action-600 hover:bg-action-700;
+    color: var(--color-on-action);   /* not text-white */
+}{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Writing your own filled component?</div>
+            Use <code>var(--color-on-action)</code> for its label. Hardcoding
+            <code>text-white</code> works in light mode and becomes unreadable in dark.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Surfaces</h2>
+    <p class="text-gray-700">
+        Raised surfaces use <code>--color-panel</code>, not <code>white</code>. Keeping those
+        separate is what lets the surface darken while <code>white</code> stays available as a real
+        white for the few things that need one.
+    </p>
+    <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-3">
+        <div class="border border-divider p-4 text-xs" style="background:var(--color-page)">--color-page</div>
+        <div class="border border-divider p-4 text-xs" style="background:var(--color-panel)">--color-panel</div>
+        <div class="border border-divider p-4 text-xs" style="background:var(--color-panel-alt)">--color-panel-alt</div>
+    </div>
+
+    <h2 class="mt-8">Components in both themes</h2>
+    <div class="doc-preview mt-4 flex flex-col gap-4">
+        <div class="card">
+            <div class="card-kicker">Card</div>
+            <h3 class="card-title mt-1">Surfaces follow the theme</h3>
+            <p class="card-content mt-2">Borders, body copy and kickers all read their tokens.</p>
+        </div>
+        <div class="callout callout-success">{% lucide "check" size=16 cls="callout-icon" %}<div>A success callout.</div></div>
+        <table class="data-table"><thead><tr><th>Name</th><th>State</th></tr></thead>
+            <tbody><tr><td>Electronics</td><td><span class="badge badge-green">Active</span></td></tr>
+            <tr><td>Furniture</td><td><span class="badge badge-grey">Draft</span></td></tr></tbody></table>
+    </div>
+{% endblock %}

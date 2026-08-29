@@ -1,0 +1,107 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Autocomplete Input{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Autocomplete Input{% endblock %}
+{% block doc_intro %}
+    Search-as-you-type over a database table, backed by a Django REST Framework endpoint. The user
+    searches a real queryset and selects a record; the field posts that record's primary key. This
+    is the widget for "pick a related object" when the table is too big for a
+    <a class="text-action-600 underline" href="{% url 'docs_forms_select' %}">select</a>.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Try it</h2>
+    <p class="text-gray-700">
+        Live, against the demo's own category endpoint — type a letter or two. Results come from the
+        database, not from the page.
+    </p>
+    <div class="doc-preview mt-4 max-w-md">
+        <div class="form-field">
+            <label class="form-label" for="{{ sink_form.linked_category.id_for_label }}">{{ sink_form.linked_category.label }}</label>
+            {{ sink_form.linked_category }}
+        </div>
+    </div>
+
+    <h2 class="mt-8">The widget</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_autocomplete.widgets import AutocompleteInputWidget
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ["name", "category"]
+        widgets = {
+            "category": AutocompleteInputWidget(attrs={
+                "data-url": reverse_lazy("category-api-list"),
+                "data-text_field": "name",   # which field to display
+                "data-headers": "on",        # show column headers in the panel
+            }),
+        }{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">The backend contract</h2>
+    <p class="text-gray-700">
+        The widget expects a paginated DRF list endpoint that honours a <code>?q=</code> search
+        parameter and exposes a detail route at <code>&lt;url&gt;/&lt;pk&gt;/</code> — it uses the
+        latter to resolve the label for an already-saved value when an edit form loads.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# api.py
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        qs = Category.objects.all()
+        q = self.request.query_params.get("q")
+        if q:
+            qs = qs.filter(name__icontains=q)
+        return qs
+
+router = routers.DefaultRouter()
+router.register("categories", CategoryViewSet, basename="category-api"){% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">The endpoint is a real API surface</div>
+            It is queryable by anyone who can load the form. Apply the same permission and queryset
+            filtering you would to any other view — restricting the widget in the template restricts
+            nothing.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Scoping to a parent field</h2>
+    <p class="text-gray-700">
+        <code>data-parent</code> points at another field's input; its value is sent along so the
+        results can be narrowed — cities within the selected country, products within the selected
+        category.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}"product": AutocompleteInputWidget(attrs={
+    "data-url": reverse_lazy("product-api-list"),
+    "data-text_field": "name",
+    "data-parent": "id_category",   # the parent field's input id
+}){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">While it loads</h2>
+    <p class="text-gray-700">
+        The widget shows the indeterminate <code>.progress-bar</code> strip during a request — the
+        one case that class is for. See
+        <a class="text-action-600 underline" href="{% url 'docs_feedback_progress_bar' %}">Progress Bar</a>
+        for the determinate counterpart.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Attribute</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>data-url</code></td><td>The DRF list endpoint. Required.</td></tr>
+                <tr><td><code>data-text_field</code></td><td>Which serializer field to display.</td></tr>
+                <tr><td><code>data-headers</code></td><td><code>"on"</code> to show column headers in the results panel.</td></tr>
+                <tr><td><code>data-parent</code></td><td>Id of a parent field's input, to scope results.</td></tr>
+                <tr><td><code>autocomplete-panel</code></td><td>The results dropdown.</td></tr>
+                <tr><td><code>autocomplete-table</code></td><td>The results table inside it.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="mt-4 text-gray-700">
+        See it on a real form in the
+        <a class="text-action-600 underline" href="{% url 'product_list_view' %}">Products</a> playground.
+    </p>
+{% endblock %}

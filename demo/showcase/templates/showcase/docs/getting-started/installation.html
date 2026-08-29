@@ -1,0 +1,93 @@
+{% extends 'showcase/docs/_base.html' %}
+{% block doc_title_tag %}Installation{% endblock %}
+{% block doc_section %}Getting Started{% endblock %}
+{% block doc_title %}Installation{% endblock %}
+{% block doc_intro %}
+    The design system is three Django apps plus a Tailwind build step. There is no npm package to
+    depend on at runtime and no JS bundler — Tailwind's CLI compiles one stylesheet, and Django
+    serves it as an ordinary static file.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">1. Add the apps</h2>
+    <p class="text-gray-700">
+        Copy <code>wise_core/</code> (and optionally <code>wise_autocomplete/</code> and
+        <code>wise_richtext/</code>) next to your own apps, then register them.
+        <code>wise_core</code> is the only required one.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}INSTALLED_APPS = [
+    # ...
+    'django.contrib.humanize',   # used by some generic templates
+    'django_filters',            # required by WiseListView's filtering
+    'rest_framework',            # only if you use AutocompleteInputWidget
+
+    'wise_core',
+    'wise_autocomplete',         # optional
+    'wise_richtext',             # optional
+]{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">2. Register the context processor</h2>
+    <p class="text-gray-700">
+        <code>wise_core.context_processors.nav</code> feeds the sidebar menu from a plain setting.
+        Skip it only if you never render <code>nav_menu.html</code>.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}TEMPLATES = [{
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'APP_DIRS': True,
+    'OPTIONS': {'context_processors': [
+        'django.template.context_processors.request',   # required
+        'django.contrib.auth.context_processors.auth',
+        'django.contrib.messages.context_processors.messages',
+        'wise_core.context_processors.nav',
+    ]},
+}]{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">3. Build the stylesheet</h2>
+    <p class="text-gray-700">
+        <code>tokens.css</code> is a <em>partial</em>, not an entry point — it has no
+        <code>@import "tailwindcss"</code> and no <code>@source</code> of its own, because those
+        depend on where your templates live. Your project supplies an entry file:
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}/* static_src/input.css */
+@import "tailwindcss";
+
+/* Tell Tailwind where to scan for class names - including every wise_* app,
+   since their component markup uses utility classes too. */
+@source "../myapp/templates";
+@source "../../wise_core/templates";
+@source "../../wise_autocomplete/templates";
+@source "../../wise_richtext/templates";
+
+@import "../../wise_core/static/wise_core/css/tokens.css";{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}npm install -D @tailwindcss/cli tailwindcss
+npx tailwindcss -i ./static_src/input.css \
+                -o ./wise_core/static/wise_core/css/tailwind.css --minify{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        <div>
+            Forgetting an <code>@source</code> line is the single most common setup mistake: the
+            build succeeds, but any utility class used only in that directory is tree-shaken out and
+            the page renders unstyled.
+        </div>
+    </div>
+
+    <h2 class="mt-8">4. Extend the base template</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/base.html' %}
+
+{% block body %}
+    <div class="page-panel">
+        <h1>Hello</h1>
+    </div>
+{% endblock %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Optional extras</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Package</th><th>Needed for</th></tr></thead>
+            <tbody>
+                <tr><td><code>django-filter</code></td><td><code>WiseListView</code> filtering and the filter panel.</td></tr>
+                <tr><td><code>djangorestframework</code></td><td><code>AutocompleteInputWidget</code>'s search endpoint.</td></tr>
+                <tr><td><code>segno</code></td><td>The <code>{% templatetag openblock %} qr_code {% templatetag closeblock %}</code> tag.</td></tr>
+                <tr><td><code>python-barcode</code></td><td>The <code>{% templatetag openblock %} barcode {% templatetag closeblock %}</code> tag.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

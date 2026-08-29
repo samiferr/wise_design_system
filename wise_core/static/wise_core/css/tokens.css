@@ -613,6 +613,26 @@
         @apply h-4 w-4 border-divider accent-action-600;
     }
 
+    /* Native <input type="color">. The browser paints the swatch inside its
+       own padding box, so that padding is zeroed to make the swatch fill the
+       control - otherwise it floats in a white frame that ignores the theme. */
+    .color-input {
+        @apply w-14 cursor-pointer border border-divider bg-surface p-0;
+        height: var(--control-height-md);
+    }
+
+    .color-input::-webkit-color-swatch-wrapper {
+        padding: 2px;
+    }
+
+    .color-input::-webkit-color-swatch {
+        border: none;
+    }
+
+    .color-input::-moz-color-swatch {
+        border: none;
+    }
+
     /* ── Page forms ────────────────────────────────────────────────────
        Every record create/update form renders as a single-column stack of
        labeled fields instead of a <table>: one field per line reads
@@ -1106,6 +1126,31 @@
 
     .btn-group > .btn.selected {
         @apply bg-action-100 border-action-500 text-action-700;
+    }
+
+    /* ── Copy button ─────────────────────────────────────────────────────
+       Both states ship in the markup and CSS shows one at a time, so the
+       script only toggles a class - no innerHTML rewriting, and the button's
+       width doesn't jump between states. */
+    .copy-button .copy-button-idle,
+    .copy-button .copy-button-done {
+        @apply inline-flex items-center gap-1.5;
+    }
+
+    .copy-button .copy-button-done {
+        @apply hidden;
+    }
+
+    .copy-button.is-copied .copy-button-idle {
+        @apply hidden;
+    }
+
+    .copy-button.is-copied .copy-button-done {
+        @apply inline-flex;
+    }
+
+    .copy-button.is-copied {
+        @apply border-action-500 text-action-700;
     }
 
     /* ── Dropdown ────────────────────────────────────────────────────────

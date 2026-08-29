@@ -1,0 +1,35 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Textarea{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Textarea{% endblock %}
+{% block doc_intro %}Multi-line text. Vertically resizable only — horizontal resizing breaks form layouts, so it is
+    disabled.{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 max-w-sm"><textarea class="textarea" placeholder="Notes…"></textarea></div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<textarea class="textarea" placeholder="Notes…"></textarea>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Rendered by Django</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-stack">
+            <div class="form-field">
+                <label class="form-label" for="{{ sink_form.bio.id_for_label }}">{{ sink_form.bio.label }}</label>
+                {{ sink_form.bio }}
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}bio = forms.CharField(required=False, widget=forms.Textarea){% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        Need formatting rather than plain text? Use the
+        <a class="text-action-600 underline" href="{% url 'docs_forms_rich_text_input' %}">Rich Text Input</a>.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody><tr><td><code>textarea</code></td><td>Min-height 7rem, vertically resizable.</td></tr></tbody>
+        </table>
+    </div>
+{% endblock %}

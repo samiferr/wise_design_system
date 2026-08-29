@@ -1,0 +1,78 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Rich Text Input{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Rich Text Input{% endblock %}
+{% block doc_intro %}
+    A Quill-backed editor that posts HTML into an ordinary <code>TextField</code>. Use it where the
+    content genuinely needs structure — notes, descriptions, published copy. For anything plainer, a
+    <a class="text-action-600 underline" href="{% url 'docs_forms_textarea' %}">textarea</a> is
+    cheaper and easier to sanitize.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Try it</h2>
+    <div class="doc-preview mt-4">
+        <div class="form-field">
+            <label class="form-label">{{ sink_form.description.label }}</label>
+            {{ sink_form.description }}
+        </div>
+    </div>
+
+    <h2 class="mt-8">Usage</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_richtext.widgets import RichTextInputWidget
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ["name", "notes"]
+        widgets = {"notes": RichTextInputWidget()}
+
+class Product(models.Model):
+    notes = models.TextField(blank=True){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Rendering the stored HTML</h2>
+    <div class="callout callout-danger mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Never render it with |safe unsanitized</div>
+            The field contains HTML supplied by whoever filled the form. Piping it straight through
+            <code>|safe</code> is a stored-XSS vulnerability. Sanitize on the way <em>in</em>, with an
+            allowlist, and treat the stored value as untrusted until you have.
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# pip install nh3
+import nh3
+
+def clean_notes(self):
+    return nh3.clean(
+        self.cleaned_data["notes"],
+        tags={"p", "br", "strong", "em", "u", "ol", "ul", "li", "a", "h2", "h3", "blockquote"},
+        attributes={"a": {"href", "title", "rel"}},
+    ){% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="prose-content">{{ object.notes|safe }}</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Plain-text excerpts</h2>
+    <p class="text-gray-700">
+        In a datatable cell or a card summary, strip the markup rather than rendering it — a
+        half-closed tag in a truncated string will break the surrounding layout.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<td class="text-gray-600">{{ product.notes|striptags|truncatechars:60 }}</td>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="doc-preview mt-4">
+        <table class="data-table">
+            <thead><tr><th>Product</th><th>Notes</th></tr></thead>
+            <tbody><tr><td>USB-C hub</td><td class="text-gray-600">4 ports, includes HDMI passthrough.</td></tr></tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Thing</th><th>Note</th></tr></thead>
+            <tbody>
+                <tr><td><code>RichTextInputWidget</code></td><td>Quill-backed; posts HTML as a string.</td></tr>
+                <tr><td>Model field</td><td><code>TextField</code> — the widget does not need a custom field.</td></tr>
+                <tr><td>Sanitizing</td><td>Your responsibility, on input. <code>nh3</code> or <code>bleach</code>.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

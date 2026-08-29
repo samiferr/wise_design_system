@@ -1,0 +1,78 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Auto Suggest Input{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Auto Suggest Input{% endblock %}
+{% block doc_intro %}
+    Client-side filtering over a list that is already on the page — no endpoint, no request per
+    keystroke. Unlike
+    <a class="text-action-600 underline" href="{% url 'docs_forms_autocomplete_input' %}">Autocomplete</a>,
+    it selects a <em>string</em>, not a record, and it renders its own panel rather than relying on
+    the browser's <code>&lt;datalist&gt;</code> popup.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Try it</h2>
+    <p class="text-gray-700">Type "c", or "in":</p>
+    <div class="doc-preview mt-4 max-w-md">
+        <div class="form-field">
+            <label class="form-label" for="{{ sink_form.tag.id_for_label }}">{{ sink_form.tag.label }}</label>
+            {{ sink_form.tag }}
+        </div>
+    </div>
+    <datalist id="tag_suggestions">
+        <option value="Draft"></option>
+        <option value="Pending"></option>
+        <option value="Confirmed"></option>
+        <option value="Cancelled"></option>
+        <option value="Invoiced"></option>
+    </datalist>
+
+    <h2 class="mt-8">Supplying the options</h2>
+    <p class="text-gray-700">
+        Point <code>data-list</code> at a <code>&lt;datalist&gt;</code> elsewhere on the page; the
+        widget seeds itself from its <code>&lt;option&gt;</code> values. The datalist is only a data
+        carrier here — the visible panel is the widget's own.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_autocomplete.widgets import AutoSuggestInputWidget
+
+tag = forms.CharField(
+    widget=AutoSuggestInputWidget(attrs={"data-list": "tag_suggestions"}),
+){% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<datalist id="tag_suggestions">
+    {% for tag in available_tags %}<option value="{{ tag }}"></option>{% endfor %}
+</datalist>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Or assign the array directly</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}document.getElementById('id_tag').arr = ['Draft', 'Pending', 'Confirmed']{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">When to use which</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Use</th><th>When</th></tr></thead>
+            <tbody>
+                <tr><td><a class="text-action-600 underline" href="{% url 'docs_forms_combobox' %}">Combobox</a></td><td>Short static list, browser-native popup is fine.</td></tr>
+                <tr><td><strong>Auto Suggest</strong></td><td>Known list, but you want a styled panel and keyboard navigation.</td></tr>
+                <tr><td><a class="text-action-600 underline" href="{% url 'docs_forms_autocomplete_input' %}">Autocomplete</a></td><td>Options live in a database table and must be searched server-side.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="callout callout-info mt-6">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            Every option ships in the HTML, so the page grows with the list. Past a few hundred
+            entries that is the wrong trade — switch to Autocomplete.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Attribute</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>data-list</code></td><td>Id of a <code>&lt;datalist&gt;</code> to seed options from.</td></tr>
+                <tr><td><code>data-parent</code></td><td>Id of a parent field's input, to scope suggestions.</td></tr>
+                <tr><td><code>.arr</code></td><td>JS property on the input; the option array, if set directly.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

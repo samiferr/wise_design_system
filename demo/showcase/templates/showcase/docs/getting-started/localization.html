@@ -1,0 +1,67 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Localization{% endblock %}
+{% block doc_section %}Getting Started{% endblock %}
+{% block doc_title %}Localization{% endblock %}
+{% block doc_intro %}
+    Every string the design system renders goes through Django's own translation machinery, and the
+    layout flips wholesale for right-to-left languages. There is no separate i18n layer to learn.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Enabling translations</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# settings.py
+USE_I18N = True
+LANGUAGE_CODE = 'en-us'
+LANGUAGES = [('en', 'English'), ('fr', 'Français'), ('ar', 'العربية')]
+LOCALE_PATHS = [BASE_DIR / 'locale']
+
+MIDDLEWARE = [
+    # ...
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',   # must follow SessionMiddleware
+    'django.middleware.common.CommonMiddleware',
+]{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Translating the system's own strings</h2>
+    <p class="text-gray-700">
+        The shipped partials wrap their literals in <code>{% templatetag openblock %} trans {% templatetag closeblock %}</code>
+        — "Filter", "Apply", "Reset filter", "No records.", "Home". Running
+        <code>makemessages</code> over the app picks them up along with your own.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}django-admin makemessages -l fr -l ar
+django-admin compilemessages{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Right-to-left</h2>
+    <p class="text-gray-700">
+        <code>base.html</code> already sets <code>dir</code> from Django's
+        <code>LANGUAGE_BIDI</code>, so switching to an RTL language mirrors the layout without any
+        template changes. Because the component layer is built from Tailwind's logical properties
+        and flexbox rather than hardcoded left/right offsets, panels, menus and tables flip with it.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Watch for physical offsets in your own markup</div>
+            A utility like <code>ml-2</code> or <code>left-0</code> will not flip. Prefer the logical
+            equivalents (<code>ms-2</code>, <code>start-0</code>) in templates that must support RTL.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Language switcher</h2>
+    <p class="text-gray-700">
+        <code>wise_core/components/_language_switcher.html</code> posts to Django's built-in
+        <code>set_language</code> view — include it anywhere in your chrome.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# urls.py
+urlpatterns += [path('i18n/', include('django.conf.urls.i18n'))]{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% include 'wise_core/components/_language_switcher.html' %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Formatting</h2>
+    <p class="text-gray-700">
+        Dates, numbers and currency use Django's locale-aware formatting
+        (<code>USE_L10N</code> is always on in modern Django). Use <code>{% templatetag openblock %} localize {% templatetag closeblock %}</code>
+        or the <code>date</code>/<code>floatformat</code> filters rather than formatting in Python,
+        so a datatable cell renders correctly per-locale.
+    </p>
+{% endblock %}

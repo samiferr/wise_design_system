@@ -1,0 +1,98 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Rating{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Rating{% endblock %}
+{% block doc_intro %}
+    A star rating, in two forms: a read-only display and an input built from real radio buttons.
+    The input needs no JavaScript — the highlight is pure CSS.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Read-only</h2>
+    <div class="doc-preview mt-4 flex flex-col gap-2">
+        <div class="rating">
+            {% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star" %}
+            <span class="ml-1.5 text-xs text-gray-600">4 / 5</span>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="rating">
+    {% for i in "12345"|make_list %}
+        {% if forloop.counter <= object.rating %}
+            {% lucide "star" size=18 cls="rating-star is-on" %}
+        {% else %}
+            {% lucide "star" size=18 cls="rating-star" %}
+        {% endif %}
+    {% endfor %}
+    <span class="ml-1.5 text-xs text-gray-600">{{ object.rating }} / 5</span>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Input</h2>
+    <p class="text-gray-700">Real Django widget output — hover and click it:</p>
+    <div class="doc-preview mt-4">
+        <div class="form-field">
+            <span class="form-label">{{ sink_form.rating.label }}</span>
+            {{ sink_form.rating }}
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.widgets import RatingInput
+
+rating = forms.ChoiceField(
+    choices=[(i, str(i)) for i in range(1, 6)],
+    widget=RatingInput(),
+    initial=4,
+)
+
+# On a ModelForm:
+class Meta:
+    model = Product
+    fields = ["name", "rating"]
+    widgets = {"rating": RatingInput()}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">How the CSS-only highlight works</h2>
+    <p class="text-gray-700">
+        A sibling selector can only match elements <em>after</em> the checked input. So the widget
+        emits the radios in descending order (5 first) and the container is
+        <code>flex-row-reverse</code>, flipping them back to ascending on screen. Now
+        <code>input:checked ~ label</code> matches exactly the stars visually to the left of the
+        checked one.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}.rating-input {
+    @apply inline-flex flex-row-reverse items-center justify-end gap-0.5;
+}
+.rating-input input { @apply sr-only; }
+
+.rating-input input:checked ~ label,
+.rating-input label:hover,
+.rating-input label:hover ~ label {
+    @apply text-warning-500;
+}{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            Because they are radios, the group is keyboard-navigable with arrow keys and the value
+            posts like any other choice field. The inputs are <code>.sr-only</code>, not
+            <code>display:none</code>, so they stay focusable.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Storing it</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class Product(models.Model):
+    rating = models.PositiveSmallIntegerField(null=True, blank=True){% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        See it on a real record in the
+        <a class="text-action-600 underline" href="{% url 'product_list_view' %}">Products</a> playground.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class / widget</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>rating</code></td><td>Read-only container.</td></tr>
+                <tr><td><code>rating-star.is-on</code></td><td>A filled star.</td></tr>
+                <tr><td><code>rating-input</code></td><td>Interactive container (radios + labels).</td></tr>
+                <tr><td><code>wise_core.widgets.RatingInput</code></td><td>Django widget rendering the whole group.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
