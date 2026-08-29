@@ -1,0 +1,11 @@
+{% comment %}
+Template for wise_core.widgets.ComboboxInput: a text input bound to a native
+<datalist>. The browser renders and filters the suggestion popup itself, so
+the user can pick a known value or type a brand new one, with no JS.
+{% endcomment %}
+<input type="{{ widget.type }}" name="{{ widget.name }}"
+       {% if widget.value != None %}value="{{ widget.value|stringformat:'s' }}"{% endif %}
+       {% for name, value in widget.attrs.items %}{% if value is not False %}{{ name }}{% if value is not True %}="{{ value|stringformat:'s' }}"{% endif %} {% endif %}{% endfor %}>
+<datalist id="{{ widget.list_id }}">
+    {% for option in widget.datalist %}<option value="{{ option }}"></option>{% endfor %}
+</datalist>

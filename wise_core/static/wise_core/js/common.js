@@ -81,3 +81,41 @@ const compressImage = async (file, resize_width, {quality = 1, type = file.type}
     });
 
 };
+// ── Theme / palette / density switching ────────────────────────────────────
+// The *initial* value is applied by the inline bootstrap script in base.html
+// (before first paint); these helpers only handle switching at runtime and
+// persisting the choice. Each writes one attribute on <html>, which the token
+// layer keys off - see docs/design-tokens.md.
+
+function wiseSetPreference(name, value) {
+    var attr = 'data-' + name.replace('wise-', '')
+    if (value) {
+        document.documentElement.setAttribute(attr, value)
+    } else {
+        document.documentElement.removeAttribute(attr)
+    }
+    try {
+        if (value) {
+            localStorage.setItem(name, value)
+        } else {
+            localStorage.removeItem(name)
+        }
+    } catch (e) { /* storage disabled - the attribute still applies for this page */ }
+}
+
+function wiseSetTheme(theme) {
+    wiseSetPreference('wise-theme', theme)
+}
+
+function wiseSetPalette(palette) {
+    wiseSetPreference('wise-palette', palette)
+}
+
+function wiseSetDensity(density) {
+    wiseSetPreference('wise-density', density)
+}
+
+function wiseToggleTheme() {
+    var current = document.documentElement.getAttribute('data-theme')
+    wiseSetTheme(current === 'dark' ? 'light' : 'dark')
+}

@@ -1,0 +1,36 @@
+{% comment %}
+Template for wise_core.widgets.OTPInput. The small script advances focus to the
+next box as digits are typed and steps back on Backspace - it's a convenience
+only: the field posts and validates correctly with JavaScript disabled.
+{% endcomment %}
+<div class="otp-group" data-otp>
+    {% for widget in widget.subwidgets %}{% include widget.template_name %}{% endfor %}
+</div>
+<script>
+    (function () {
+        var group = document.currentScript.previousElementSibling
+        if (!group || group.dataset.otpBound) return
+        group.dataset.otpBound = '1'
+        var boxes = Array.prototype.slice.call(group.querySelectorAll('input'))
+        boxes.forEach(function (box, i) {
+            box.addEventListener('input', function () {
+                if (box.value.length && i < boxes.length - 1) boxes[i + 1].focus()
+            })
+            box.addEventListener('keydown', function (e) {
+                if (e.key === 'Backspace' && !box.value && i > 0) boxes[i - 1].focus()
+            })
+            box.addEventListener('paste', function (e) {
+                // Pasting a whole code should fill the row, not one box.
+                var text = (e.clipboardData || window.clipboardData).getData('text')
+                var digits = text.replace(/\D/g, '').split('')
+                if (digits.length < 2) return
+                e.preventDefault()
+                for (var j = 0; j < boxes.length - i; j++) {
+                    if (digits[j] === undefined) break
+                    boxes[i + j].value = digits[j]
+                }
+                boxes[Math.min(i + digits.length, boxes.length - 1)].focus()
+            })
+        })
+    })()
+</script>

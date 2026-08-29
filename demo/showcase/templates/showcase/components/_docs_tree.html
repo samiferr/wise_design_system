@@ -1,0 +1,33 @@
+{% load wise_icons %}
+{% comment %}
+The documentation site's navigation, rendered as a Tree (see the Navigation →
+Tree component page). Sections are <details>/<summary> pairs, so expand and
+collapse work with no JavaScript at all; the section containing the current
+page is rendered already-open via the `open` attribute.
+
+Data comes from showcase.context_processors.docs_nav; which node is selected is
+decided by comparing against `current_section_slug`/`current_page_slug`, which
+DocPageView supplies.
+{% endcomment %}
+<nav class="tree" aria-label="Documentation">
+    <a class="tree-leaf {% if not current_section_slug %}selected{% endif %}" href="{% url 'docs' %}">
+        {% lucide "house" size=15 %}<span>Overview</span>
+    </a>
+    {% for section in docs_nav %}
+        <details class="tree-item" {% if section.slug == current_section_slug %}open{% endif %}>
+            <summary class="tree-item-label">
+                {% lucide "chevron-right" size=14 cls="tree-item-chevron" %}
+                {% lucide section.icon size=15 cls="shrink-0" %}
+                <span class="truncate">{{ section.title }}</span>
+            </summary>
+            <div class="tree-item-children">
+                {% for item in section.items %}
+                    <a class="tree-leaf {% if section.slug == current_section_slug and item.slug == current_page_slug %}selected{% endif %}"
+                       href="{% url item.url_name %}">
+                        <span class="truncate">{{ item.title }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </details>
+    {% endfor %}
+</nav>

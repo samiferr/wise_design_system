@@ -4,6 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block theme_bootstrap %}
+        {% comment %}
+        Applies the stored theme/density before the stylesheet paints, so a dark
+        page never flashes light on load. Inline and blocking on purpose - a
+        deferred script would run after first paint. Override this block with
+        an empty one to opt a project out of theme switching entirely.
+        {% endcomment %}
+        <script>
+            (function () {
+                try {
+                    var t = localStorage.getItem('wise-theme')
+                    if (t) document.documentElement.setAttribute('data-theme', t)
+                    var p = localStorage.getItem('wise-palette')
+                    if (p) document.documentElement.setAttribute('data-palette', p)
+                    var d = localStorage.getItem('wise-density')
+                    if (d) document.documentElement.setAttribute('data-density', d)
+                } catch (e) { /* private mode / storage disabled - keep defaults */ }
+            })()
+        </script>
+    {% endblock %}
     <link rel="stylesheet" type="text/css" href="{% static 'wise_core/css/tailwind.css' %}">
     {% block extra_head %}{% endblock %}
     <title>{% block title %}{{ project_name|default:"Wise" }}{% endblock %}</title>

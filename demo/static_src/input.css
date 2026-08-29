@@ -41,4 +41,32 @@
     .doc-props td code, .doc-code-inline {
         @apply bg-gray-100 px-1 py-0.5 text-[0.85em];
     }
+
+    /* The docs shell: a persistent tree sidebar beside the page column. */
+    .docs-sidebar {
+        @apply sticky top-0 hidden h-screen w-[264px] flex-shrink-0 flex-col border-r border-divider
+        bg-panel md:flex;
+    }
+
+    .doc-pager {
+        @apply mt-12 grid grid-cols-2 gap-4 border-t border-divider pt-5;
+    }
+
+    .doc-pager-link {
+        @apply flex items-center gap-2 text-sm font-semibold text-action-600 no-underline
+        hover:underline;
+    }
+
+    .doc-pager-kicker {
+        @apply block text-[11px] font-normal uppercase tracking-wider text-gray-500;
+    }
+
+    /* Swatch grid used by the Color Palettes page. */
+    .swatch {
+        @apply flex h-14 items-end justify-between border border-divider px-2 py-1 text-[10px];
+    }
+
+    .doc-section-grid {
+        @apply mt-4 grid gap-4 sm:grid-cols-2;
+    }
 }
