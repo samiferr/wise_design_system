@@ -1,0 +1,62 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Polar Area Chart{% endblock %}
+{% block doc_section %}Data Viz{% endblock %}
+{% block doc_title %}Polar Area Chart{% endblock %}
+{% block doc_intro %}
+    Every slice takes an equal angle and encodes its value as <em>radius</em> instead. Useful for
+    cyclical categories — months, days of the week, compass directions — where the ordering around
+    the circle is itself meaningful.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-8">
+        <svg class="chart-svg" viewBox="0 0 100 100" style="width:200px;height:200px" role="img" aria-label="Revenue by month">
+            {% for slice in polar_slices %}<path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}" opacity="0.85"/>{% endfor %}
+        </svg>
+        <div class="chart-legend" style="flex-direction:column;align-items:flex-start">
+            {% for slice in polar_slices %}
+                <span class="chart-legend-item"><span class="chart-legend-dot" style="background:{{ slice.color }}"></span>{{ slice.label }} — {{ slice.value }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}context["polar_slices"] = charts.polar_area(revenue, labels=months){% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:200px;height:200px">
+    {% for slice in polar_slices %}
+        <path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}" opacity="0.85"/>
+    {% endfor %}
+</svg>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Radius is scaled by area</h2>
+    <p class="text-gray-700">
+        A slice's radius is proportional to the <em>square root</em> of its value, not the value
+        itself. Scaling radius linearly would make a doubled value cover four times the area, which
+        the eye reads as four times bigger — the classic way to overstate a difference by accident.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}radius = math.sqrt(value / max_value) * outer_radius{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The <a class="text-action-600 underline" href="{% url 'docs_data_viz_bubble_chart' %}">bubble chart</a>
+        does the same thing for the same reason.
+    </p>
+
+    <h2 class="mt-8">Polar area or bar?</h2>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            A bar chart is easier to read for almost any comparison — length is judged far more
+            accurately than area. Choose a polar area chart when the circular arrangement carries
+            meaning (a yearly cycle, a compass) and you want that structure visible, not because it
+            looks more interesting.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>API</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>charts.polar_area(values, labels, cx, cy, radius)</code></td><td>Equal-angle slices with value-scaled radii.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

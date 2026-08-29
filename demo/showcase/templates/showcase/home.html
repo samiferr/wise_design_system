@@ -1,47 +1,80 @@
 {% extends 'wise_core/base.html' %}
+{% load wise_icons %}
+
+{% block title %}Wise Design System{% endblock %}
 
 {% block body %}
-    <div class="page-panel max-w-4xl">
-        <h1>Wise Design System</h1>
+    <div class="page-panel mx-auto max-w-5xl">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <div class="card-kicker">Design system</div>
+                <h1 class="mt-1">Wise Design System</h1>
+            </div>
+            {% include 'wise_core/components/_theme_toggle.html' %}
+        </div>
+
         <p class="mt-3 max-w-2xl text-gray-700">
-            A Tailwind CSS v4 design system for Django projects, extracted from the DCMS7 application.
-            Complex components — datatables, autocomplete, rich text — are backed by Django itself and
-            its ecosystem (<code>django-filter</code>, Django REST Framework), not a JS framework.
-            This site is both its documentation and its own demo: everything on it is built with the
-            components it describes.
+            A Tailwind CSS v4 design system for Django projects. Datatables, autocomplete widgets and
+            rich text editing are backed by Django and its ecosystem — <code>django-filter</code>,
+            Django REST Framework — not a JavaScript framework. The JS each widget ships is a thin
+            layer over a real Django form field or class-based view.
         </p>
 
-        <div class="mt-8 grid gap-4 sm:grid-cols-2">
-            <a class="card" href="{% url 'tokens' %}">
-                <div class="card-kicker">Foundations</div>
-                <h3 class="card-title mt-1">Design tokens</h3>
-                <p class="card-content mt-2">Color, type, spacing and shadow tokens — the <code>@theme</code> in <code>wise_core/static/wise_core/css/tokens.css</code>.</p>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+            <a class="btn btn-primary" href="{% url 'docs' %}">
+                {% lucide "file-text" size=16 %}<span>Read the docs</span>
             </a>
-            <a class="card" href="{% url 'components' %}">
-                <div class="card-kicker">Foundations</div>
-                <h3 class="card-title mt-1">Components</h3>
-                <p class="card-content mt-2">Buttons, badges, cards, forms, tabs and the flash-message pattern.</p>
+            <a class="btn btn-secondary" href="{% url 'docs_theming_built_in_themes' %}">
+                {% lucide "settings" size=16 %}<span>Try the themes</span>
             </a>
+        </div>
+
+        <h2 class="mt-12">Documentation</h2>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {% for section in docs_nav %}
+                <a class="card" href="{% url section.items.0.url_name %}">
+                    <div class="card-kicker">{{ section.items|length }} pages</div>
+                    <h3 class="card-title mt-1">{{ section.title }}</h3>
+                    <p class="card-content mt-2">
+                        {% for item in section.items|slice:":4" %}{{ item.title }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if section.items|length > 4 %}…{% endif %}
+                    </p>
+                </a>
+            {% endfor %}
+        </div>
+
+        <h2 class="mt-12">Playground</h2>
+        <p class="text-gray-700">
+            A small Django app built entirely from this system. Sign in as
+            <code>demo</code> / <code>wise-demo-2026</code> to browse it.
+        </p>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
             <a class="card" href="{% url 'category_list_view' %}">
                 <div class="card-kicker">Datatable &amp; CRUD</div>
                 <h3 class="card-title mt-1">Categories</h3>
-                <p class="card-content mt-2"><code>WiseListView</code> + <code>django-filter</code> + full create/update/delete, log in required.</p>
+                <p class="card-content mt-2">
+                    A full <code>WiseListView</code> + <code>django-filter</code> datatable with the
+                    filter drawer, pagination and create/update/delete.
+                </p>
             </a>
             <a class="card" href="{% url 'product_list_view' %}">
-                <div class="card-kicker">Widgets</div>
+                <div class="card-kicker">Form widgets</div>
                 <h3 class="card-title mt-1">Products</h3>
-                <p class="card-content mt-2">A ModelForm using <code>AutocompleteInputWidget</code> (DRF-backed) and <code>RichTextInputWidget</code> (Quill).</p>
+                <p class="card-content mt-2">
+                    One form exercising the autocomplete, rich text, rating, date and file
+                    widgets together.
+                </p>
             </a>
-            <a class="card" href="{% url 'icons' %}">
-                <div class="card-kicker">Foundations</div>
-                <h3 class="card-title mt-1">Icons</h3>
-                <p class="card-content mt-2">Every vendored Lucide icon, rendered with the <code>{% templatetag openblock %} lucide {% templatetag closeblock %}</code> tag.</p>
-            </a>
-            <div class="card">
-                <div class="card-kicker">Log in</div>
-                <h3 class="card-title mt-1">Demo account</h3>
-                <p class="card-content mt-2">Run <code>python manage.py seed_demo</code>, then sign in as <code>demo</code> / <code>wise-demo-2026</code> at <a class="text-action-600 underline" href="{% url 'login' %}">/accounts/login/</a> to use the CRUD pages.</p>
-            </div>
         </div>
+
+        {% if not request.user.is_authenticated %}
+            <div class="callout callout-info mt-6">
+                {% lucide "info" size=16 cls="callout-icon" %}
+                <div>
+                    The documentation needs no login. The playground does —
+                    <a class="underline" href="{% url 'login' %}">sign in</a> as
+                    <code>demo</code> / <code>wise-demo-2026</code>.
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

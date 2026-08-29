@@ -1,0 +1,22 @@
+{% load wise_icons %}
+{% comment %}
+Template for wise_core.widgets.RatingInput.
+
+The radios are emitted in DESCENDING order and the container is
+flex-row-reverse, which flips them back to ascending on screen. That ordering
+is what makes the pure-CSS highlight work: `input:checked ~ label` can only
+match *later* siblings, and after the reverse those are the stars to the left
+of the checked one. Nothing here needs JavaScript.
+{% endcomment %}
+<div class="rating-input">
+    {% for group, options, index in widget.optgroups reversed %}
+        {% for option in options %}
+            <input type="radio" name="{{ option.name }}" value="{{ option.value|stringformat:'s' }}"
+                   id="{{ option.attrs.id }}"{% if option.selected %} checked{% endif %}>
+            <label for="{{ option.attrs.id }}" title="{{ option.label }}">
+                {% lucide "star" size=20 %}
+                <span class="sr-only">{{ option.label }}</span>
+            </label>
+        {% endfor %}
+    {% endfor %}
+</div>

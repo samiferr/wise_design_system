@@ -1,0 +1,91 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Usage{% endblock %}
+{% block doc_section %}Getting Started{% endblock %}
+{% block doc_title %}Usage{% endblock %}
+{% block doc_intro %}
+    How the pieces fit: class names are the public API, generic templates give you CRUD for free,
+    and the view mixins supply the context those templates expect.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Class names are the contract</h2>
+    <p class="text-gray-700">
+        Components are plain CSS classes — <code>.btn</code>, <code>.card</code>,
+        <code>.data-table</code> — not web components or template tags. That means they work in any
+        template, compose with Tailwind utilities, and stay stable when tokens change. Change a
+        token and every component follows; change a class name and you've made a breaking change.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <button class="btn btn-primary">Save</button>
+        <button class="btn btn-secondary mt-0">Cancel</button>
+        <span class="badge badge-green">Confirmed</span>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary">Save</button>
+<button class="btn btn-secondary mt-0">Cancel</button>
+<span class="badge badge-green">Confirmed</span>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">The view mixins</h2>
+    <p class="text-gray-700">
+        <code>WiseListView</code>, <code>WiseDetailView</code>, <code>WiseCreateView</code>,
+        <code>WiseUpdateView</code> and <code>WiseDeleteView</code> wrap Django's own generic views.
+        They add the context the generic templates need — the filterset, the applied-filter count,
+        the success message — so a full CRUD screen is a handful of attributes.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.mixins import WiseListView, WiseCreateView
+
+class CategoryListView(WiseListView):
+    model = Category
+    filterset_class = CategoryFilter
+    template_name = 'showcase/category/list.html'
+    paginate_by = 10
+
+
+class CategoryCreateView(WiseCreateView):
+    model = Category
+    form_class = CategoryForm
+    template_name = 'showcase/category/form.html'
+    success_url = reverse_lazy('category_list_view')
+    success_message = 'Category "%(name)s" created.'{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">The generic templates</h2>
+    <p class="text-gray-700">
+        Each mixin has a matching generic template. You extend it and fill blocks rather than
+        writing the page chrome yourself — that is what keeps every list/detail/form screen in an
+        application consistent.
+    </p>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Template</th><th>Blocks you fill</th></tr></thead>
+            <tbody>
+                <tr><td><code>generic/list_generic.html</code></td><td><code>list_icon</code>, <code>list_title</code>, <code>list_actions</code>, <code>list_body</code></td></tr>
+                <tr><td><code>generic/detail_generic.html</code></td><td><code>detail_actions</code>, <code>detail_title</code>, <code>detail_rows</code></td></tr>
+                <tr><td><code>generic/form_generic.html</code></td><td><code>form_title</code>, plus the form itself</td></tr>
+                <tr><td><code>generic/confirm_generic.html</code></td><td><code>confirm_back_url</code>, <code>confirm_rows</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/list_generic.html' %}
+{% load wise_icons %}
+
+{% block list_icon %}{% lucide "tag" size=28 cls="text-brand-600" %}{% endblock %}
+{% block list_title %}Categories{% endblock %}
+
+{% block list_actions %}
+    {% include 'wise_core/components/filter_button.html' %}
+    <a class="btn btn-primary" href="{% url 'category_create_view' %}">
+        {% lucide "plus" size=16 %}<span>New</span>
+    </a>
+{% endblock %}{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        See the result on <a class="text-action-600 underline" href="{% url 'category_list_view' %}">Categories</a>.
+    </p>
+
+    <h2 class="mt-8">Icons</h2>
+    <p class="text-gray-700">
+        Icons are vendored Lucide SVGs rendered inline by a template tag, so they inherit
+        <code>currentColor</code> and scale with a <code>size</code> argument. See
+        <a class="text-action-600 underline" href="{% url 'docs_media_icons' %}">Media → Icons</a>.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_icons %}
+{% lucide "search" size=16 cls="text-gray-500" %}{% endverbatim %}{% endfilter %}</code></pre>
+{% endblock %}

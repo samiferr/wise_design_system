@@ -1,0 +1,110 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Color Palettes{% endblock %}
+{% block doc_section %}Theming &amp; Utilities{% endblock %}
+{% block doc_title %}Color Palettes{% endblock %}
+{% block doc_intro %}
+    The system is deliberately mono-accent: one brand color carries chrome, links and tags, and one
+    action color carries interactive fills. Red and amber are reserved for meaning — destructive and
+    caution — so they never compete with the accent for attention.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Switch palette</h2>
+    <p class="text-gray-700">Only the brand and action ramps move; neutrals and every component rule are shared.</p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="wiseSetPalette('')">Green</button>
+            <button class="btn btn-secondary" onclick="wiseSetPalette('blue')">Blue</button>
+            <button class="btn btn-secondary" onclick="wiseSetPalette('violet')">Violet</button>
+            <button class="btn btn-secondary" onclick="wiseSetPalette('amber')">Amber</button>
+        </div>
+    </div>
+
+    <h2 class="mt-8">brand</h2>
+    <p class="text-gray-700">Chrome, links, tags and kickers.</p>
+    <div class="doc-preview mt-4 grid grid-cols-4 gap-1 sm:grid-cols-8">
+        <div class="swatch" style="background:var(--color-brand-50)">50</div>
+        <div class="swatch" style="background:var(--color-brand-100)">100</div>
+        <div class="swatch" style="background:var(--color-brand-300)">300</div>
+        <div class="swatch text-white" style="background:var(--color-brand-500)">500</div>
+        <div class="swatch text-white" style="background:var(--color-brand-600)">600</div>
+        <div class="swatch text-white" style="background:var(--color-brand-700)">700</div>
+        <div class="swatch text-white" style="background:var(--color-brand-800)">800</div>
+        <div class="swatch text-white" style="background:var(--color-brand-900)">900</div>
+    </div>
+
+    <h2 class="mt-8">action</h2>
+    <p class="text-gray-700">Buttons, focus rings, selected rows.</p>
+    <div class="doc-preview mt-4 grid grid-cols-3 gap-1 sm:grid-cols-6">
+        <div class="swatch" style="background:var(--color-action-50)">50</div>
+        <div class="swatch" style="background:var(--color-action-100)">100</div>
+        <div class="swatch" style="background:var(--color-action-400)">400</div>
+        <div class="swatch" style="background:var(--color-action-500);color:var(--color-on-action)">500</div>
+        <div class="swatch" style="background:var(--color-action-600);color:var(--color-on-action)">600</div>
+        <div class="swatch" style="background:var(--color-action-700);color:var(--color-on-action)">700</div>
+    </div>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            Buttons fill with <code>action-600</code>, not <code>-500</code>. In the default palette
+            white on <code>-500</code> reaches only 3.3:1, which fails the 4.5:1 minimum for normal
+            text; <code>-600</code> clears it at 5:1. Keep that in mind if you retune the ramp.
+        </div>
+    </div>
+
+    <h2 class="mt-8">accent — destructive only</h2>
+    <div class="doc-preview mt-4 grid grid-cols-4 gap-1">
+        <div class="swatch" style="background:var(--color-accent-50)">50</div>
+        <div class="swatch" style="background:var(--color-accent-400)">400</div>
+        <div class="swatch" style="background:var(--color-accent-500);color:var(--color-on-accent)">500</div>
+        <div class="swatch" style="background:var(--color-accent-600);color:var(--color-on-accent)">600</div>
+    </div>
+
+    <h2 class="mt-8">warning — status and caution only</h2>
+    <div class="doc-preview mt-4 grid grid-cols-4 gap-1">
+        <div class="swatch" style="background:var(--color-warning-50)">50</div>
+        <div class="swatch" style="background:var(--color-warning-400)">400</div>
+        <div class="swatch text-white" style="background:var(--color-warning-500)">500</div>
+        <div class="swatch text-white" style="background:var(--color-warning-600)">600</div>
+    </div>
+    <p class="mt-2 text-gray-700">
+        <code>warning-400</code> is decorative-only — it is tuned for chart fills, not for text.
+        <code>500</code> and <code>600</code> are the ones that clear contrast for warning copy.
+    </p>
+
+    <h2 class="mt-8">Neutrals &amp; surfaces</h2>
+    <div class="doc-preview mt-4 grid grid-cols-6 gap-1 sm:grid-cols-11">
+        <div class="swatch" style="background:var(--color-gray-50)">50</div>
+        <div class="swatch" style="background:var(--color-gray-100)">100</div>
+        <div class="swatch" style="background:var(--color-gray-200)">200</div>
+        <div class="swatch" style="background:var(--color-gray-300)">300</div>
+        <div class="swatch" style="background:var(--color-gray-400)">400</div>
+        <div class="swatch" style="background:var(--color-gray-500)">500</div>
+        <div class="swatch" style="background:var(--color-gray-600)">600</div>
+        <div class="swatch" style="background:var(--color-gray-700)">700</div>
+        <div class="swatch" style="background:var(--color-gray-800)">800</div>
+        <div class="swatch" style="background:var(--color-gray-900)">900</div>
+        <div class="swatch" style="background:var(--color-gray-950)">950</div>
+    </div>
+    <p class="mt-2 text-gray-700">
+        This ramp <em>overrides</em> Tailwind's built-in gray, so <code>text-gray-*</code>,
+        <code>bg-gray-*</code> and <code>border-gray-*</code> already pick up the system's tones —
+        there is nothing new to learn and nothing to rename.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Ramp</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>brand-50..950</code></td><td>Chrome, links, tags, kickers.</td></tr>
+                <tr><td><code>action-50..700</code></td><td>Buttons, focus, primary interactive state.</td></tr>
+                <tr><td><code>accent-50..600</code></td><td><strong>Destructive only</strong> — delete, revoke, errors.</td></tr>
+                <tr><td><code>warning-50..600</code></td><td><strong>Status/caution only</strong> — pending, warnings.</td></tr>
+                <tr><td><code>gray-50..950</code></td><td>Overrides Tailwind's gray; inverts in dark mode.</td></tr>
+                <tr><td><code>page</code>, <code>panel</code>, <code>panel-alt</code>, <code>surface</code>, <code>divider</code></td><td>Canvas, raised surface, second level, input fill, hairlines.</td></tr>
+                <tr><td><code>on-action</code>, <code>on-brand</code>, <code>on-accent</code></td><td>Readable foreground on a filled surface.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Icons{% endblock %}
+{% block doc_section %}Media{% endblock %}
+{% block doc_title %}Icons{% endblock %}
+{% block doc_intro %}
+    Vendored <a class="text-action-600 underline" href="https://lucide.dev" target="_blank" rel="noopener">Lucide</a>
+    icons, inlined as SVG by a template tag rather than loaded as <code>&lt;img&gt;</code> or an icon
+    font. Inline SVG inherits <code>currentColor</code>, scales with a size argument, and needs no
+    extra request.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Usage</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-4">
+        {% lucide "search" size=16 %}
+        {% lucide "search" size=24 %}
+        {% lucide "search" size=32 %}
+        {% lucide "search" size=24 cls="text-action-600" %}
+        {% lucide "search" size=24 cls="text-accent-500" %}
+        {% lucide "search" size=24 stroke_width="2.5" %}
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_icons %}
+
+{% lucide "search" %}                          {# 18px default #}
+{% lucide "search" size=24 %}
+{% lucide "search" size=24 cls="text-action-600" %}
+{% lucide "search" size=24 stroke_width="2.5" %}
+
+{# the icon name can be a variable - this is how nav_menu.html works #}
+{% lucide item.icon size=20 %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Color follows text</h2>
+    <p class="text-gray-700">
+        Every icon is stroked with <code>currentColor</code>, so it takes the color of whatever
+        contains it — including through a theme switch, with no icon-specific styling.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-4">
+        <span class="inline-flex items-center gap-1.5 text-gray-600">{% lucide "clock" size=15 %} muted</span>
+        <span class="inline-flex items-center gap-1.5 text-action-600">{% lucide "check" size=15 %} action</span>
+        <span class="inline-flex items-center gap-1.5 text-accent-500">{% lucide "alert-triangle" size=15 %} danger</span>
+        <button class="btn btn-primary">{% lucide "plus" size=16 %}<span>On a button</span></button>
+    </div>
+
+    <h2 class="mt-8">Adding an icon</h2>
+    <p class="text-gray-700">
+        Drop the SVG into <code>wise_core/static/wise_core/icons/lucide/</code>, named
+        <code>&lt;name&gt;.svg</code>. The tag reads it from disk and caches it, so no registry needs
+        updating.
+    </p>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            An unknown name renders an HTML comment rather than raising — a missing icon never breaks
+            a page. If an icon is silently absent, check the filename against the gallery below.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Gallery</h2>
+    <p class="text-gray-700">{{ icon_names|length }} icons are vendored. Click a name to copy the tag.</p>
+    <div class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-6">
+        {% for name in icon_names %}
+            <button class="copy-button flex flex-col items-center gap-1.5 border border-divider bg-panel px-2 py-3 text-center"
+                    data-copy="{% templatetag openblock %} lucide &quot;{{ name }}&quot; size=16 {% templatetag closeblock %}"
+                    title="Copy the tag for {{ name }}">
+                <span class="copy-button-idle flex flex-col items-center gap-1.5">
+                    {% lucide name size=20 %}
+                    <span class="text-[10px] leading-tight text-gray-600">{{ name }}</span>
+                </span>
+                <span class="copy-button-done flex flex-col items-center gap-1.5">
+                    {% lucide "check" size=20 %}
+                    <span class="text-[10px] leading-tight">copied</span>
+                </span>
+            </button>
+        {% endfor %}
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Argument</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>name</code></td><td>Icon filename without <code>.svg</code>. Can be a variable.</td></tr>
+                <tr><td><code>size</code></td><td>Width and height in px. Default 18.</td></tr>
+                <tr><td><code>cls</code></td><td>Extra classes on the <code>&lt;svg&gt;</code>.</td></tr>
+                <tr><td><code>stroke_width</code></td><td>Default <code>"1.5"</code>.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

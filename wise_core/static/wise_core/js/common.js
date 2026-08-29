@@ -81,3 +81,137 @@ const compressImage = async (file, resize_width, {quality = 1, type = file.type}
     });
 
 };
+// ── Theme / palette / density switching ────────────────────────────────────
+// The *initial* value is applied by the inline bootstrap script in base.html
+// (before first paint); these helpers only handle switching at runtime and
+// persisting the choice. Each writes one attribute on <html>, which the token
+// layer keys off - see docs/design-tokens.md.
+
+function wiseSetPreference(name, value) {
+    var attr = 'data-' + name.replace('wise-', '')
+    if (value) {
+        document.documentElement.setAttribute(attr, value)
+    } else {
+        document.documentElement.removeAttribute(attr)
+    }
+    try {
+        if (value) {
+            localStorage.setItem(name, value)
+        } else {
+            localStorage.removeItem(name)
+        }
+    } catch (e) { /* storage disabled - the attribute still applies for this page */ }
+}
+
+function wiseSetTheme(theme) {
+    wiseSetPreference('wise-theme', theme)
+}
+
+function wiseSetPalette(palette) {
+    wiseSetPreference('wise-palette', palette)
+}
+
+function wiseSetDensity(density) {
+    wiseSetPreference('wise-density', density)
+}
+
+function wiseToggleTheme() {
+    var current = document.documentElement.getAttribute('data-theme')
+    wiseSetTheme(current === 'dark' ? 'light' : 'dark')
+}
+
+// ── Copy button ────────────────────────────────────────────────────────────
+// One delegated listener, so buttons rendered later (in a drawer, a dialog, an
+// HTMX swap) work with no re-binding.
+
+function wiseCopy(button, text) {
+    if (!text) return
+
+    var done = function () {
+        button.classList.add('is-copied')
+        clearTimeout(button._wiseCopyTimer)
+        button._wiseCopyTimer = setTimeout(function () {
+            button.classList.remove('is-copied')
+        }, 1500)
+    }
+
+    // navigator.clipboard needs a secure context; over plain HTTP it is
+    // undefined, so fall back to the legacy execCommand path rather than
+    // failing silently.
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, function () { wiseCopyFallback(text, done) })
+    } else {
+        wiseCopyFallback(text, done)
+    }
+}
+
+function wiseCopyFallback(text, done) {
+    var area = document.createElement('textarea')
+    area.value = text
+    area.setAttribute('readonly', '')
+    area.style.position = 'fixed'
+    area.style.opacity = '0'
+    document.body.appendChild(area)
+    area.select()
+    try {
+        document.execCommand('copy')
+        done()
+    } catch (e) { /* nothing more we can do - the value stays selected */ }
+    document.body.removeChild(area)
+}
+
+document.addEventListener('click', function (e) {
+    var button = e.target.closest ? e.target.closest('.copy-button') : null
+    if (!button) return
+    var text = button.dataset.copy
+    if (!text && button.dataset.copyTarget) {
+        var target = document.querySelector(button.dataset.copyTarget)
+        text = target ? (target.innerText || target.textContent) : ''
+    }
+    wiseCopy(button, text)
+})
+
+// ── Dropdown click-away ────────────────────────────────────────────────────
+// <details> stays open until its summary is clicked again; this closes any
+// open dropdown when the click lands outside it.
+
+document.addEventListener('click', function (e) {
+    document.querySelectorAll('details.dropdown[open]').forEach(function (d) {
+        if (!d.contains(e.target)) d.removeAttribute('open')
+    })
+})
+
+document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return
+    document.querySelectorAll('details.dropdown[open]').forEach(function (d) {
+        d.removeAttribute('open')
+    })
+})
+
+// ── Dialog / drawer ────────────────────────────────────────────────────────
+// The native <dialog> element supplies focus trapping, Esc-to-close and
+// top-layer stacking; these are just the open/close calls.
+
+function wiseOpenDialog(id) {
+    var dialog = document.getElementById(id)
+    if (dialog && typeof dialog.showModal === 'function') dialog.showModal()
+}
+
+function wiseCloseDialog(id) {
+    var dialog = document.getElementById(id)
+    if (dialog && typeof dialog.close === 'function') dialog.close()
+}
+
+function wiseOpenDrawer(id) {
+    var drawer = document.getElementById(id)
+    if (drawer) drawer.classList.remove('hidden')
+    var backdrop = document.getElementById(id + '_backdrop')
+    if (backdrop) backdrop.classList.remove('hidden')
+}
+
+function wiseCloseDrawer(id) {
+    var drawer = document.getElementById(id)
+    if (drawer) drawer.classList.add('hidden')
+    var backdrop = document.getElementById(id + '_backdrop')
+    if (backdrop) backdrop.classList.add('hidden')
+}

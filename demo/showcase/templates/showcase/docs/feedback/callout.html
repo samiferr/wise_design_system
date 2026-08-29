@@ -1,0 +1,85 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Callout{% endblock %}
+{% block doc_section %}Feedback{% endblock %}
+{% block doc_title %}Callout{% endblock %}
+{% block doc_intro %}
+    A block-level message inside page content — a warning on a form, an explanation on a detail
+    page. Unlike a <a class="text-action-600 underline" href="{% url 'docs_feedback_toast' %}">toast</a>,
+    it is part of the document: it does not float, does not time out, and is there on page load.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Variants</h2>
+    <div class="doc-preview mt-4 flex flex-col gap-3">
+        <div class="callout">{% lucide "info" size=16 cls="callout-icon" %}<div>A neutral callout with no variant class.</div></div>
+        <div class="callout callout-info">{% lucide "info" size=16 cls="callout-icon" %}<div><div class="callout-title">Heads up</div>Informational context the reader needs before continuing.</div></div>
+        <div class="callout callout-success">{% lucide "check" size=16 cls="callout-icon" %}<div><div class="callout-title">All set</div>Your changes have been published.</div></div>
+        <div class="callout callout-warning">{% lucide "alert-triangle" size=16 cls="callout-icon" %}<div><div class="callout-title">Check this first</div>Deleting a category also deletes its products.</div></div>
+        <div class="callout callout-danger">{% lucide "circle-x" size=16 cls="callout-icon" %}<div><div class="callout-title">This cannot be undone</div>The records will be permanently removed.</div></div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="callout callout-warning">
+    {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+    <div>
+        <div class="callout-title">Check this first</div>
+        Deleting a category also deletes its products.
+    </div>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Without a title</h2>
+    <div class="doc-preview mt-4">
+        <div class="callout callout-info">{% lucide "info" size=16 cls="callout-icon" %}<div>Prices exclude VAT.</div></div>
+    </div>
+
+    <h2 class="mt-8">Callout, toast, or form alert?</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Use</th><th>When</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Callout</strong></td><td>Standing context in the page — always there, tied to a place in the content.</td></tr>
+                <tr><td><a class="text-action-600 underline" href="{% url 'docs_feedback_toast' %}">Toast</a></td><td>Transient confirmation of something that just happened.</td></tr>
+                <tr><td><code>.form-alert</code></td><td>Non-field validation errors, at the top of a form. See <a class="text-action-600 underline" href="{% url 'docs_forms_form_layout' %}">Form Layout</a>.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">On a delete confirmation</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/confirm_generic.html' %}
+
+{% block confirm_rows %}
+    <tr><th>Name</th><td>{{ object.name }}</td></tr>
+{% endblock %}
+
+{% block confirm_warning %}
+    {% if object.products.exists %}
+        <div class="callout callout-danger">
+            {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+            <div>
+                <div class="callout-title">This also deletes {{ object.products.count }} products</div>
+                They cannot be recovered.
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Accessibility</h2>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            A callout present on page load needs no ARIA — it is read in document order. If you insert
+            one in response to a user action, add <code>role="alert"</code> so it is announced.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>callout</code></td><td>Base; neutral.</td></tr>
+                <tr><td><code>callout-info</code> / <code>-success</code> / <code>-warning</code> / <code>-danger</code></td><td>Tone.</td></tr>
+                <tr><td><code>callout-title</code></td><td>Bold first line.</td></tr>
+                <tr><td><code>callout-icon</code></td><td>Leading icon, aligned to the first line.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

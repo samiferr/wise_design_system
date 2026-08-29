@@ -1,0 +1,84 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Doughnut Chart{% endblock %}
+{% block doc_section %}Data Viz{% endblock %}
+{% block doc_title %}Doughnut Chart{% endblock %}
+{% block doc_intro %}
+    A pie with the middle removed. The hole is not decoration — it gives you somewhere to put the
+    total, which is usually the number people actually want.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-8">
+        <div class="relative inline-flex items-center justify-center">
+            <svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px" role="img" aria-label="Revenue by month">
+                {% for slice in doughnut_slices %}<path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}"/>{% endfor %}
+            </svg>
+            <div class="absolute text-center">
+                <div class="font-heading text-2xl font-semibold">209</div>
+                <div class="text-[10px] uppercase tracking-wider text-gray-600">total</div>
+            </div>
+        </div>
+        <div class="chart-legend" style="flex-direction:column;align-items:flex-start">
+            {% for slice in doughnut_slices %}
+                <span class="chart-legend-item"><span class="chart-legend-dot" style="background:{{ slice.color }}"></span>{{ slice.label }} — {{ slice.value }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}context["doughnut_slices"] = charts.doughnut(revenue, labels=months, thickness=18){% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="relative inline-flex items-center justify-center">
+    <svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px">
+        {% for slice in doughnut_slices %}
+            <path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}"/>
+        {% endfor %}
+    </svg>
+    <div class="absolute text-center">
+        <div class="font-heading text-2xl font-semibold">{{ total }}</div>
+        <div class="text-[10px] uppercase tracking-wider text-gray-600">total</div>
+    </div>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        <code>doughnut()</code> is <code>pie()</code> with an inner radius — each slice becomes a ring
+        segment drawn as an outer arc, a line inward, and an inner arc back.
+    </p>
+
+    <h2 class="mt-8">The CSS-only alternative</h2>
+    <p class="text-gray-700">
+        For a single percentage, <code>.donut-chart</code> needs no SVG at all — it is one element
+        with a <code>conic-gradient</code>.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-8">
+        <div class="donut-chart" style="--value: 68"><span class="donut-chart-label">68%</span></div>
+        <div class="chart-legend">
+            <span class="chart-legend-item"><span class="chart-legend-dot bg-action-600"></span>Completed</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot bg-gray-200"></span>Remaining</span>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="donut-chart" style="--value: {{ percent }}">
+    <span class="donut-chart-label">{{ percent }}%</span>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Which to use</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Need</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td>Several categories summing to a whole</td><td><code>charts.doughnut()</code> + SVG.</td></tr>
+                <tr><td>One percentage, no breakdown</td><td><code>.donut-chart</code> (CSS only).</td></tr>
+                <tr><td>Progress toward completion</td><td><a class="text-action-600 underline" href="{% url 'docs_feedback_progress_ring' %}">Progress ring</a>.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>API / class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>charts.doughnut(values, labels, cx, cy, radius, thickness)</code></td><td>Ring-segment slices.</td></tr>
+                <tr><td><code>donut-chart</code></td><td>CSS-only ring; <code>--value</code> is a bare 0–100 number.</td></tr>
+                <tr><td><code>donut-chart-label</code></td><td>Centred text inside it.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

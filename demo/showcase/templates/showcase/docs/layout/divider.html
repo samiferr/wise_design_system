@@ -1,0 +1,69 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Divider{% endblock %}
+{% block doc_section %}Layout{% endblock %}
+{% block doc_title %}Divider{% endblock %}
+{% block doc_intro %}
+    A hairline rule. Styles a real <code>&lt;hr&gt;</code>, which already means "thematic break" —
+    so the separation is in the document, not just the paint.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Horizontal</h2>
+    <div class="doc-preview mt-4">
+        <p class="text-sm">Above the rule.</p>
+        <hr class="divider">
+        <p class="text-sm">Below the rule.</p>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<hr class="divider">{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Labelled</h2>
+    <div class="doc-preview mt-4">
+        <div class="divider-labeled">or continue with</div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="divider-labeled">or continue with</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The lines are <code>::before</code>/<code>::after</code> pseudo-elements, so the label
+        centres itself at any width without measuring anything.
+    </p>
+
+    <h2 class="mt-8">Vertical</h2>
+    <div class="doc-preview mt-4 flex h-10 items-center">
+        <span class="text-sm">Draft</span>
+        <hr class="divider divider-vertical">
+        <span class="text-sm">Pending</span>
+        <hr class="divider divider-vertical">
+        <span class="text-sm">Confirmed</span>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="flex h-10 items-center">
+    <span>Draft</span>
+    <hr class="divider divider-vertical">
+    <span>Pending</span>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        <code>.divider-vertical</code> uses <code>self-stretch</code>, so it fills the flex row's
+        height rather than needing one set.
+    </p>
+
+    <h2 class="mt-8">When not to use one</h2>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            Most separation in this system is already carried by borders —
+            <code>.card</code>, <code>.data-table</code> rows, <code>.form-actions</code>,
+            <code>.accordion-item</code> all draw their own. Adding a divider next to one of those
+            gives you a double line. Reach for a divider only where nothing else provides the break.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>divider</code></td><td>Horizontal rule on an <code>&lt;hr&gt;</code>.</td></tr>
+                <tr><td><code>divider-vertical</code></td><td>Modifier — vertical rule inside a flex row.</td></tr>
+                <tr><td><code>divider-labeled</code></td><td>Rule with centred text.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

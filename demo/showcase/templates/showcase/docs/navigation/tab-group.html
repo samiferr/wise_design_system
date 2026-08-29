@@ -1,0 +1,106 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Tab Group{% endblock %}
+{% block doc_section %}Navigation{% endblock %}
+{% block doc_title %}Tab Group{% endblock %}
+{% block doc_intro %}
+    Underlined tabs for switching between views of the same record. There is no client-side state:
+    each tab is a link to its own URL, and the server marks one <code>.selected</code>. That means
+    tabs are bookmarkable, back-button friendly, and each panel only loads the data it needs.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 p-0">
+        <div class="tab-bar border-b border-divider px-4">
+            <a class="bar-item selected" href="#">Overview</a>
+            <a class="bar-item" href="#">History</a>
+            <a class="bar-item" href="#">Settings</a>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="tab-bar border-b border-divider px-4">
+    <a class="bar-item {% if request.resolver_match.url_name == 'record_overview' %}selected{% endif %}"
+       href="{% url 'record_overview' pk=object.pk %}">Overview</a>
+    <a class="bar-item {% if request.resolver_match.url_name == 'record_history' %}selected{% endif %}"
+       href="{% url 'record_history' pk=object.pk %}">History</a>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">With icons and counts</h2>
+    <div class="doc-preview mt-4 p-0">
+        <div class="tab-bar border-b border-divider px-4">
+            <a class="bar-item selected inline-flex items-center gap-1.5" href="#">{% lucide "layout-dashboard" size=15 %}Overview</a>
+            <a class="bar-item inline-flex items-center gap-1.5" href="#">{% lucide "clipboard-list" size=15 %}Products <span class="badge badge-grey">12</span></a>
+            <a class="bar-item inline-flex items-center gap-1.5" href="#">{% lucide "clock" size=15 %}History</a>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="bar-item inline-flex items-center gap-1.5" href="{% url 'category_products' pk=object.pk %}">
+    {% lucide "clipboard-list" size=15 %}Products
+    <span class="badge badge-grey">{{ object.products.count }}</span>
+</a>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">The views behind them</h2>
+    <p class="text-gray-700">
+        One view per tab, each rendering the same shell. A shared base view keeps the tab bar and the
+        record lookup in one place.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+class CategoryTabMixin(WiseDetailView):
+    model = Category
+
+class CategoryOverviewView(CategoryTabMixin):
+    template_name = 'showcase/category/overview.html'
+
+class CategoryProductsView(CategoryTabMixin):
+    template_name = 'showcase/category/products.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['products'] = self.object.products.all()   # only this tab pays for it
+        return context
+
+# urls.py
+path('categories/<int:pk>/', CategoryOverviewView.as_view(), name='category_overview'),
+path('categories/<int:pk>/products/', CategoryProductsView.as_view(), name='category_products'),{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{# _tabs.html - included by every tab template #}
+<div class="tab-bar border-b border-divider px-4">
+    <a class="bar-item {% if active == 'overview' %}selected{% endif %}"
+       href="{% url 'category_overview' pk=object.pk %}">Overview</a>
+    <a class="bar-item {% if active == 'products' %}selected{% endif %}"
+       href="{% url 'category_products' pk=object.pk %}">Products</a>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Why not client-side panels?</h2>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            Hiding panels with CSS means every tab's data is queried and rendered on every page load,
+            even the ones nobody opens — and the URL no longer says which tab you are on, so a
+            bookmark or a refresh drops you back on the first. One URL per tab avoids both.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Many tabs</h2>
+    <p class="text-gray-700"><code>.tab-bar</code> scrolls horizontally rather than wrapping, so a long set stays on one line.</p>
+    <div class="doc-preview mt-4 p-0">
+        <div class="tab-bar border-b border-divider px-4">
+            <a class="bar-item selected" href="#">Overview</a>
+            <a class="bar-item" href="#">Products</a>
+            <a class="bar-item" href="#">Suppliers</a>
+            <a class="bar-item" href="#">Pricing</a>
+            <a class="bar-item" href="#">History</a>
+            <a class="bar-item" href="#">Permissions</a>
+            <a class="bar-item" href="#">Settings</a>
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>tab-bar</code></td><td>Container — horizontally scrolling flex row.</td></tr>
+                <tr><td><code>bar-item</code></td><td>One tab.</td></tr>
+                <tr><td><code>bar-item.selected</code></td><td>The active tab; set server-side.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

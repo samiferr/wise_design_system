@@ -1,0 +1,125 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Form Layout{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Form Layout{% endblock %}
+{% block doc_intro %}
+    Every record form renders as a single-column stack of labeled fields — never a two-column
+    <code>&lt;table&gt;</code>. One field per line reads top-to-bottom without the eye jumping
+    between a label column and a value column, and it holds up at any width with no horizontal
+    scroll fallback.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Field states</h2>
+    <div class="doc-preview mt-4 max-w-lg">
+        <div class="form-stack">
+            <div class="form-field">
+                <label class="form-label">Name<span class="form-required">*</span></label>
+                <input type="text" placeholder="Ada Lovelace">
+                <span class="helptext">Shown to other members of your team.</span>
+            </div>
+            <div class="form-field form-field-error">
+                <label class="form-label">Email<span class="form-required">*</span></label>
+                <input type="text" value="not-an-email">
+                <ul class="errorlist"><li>Enter a valid email address.</li></ul>
+            </div>
+            <div class="form-field form-field-checkbox">
+                <label class="form-checkbox-label"><input type="checkbox" checked><span>Subscribe to updates</span></label>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-secondary">Cancel</button>
+            <button class="btn btn-primary">Save</button>
+        </div>
+    </div>
+
+    <h2 class="mt-8">You rarely write this markup</h2>
+    <p class="text-gray-700">
+        <code>_form_fields.html</code> produces it from any Django form. It walks
+        <code>visible_fields</code>, renders the label, required asterisk, help text and errorlist for
+        each, and switches to the checkbox layout based on the widget's <code>input_type</code>.
+        Non-field errors get a <code>.form-alert</code> banner above the stack.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-stack">
+        {% include 'wise_core/components/_form_fields.html' with form=form %}
+    </div>
+    <div class="form-actions">
+        <a class="btn btn-secondary" href="{{ cancel_url }}">Cancel</a>
+        <button class="btn btn-primary" type="submit">Save</button>
+    </div>
+</form>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        Extending <code>wise_core/generic/form_generic.html</code> gives you the wrapper too — see
+        <a class="text-action-600 underline" href="{% url 'docs_getting_started_usage' %}">Usage</a>.
+    </p>
+
+    <h2 class="mt-8">A whole form, rendered by Django</h2>
+    <div class="doc-preview mt-4 max-w-lg">
+        <div class="form-stack">
+            <div class="form-field">
+                <label class="form-label" for="{{ sink_form.full_name.id_for_label }}">{{ sink_form.full_name.label }}<span class="form-required">*</span></label>
+                {{ sink_form.full_name }}
+                <span class="helptext">{{ sink_form.full_name.help_text }}</span>
+            </div>
+            <div class="form-field">
+                <label class="form-label" for="{{ sink_form.email.id_for_label }}">{{ sink_form.email.label }}<span class="form-required">*</span></label>
+                {{ sink_form.email }}
+            </div>
+            <div class="form-field">
+                <label class="form-label" for="{{ sink_form.starts_on.id_for_label }}">{{ sink_form.starts_on.label }}</label>
+                {{ sink_form.starts_on }}
+            </div>
+            <div class="form-field form-field-checkbox">
+                <label class="form-checkbox-label" for="{{ sink_form.notifications.id_for_label }}">
+                    {{ sink_form.notifications }}<span>{{ sink_form.notifications.label }}</span>
+                </label>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-secondary">Cancel</button>
+            <button class="btn btn-primary">Save</button>
+        </div>
+    </div>
+
+    <h2 class="mt-8">Non-field errors</h2>
+    <div class="doc-preview mt-4 max-w-lg">
+        <div class="form-alert">
+            {% lucide "alert-triangle" size=16 cls="mt-0.5 shrink-0" %}
+            <div>A category with this name already exists.</div>
+        </div>
+    </div>
+
+    <h2 class="mt-8">Compact two-column variant</h2>
+    <p class="text-gray-700">
+        <code>.form-stack-compact</code> for dense modal forms. Fields opt into spanning the full row
+        via their <code>data-field</code> attribute, which <code>_form_fields.html</code> sets for you.
+    </p>
+    <div class="doc-preview mt-4 max-w-lg">
+        <div class="form-stack-compact">
+            <div class="form-field"><label class="form-label">First name</label><input type="text"></div>
+            <div class="form-field"><label class="form-label">Last name</label><input type="text"></div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}/* in your own CSS, name the fields that should span both columns */
+.form-stack-compact .form-field[data-field="notes"] { @apply col-span-2; }{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>form-stack</code></td><td>Vertical field container (the default).</td></tr>
+                <tr><td><code>form-stack-compact</code></td><td>Two-column grid variant for modals.</td></tr>
+                <tr><td><code>form-field</code></td><td>One label + input + help + errors group.</td></tr>
+                <tr><td><code>form-field-error</code></td><td>Reddens the control.</td></tr>
+                <tr><td><code>form-field-checkbox</code></td><td>Horizontal checkbox row.</td></tr>
+                <tr><td><code>form-label</code>, <code>form-required</code></td><td>Label and its red asterisk.</td></tr>
+                <tr><td><code>helptext</code>, <code>errorlist</code></td><td>Help text; field validation errors.</td></tr>
+                <tr><td><code>form-alert</code></td><td>Banner for non-field errors.</td></tr>
+                <tr><td><code>form-actions</code></td><td>Right-aligned Cancel/Save row.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

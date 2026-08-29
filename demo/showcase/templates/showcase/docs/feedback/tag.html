@@ -1,0 +1,82 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Tag{% endblock %}
+{% block doc_section %}Feedback{% endblock %}
+{% block doc_title %}Tag{% endblock %}
+{% block doc_intro %}
+    A bordered label for a user-supplied value — a keyword, a selected filter, an attached file.
+    Tags can be removable; <a class="text-action-600 underline" href="{% url 'docs_feedback_badge' %}">badges</a>,
+    which show system state, never are.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
+        <span class="tag">design</span>
+        <span class="tag">accessibility</span>
+        <span class="tag tag-action">{% lucide "star" size=12 %}featured</span>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="tag">design</span>
+<span class="tag tag-action">{% lucide "star" size=12 %}featured</span>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Removable</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
+        <span class="tag">design<button class="tag-remove" aria-label="Remove design">{% lucide "x" size=12 %}</button></span>
+        <span class="tag">code<button class="tag-remove" aria-label="Remove code">{% lucide "x" size=12 %}</button></span>
+        <span class="tag">{% lucide "file-text" size=12 %}datasheet-v2.pdf<button class="tag-remove" aria-label="Remove file">{% lucide "x" size=12 %}</button></span>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="tag">
+    {{ tag.name }}
+    <button class="tag-remove" aria-label="Remove {{ tag.name }}">{% lucide "x" size=12 %}</button>
+</span>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The remove control is a <code>&lt;button&gt;</code>, so it is focusable and keyboard
+        operable. Give it an <code>aria-label</code> naming <em>which</em> tag it removes — a page of
+        buttons all announced as "Remove" is unusable by ear.
+    </p>
+
+    <h2 class="mt-8">Removing server-side</h2>
+    <p class="text-gray-700">A removal changes data, so it should be a POST rather than a link:</p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% for tag in product.tags.all %}
+    <span class="tag">
+        {{ tag.name }}
+        <form method="post" action="{% url 'product_tag_remove' pk=product.pk tag=tag.pk %}">
+            {% csrf_token %}
+            <button class="tag-remove" type="submit" aria-label="Remove {{ tag.name }}">
+                {% lucide "x" size=12 %}
+            </button>
+        </form>
+    </span>
+{% endfor %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Applied filters</h2>
+    <p class="text-gray-700">
+        The filter panel already uses this: each active filter renders as a tag so the user can see
+        what is narrowing the list.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
+        <span class="text-xs uppercase tracking-wider text-gray-600">Filtering by</span>
+        <span class="tag">name: hub</span>
+        <span class="tag">category: Electronics</span>
+        <a class="text-xs text-action-600 underline" href="#">Clear all</a>
+    </div>
+
+    <h2 class="mt-8">Adding tags</h2>
+    <p class="text-gray-700">
+        Pair the list with an
+        <a class="text-action-600 underline" href="{% url 'docs_forms_auto_suggest_input' %}">auto suggest</a>
+        or <a class="text-action-600 underline" href="{% url 'docs_forms_combobox' %}">combobox</a>
+        input so existing tags are reused rather than re-typed with slight variations.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>tag</code></td><td>Bordered label.</td></tr>
+                <tr><td><code>tag-action</code></td><td>Accent-tinted variant.</td></tr>
+                <tr><td><code>tag-remove</code></td><td>The dismiss button inside a tag.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

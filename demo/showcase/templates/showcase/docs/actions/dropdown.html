@@ -1,0 +1,98 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Dropdown{% endblock %}
+{% block doc_section %}Actions{% endblock %}
+{% block doc_title %}Dropdown{% endblock %}
+{% block doc_intro %}
+    A menu of actions anchored to a trigger. Built on <code>&lt;details&gt;</code> so it opens,
+    closes and traps nothing — no JavaScript required, and it degrades to an always-visible list if
+    CSS fails to load.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-start gap-3" style="min-height: 12rem;">
+        <details class="dropdown">
+            <summary class="btn btn-secondary">{% lucide "settings" size=15 %}<span>Actions</span>{% lucide "chevron-down" size=14 %}</summary>
+            <div class="dropdown-panel">
+                <a class="dropdown-item" href="#">{% lucide "eye" size=14 %}View</a>
+                <a class="dropdown-item" href="#">{% lucide "pencil" size=14 %}Edit</a>
+                <a class="dropdown-item" href="#">{% lucide "download" size=14 %}Export</a>
+                <hr class="dropdown-divider">
+                <a class="dropdown-item dropdown-item-danger" href="#">{% lucide "trash-2" size=14 %}Delete</a>
+            </div>
+        </details>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<details class="dropdown">
+    <summary class="btn btn-secondary">
+        {% lucide "settings" size=15 %}<span>Actions</span>{% lucide "chevron-down" size=14 %}
+    </summary>
+    <div class="dropdown-panel">
+        <a class="dropdown-item" href="{{ object.get_absolute_url }}">{% lucide "eye" size=14 %}View</a>
+        <a class="dropdown-item" href="{% url 'product_update_view' pk=object.pk %}">{% lucide "pencil" size=14 %}Edit</a>
+        <hr class="dropdown-divider">
+        <a class="dropdown-item dropdown-item-danger" href="{% url 'product_delete_view' pk=object.pk %}">
+            {% lucide "trash-2" size=14 %}Delete
+        </a>
+    </div>
+</details>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Grouped, with headers</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-start gap-3" style="min-height: 14rem;">
+        <details class="dropdown">
+            <summary class="btn btn-icon btn-secondary" aria-label="Row actions">{% lucide "menu" size=15 %}</summary>
+            <div class="dropdown-panel">
+                <div class="dropdown-header">This record</div>
+                <a class="dropdown-item" href="#">{% lucide "pencil" size=14 %}Edit</a>
+                <a class="dropdown-item selected" href="#">{% lucide "check" size=14 %}Mark reviewed</a>
+                <div class="dropdown-header">Export</div>
+                <a class="dropdown-item" href="#">{% lucide "file-text" size=14 %}PDF</a>
+                <button class="dropdown-item" disabled>{% lucide "printer" size=14 %}Print (unavailable)</button>
+            </div>
+        </details>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="dropdown-panel">
+    <div class="dropdown-header">This record</div>
+    <a class="dropdown-item" href="#">Edit</a>
+    <a class="dropdown-item selected" href="#">Mark reviewed</a>
+    <button class="dropdown-item" disabled>Print (unavailable)</button>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Items that perform an action</h2>
+    <p class="text-gray-700">
+        A menu item that changes data should be a real form submission, not a link — a
+        <code>GET</code> that mutates state will eventually be triggered by a crawler or a prefetch.
+        <code>.dropdown-item</code> styles a <code>&lt;button&gt;</code> identically to an anchor.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<form method="post" action="{% url 'product_archive' pk=object.pk %}">
+    {% csrf_token %}
+    <button class="dropdown-item" type="submit">{% lucide "save" size=14 %}Archive</button>
+</form>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Closing on outside click</h2>
+    <p class="text-gray-700">
+        <code>&lt;details&gt;</code> stays open until its summary is clicked again. If you want
+        click-away to close it, <code>common.js</code> ships one delegated listener that closes any
+        open dropdown when the click lands elsewhere — no per-dropdown wiring.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}document.addEventListener('click', function (e) {
+    document.querySelectorAll('details.dropdown[open]').forEach(function (d) {
+        if (!d.contains(e.target)) d.removeAttribute('open')
+    })
+}){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>dropdown</code></td><td>On the <code>&lt;details&gt;</code>; anchors the panel.</td></tr>
+                <tr><td><code>dropdown-panel</code></td><td>The floating menu. Sits at <code>--z-dropdown</code>.</td></tr>
+                <tr><td><code>dropdown-item</code></td><td>One entry — works on <code>&lt;a&gt;</code> and <code>&lt;button&gt;</code>.</td></tr>
+                <tr><td><code>dropdown-item.selected</code></td><td>Current/active entry.</td></tr>
+                <tr><td><code>dropdown-item-danger</code></td><td>Destructive entry.</td></tr>
+                <tr><td><code>dropdown-header</code></td><td>Small uppercase group label.</td></tr>
+                <tr><td><code>dropdown-divider</code></td><td>Hairline <code>&lt;hr&gt;</code> between groups.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

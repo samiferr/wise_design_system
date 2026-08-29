@@ -1,0 +1,74 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Number Input{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Number Input{% endblock %}
+{% block doc_intro %}
+    A numeric input with the browser's own stepper and validation. Django's
+    <code>IntegerField</code>/<code>DecimalField</code> already emit
+    <code>type="number"</code> with <code>min</code>, <code>max</code> and <code>step</code> derived
+    from the field, so the client and server agree on the bounds without you repeating them.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 max-w-[10rem]">
+        <input class="input" type="number" value="1" min="0" max="999" step="1">
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="number" value="1" min="0" max="999" step="1">{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">With units</h2>
+    <div class="doc-preview mt-4 max-w-xs">
+        <div class="input-group">
+            <input class="input" type="number" value="30" min="1">
+            <span class="input-group-addon">days</span>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="input-group">
+    <input class="input" type="number" value="30" min="1">
+    <span class="input-group-addon">days</span>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Rendered by Django</h2>
+    <div class="doc-preview mt-4 max-w-[12rem]">
+        <div class="form-stack">
+            <div class="form-field">
+                <label class="form-label" for="{{ sink_form.quantity.id_for_label }}">{{ sink_form.quantity.label }}</label>
+                {{ sink_form.quantity }}
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}quantity = forms.IntegerField(
+    min_value=0, max_value=999, initial=1,
+    widget=forms.NumberInput(attrs={"step": 1}),
+){% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <code>min</code>/<code>max</code> are a convenience, not a guarantee — they are trivially
+            bypassed. Keep the validation on the field (<code>min_value</code>/<code>max_value</code>),
+            which is what actually enforces it.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Money</h2>
+    <p class="text-gray-700">
+        Use <code>DecimalField</code>, never a float, and set <code>step</code> to the currency's
+        smallest unit so the stepper doesn't produce unrepresentable values.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}price = forms.DecimalField(
+    max_digits=9, decimal_places=2,
+    widget=forms.NumberInput(attrs={"step": "0.01", "class": "input"}),
+){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Attribute</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>min</code> / <code>max</code></td><td>Bounds; mirror the field's <code>min_value</code>/<code>max_value</code>.</td></tr>
+                <tr><td><code>step</code></td><td>Stepper increment — <code>1</code> for counts, <code>0.01</code> for money.</td></tr>
+                <tr><td><code>inputmode="numeric"</code></td><td>Numeric keypad on mobile without the spinner.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

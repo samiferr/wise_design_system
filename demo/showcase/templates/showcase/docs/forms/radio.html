@@ -1,0 +1,66 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Radio{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Radio{% endblock %}
+{% block doc_intro %}
+    One choice from a small set. Radios share a <code>name</code>, which is what makes them mutually
+    exclusive and lets arrow keys move between them. Above roughly seven options, a
+    <a class="text-action-600 underline" href="{% url 'docs_forms_select' %}">select</a> reads better.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Radio group</h2>
+    <div class="doc-preview mt-4 flex flex-col gap-2">
+        <label class="form-checkbox-label"><input class="radio" type="radio" name="doc-plan" checked><span>Free</span></label>
+        <label class="form-checkbox-label"><input class="radio" type="radio" name="doc-plan"><span>Pro</span></label>
+        <label class="form-checkbox-label"><input class="radio" type="radio" name="doc-plan"><span>Team</span></label>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
+    <input class="radio" type="radio" name="plan" value="free" checked><span>Free</span>
+</label>
+<label class="form-checkbox-label">
+    <input class="radio" type="radio" name="plan" value="pro"><span>Pro</span>
+</label>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            Radios with different <code>name</code>s are not a group — each becomes independently
+            checkable and, once checked, impossible to clear. If yours won't deselect, this is why.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Rendered by Django</h2>
+    <div class="doc-preview mt-4">
+        <div class="form-field">
+            <span class="form-label">{{ sink_form.plan.label }}</span>
+            {{ sink_form.plan }}
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}plan = forms.ChoiceField(
+    choices=[("free", "Free"), ("pro", "Pro"), ("team", "Team")],
+    widget=forms.RadioSelect,
+    initial="pro",
+){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Grouping semantics</h2>
+    <p class="text-gray-700">
+        A visible group label should be tied to the radios with
+        <code>&lt;fieldset&gt;</code>/<code>&lt;legend&gt;</code>, so assistive tech announces the
+        question along with each option.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<fieldset>
+    <legend class="form-label">Plan</legend>
+    {{ form.plan }}
+</fieldset>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>radio</code></td><td>The control itself.</td></tr>
+                <tr><td><code>form-checkbox-label</code></td><td>Shared label wrapper (works for radios too).</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

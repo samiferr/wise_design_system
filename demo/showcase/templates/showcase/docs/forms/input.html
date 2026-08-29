@@ -1,0 +1,83 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Input{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Input{% endblock %}
+{% block doc_intro %}The standalone text control. Use <code>.input</code> directly for a control that needs no label or
+    error treatment of its own — an inline search box, a filter row. Inside a form, let
+    <code>_form_fields.html</code> render it so it gets its label, help text and errorlist.{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Types</h2>
+    <p class="text-gray-700">One class covers every text-like input type; the browser supplies the keyboard and validation.</p>
+    <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-2">
+        <input class="input" type="text" placeholder="Text">
+        <input class="input" type="email" placeholder="ada@example.com">
+        <input class="input" type="tel" placeholder="+1 555 0100">
+        <input class="input" type="password" placeholder="Password">
+        <input class="input" type="url" placeholder="https://example.com">
+        <input class="input" type="search" placeholder="Search…">
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="text" placeholder="Text">
+<input class="input" type="email" placeholder="ada@example.com">
+<input class="input" type="tel" placeholder="+1 555 0100">
+<input class="input" type="password">{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Sizes</h2>
+    <div class="doc-preview mt-4 flex flex-col gap-3">
+        <input class="input input-sm" placeholder="Small">
+        <input class="input" placeholder="Medium (default)">
+        <input class="input input-lg" placeholder="Large">
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input input-sm" placeholder="Small">
+<input class="input" placeholder="Medium">
+<input class="input input-lg" placeholder="Large">{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">Heights come from <code>--control-height-*</code>, so all three shrink under <code>data-density="compact"</code>.</p>
+
+    <h2 class="mt-8">With a prefix or suffix</h2>
+    <div class="doc-preview mt-4 flex flex-col gap-3 max-w-sm">
+        <div class="input-group">
+            <span class="input-group-addon">{% lucide "search" size=15 %}</span>
+            <input class="input" placeholder="Search products">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon">€</span>
+            <input class="input" type="number" value="49.00">
+            <span class="input-group-addon">per month</span>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="input-group">
+    <span class="input-group-addon">€</span>
+    <input class="input" type="number" value="49.00">
+    <span class="input-group-addon">per month</span>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Rendered by Django</h2>
+    <p class="text-gray-700">This is real output from the demo form — not hand-written markup.</p>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-stack">
+            <div class="form-field">
+                <label class="form-label" for="{{ sink_form.full_name.id_for_label }}">{{ sink_form.full_name.label }}<span class="form-required">*</span></label>
+                {{ sink_form.full_name }}
+                <span class="helptext">{{ sink_form.full_name.help_text }}</span>
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}full_name = forms.CharField(
+    label="Full name",
+    widget=forms.TextInput(attrs={"placeholder": "Ada Lovelace"}),
+    help_text="Shown to other members of your team.",
+){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>input</code></td><td>Standalone text input.</td></tr>
+                <tr><td><code>input-sm</code> / <code>input-lg</code></td><td>Smaller / larger control height.</td></tr>
+                <tr><td><code>input-group</code></td><td>Wrapper for an input with attached addons.</td></tr>
+                <tr><td><code>input-group-addon</code></td><td>The attached prefix or suffix.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

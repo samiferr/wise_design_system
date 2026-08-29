@@ -1,0 +1,75 @@
+{% extends 'wise_core/base.html' %}
+{% load wise_icons %}
+{% comment %}
+Shell for every documentation page: the tree sidebar, the page header
+(breadcrumb + title + intro), and the prev/next pager.
+
+A page extending this fills `doc_title`, `doc_intro` and `doc_body`. It should
+not need to touch the layout blocks below.
+{% endcomment %}
+
+{% block title %}{% block doc_title_tag %}{% endblock %} – Wise Design System{% endblock %}
+
+{# The mobile drawer shows the docs tree rather than the app's own nav menu. #}
+{% block sidebar %}
+    <div class="fixed inset-x-0 top-[57px] bottom-0 z-10 hidden overflow-auto bg-page px-3 py-3 md:hidden" id="mySidebar">
+        {% include 'showcase/components/_docs_tree.html' %}
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="flex">
+        <aside class="docs-sidebar">
+            <div class="flex items-center gap-2 px-4 py-4">
+                <a href="{% url 'home' %}" class="min-w-0 flex-1 truncate font-heading font-semibold uppercase tracking-wide text-gray-900 no-underline">
+                    Wise
+                </a>
+                {% include 'wise_core/components/_theme_toggle.html' %}
+            </div>
+            <div class="min-h-0 flex-1 overflow-y-auto scrollbar-thin px-2 pb-6">
+                {% include 'showcase/components/_docs_tree.html' %}
+            </div>
+        </aside>
+
+        <main class="min-w-0 flex-1">
+            <div class="page-panel mx-auto max-w-4xl">
+                {% block doc_header %}
+                    <nav class="breadcrumb" aria-label="Breadcrumb">
+                        <a class="breadcrumb-item" href="{% url 'docs' %}">Docs</a>
+                        {% if current_section_slug %}
+                            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+                            <span class="breadcrumb-item">{% block doc_section %}{% endblock %}</span>
+                        {% endif %}
+                    </nav>
+                    <h1 class="mt-2">{% block doc_title %}{% endblock %}</h1>
+                    <p class="mt-2 max-w-2xl text-gray-700">{% block doc_intro %}{% endblock %}</p>
+                {% endblock %}
+
+                {% block doc_body %}{% endblock %}
+
+                {% if previous_page or next_page %}
+                    <nav class="doc-pager" aria-label="Pagination">
+                        {% if previous_page %}
+                            <a class="doc-pager-link" href="{% url previous_page.url_name %}">
+                                {% lucide "arrow-left" size=15 %}
+                                <span>
+                                    <span class="doc-pager-kicker">Previous</span>
+                                    {{ previous_page.title }}
+                                </span>
+                            </a>
+                        {% else %}<span></span>{% endif %}
+                        {% if next_page %}
+                            <a class="doc-pager-link justify-end text-right" href="{% url next_page.url_name %}">
+                                <span>
+                                    <span class="doc-pager-kicker">Next</span>
+                                    {{ next_page.title }}
+                                </span>
+                                {% lucide "arrow-right" size=15 %}
+                            </a>
+                        {% endif %}
+                    </nav>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Time Input{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Time Input{% endblock %}
+{% block doc_intro %}
+    <code>&lt;input type="time"&gt;</code>. The browser shows 12- or 24-hour format per the user's
+    locale and always posts 24-hour <code>HH:MM</code>, so display and storage stay separate.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 flex flex-wrap gap-3">
+        <input class="input max-w-[8rem]" type="time" value="09:30">
+        <input class="input max-w-[10rem]" type="time" value="09:30:00" step="1">
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="time" value="09:30">
+
+<!-- step="1" adds a seconds field; step="900" snaps to 15-minute slots -->
+<input class="input" type="time" value="09:30" step="900">{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Rendered by Django</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-stack">
+            <div class="form-field">
+                <label class="form-label" for="{{ sink_form.starts_at.id_for_label }}">{{ sink_form.starts_at.label }}</label>
+                {{ sink_form.starts_at }}
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}starts_at = forms.TimeField(widget=forms.TimeInput(attrs={"type": "time"}))
+
+# On an edit form, pin the format so the existing value prefills:
+widgets = {
+    "starts_at": forms.TimeInput(attrs={"type": "time"}, format="%H:%M"),
+}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Time ranges</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-end gap-3">
+        <div><label class="form-label mb-1 block text-xs">Opens</label><input class="input max-w-[8rem]" type="time" value="09:00"></div>
+        <div><label class="form-label mb-1 block text-xs">Closes</label><input class="input max-w-[8rem]" type="time" value="17:30"></div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}def clean(self):
+    cleaned = super().clean()
+    opens, closes = cleaned.get("opens"), cleaned.get("closes")
+    if opens and closes and closes <= opens:
+        raise ValidationError("Closing time must be after opening time.")
+    return cleaned{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Time zones</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            A <code>TimeField</code> has no date and therefore no timezone — it cannot be converted.
+            For a moment in time use <code>DateTimeField</code> and let Django store UTC. Keep
+            <code>TimeField</code> for wall-clock values like opening hours, which genuinely are
+            "09:00 local, whatever local means today".
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Attribute</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>step</code></td><td>Seconds. <code>60</code> (default) hides seconds; <code>900</code> snaps to quarter hours.</td></tr>
+                <tr><td><code>min</code> / <code>max</code></td><td>Bounds the selectable time.</td></tr>
+                <tr><td><code>format="%H:%M"</code></td><td>On the widget, so existing values prefill on edit forms.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

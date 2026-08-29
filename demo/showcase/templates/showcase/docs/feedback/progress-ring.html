@@ -1,0 +1,83 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Progress Ring{% endblock %}
+{% block doc_section %}Feedback{% endblock %}
+{% block doc_title %}Progress Ring{% endblock %}
+{% block doc_intro %}
+    A circular progress indicator, drawn as a stroked SVG arc. Use it where a percentage is the
+    headline number — a dashboard tile — and a
+    <a class="text-action-600 underline" href="{% url 'docs_feedback_progress_bar' %}">bar</a> where
+    it accompanies a task.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-8">
+        <div class="progress-ring">
+            <svg width="{{ ring.size }}" height="{{ ring.size }}">
+                <circle class="progress-ring-track" cx="{{ ring.center }}" cy="{{ ring.center }}" r="{{ ring.radius }}" stroke-width="{{ ring.stroke }}"></circle>
+                <circle class="progress-ring-indicator" cx="{{ ring.center }}" cy="{{ ring.center }}" r="{{ ring.radius }}" stroke-width="{{ ring.stroke }}"
+                        stroke-dasharray="{{ ring.dasharray }}" stroke-dashoffset="{{ ring.dashoffset }}"></circle>
+            </svg>
+            <span class="progress-ring-label">{{ ring.percent }}%</span>
+        </div>
+        <div class="text-sm text-gray-600">Geometry computed in the view by <code>charts.progress_ring(68)</code>.</div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+from wise_core import charts
+
+context["ring"] = charts.progress_ring(68){% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="progress-ring">
+    <svg width="{{ ring.size }}" height="{{ ring.size }}">
+        <circle class="progress-ring-track"
+                cx="{{ ring.center }}" cy="{{ ring.center }}" r="{{ ring.radius }}"
+                stroke-width="{{ ring.stroke }}"></circle>
+        <circle class="progress-ring-indicator"
+                cx="{{ ring.center }}" cy="{{ ring.center }}" r="{{ ring.radius }}"
+                stroke-width="{{ ring.stroke }}"
+                stroke-dasharray="{{ ring.dasharray }}"
+                stroke-dashoffset="{{ ring.dashoffset }}"></circle>
+    </svg>
+    <span class="progress-ring-label">{{ ring.percent }}%</span>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Straight from the template</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_charts %}
+{% chart_progress_ring 42 radius=20 stroke=4 as small_ring %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">How it works</h2>
+    <p class="text-gray-700">
+        The indicator circle is stroked with a dash pattern exactly as long as its circumference, then
+        offset by the unfilled remainder. CSS rotates the SVG <code>-90deg</code> so the arc starts at
+        twelve o'clock instead of three.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}circumference = 2 * math.pi * radius
+dasharray  = circumference
+dashoffset = circumference * (1 - percent / 100)   # 100% -> 0 offset -> full ring{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        <code>progress_ring()</code> clamps its input to 0–100, so a bad percentage cannot produce a
+        ring that over- or under-draws.
+    </p>
+
+    <h2 class="mt-8">Ring or doughnut?</h2>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            A progress ring shows <em>one</em> value against a maximum. To break a total into parts,
+            use the <a class="text-action-600 underline" href="{% url 'docs_data_viz_doughnut_chart' %}">doughnut chart</a> instead.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class / API</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>progress-ring</code></td><td>Wrapper; centres the label over the SVG.</td></tr>
+                <tr><td><code>progress-ring-track</code></td><td>The unfilled circle.</td></tr>
+                <tr><td><code>progress-ring-indicator</code></td><td>The filled arc.</td></tr>
+                <tr><td><code>progress-ring-label</code></td><td>Centred text.</td></tr>
+                <tr><td><code>charts.progress_ring(percent, radius, stroke)</code></td><td>Returns size, center, radius, dasharray, dashoffset, percent.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

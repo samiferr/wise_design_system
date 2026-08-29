@@ -1,0 +1,88 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Line Chart{% endblock %}
+{% block doc_section %}Data Viz{% endblock %}
+{% block doc_title %}Line Chart{% endblock %}
+{% block doc_intro %}
+    A trend over time, as an SVG polyline with geometry computed server-side. No charting library,
+    no client bundle — it renders with JavaScript disabled and prints correctly.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">With area, grid and points</h2>
+    <div class="doc-preview mt-4">
+        <svg class="chart-svg" viewBox="0 0 300 120" preserveAspectRatio="none" style="height:140px" role="img" aria-label="Monthly revenue trend">
+            {% for y in grid_lines %}<line class="chart-grid-line" x1="0" y1="{{ y }}" x2="300" y2="{{ y }}"/>{% endfor %}
+            <path class="chart-series-area" d="{{ revenue_area }}"/>
+            <polyline class="chart-series-line" points="{{ revenue_line }}"/>
+        </svg>
+        <div class="mt-1 flex justify-between text-[11px] text-gray-600">
+            {% for label in months %}<span>{{ label }}</span>{% endfor %}
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+from wise_core import charts
+
+context.update({
+    "revenue_line": charts.polyline(revenue, 300, 120, padding=6),
+    "revenue_area": charts.area_path(revenue, 300, 120, padding=6),
+    "grid_lines": charts.grid_lines(4, 300, 120, 6),
+    "months": months,
+}){% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 300 120" preserveAspectRatio="none"
+     style="height:140px" role="img" aria-label="Monthly revenue trend">
+    {% for y in grid_lines %}
+        <line class="chart-grid-line" x1="0" y1="{{ y }}" x2="300" y2="{{ y }}"/>
+    {% endfor %}
+    <path class="chart-series-area" d="{{ revenue_area }}"/>
+    <polyline class="chart-series-line" points="{{ revenue_line }}"/>
+</svg>
+<div class="mt-1 flex justify-between text-[11px] text-gray-600">
+    {% for label in months %}<span>{{ label }}</span>{% endfor %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Coordinates</h2>
+    <p class="text-gray-700">
+        SVG's y axis grows <em>downward</em>, so a larger value produces a smaller y —
+        <code>charts.polyline()</code> handles the flip. <code>padding</code> insets the plot
+        vertically so a stroked line's cap is not clipped at the top or bottom of the viewBox.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}charts.polyline([1, 3, 2], 100, 30)
+# "0.00,30.00 50.00,0.00 100.00,15.00"   <- the peak (3) is at y=0{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Fixing the scale</h2>
+    <p class="text-gray-700">
+        By default the series is scaled to its own min and max, which exaggerates small variation.
+        Pass an explicit range — usually a zero baseline — when the absolute size matters.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}charts.polyline(revenue, 300, 120, padding=6, minimum=0)
+
+# ...and to compare two series on one chart, give both the same bounds:
+lo, hi = 0, max(max(a), max(b))
+line_a = charts.polyline(a, 300, 120, minimum=lo, maximum=hi)
+line_b = charts.polyline(b, 300, 120, minimum=lo, maximum=hi){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Multiple series</h2>
+    <p class="text-gray-700">
+        Give each line its own color from <code>charts.series_color(i)</code>, which returns a
+        <code>var(--color-*)</code> reference so the palette follows the theme.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% for series in chart_series %}
+    <polyline class="chart-series-line" points="{{ series.points }}"
+              style="stroke: {{ series.color }}"/>
+{% endfor %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>API / class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>charts.polyline(values, w, h, padding, minimum, maximum)</code></td><td>A <code>points</code> string.</td></tr>
+                <tr><td><code>charts.area_path(...)</code></td><td>The same series closed to the baseline, as a <code>d</code> path.</td></tr>
+                <tr><td><code>charts.points(...)</code></td><td>Raw (x, y) tuples, for drawing markers.</td></tr>
+                <tr><td><code>charts.grid_lines(count, w, h, padding)</code></td><td>Gridline y positions.</td></tr>
+                <tr><td><code>chart-series-line</code> / <code>-area</code></td><td>Stroke and tinted fill.</td></tr>
+                <tr><td><code>chart-grid-line</code> / <code>chart-axis</code></td><td>Grid and axis strokes.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

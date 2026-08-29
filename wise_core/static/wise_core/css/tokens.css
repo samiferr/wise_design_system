@@ -62,6 +62,52 @@
     --color-surface: #e9e9ea;
     --color-page: #f2f2f3;
 
+    /* Raised surfaces. `panel` is what every card/table/dropdown sits on;
+       `panel-alt` is the subtle second level (table head, code block, inset
+       rows). These exist as their own tokens rather than reusing `white` so
+       that a theme can flip the surface without also flipping the `white`
+       that button labels are painted in - see the on-* tokens below. */
+    --color-panel: #ffffff;
+    --color-panel-alt: #f9f9fb;
+    --color-overlay: rgba(24, 24, 26, 0.45);
+
+    /* "On" colors - the readable foreground for text sitting *on top of* a
+       filled brand/action/accent surface. Light themes want white here; dark
+       themes lighten the fill itself, so they need a near-black instead.
+       Components reference these instead of hardcoding `text-white`, which is
+       what lets a primary button stay legible in every theme. */
+    --color-on-action: #ffffff;
+    --color-on-brand: #ffffff;
+    --color-on-accent: #ffffff;
+
+    /* Elevation order. Named for the thing that sits at each level so two
+       components never have to guess whether 20 beats 10. */
+    --z-dropdown: 30;
+    --z-sticky: 40;
+    --z-drawer: 50;
+    --z-dialog: 60;
+    --z-toast: 70;
+    --z-tooltip: 80;
+
+    /* Motion. `fast` for hover/focus tints, `normal` for anything that moves
+       or resizes, `slow` for a panel sliding in. */
+    --transition-fast: 100ms;
+    --transition-normal: 150ms;
+    --transition-slow: 250ms;
+
+    /* Focus. A single visible ring shared by every interactive component, so
+       keyboard focus looks the same everywhere. */
+    --focus-ring-width: 2px;
+    --focus-ring-offset: 1px;
+
+    /* Control sizing. The density variants below rewrite these three, which
+       is why controls must read them rather than hardcode a height. */
+    --control-height-sm: 2rem;
+    --control-height-md: 2.5rem;
+    --control-height-lg: 3rem;
+    --control-padding-y: 0.5rem;
+    --table-padding-y: 0.5rem;
+
     /* Override Tailwind's built-in gray scale with the system's own
        neutral ramp, so every gray-* utility (border-gray-200,
        text-gray-600, bg-gray-100, ...) picks up the right tone with no
@@ -95,6 +141,211 @@
     --shadow-blueprint-sm: 0 1px 2px rgba(43, 43, 45, 0.14);
     --shadow-blueprint-md: 0 3px 10px rgba(43, 43, 45, 0.16);
     --shadow-blueprint-lg: 0 12px 32px rgba(43, 43, 45, 0.22);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Built-in themes
+   ══════════════════════════════════════════════════════════════════════
+
+   Tailwind v4 compiles every color utility to a `var(--color-*)` reference
+   - `.bg-panel` is literally `background-color: var(--color-panel)`, and so
+   is the `@apply bg-panel` inside a component rule. That means redefining a
+   token under an attribute selector re-themes the whole system *at runtime*,
+   with no rebuild and no second stylesheet.
+
+   Three independent axes, each one attribute on <html>:
+
+     data-theme    light (default) | dark
+     data-palette  green (default) | blue | violet | amber
+     data-density  comfortable (default) | compact
+
+   They compose, which is why the dark palettes below are written as
+   `[data-theme="dark"][data-palette="..."]` - a bare `[data-palette]` block
+   would have equal specificity to the dark block and, coming later in the
+   file, would silently undo it.
+
+   base.html applies the stored values before first paint; common.js's
+   wiseSetTheme()/wiseSetPalette()/wiseSetDensity() switch them at runtime.
+   ────────────────────────────────────────────────────────────────────── */
+
+:root[data-theme="dark"] {
+    /* The neutral ramp inverts: 50 is now the darkest and 950 the lightest.
+       Every existing `text-gray-600` / `bg-gray-100` / `border-gray-300` in
+       the component layer and in application templates keeps working and
+       lands the right way up, with no markup changes anywhere. */
+    --color-gray-50: #18181a;
+    --color-gray-100: #1f1f22;
+    --color-gray-200: #2b2b2f;
+    --color-gray-300: #3a3a3f;
+    --color-gray-400: #5c5c62;
+    --color-gray-500: #8e8e95;
+    --color-gray-600: #a9a9b0;
+    --color-gray-700: #c4c4c9;
+    --color-gray-800: #dedee1;
+    --color-gray-900: #f2f2f3;
+    --color-gray-950: #ffffff;
+
+    --color-page: #131315;
+    --color-panel: #1b1b1e;
+    --color-panel-alt: #232327;
+    --color-surface: #232327;
+    --color-divider: rgba(255, 255, 255, 0.14);
+    --color-overlay: rgba(0, 0, 0, 0.65);
+
+    /* The accent ramps lighten, because a dark green that reads well as a
+       button fill on white is nearly invisible on near-black. Once the fill
+       is light, its label has to go dark - hence the on-* flip below. */
+    --color-brand-100: #14532d;
+    --color-brand-500: #34d17a;
+    --color-brand-600: #4ade80;
+    --color-brand-700: #22c55e;
+    --color-brand-800: #86efac;
+
+    --color-action-50: #10281a;
+    --color-action-100: #14532d;
+    --color-action-400: #22c55e;
+    --color-action-500: #34d17a;
+    --color-action-600: #3ddc84;
+    --color-action-700: #86efac;
+
+    --color-on-action: #06210f;
+    --color-on-brand: #06210f;
+    --color-on-accent: #2a0d0d;
+
+    --color-accent-50: #2f1414;
+    --color-accent-400: #d99a9a;
+    --color-accent-500: #e08b8b;
+    --color-accent-600: #f0a8a8;
+
+    --color-warning-50: #2a2213;
+    --color-warning-400: #d9b15c;
+    --color-warning-500: #e2c07a;
+    --color-warning-600: #f0d49b;
+
+    /* Shadows carry almost no weight on a dark ground - lean on the border
+       instead and keep these deep enough to read as separation, not glow. */
+    --shadow-blueprint-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-blueprint-md: 0 3px 10px rgba(0, 0, 0, 0.55);
+    --shadow-blueprint-lg: 0 12px 32px rgba(0, 0, 0, 0.65);
+}
+
+/* ── Alternate palettes ─────────────────────────────────────────────────
+   Only the brand/action ramps move; neutrals, surfaces and the whole
+   component layer are shared. This is the same override a consuming project
+   would write in its own @theme block to rebrand - see the Customizing &
+   Theming page - just expressed as a switchable attribute so the docs site
+   can demonstrate it live. */
+
+:root[data-palette="blue"] {
+    --color-brand-50: #eff6ff;
+    --color-brand-100: #dbeafe;
+    --color-brand-300: #93c5fd;
+    --color-brand-500: #3b82f6;
+    --color-brand-600: #2563eb;
+    --color-brand-700: #1d4ed8;
+    --color-brand-800: #1e40af;
+    --color-brand-900: #1e3a8a;
+    --color-action-50: #eff6ff;
+    --color-action-100: #dbeafe;
+    --color-action-400: #60a5fa;
+    --color-action-500: #2563eb;
+    --color-action-600: #1d4ed8;
+    --color-action-700: #1e40af;
+}
+
+:root[data-theme="dark"][data-palette="blue"] {
+    --color-brand-100: #1e3a8a;
+    --color-brand-500: #60a5fa;
+    --color-brand-600: #93c5fd;
+    --color-brand-700: #3b82f6;
+    --color-brand-800: #bfdbfe;
+    --color-action-50: #16233f;
+    --color-action-100: #1e3a8a;
+    --color-action-400: #3b82f6;
+    --color-action-500: #60a5fa;
+    --color-action-600: #7cb8fb;
+    --color-action-700: #bfdbfe;
+    --color-on-action: #06152e;
+    --color-on-brand: #06152e;
+}
+
+:root[data-palette="violet"] {
+    --color-brand-50: #f5f3ff;
+    --color-brand-100: #ede9fe;
+    --color-brand-300: #c4b5fd;
+    --color-brand-500: #8b5cf6;
+    --color-brand-600: #7c3aed;
+    --color-brand-700: #6d28d9;
+    --color-brand-800: #5b21b6;
+    --color-brand-900: #4c1d95;
+    --color-action-50: #f5f3ff;
+    --color-action-100: #ede9fe;
+    --color-action-400: #a78bfa;
+    --color-action-500: #7c3aed;
+    --color-action-600: #6d28d9;
+    --color-action-700: #5b21b6;
+}
+
+:root[data-theme="dark"][data-palette="violet"] {
+    --color-brand-100: #4c1d95;
+    --color-brand-500: #a78bfa;
+    --color-brand-600: #c4b5fd;
+    --color-brand-700: #8b5cf6;
+    --color-brand-800: #ddd6fe;
+    --color-action-50: #241a45;
+    --color-action-100: #4c1d95;
+    --color-action-400: #8b5cf6;
+    --color-action-500: #a78bfa;
+    --color-action-600: #b9a3fb;
+    --color-action-700: #ddd6fe;
+    --color-on-action: #180a33;
+    --color-on-brand: #180a33;
+}
+
+:root[data-palette="amber"] {
+    --color-brand-50: #fffbeb;
+    --color-brand-100: #fef3c7;
+    --color-brand-300: #fcd34d;
+    --color-brand-500: #d97706;
+    --color-brand-600: #b45309;
+    --color-brand-700: #92400e;
+    --color-brand-800: #78350f;
+    --color-brand-900: #451a03;
+    --color-action-50: #fffbeb;
+    --color-action-100: #fef3c7;
+    --color-action-400: #fbbf24;
+    --color-action-500: #b45309;
+    --color-action-600: #92400e;
+    --color-action-700: #78350f;
+}
+
+:root[data-theme="dark"][data-palette="amber"] {
+    --color-brand-100: #78350f;
+    --color-brand-500: #fbbf24;
+    --color-brand-600: #fcd34d;
+    --color-brand-700: #f59e0b;
+    --color-brand-800: #fde68a;
+    --color-action-50: #3a2408;
+    --color-action-100: #78350f;
+    --color-action-400: #f59e0b;
+    --color-action-500: #fbbf24;
+    --color-action-600: #fcd34d;
+    --color-action-700: #fde68a;
+    --color-on-action: #2a1804;
+    --color-on-brand: #2a1804;
+}
+
+/* ── Density ────────────────────────────────────────────────────────────
+   Compact tightens control heights and table/form rhythm for data-dense
+   admin screens, without touching type size or the spacing scale (which
+   would resize icons and layout gaps along with it). */
+
+:root[data-density="compact"] {
+    --control-height-sm: 1.75rem;
+    --control-height-md: 2.125rem;
+    --control-height-lg: 2.5rem;
+    --control-padding-y: 0.3rem;
+    --table-padding-y: 0.3rem;
 }
 
 @font-face {
@@ -136,7 +387,17 @@
     html, body {
         font-family: var(--font-body);
         background: var(--color-page);
-        color: #000000;
+        /* Reads the neutral ramp rather than a literal black: the ramp
+           inverts under [data-theme="dark"], so this follows the theme. */
+        color: var(--color-gray-900);
+    }
+
+    /* One focus ring for the whole system. :focus-visible (not :focus) so it
+       shows for keyboard users without ringing every mouse click. Components
+       that need a different treatment override it locally. */
+    :focus-visible {
+        outline: var(--focus-ring-width) solid var(--color-action-500);
+        outline-offset: var(--focus-ring-offset);
     }
 
     h1, h2, h3, h4, h5, h6 {
@@ -188,11 +449,13 @@
     /* action-600, not action-500: white-on-action-500 only hits 3.3:1 (fails
        the 4.5:1 normal-text minimum) - action-600 clears it at 5:1. */
     .btn-primary {
-        @apply bg-action-600 text-white border-action-600 hover:bg-action-700;
+        @apply bg-action-600 border-action-600 hover:bg-action-700;
+        color: var(--color-on-action);
     }
 
     .btn-brand {
-        @apply bg-brand-700 text-white border-brand-700 hover:bg-brand-800;
+        @apply bg-brand-700 border-brand-700 hover:bg-brand-800;
+        color: var(--color-on-brand);
     }
 
     .btn-secondary {
@@ -200,7 +463,8 @@
     }
 
     .btn-danger {
-        @apply bg-accent-500 text-white border-accent-500 hover:bg-accent-600;
+        @apply bg-accent-500 border-accent-500 hover:bg-accent-600;
+        color: var(--color-on-accent);
     }
 
     .btn-ghost {
@@ -230,7 +494,7 @@
 
     /* Cards */
     .card {
-        @apply block border border-divider bg-white p-6 text-gray-900 no-underline
+        @apply block border border-divider bg-panel p-6 text-gray-900 no-underline
         transition-colors duration-150 hover:bg-gray-900/[0.03];
     }
 
@@ -297,8 +561,9 @@
 
     .filter-container input:not([type="submit"]):not([type="button"]):not(.btn),
     .filter-container select {
-        @apply h-9 w-full border border-divider bg-surface px-2.5 py-1.5 text-sm text-gray-900
+        @apply w-full border border-divider bg-surface px-2.5 py-1.5 text-sm text-gray-900
         outline-none focus:border-action-500;
+        height: var(--control-height-sm);
     }
 
     .language-switcher select {
@@ -321,13 +586,24 @@
        error treatment of its own. */
     .input,
     .select {
-        @apply h-10 w-full border border-divider bg-surface px-3 py-2 text-sm text-gray-900
-        outline-none transition-colors duration-150 focus:border-action-500 focus:bg-white;
+        @apply w-full border border-divider bg-surface px-3 text-sm text-gray-900
+        outline-none transition-colors duration-150 focus:border-action-500 focus:bg-panel;
+        height: var(--control-height-md);
+        padding-block: var(--control-padding-y);
+    }
+
+    .input-sm, .select-sm {
+        height: var(--control-height-sm);
+    }
+
+    .input-lg, .select-lg {
+        height: var(--control-height-lg);
     }
 
     .textarea {
-        @apply w-full border border-divider bg-surface px-3 py-2 text-sm text-gray-900
-        outline-none transition-colors duration-150 focus:border-action-500 focus:bg-white;
+        @apply w-full border border-divider bg-surface px-3 text-sm text-gray-900
+        outline-none transition-colors duration-150 focus:border-action-500 focus:bg-panel;
+        padding-block: var(--control-padding-y);
         min-height: 7rem;
         resize: vertical;
     }
@@ -335,6 +611,26 @@
     .checkbox,
     .radio {
         @apply h-4 w-4 border-divider accent-action-600;
+    }
+
+    /* Native <input type="color">. The browser paints the swatch inside its
+       own padding box, so that padding is zeroed to make the swatch fill the
+       control - otherwise it floats in a white frame that ignores the theme. */
+    .color-input {
+        @apply w-14 cursor-pointer border border-divider bg-surface p-0;
+        height: var(--control-height-md);
+    }
+
+    .color-input::-webkit-color-swatch-wrapper {
+        padding: 2px;
+    }
+
+    .color-input::-webkit-color-swatch {
+        border: none;
+    }
+
+    .color-input::-moz-color-swatch {
+        border: none;
     }
 
     /* ── Page forms ────────────────────────────────────────────────────
@@ -363,8 +659,10 @@
     .form-field input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="hidden"]):not([type="file"]):not(.btn),
     .form-field select,
     .form-field textarea {
-        @apply h-10 w-full border border-divider bg-surface px-3 py-2 text-sm text-gray-900
-        outline-none transition-colors duration-150 focus:border-action-500 focus:bg-white;
+        @apply w-full border border-divider bg-surface px-3 text-sm text-gray-900
+        outline-none transition-colors duration-150 focus:border-action-500 focus:bg-panel;
+        height: var(--control-height-md);
+        padding-block: var(--control-padding-y);
     }
 
     .form-field textarea {
@@ -375,7 +673,7 @@
 
     .form-field input[type="file"] {
         @apply block w-full cursor-pointer text-sm text-gray-700
-        file:mr-3 file:cursor-pointer file:border file:border-divider file:bg-white
+        file:mr-3 file:cursor-pointer file:border file:border-divider file:bg-panel
         file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-gray-800;
     }
 
@@ -441,7 +739,7 @@
     /* Read-only detail table - a wide, uppercase-label / larger-value
        plain <table> for a record's detail page. */
     .detail-panel {
-        @apply w-full border border-divider bg-white p-6 text-left font-body;
+        @apply w-full border border-divider bg-panel p-6 text-left font-body;
     }
 
     .detail-panel table {
@@ -473,12 +771,14 @@
     }
 
     .data-table th {
-        @apply border-b border-divider px-3 py-2 text-left text-[11px] font-semibold uppercase
+        @apply border-b border-divider px-3 text-left text-[11px] font-semibold uppercase
         tracking-wider text-gray-600;
+        padding-block: var(--table-padding-y);
     }
 
     .data-table td {
-        @apply border-b border-gray-900/[0.08] px-3 py-2;
+        @apply border-b border-gray-900/[0.08] px-3;
+        padding-block: var(--table-padding-y);
     }
 
     .data-table tr:hover td {
@@ -491,7 +791,7 @@
        needed for display; wire prev/next-month navigation as plain links
        with a `?month=` query param, the same way pagination does. */
     .calendar {
-        @apply border border-divider bg-white;
+        @apply border border-divider bg-panel;
     }
 
     .calendar-header {
@@ -525,7 +825,8 @@
     }
 
     .calendar-day.is-today .calendar-day-number {
-        @apply inline-flex h-5 w-5 items-center justify-center bg-action-600 text-white;
+        @apply inline-flex h-5 w-5 items-center justify-center bg-action-600;
+        color: var(--color-on-action);
     }
 
     .calendar-event {
@@ -614,12 +915,12 @@
     /* Filter side panel - starts hidden via a literal `hidden` class on the element (toggled by JS) */
     .filter-panel {
         @apply fixed inset-y-0 right-0 z-20 w-full max-w-[400px] overflow-y-auto border-l border-divider
-        bg-white shadow-[var(--shadow-blueprint-lg)];
+        bg-panel shadow-[var(--shadow-blueprint-lg)];
     }
 
     /* Autocomplete / autosuggest widget panel - see the wise_autocomplete app */
     .autocomplete-panel {
-        @apply absolute z-10 w-full min-w-max border border-divider bg-white p-0
+        @apply absolute z-10 w-full min-w-max border border-divider bg-panel p-0
         shadow-[var(--shadow-blueprint-lg)];
     }
 
@@ -641,7 +942,7 @@
     }
 
     .autocomplete-table {
-        @apply w-full border-collapse bg-white text-sm table-auto;
+        @apply w-full border-collapse bg-panel text-sm table-auto;
     }
 
     .autocomplete-table th, .autocomplete-table td {
@@ -661,7 +962,8 @@
     }
 
     .autocomplete-table tr.selected {
-        @apply bg-action-600 text-white;
+        @apply bg-action-600;
+        color: var(--color-on-action);
     }
 
     /* Pagination */
@@ -723,7 +1025,7 @@
 
     .donut-chart::before {
         content: '';
-        @apply absolute inset-2.5 bg-white;
+        @apply absolute inset-2.5 bg-panel;
         border-radius: 9999px;
     }
 
@@ -742,6 +1044,735 @@
     .chart-legend-dot {
         @apply inline-block h-2.5 w-2.5 shrink-0;
         border-radius: 9999px;
+    }
+
+    /* SVG chart chrome, shared by the line/scatter/radar/polar/bubble charts.
+       Their geometry is computed server-side by wise_core/charts.py; these
+       rules only carry the colors so the charts re-theme like everything
+       else. Stroke/fill read tokens directly because SVG presentation
+       attributes can't use Tailwind utilities. */
+    .chart-svg {
+        @apply w-full overflow-visible;
+    }
+
+    .chart-grid-line {
+        stroke: var(--color-divider);
+        stroke-width: 1;
+    }
+
+    .chart-axis {
+        stroke: var(--color-gray-400);
+        stroke-width: 1;
+    }
+
+    .chart-axis-label {
+        fill: var(--color-gray-600);
+        font-size: 10px;
+    }
+
+    .chart-series-line {
+        fill: none;
+        stroke: var(--color-action-600);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .chart-series-area {
+        fill: var(--color-action-600);
+        opacity: 0.12;
+        stroke: none;
+    }
+
+    .chart-point {
+        fill: var(--color-action-600);
+    }
+
+    .chart-slice {
+        stroke: var(--color-panel);
+        stroke-width: 1.5;
+    }
+
+    /* ── Theme toggle ────────────────────────────────────────────────────
+       Both icons ship in the markup and CSS picks one, because the active
+       theme lives in localStorage - the server has no idea which to render. */
+    .theme-toggle .theme-toggle-dark {
+        @apply hidden;
+    }
+
+    :root[data-theme="dark"] .theme-toggle .theme-toggle-light {
+        @apply hidden;
+    }
+
+    :root[data-theme="dark"] .theme-toggle .theme-toggle-dark {
+        @apply inline-flex;
+    }
+
+    /* ── Button group ────────────────────────────────────────────────────
+       Collapses the shared borders between adjacent buttons into one. */
+    .btn-group {
+        @apply inline-flex items-center;
+    }
+
+    .btn-group > .btn + .btn {
+        @apply -ml-px;
+    }
+
+    .btn-group > .btn:hover,
+    .btn-group > .btn:focus-visible,
+    .btn-group > .btn.selected {
+        @apply relative z-10;
+    }
+
+    .btn-group > .btn.selected {
+        @apply bg-action-100 border-action-500 text-action-700;
+    }
+
+    /* ── Copy button ─────────────────────────────────────────────────────
+       Both states ship in the markup and CSS shows one at a time, so the
+       script only toggles a class - no innerHTML rewriting, and the button's
+       width doesn't jump between states. */
+    .copy-button .copy-button-idle,
+    .copy-button .copy-button-done {
+        @apply inline-flex items-center gap-1.5;
+    }
+
+    .copy-button .copy-button-done {
+        @apply hidden;
+    }
+
+    .copy-button.is-copied .copy-button-idle {
+        @apply hidden;
+    }
+
+    .copy-button.is-copied .copy-button-done {
+        @apply inline-flex;
+    }
+
+    .copy-button.is-copied {
+        @apply border-action-500 text-action-700;
+    }
+
+    /* ── Dropdown ────────────────────────────────────────────────────────
+       Positioning only - toggling is one line of JS (wiseToggleDropdown) or
+       a <details> wrapper if you'd rather not use any. */
+    .dropdown {
+        @apply relative inline-block;
+    }
+
+    .dropdown-panel {
+        @apply absolute right-0 top-full mt-1 min-w-[12rem] border border-divider bg-panel py-1
+        shadow-[var(--shadow-blueprint-md)];
+        z-index: var(--z-dropdown);
+    }
+
+    .dropdown-item {
+        @apply flex w-full cursor-pointer items-center gap-2 border-none bg-transparent px-3 py-2
+        text-left text-sm text-gray-800 no-underline hover:bg-gray-900/5;
+    }
+
+    .dropdown-item.selected {
+        @apply bg-action-100 font-semibold text-action-700;
+    }
+
+    .dropdown-item[disabled],
+    .dropdown-item.disabled {
+        @apply pointer-events-none opacity-45;
+    }
+
+    .dropdown-item-danger {
+        @apply text-accent-600 hover:bg-accent-50;
+    }
+
+    .dropdown-divider {
+        @apply my-1 h-px border-0 bg-divider;
+    }
+
+    .dropdown-header {
+        @apply px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-gray-600;
+    }
+
+    /* ── Switch ──────────────────────────────────────────────────────────
+       A real <input type="checkbox">, restyled - so it posts, validates and
+       reads to assistive tech exactly like a checkbox. */
+    .switch {
+        @apply relative inline-block h-5 w-9 shrink-0 cursor-pointer border border-divider
+        bg-gray-300 align-middle transition-colors;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .switch::after {
+        content: '';
+        @apply absolute top-1/2 left-[2px] block h-3.5 w-3.5 bg-panel transition-transform;
+        transform: translateY(-50%);
+    }
+
+    .switch:checked {
+        @apply border-action-600 bg-action-600;
+    }
+
+    .switch:checked::after {
+        transform: translateY(-50%) translateX(1rem);
+    }
+
+    .switch:disabled {
+        @apply cursor-not-allowed opacity-45;
+    }
+
+    /* ── Rating ──────────────────────────────────────────────────────────
+       Read-only display (.rating) and an input built from real radios
+       (.rating-input). The input renders its radios in descending order and
+       flips them visually with flex-row-reverse, which is what lets a plain
+       sibling selector light up every star to the left of the checked one
+       with no JS. */
+    .rating {
+        @apply inline-flex items-center gap-0.5 text-gray-300;
+    }
+
+    .rating-star.is-on {
+        @apply text-warning-500;
+    }
+
+    .rating-input {
+        @apply inline-flex flex-row-reverse items-center justify-end gap-0.5;
+    }
+
+    .rating-input input {
+        @apply sr-only;
+    }
+
+    .rating-input label {
+        @apply cursor-pointer text-gray-300 transition-colors;
+    }
+
+    .rating-input input:checked ~ label,
+    .rating-input label:hover,
+    .rating-input label:hover ~ label {
+        @apply text-warning-500;
+    }
+
+    .rating-input input:focus-visible + label {
+        outline: var(--focus-ring-width) solid var(--color-action-500);
+        outline-offset: var(--focus-ring-offset);
+    }
+
+    /* ── OTP input ───────────────────────────────────────────────────────
+       One <input> per digit; the view reassembles them into a single code.
+       See the OTP Input page for the Django form that does the joining. */
+    .otp-group {
+        @apply inline-flex items-center gap-2;
+    }
+
+    .otp-input {
+        @apply w-10 border border-divider bg-surface text-center text-lg font-semibold text-gray-900
+        outline-none transition-colors focus:border-action-500 focus:bg-panel;
+        height: var(--control-height-lg);
+    }
+
+    /* ── Input group ─────────────────────────────────────────────────────
+       An input with an attached prefix/suffix (currency, unit, search icon,
+       an inline button). */
+    .input-group {
+        @apply flex w-full items-stretch;
+    }
+
+    .input-group > .input,
+    .input-group > .select {
+        @apply min-w-0 flex-1;
+    }
+
+    .input-group > * + * {
+        @apply -ml-px;
+    }
+
+    .input-group-addon {
+        @apply inline-flex shrink-0 items-center border border-divider bg-panel-alt px-3 text-sm
+        text-gray-600;
+    }
+
+    /* ── Accordion ───────────────────────────────────────────────────────
+       <details>/<summary>, so open/close needs no JavaScript at all. */
+    .accordion {
+        @apply border border-divider bg-panel;
+    }
+
+    .accordion-item + .accordion-item {
+        @apply border-t border-divider;
+    }
+
+    .accordion-item > summary {
+        @apply flex cursor-pointer list-none items-center gap-2 px-4 py-3 font-heading text-sm
+        font-semibold text-gray-900 hover:bg-gray-900/[0.03];
+    }
+
+    .accordion-item > summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .accordion-chevron {
+        @apply shrink-0 text-gray-500 transition-transform;
+    }
+
+    .accordion-item[open] > summary .accordion-chevron {
+        transform: rotate(90deg);
+    }
+
+    .accordion-content {
+        @apply border-t border-divider px-4 py-3 text-sm text-gray-800;
+    }
+
+    /* ── Dialog ──────────────────────────────────────────────────────────
+       The native <dialog> element: focus trapping, Esc-to-close and the
+       top-layer stacking come from the browser, so the only JS involved is
+       the one call that opens it (wiseOpenDialog). */
+    .dialog {
+        @apply w-full max-w-lg border border-divider bg-panel p-0 text-gray-900
+        shadow-[var(--shadow-blueprint-lg)];
+    }
+
+    .dialog::backdrop {
+        background: var(--color-overlay);
+    }
+
+    .dialog-header {
+        @apply flex items-center justify-between gap-3 border-b border-divider px-5 py-3;
+    }
+
+    .dialog-title {
+        @apply font-heading text-lg font-semibold uppercase tracking-wide;
+    }
+
+    .dialog-body {
+        @apply px-5 py-4 text-sm;
+    }
+
+    .dialog-footer {
+        @apply flex flex-wrap items-center justify-end gap-3 border-t border-divider px-5 py-3;
+    }
+
+    /* ── Drawer ──────────────────────────────────────────────────────────
+       Edge-anchored panel. Same mechanic as .filter-panel (which is really a
+       right-hand drawer with a fixed job) - this is the general form. */
+    .drawer {
+        @apply fixed inset-y-0 right-0 flex w-full max-w-[420px] flex-col overflow-y-auto
+        border-l border-divider bg-panel shadow-[var(--shadow-blueprint-lg)];
+        z-index: var(--z-drawer);
+    }
+
+    .drawer-left {
+        @apply inset-y-0 left-0 right-auto border-l-0 border-r border-divider;
+    }
+
+    .drawer-header {
+        @apply flex items-center justify-between gap-3 border-b border-divider px-5 py-3;
+    }
+
+    .drawer-body {
+        @apply flex-1 px-5 py-4 text-sm;
+    }
+
+    .drawer-footer {
+        @apply flex flex-wrap items-center justify-end gap-3 border-t border-divider px-5 py-3;
+    }
+
+    .drawer-backdrop {
+        @apply fixed inset-0;
+        background: var(--color-overlay);
+        z-index: calc(var(--z-drawer) - 1);
+    }
+
+    /* ── Divider ─────────────────────────────────────────────────────────
+       Styles a plain <hr>; .divider-labeled centers text in the rule. */
+    .divider {
+        @apply my-4 h-px w-full border-0 bg-divider;
+    }
+
+    .divider-vertical {
+        @apply mx-2 my-0 h-auto w-px self-stretch;
+    }
+
+    .divider-labeled {
+        @apply my-4 flex items-center gap-3 text-xs uppercase tracking-wider text-gray-600;
+    }
+
+    .divider-labeled::before,
+    .divider-labeled::after {
+        content: '';
+        @apply h-px flex-1 bg-divider;
+    }
+
+    /* ── Scroller ────────────────────────────────────────────────────────
+       A constrained scroll region with snap points - the substrate the
+       carousel is built on, and useful on its own for a wide toolbar. */
+    .scroller {
+        @apply flex gap-3 overflow-x-auto scrollbar-thin;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+    }
+
+    .scroller > * {
+        scroll-snap-align: start;
+        @apply shrink-0;
+    }
+
+    .scroller-vertical {
+        @apply flex-col overflow-x-hidden overflow-y-auto;
+        scroll-snap-type: y mandatory;
+    }
+
+    /* ── Breadcrumb ──────────────────────────────────────────────────────*/
+    .breadcrumb {
+        @apply flex flex-wrap items-center gap-1.5 text-sm text-gray-600;
+    }
+
+    .breadcrumb-item {
+        @apply inline-flex items-center gap-1.5 text-gray-600 no-underline hover:text-action-600;
+    }
+
+    .breadcrumb-item:last-child,
+    .breadcrumb-item[aria-current="page"] {
+        @apply font-semibold text-gray-900;
+    }
+
+    .breadcrumb-separator {
+        @apply inline-flex shrink-0 items-center text-gray-400;
+    }
+
+    /* ── Tree ────────────────────────────────────────────────────────────
+       Nestable disclosure navigation. Every branch is a <details>, so the
+       whole thing expands and collapses without JavaScript and a
+       server-rendered page can mark branches `open` to reveal the current
+       node - which is exactly how this site's own sidebar works. */
+    .tree {
+        @apply flex flex-col text-sm;
+    }
+
+    .tree-item > summary,
+    .tree-item-label {
+        @apply flex cursor-pointer list-none items-center gap-2 px-2.5 py-1.5 text-gray-800
+        transition-colors hover:bg-gray-900/5;
+    }
+
+    .tree-item > summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .tree-item-chevron {
+        @apply shrink-0 text-gray-500 transition-transform;
+    }
+
+    .tree-item[open] > summary .tree-item-chevron {
+        transform: rotate(90deg);
+    }
+
+    /* The indent comes from a border rather than padding so nested levels
+       show a continuous guide line down the left of their children. */
+    .tree-item-children {
+        @apply ml-[1.05rem] border-l border-divider pl-2;
+    }
+
+    .tree-leaf {
+        @apply flex items-center gap-2 px-2.5 py-1.5 text-gray-700 no-underline transition-colors
+        hover:bg-gray-900/5 hover:text-gray-900;
+    }
+
+    .tree-leaf.selected {
+        @apply bg-action-100 font-semibold text-action-700;
+    }
+
+    /* ── Callout ─────────────────────────────────────────────────────────
+       A block-level message inside page content (as opposed to a toast,
+       which floats above it). */
+    .callout {
+        @apply flex items-start gap-3 border-l-4 border-divider bg-panel-alt px-4 py-3 text-sm
+        text-gray-800;
+    }
+
+    .callout-title {
+        @apply mb-0.5 font-heading font-semibold;
+    }
+
+    .callout-icon {
+        @apply mt-0.5 shrink-0;
+    }
+
+    .callout-info {
+        @apply border-action-500 bg-action-50 text-action-700;
+    }
+
+    .callout-success {
+        @apply border-emerald-600 bg-emerald-50 text-emerald-800;
+    }
+
+    .callout-warning {
+        @apply border-warning-500 bg-warning-50 text-warning-600;
+    }
+
+    .callout-danger {
+        @apply border-accent-500 bg-accent-50 text-accent-600;
+    }
+
+    /* ── Progress (determinate) ──────────────────────────────────────────
+       Distinct from `.progress-bar` above, which is the *indeterminate*
+       animated loading strip the autocomplete widget uses while a request is
+       in flight. This one shows a known percentage, via --value. */
+    .progress {
+        @apply h-2 w-full overflow-hidden bg-gray-200;
+    }
+
+    .progress-value {
+        @apply block h-full bg-action-600;
+        width: var(--value, 0%);
+        transition: width var(--transition-slow) ease;
+    }
+
+    .progress-lg {
+        @apply h-4;
+    }
+
+    .progress-label {
+        @apply mt-1 flex items-center justify-between text-xs text-gray-600;
+    }
+
+    /* ── Progress ring ───────────────────────────────────────────────────
+       SVG rather than the conic-gradient used by .donut-chart, because a
+       stroked arc gives a real rounded cap and animates cleanly. */
+    .progress-ring {
+        @apply relative inline-flex items-center justify-center;
+    }
+
+    .progress-ring svg {
+        transform: rotate(-90deg);
+    }
+
+    .progress-ring-track {
+        fill: none;
+        stroke: var(--color-gray-200);
+    }
+
+    .progress-ring-indicator {
+        fill: none;
+        stroke: var(--color-action-600);
+        stroke-linecap: round;
+        transition: stroke-dashoffset var(--transition-slow) ease;
+    }
+
+    .progress-ring-label {
+        @apply absolute text-sm font-semibold text-gray-900;
+    }
+
+    /* ── Spinner ─────────────────────────────────────────────────────────*/
+    .spinner {
+        @apply inline-block h-5 w-5 shrink-0 border-2 border-gray-300;
+        border-top-color: var(--color-action-600);
+        border-radius: 9999px;
+        animation: wise-spin 0.7s linear infinite;
+    }
+
+    .spinner-sm {
+        @apply h-3.5 w-3.5 border;
+    }
+
+    .spinner-lg {
+        @apply h-8 w-8;
+    }
+
+    @keyframes wise-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .spinner {
+            animation-duration: 2s;
+        }
+    }
+
+    /* ── Tag ─────────────────────────────────────────────────────────────
+       Badge's bordered sibling: badges label a *state*, tags label a
+       user-supplied value and can be removable. */
+    .tag {
+        @apply inline-flex items-center gap-1.5 border border-divider bg-panel px-2 py-0.5 text-xs
+        text-gray-800;
+    }
+
+    .tag-action {
+        @apply border-action-500 bg-action-50 text-action-700;
+    }
+
+    .tag-remove {
+        @apply -mr-0.5 inline-flex cursor-pointer items-center border-none bg-transparent p-0
+        text-gray-500 hover:text-accent-600;
+    }
+
+    /* ── Toast ───────────────────────────────────────────────────────────
+       The generic form of `.flash-messages`, which is the Django-messages
+       binding of exactly this. */
+    .toast-stack {
+        @apply fixed bottom-4 right-6 m-0 flex w-72 list-none flex-col gap-2 p-0;
+        z-index: var(--z-toast);
+    }
+
+    .toast {
+        @apply flex items-start gap-2.5 border border-divider bg-panel px-4 py-3 text-sm
+        text-gray-800 shadow-[var(--shadow-blueprint-md)];
+    }
+
+    .toast-icon {
+        @apply mt-0.5 shrink-0;
+    }
+
+    .toast-title {
+        @apply font-semibold;
+    }
+
+    .toast-close {
+        @apply ml-auto cursor-pointer border-none bg-transparent p-0 text-gray-500 hover:text-gray-900;
+    }
+
+    .toast-success {
+        @apply border-emerald-700 bg-emerald-50 text-emerald-800;
+    }
+
+    .toast-error {
+        @apply border-accent-500 bg-accent-50 text-accent-600;
+    }
+
+    .toast-warning {
+        @apply border-warning-500 bg-warning-50 text-warning-600;
+    }
+
+    /* ── Tooltip ─────────────────────────────────────────────────────────
+       Pure CSS, text supplied through a data-tooltip attribute. Hover and
+       keyboard focus both trigger it. */
+    .tooltip {
+        @apply relative inline-flex;
+    }
+
+    .tooltip::after {
+        content: attr(data-tooltip);
+        @apply pointer-events-none absolute bottom-full left-1/2 mb-1.5 hidden -translate-x-1/2
+        whitespace-nowrap bg-gray-900 px-2 py-1 text-xs text-page;
+        z-index: var(--z-tooltip);
+    }
+
+    .tooltip:hover::after,
+    .tooltip:focus-visible::after,
+    .tooltip:focus-within::after {
+        @apply block;
+    }
+
+    .tooltip-bottom::after {
+        @apply bottom-auto top-full mb-0 mt-1.5;
+    }
+
+    /* ── Avatar ──────────────────────────────────────────────────────────*/
+    .avatar {
+        @apply inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden
+        border border-divider bg-panel-alt font-heading text-xs font-semibold uppercase
+        text-action-700;
+    }
+
+    .avatar img {
+        @apply h-full w-full object-cover;
+    }
+
+    .avatar-sm {
+        @apply h-6 w-6 text-[10px];
+    }
+
+    .avatar-lg {
+        @apply h-14 w-14 text-base;
+    }
+
+    .avatar-circle {
+        border-radius: 9999px;
+    }
+
+    .avatar-group {
+        @apply flex items-center;
+    }
+
+    .avatar-group > .avatar + .avatar {
+        @apply -ml-2;
+    }
+
+    /* ── Image & video ───────────────────────────────────────────────────*/
+    .image {
+        @apply block max-w-full border border-divider bg-panel-alt;
+    }
+
+    .image-figure {
+        @apply m-0 inline-block;
+    }
+
+    .image-caption {
+        @apply mt-1.5 text-xs text-gray-600;
+    }
+
+    .aspect-video-frame {
+        @apply relative block w-full overflow-hidden border border-divider bg-gray-900;
+        aspect-ratio: 16 / 9;
+    }
+
+    .aspect-video-frame > iframe,
+    .aspect-video-frame > video,
+    .aspect-video-frame > img {
+        @apply absolute inset-0 h-full w-full;
+        object-fit: cover;
+    }
+
+    /* ── Carousel ────────────────────────────────────────────────────────
+       Scroll-snap, so swiping works natively on touch and the arrows are
+       just anchors to #ids. */
+    .carousel {
+        @apply relative;
+    }
+
+    .carousel-track {
+        @apply flex gap-0 overflow-x-auto scrollbar-thin;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+    }
+
+    .carousel-item {
+        @apply w-full shrink-0;
+        scroll-snap-align: center;
+    }
+
+    .carousel-nav {
+        @apply mt-2 flex items-center justify-center gap-2;
+    }
+
+    .carousel-dot {
+        @apply block h-2 w-2 bg-gray-300 no-underline;
+        border-radius: 9999px;
+    }
+
+    .carousel-dot.selected {
+        @apply bg-action-600;
+    }
+
+    /* ── QR code / barcode ───────────────────────────────────────────────
+       Container for a server-generated SVG (see wise_core/qrcode.py). */
+    .qr-code {
+        @apply inline-block border border-divider bg-panel p-3;
+    }
+
+    .qr-code svg {
+        @apply block;
+        shape-rendering: crispEdges;
+    }
+
+    .barcode {
+        @apply inline-block border border-divider bg-panel px-3 py-2;
+    }
+
+    .barcode svg {
+        @apply block;
+        shape-rendering: crispEdges;
     }
 }
 

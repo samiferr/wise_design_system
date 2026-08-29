@@ -1,0 +1,97 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Combobox{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Combobox{% endblock %}
+{% block doc_intro %}
+    A text input with a list of suggestions: the user can pick a known value <em>or</em> type a new
+    one. Built on the native <code>&lt;datalist&gt;</code>, so the browser renders and filters the
+    popup — no JavaScript, no endpoint.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Try it</h2>
+    <p class="text-gray-700">Start typing a country, or type something not in the list:</p>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-field">
+            <label class="form-label" for="{{ sink_form.country.id_for_label }}">{{ sink_form.country.label }}</label>
+            {{ sink_form.country }}
+            <span class="helptext">{{ sink_form.country.help_text }}</span>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.widgets import ComboboxInput
+
+country = forms.CharField(
+    widget=ComboboxInput(choices=["Belgium", "Brazil", "Canada", "France"]),
+    help_text="Pick a suggestion or type your own.",
+){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">The markup it emits</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="text" name="country" list="id_country_list" id="id_country">
+<datalist id="id_country_list">
+    <option value="Belgium"></option>
+    <option value="Brazil"></option>
+</datalist>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The widget derives the <code>&lt;datalist&gt;</code> id from the field's own id, so two
+        comboboxes on one page never collide.
+    </p>
+
+    <h2 class="mt-8">Choosing between the three</h2>
+    <p class="text-gray-700">This system has three "type to choose" controls. They are not interchangeable:</p>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Control</th><th>Options come from</th><th>New values?</th><th>Use when</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td><strong>Combobox</strong></td><td>Inline <code>&lt;datalist&gt;</code></td><td>Yes</td>
+                    <td>A short, static list where free text is legitimate.</td>
+                </tr>
+                <tr>
+                    <td><a class="text-action-600 underline" href="{% url 'docs_forms_auto_suggest_input' %}">Auto Suggest</a></td>
+                    <td>A JS array on the page</td><td>Yes</td>
+                    <td>The list is known up front but needs richer filtering than the browser's.</td>
+                </tr>
+                <tr>
+                    <td><a class="text-action-600 underline" href="{% url 'docs_forms_autocomplete_input' %}">Autocomplete</a></td>
+                    <td>A DRF endpoint</td><td>No — picks a record</td>
+                    <td>The list is a database table, too big to inline.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Limits of datalist</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            The popup's appearance is entirely the browser's — it cannot be styled, and it varies
+            between them. You also cannot show a label distinct from the submitted value. When either
+            matters, move to Auto Suggest or Autocomplete, which render their own panel with
+            <code>.autocomplete-panel</code>.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Suggestions from the database</h2>
+    <p class="text-gray-700">
+        Fine for a bounded list — existing tag names, say. Above a few hundred options, inlining them
+        into every page render stops being reasonable; switch to Autocomplete.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ProductForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["supplier"].widget = ComboboxInput(
+            choices=Product.objects.values_list("supplier", flat=True)
+                                   .distinct().order_by("supplier"),
+        ){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>API</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>ComboboxInput(choices=[...])</code></td><td>The widget; choices are plain strings.</td></tr>
+                <tr><td><code>input</code></td><td>The control keeps the standard input styling.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Design Tokens{% endblock %}
+{% block doc_section %}Theming &amp; Utilities{% endblock %}
+{% block doc_title %}Design Tokens{% endblock %}
+{% block doc_intro %}
+    Every token is declared once in <code>tokens.css</code>'s <code>@theme</code> block. Colors live
+    on <a class="text-action-600 underline" href="{% url 'docs_theming_color_palettes' %}">Color
+    Palettes</a>; this page covers the rest — type, radius, elevation, motion, focus and sizing.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Typography</h2>
+    <p class="text-gray-700">
+        Headings use <code>--font-heading</code> (Barlow Condensed, semibold, tight leading); body
+        copy uses <code>--font-body</code> (Barlow). Both apply automatically to their elements — the
+        utility classes are only for forcing one onto something else. The scale is fixed, not fluid.
+    </p>
+    <div class="doc-preview mt-4 space-y-1">
+        <h1>Heading 1 / 42px</h1>
+        <h2>Heading 2 / 32px</h2>
+        <h3>Heading 3 / 25px</h3>
+        <h4>Heading 4 / 20px</h4>
+        <h5>Heading 5 / 16px</h5>
+        <h6>Heading 6 / 13px uppercase</h6>
+        <p class="pt-2 text-base">Body text (Barlow, 16px default) — the quick brown fox jumps over the lazy dog.</p>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<h2>Section title</h2>   <!-- font-heading applied automatically -->
+<p>Body copy needs no class.</p>
+
+<!-- forcing the heading font onto a non-heading element -->
+<div class="font-heading font-semibold uppercase tracking-wide">Eyebrow label</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Radius</h2>
+    <p class="text-gray-700">
+        The whole radius scale is zeroed, so every <code>rounded-*</code> utility resolves to a
+        square corner with no template changes. Write markup as if this were any Tailwind project.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <div class="rounded-lg border border-divider bg-panel px-3 py-2 text-xs">rounded-lg → square</div>
+        <div class="border border-divider bg-panel px-3 py-2 text-xs" style="border-radius:9999px">explicit circle</div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="rounded-lg border">Square corner — rounded-lg resolves to 0</div>
+
+<!-- for a true circle (status dot, avatar), bypass the token -->
+<div class="h-2 w-2 bg-action-600" style="border-radius: 9999px;"></div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Elevation</h2>
+    <p class="text-gray-700">
+        Three shadow levels, plus a named z-index scale so two components never have to guess whether
+        20 beats 10.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap gap-6">
+        <div class="bg-panel p-4 text-xs" style="box-shadow:var(--shadow-blueprint-sm)">blueprint-sm</div>
+        <div class="bg-panel p-4 text-xs" style="box-shadow:var(--shadow-blueprint-md)">blueprint-md</div>
+        <div class="bg-panel p-4 text-xs" style="box-shadow:var(--shadow-blueprint-lg)">blueprint-lg</div>
+    </div>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Token</th><th>Value</th><th>Used by</th></tr></thead>
+            <tbody>
+                <tr><td><code>--z-dropdown</code></td><td>30</td><td>Dropdown panels, autocomplete results.</td></tr>
+                <tr><td><code>--z-sticky</code></td><td>40</td><td>Sticky headers.</td></tr>
+                <tr><td><code>--z-drawer</code></td><td>50</td><td>Drawers, the filter panel.</td></tr>
+                <tr><td><code>--z-dialog</code></td><td>60</td><td>Modal dialogs.</td></tr>
+                <tr><td><code>--z-toast</code></td><td>70</td><td>Toasts and flash messages.</td></tr>
+                <tr><td><code>--z-tooltip</code></td><td>80</td><td>Tooltips — always on top.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Motion &amp; focus</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <button class="btn btn-secondary">Tab to me for the focus ring</button>
+        <input class="input max-w-[12rem]" placeholder="…and me">
+    </div>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>--transition-fast</code></td><td>100ms</td><td>Hover and focus tints.</td></tr>
+                <tr><td><code>--transition-normal</code></td><td>150ms</td><td>Anything that moves or resizes.</td></tr>
+                <tr><td><code>--transition-slow</code></td><td>250ms</td><td>A panel sliding in, a progress fill.</td></tr>
+                <tr><td><code>--focus-ring-width</code></td><td>2px</td><td>The shared <code>:focus-visible</code> ring.</td></tr>
+                <tr><td><code>--focus-ring-offset</code></td><td>1px</td><td>Gap between element and ring.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Control sizing</h2>
+    <p class="text-gray-700">
+        Controls read these rather than hardcoding a height, which is exactly what lets
+        <code>data-density</code> retune the whole UI in one place.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-end gap-3">
+        <input class="input input-sm max-w-[8rem]" placeholder="sm">
+        <input class="input max-w-[8rem]" placeholder="md">
+        <input class="input input-lg max-w-[8rem]" placeholder="lg">
+        <button class="btn btn-secondary" onclick="wiseSetDensity('compact')">Compact</button>
+        <button class="btn btn-secondary" onclick="wiseSetDensity('')">Comfortable</button>
+    </div>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Token</th><th>Comfortable</th><th>Compact</th></tr></thead>
+            <tbody>
+                <tr><td><code>--control-height-sm</code></td><td>2rem</td><td>1.75rem</td></tr>
+                <tr><td><code>--control-height-md</code></td><td>2.5rem</td><td>2.125rem</td></tr>
+                <tr><td><code>--control-height-lg</code></td><td>3rem</td><td>2.5rem</td></tr>
+                <tr><td><code>--control-padding-y</code></td><td>0.5rem</td><td>0.3rem</td></tr>
+                <tr><td><code>--table-padding-y</code></td><td>0.5rem</td><td>0.3rem</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

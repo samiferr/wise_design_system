@@ -1,0 +1,84 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Checkbox{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Checkbox{% endblock %}
+{% block doc_intro %}
+    A real <code>&lt;input type="checkbox"&gt;</code>, tinted with the action color. For a
+    single on/off setting that applies immediately, consider
+    <a class="text-action-600 underline" href="{% url 'docs_forms_switch' %}">Switch</a> instead —
+    a checkbox implies "this takes effect when you submit".
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Single</h2>
+    <div class="doc-preview mt-4 flex flex-col gap-2">
+        <label class="form-checkbox-label"><input class="checkbox" type="checkbox" checked><span>Subscribe to updates</span></label>
+        <label class="form-checkbox-label"><input class="checkbox" type="checkbox"><span>Send me a copy</span></label>
+        <label class="form-checkbox-label"><input class="checkbox" type="checkbox" disabled><span>Unavailable</span></label>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
+    <input class="checkbox" type="checkbox" checked>
+    <span>Subscribe to updates</span>
+</label>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        Wrapping the input in its <code>&lt;label&gt;</code> makes the text part of the hit target —
+        worth doing every time; a bare 16px box is a poor click target.
+    </p>
+
+    <h2 class="mt-8">Checkbox group</h2>
+    <p class="text-gray-700">Django's <code>CheckboxSelectMultiple</code> renders the group; this is its real output:</p>
+    <div class="doc-preview mt-4">
+        <div class="form-field">
+            <span class="form-label">{{ sink_form.interests.label }}</span>
+            {{ sink_form.interests }}
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}interests = forms.MultipleChoiceField(
+    required=False,
+    choices=[("design", "Design"), ("code", "Code"), ("ops", "Ops")],
+    widget=forms.CheckboxSelectMultiple,
+){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">As a form field</h2>
+    <p class="text-gray-700">
+        <code>_form_fields.html</code> detects a checkbox widget and switches to the horizontal
+        layout automatically — you don't select it yourself.
+    </p>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-stack">
+            <div class="form-field form-field-checkbox">
+                <label class="form-checkbox-label" for="{{ sink_form.subscribe.id_for_label }}">
+                    {{ sink_form.subscribe }}<span>{{ sink_form.subscribe.label }}</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}subscribe = forms.BooleanField(required=False, initial=True, label="Subscribe to updates"){% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            A <code>BooleanField</code> that is <code>required=True</code> means "must be ticked" —
+            which is what you want for a terms checkbox, and almost never what you want otherwise.
+            Use <code>required=False</code> for ordinary optional flags.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Indeterminate</h2>
+    <p class="text-gray-700">
+        For a "select all" that reflects a partial selection. It is a DOM property, not an attribute,
+        so it can only be set from script.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}document.querySelector('#select-all').indeterminate = someButNotAllChecked{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>checkbox</code></td><td>The 16×16 control itself.</td></tr>
+                <tr><td><code>form-checkbox-label</code></td><td>Label wrapper making the text clickable.</td></tr>
+                <tr><td><code>form-field-checkbox</code></td><td>Modifier on <code>.form-field</code> for the horizontal layout.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

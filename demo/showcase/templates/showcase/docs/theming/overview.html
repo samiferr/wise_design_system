@@ -1,0 +1,109 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Theming Overview{% endblock %}
+{% block doc_section %}Theming &amp; Utilities{% endblock %}
+{% block doc_title %}Overview{% endblock %}
+{% block doc_intro %}
+    Theming works by redefining CSS custom properties, never by shipping a second stylesheet.
+    Tailwind v4 compiles every color utility to a <code>var(--color-*)</code> reference, so changing
+    a token's value re-themes everything built on it — at runtime, with no rebuild.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Why it works</h2>
+    <p class="text-gray-700">
+        This is the whole mechanism. A utility class is not a literal color; it is a pointer to a
+        variable:
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}/* what Tailwind v4 emits for bg-panel */
+.bg-panel { background-color: var(--color-panel); }
+
+/* ...and for a component rule that @applies it */
+.card { border-color: var(--color-divider); background-color: var(--color-panel); }{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        Redefine <code>--color-panel</code> under a selector and every card, table, dropdown and
+        drawer follows instantly — including ones in application templates the design system has
+        never seen.
+    </p>
+
+    <h2 class="mt-8">Three independent axes</h2>
+    <p class="text-gray-700">
+        Each is one attribute on <code>&lt;html&gt;</code>, and they compose freely — a compact dark
+        violet UI is a valid combination.
+    </p>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Attribute</th><th>Values</th><th>Changes</th></tr></thead>
+            <tbody>
+                <tr><td><code>data-theme</code></td><td><code>light</code> (default), <code>dark</code></td><td>Neutral ramp, surfaces, shadows, on-colors.</td></tr>
+                <tr><td><code>data-palette</code></td><td><code>green</code> (default), <code>blue</code>, <code>violet</code>, <code>amber</code></td><td>Brand and action ramps only.</td></tr>
+                <tr><td><code>data-density</code></td><td><code>comfortable</code> (default), <code>compact</code></td><td>Control heights, form and table rhythm.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Try it</h2>
+    <p class="text-gray-700">These switch the page you are reading right now, and the choice persists.</p>
+    <div class="doc-preview mt-4 flex flex-col gap-4">
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="w-20 text-xs font-semibold uppercase tracking-wider text-gray-600">Theme</span>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="wiseSetTheme('light')">Light</button>
+                <button class="btn btn-secondary" onclick="wiseSetTheme('dark')">Dark</button>
+            </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="w-20 text-xs font-semibold uppercase tracking-wider text-gray-600">Palette</span>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="wiseSetPalette('')">Green</button>
+                <button class="btn btn-secondary" onclick="wiseSetPalette('blue')">Blue</button>
+                <button class="btn btn-secondary" onclick="wiseSetPalette('violet')">Violet</button>
+                <button class="btn btn-secondary" onclick="wiseSetPalette('amber')">Amber</button>
+            </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="w-20 text-xs font-semibold uppercase tracking-wider text-gray-600">Density</span>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="wiseSetDensity('')">Comfortable</button>
+                <button class="btn btn-secondary" onclick="wiseSetDensity('compact')">Compact</button>
+            </div>
+        </div>
+        <hr class="divider">
+        <div class="flex flex-wrap items-end gap-3">
+            <button class="btn btn-primary">Primary</button>
+            <span class="badge badge-action">Badge</span>
+            <input class="input max-w-[10rem]" value="Input">
+            <span class="tag">Tag</span>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}wiseSetTheme('dark')       // or 'light'
+wiseSetPalette('violet')   // '' resets to the default palette
+wiseSetDensity('compact')  // '' resets to comfortable
+wiseToggleTheme(){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Avoiding the flash</h2>
+    <p class="text-gray-700">
+        The stored choice is applied by a small blocking script in <code>&lt;head&gt;</code>, before
+        the stylesheet paints — a deferred script would run after first paint and a dark page would
+        flash white. Override the <code>theme_bootstrap</code> block with an empty one to opt out.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% block theme_bootstrap %}
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('wise-theme')
+                if (t) document.documentElement.setAttribute('data-theme', t)
+            } catch (e) {}
+        })()
+    </script>
+{% endblock %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <div class="callout callout-info mt-6">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">The theme is client-side</div>
+            It lives in <code>localStorage</code>, not the session, so the server does not know which
+            theme is active. That is why the theme toggle renders both icons and lets CSS choose,
+            rather than branching in the template.
+        </div>
+    </div>
+{% endblock %}

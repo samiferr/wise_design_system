@@ -1,0 +1,95 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Button{% endblock %}
+{% block doc_section %}Actions{% endblock %}
+{% block doc_title %}Button{% endblock %}
+{% block doc_intro %}
+    Pair the base <code>.btn</code> class with exactly one color modifier. It works on both
+    <code>&lt;button&gt;</code> and <code>&lt;a&gt;</code> — use a button for an in-page action (form
+    submit, JS handler) and an anchor for navigation.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Variants</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-brand">Brand</button>
+        <button class="btn btn-secondary">Secondary</button>
+        <button class="btn btn-danger">Danger</button>
+        <button class="btn btn-ghost">Ghost</button>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary">Primary</button>
+<button class="btn btn-brand">Brand</button>
+<button class="btn btn-secondary">Secondary</button>
+<button class="btn btn-danger">Danger</button>
+<button class="btn btn-ghost">Ghost</button>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Disabled</h2>
+    <p class="text-gray-700">
+        The native <code>disabled</code> attribute dims the button and blocks pointer events. An
+        <code>&lt;a&gt;</code> has no such attribute, so use <code>.btn-disabled</code> there.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <button class="btn btn-primary" disabled>Disabled</button>
+        <a class="btn btn-secondary btn-disabled" href="#">Disabled link</a>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" disabled>Disabled</button>
+<a class="btn btn-secondary btn-disabled" href="#">Disabled link</a>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Icon buttons</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <button class="btn btn-icon btn-secondary">{% lucide "plus" size=16 %}</button>
+        <button class="btn btn-icon btn-primary">{% lucide "search" size=16 %}</button>
+        <a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a>
+        <a class="btn-ghost" href="#">{% lucide "trash-2" size=14 %}</a>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-icon btn-secondary">{% lucide "plus" size=16 %}</button>
+
+<!-- .btn-ghost: borderless, for datatable row actions -->
+<a class="btn-ghost" href="{% url 'category_update_view' pk=item.pk %}">{% lucide "pencil" size=14 %}</a>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            An icon-only button has no accessible name. Add <code>aria-label</code> (or a
+            <code>.sr-only</code> span) so screen readers announce what it does.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Icon + label</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>New</span></a>
+        <button class="btn btn-secondary">{% lucide "download" size=16 %}<span>Export</span></button>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="btn btn-primary" href="{% url 'category_create_view' %}">
+    {% lucide "plus" size=16 %}<span>New</span>
+</a>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Loading state</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <button class="btn btn-primary" disabled><span class="spinner spinner-sm"></span><span>Saving…</span></button>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" disabled>
+    <span class="spinner spinner-sm"></span><span>Saving…</span>
+</button>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Full width</h2>
+    <div class="doc-preview mt-4"><button class="btn btn-primary large-button">Continue</button></div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary large-button">Continue</button>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>btn</code></td><td>Base class — always paired with one color modifier.</td></tr>
+                <tr><td><code>btn-primary</code></td><td>Default call to action.</td></tr>
+                <tr><td><code>btn-brand</code></td><td>Brand-colored alternative primary.</td></tr>
+                <tr><td><code>btn-secondary</code></td><td>Outlined, neutral — "Cancel".</td></tr>
+                <tr><td><code>btn-danger</code></td><td>Destructive actions.</td></tr>
+                <tr><td><code>btn-ghost</code></td><td>Borderless, compact row-level actions.</td></tr>
+                <tr><td><code>btn-icon</code></td><td>Fixed 36×36 square for a single icon.</td></tr>
+                <tr><td><code>btn-disabled</code></td><td>Inert state for an <code>&lt;a&gt;</code>.</td></tr>
+                <tr><td><code>large-button</code></td><td>250px minimum width.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

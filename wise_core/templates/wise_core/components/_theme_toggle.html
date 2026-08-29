@@ -1,0 +1,12 @@
+{% load wise_icons i18n %}
+{% comment %}
+Light/dark toggle. Both icons are rendered and CSS picks which one shows for
+the active theme (see `.theme-toggle` in tokens.css), so the button needs no
+server-side knowledge of the current theme - which matters because the theme
+lives in localStorage, not in the session.
+{% endcomment %}
+<button type="button" class="btn btn-icon btn-secondary theme-toggle" onclick="wiseToggleTheme()"
+        title="{% trans 'Toggle dark mode' %}" aria-label="{% trans 'Toggle dark mode' %}">
+    <span class="theme-toggle-light">{% lucide "zap" size=16 %}</span>
+    <span class="theme-toggle-dark">{% lucide "star" size=16 %}</span>
+</button>

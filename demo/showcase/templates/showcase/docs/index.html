@@ -1,0 +1,68 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Documentation{% endblock %}
+{% block doc_title %}Wise Design System{% endblock %}
+{% block doc_intro %}
+    A Tailwind CSS v4 design system for Django projects. Complex components are backed by Django
+    itself and its ecosystem — <code>django-filter</code>, Django REST Framework — rather than a JS
+    framework: the JavaScript each widget ships is a thin layer over a real Django form field or
+    class-based view, not a client-side app.
+{% endblock %}
+{% block doc_body %}
+    <div class="callout callout-info mt-6">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Every example on this site is live</div>
+            Each page renders the real component next to the exact markup that produces it. Nothing
+            here is a screenshot, and the Forms pages render actual Django widget output.
+        </div>
+    </div>
+
+    <h2 class="mt-10">Start here</h2>
+    <div class="doc-section-grid">
+        <a class="card" href="{% url 'docs_getting_started_installation' %}">
+            <div class="card-kicker">Getting Started</div>
+            <h3 class="card-title mt-1">Installation</h3>
+            <p class="card-content mt-2">Add the apps, wire up Tailwind, build the stylesheet.</p>
+        </a>
+        <a class="card" href="{% url 'docs_theming_overview' %}">
+            <div class="card-kicker">Theming</div>
+            <h3 class="card-title mt-1">Theming &amp; Utilities</h3>
+            <p class="card-content mt-2">Themes, palettes, density and the token layer behind them.</p>
+        </a>
+    </div>
+
+    <h2 class="mt-10">Components</h2>
+    <div class="doc-section-grid">
+        {% for section in docs_nav %}
+            {% if section.slug != 'getting-started' and section.slug != 'theming' %}
+                <a class="card" href="{% url section.items.0.url_name %}">
+                    <div class="card-kicker">{{ section.items|length }} pages</div>
+                    <h3 class="card-title mt-1">{% lucide section.icon size=16 cls="inline -mt-1" %} {{ section.title }}</h3>
+                    <p class="card-content mt-2">
+                        {% for item in section.items %}{{ item.title }}{% if not forloop.last %}, {% endif %}{% endfor %}.
+                    </p>
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <h2 class="mt-10">Playground</h2>
+    <p class="text-gray-700">
+        The docs describe components; the playground runs them. It's a small Django app built
+        entirely from this system — a full <code>WiseListView</code> datatable with filtering and
+        CRUD, and a form using the autocomplete and rich text widgets.
+    </p>
+    <div class="doc-section-grid">
+        <a class="card" href="{% url 'category_list_view' %}">
+            <div class="card-kicker">Playground</div>
+            <h3 class="card-title mt-1">Categories</h3>
+            <p class="card-content mt-2">Datatable, filter panel, pagination and full CRUD.</p>
+        </a>
+        <a class="card" href="{% url 'product_list_view' %}">
+            <div class="card-kicker">Playground</div>
+            <h3 class="card-title mt-1">Products</h3>
+            <p class="card-content mt-2">Autocomplete, rich text, rating and file upload on one form.</p>
+        </a>
+    </div>
+{% endblock %}

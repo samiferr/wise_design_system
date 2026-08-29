@@ -1,0 +1,101 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}File Input{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}File Input{% endblock %}
+{% block doc_intro %}
+    A native file input, styled through the <code>::file-selector-button</code> pseudo-element so
+    the browser's own picker keeps working. Uploads are a place where the client is only a
+    convenience — the server has to do the real validation.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-field"><input type="file"></div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="form-field">
+    <input type="file">
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The styling is scoped to <code>.form-field input[type="file"]</code>, so a file input picks
+        it up from the surrounding field with no extra class.
+    </p>
+
+    <h2 class="mt-8">Rendered by Django</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-stack">
+            <div class="form-field">
+                <label class="form-label" for="{{ sink_form.attachment.id_for_label }}">{{ sink_form.attachment.label }}</label>
+                {{ sink_form.attachment }}
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mt-8">The form must be multipart</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">The most common upload bug</div>
+            Without <code>enctype="multipart/form-data"</code> the file silently never arrives —
+            <code>request.FILES</code> is empty and the field looks blank with no error.
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% include 'wise_core/components/_form_fields.html' with form=form %}
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Save</button>
+    </div>
+</form>{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ["name", "datasheet"]
+
+class Product(models.Model):
+    datasheet = models.FileField(upload_to="datasheets/", blank=True)
+
+# settings.py
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Restricting types and size</h2>
+    <p class="text-gray-700">
+        <code>accept</code> only filters the picker dialog. Enforce the real rules in
+        <code>clean_&lt;field&gt;</code> — and validate the content type from the file, not from the
+        filename extension.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}datasheet = forms.FileField(
+    required=False,
+    widget=forms.ClearableFileInput(attrs={"accept": ".pdf,application/pdf"}),
+)
+
+def clean_datasheet(self):
+    f = self.cleaned_data.get("datasheet")
+    if f and f.size > 5 * 1024 * 1024:
+        raise ValidationError("Keep the file under 5 MB.")
+    return f{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Showing the current file</h2>
+    <p class="text-gray-700">
+        <code>ClearableFileInput</code> (Django's default for a <code>FileField</code>) already
+        renders the existing file plus a "clear" checkbox on an update form, so a re-submit doesn't
+        silently wipe the attachment.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <span class="tag">{% lucide "file-text" size=13 %}datasheet-v2.pdf<button class="tag-remove" aria-label="Remove">{% lucide "x" size=12 %}</button></span>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Thing</th><th>Note</th></tr></thead>
+            <tbody>
+                <tr><td><code>enctype="multipart/form-data"</code></td><td>Required, or no file is uploaded.</td></tr>
+                <tr><td><code>accept</code></td><td>Filters the picker only — not validation.</td></tr>
+                <tr><td><code>MEDIA_ROOT</code> / <code>MEDIA_URL</code></td><td>Where uploads are written and served from.</td></tr>
+                <tr><td><code>ImageField</code></td><td>Needs Pillow; validates that the upload really is an image.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

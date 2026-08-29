@@ -1,0 +1,99 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Progress Bar{% endblock %}
+{% block doc_section %}Feedback{% endblock %}
+{% block doc_title %}Progress Bar{% endblock %}
+{% block doc_intro %}
+    A determinate bar for work whose size is known — an import, a quota, a completion percentage.
+    For work of unknown duration, use the indeterminate variant or a
+    <a class="text-action-600 underline" href="{% url 'docs_feedback_spinner' %}">spinner</a> instead.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Determinate</h2>
+    <div class="doc-preview mt-4 flex flex-col gap-5">
+        <div>
+            <div class="progress"><span class="progress-value" style="--value: 25%"></span></div>
+            <div class="progress-label"><span>Importing</span><span>25%</span></div>
+        </div>
+        <div>
+            <div class="progress"><span class="progress-value" style="--value: 68%"></span></div>
+            <div class="progress-label"><span>Storage used</span><span>6.8 / 10 GB</span></div>
+        </div>
+        <div class="progress progress-lg"><span class="progress-value" style="--value: 92%"></span></div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="progress">
+    <span class="progress-value" style="--value: {{ job.percent }}%"></span>
+</div>
+<div class="progress-label">
+    <span>Importing</span><span>{{ job.percent }}%</span>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The width comes from a <code>--value</code> custom property rather than a utility class,
+        because Tailwind cannot express a number only known at runtime.
+    </p>
+
+    <h2 class="mt-8">Computing it</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ImportJob(models.Model):
+    total_rows = models.PositiveIntegerField(default=0)
+    processed_rows = models.PositiveIntegerField(default=0)
+
+    @property
+    def percent(self):
+        if not self.total_rows:
+            return 0
+        return round(self.processed_rows / self.total_rows * 100){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Indeterminate</h2>
+    <p class="text-gray-700">
+        <code>.progress-bar</code> — a different class — is the animated strip shown when there is no
+        percentage to report. The autocomplete widget uses it while a request is in flight.
+    </p>
+    <div class="doc-preview mt-4">
+        <div class="h-1 w-full overflow-hidden bg-gray-200"><div class="progress-bar h-full bg-action-600"></div></div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="h-1 w-full overflow-hidden bg-gray-200">
+    <div class="progress-bar h-full bg-action-600"></div>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Two similar names, two different jobs</div>
+            <code>.progress</code> + <code>.progress-value</code> is the determinate bar.
+            <code>.progress-bar</code> on its own is the indeterminate animation — it predates the
+            determinate one and is kept under its original name so the autocomplete widget keeps
+            working.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Accessibility</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="progress" role="progressbar"
+     aria-valuenow="{{ job.percent }}" aria-valuemin="0" aria-valuemax="100"
+     aria-label="Import progress">
+    <span class="progress-value" style="--value: {{ job.percent }}%"></span>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Polling for updates</h2>
+    <p class="text-gray-700">
+        For a long job, a meta refresh is the no-JS option; a small fetch loop against a JSON endpoint
+        is the better one. Either way the percentage is computed server-side.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}async function pollProgress(url, el) {
+    const {percent, done} = await (await fetch(url)).json()
+    el.style.setProperty('--value', percent + '%')
+    if (!done) setTimeout(() => pollProgress(url, el), 2000)
+}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>progress</code></td><td>Track.</td></tr>
+                <tr><td><code>progress-value</code></td><td>Fill; width from <code>--value</code>.</td></tr>
+                <tr><td><code>progress-lg</code></td><td>Thicker track.</td></tr>
+                <tr><td><code>progress-label</code></td><td>Caption row beneath.</td></tr>
+                <tr><td><code>progress-bar</code></td><td>Indeterminate animated strip (separate component).</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

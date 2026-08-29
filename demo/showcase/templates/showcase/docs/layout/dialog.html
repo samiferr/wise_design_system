@@ -1,0 +1,126 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Dialog{% endblock %}
+{% block doc_section %}Layout{% endblock %}
+{% block doc_title %}Dialog{% endblock %}
+{% block doc_intro %}
+    A modal built on the native <code>&lt;dialog&gt;</code> element. Focus trapping,
+    Esc-to-close, the backdrop and top-layer stacking all come from the browser — the only script
+    involved is the one call that opens it.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Try it</h2>
+    <div class="doc-preview mt-4 flex flex-wrap gap-3">
+        <button class="btn btn-primary" onclick="wiseOpenDialog('demo_dialog')">Open dialog</button>
+        <button class="btn btn-danger" onclick="wiseOpenDialog('demo_confirm')">Delete something</button>
+    </div>
+
+    <dialog class="dialog" id="demo_dialog">
+        <div class="dialog-header">
+            <h3 class="dialog-title">Edit category</h3>
+            <button class="btn btn-icon btn-ghost" onclick="wiseCloseDialog('demo_dialog')" aria-label="Close">{% lucide "x" size=18 %}</button>
+        </div>
+        <div class="dialog-body">
+            <div class="form-stack-compact">
+                <div class="form-field"><label class="form-label">Name</label><input type="text" value="Electronics"></div>
+                <div class="form-field"><label class="form-label">Color</label><input class="color-input" type="color" value="#16a34a"></div>
+            </div>
+        </div>
+        <div class="dialog-footer">
+            <button class="btn btn-secondary" onclick="wiseCloseDialog('demo_dialog')">Cancel</button>
+            <button class="btn btn-primary" onclick="wiseCloseDialog('demo_dialog')">Save</button>
+        </div>
+    </dialog>
+
+    <dialog class="dialog" id="demo_confirm" style="max-width:28rem">
+        <div class="dialog-header"><h3 class="dialog-title">Delete category?</h3></div>
+        <div class="dialog-body">
+            <div class="callout callout-danger">
+                {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+                <div>This also deletes its 12 products. This cannot be undone.</div>
+            </div>
+        </div>
+        <div class="dialog-footer">
+            <button class="btn btn-secondary" onclick="wiseCloseDialog('demo_confirm')">Cancel</button>
+            <button class="btn btn-danger" onclick="wiseCloseDialog('demo_confirm')">Delete</button>
+        </div>
+    </dialog>
+
+    <h2 class="mt-8">Markup</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" onclick="wiseOpenDialog('edit_dialog')">Edit</button>
+
+<dialog class="dialog" id="edit_dialog">
+    <div class="dialog-header">
+        <h3 class="dialog-title">Edit category</h3>
+        <button class="btn btn-icon btn-ghost" onclick="wiseCloseDialog('edit_dialog')" aria-label="Close">
+            {% lucide "x" size=18 %}
+        </button>
+    </div>
+    <div class="dialog-body">…</div>
+    <div class="dialog-footer">
+        <button class="btn btn-secondary" onclick="wiseCloseDialog('edit_dialog')">Cancel</button>
+        <button class="btn btn-primary" type="submit">Save</button>
+    </div>
+</dialog>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">With a Django form</h2>
+    <p class="text-gray-700">
+        <code>method="dialog"</code> closes the dialog without submitting — exactly what a Cancel
+        button wants. The real submit is an ordinary POST, so the flow works without JavaScript once
+        the dialog is open.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<dialog class="dialog" id="edit_dialog">
+    <form method="post" action="{% url 'category_update_view' pk=object.pk %}">
+        {% csrf_token %}
+        <div class="dialog-header"><h3 class="dialog-title">Edit</h3></div>
+        <div class="dialog-body">
+            <div class="form-stack">
+                {% include 'wise_core/components/_form_fields.html' with form=form %}
+            </div>
+        </div>
+        <div class="dialog-footer">
+            <button class="btn btn-secondary" formmethod="dialog">Cancel</button>
+            <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+    </form>
+</dialog>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reopening with errors</h2>
+    <p class="text-gray-700">
+        A modal form that fails validation must come back open, or the user sees a page that appears
+        to have done nothing. Render it open when the bound form has errors.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<script>
+    {% if form.errors %}wiseOpenDialog('edit_dialog'){% endif %}
+</script>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Use showModal(), not the open attribute</div>
+            <code>&lt;dialog open&gt;</code> renders inline with no backdrop, no focus trap and no
+            top-layer promotion. <code>wiseOpenDialog()</code> calls <code>showModal()</code>, which
+            is what makes it an actual modal.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Dialog or drawer?</h2>
+    <p class="text-gray-700">
+        A dialog interrupts and demands an answer — confirm, or a short focused form. A
+        <a class="text-action-600 underline" href="{% url 'docs_layout_drawer' %}">drawer</a> is for
+        working alongside the page: filters, details, a long form. Use a dialog when the user should
+        not continue until they respond.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class / API</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>dialog</code></td><td>On the <code>&lt;dialog&gt;</code>; styles the panel and its <code>::backdrop</code>.</td></tr>
+                <tr><td><code>dialog-header</code> / <code>-title</code> / <code>-body</code> / <code>-footer</code></td><td>The regions.</td></tr>
+                <tr><td><code>wiseOpenDialog(id)</code></td><td>Calls <code>showModal()</code>.</td></tr>
+                <tr><td><code>wiseCloseDialog(id)</code></td><td>Calls <code>close()</code>.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

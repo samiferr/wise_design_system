@@ -1,0 +1,87 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons wise_codes %}
+{% block doc_title_tag %}QR Code &amp; Barcode{% endblock %}
+{% block doc_section %}Media{% endblock %}
+{% block doc_title %}QR Code &amp; Barcode{% endblock %}
+{% block doc_intro %}
+    Machine-readable codes rendered as inline SVG on the server. Both tags delegate to a small
+    pure-Python library rather than reimplementing the encodings — and neither is a hard dependency,
+    so a project that never renders a code installs nothing.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">QR code</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-6">
+        <div class="qr-code">{% qr_code "https://example.com/products/1042" scale=3 %}</div>
+        <div class="qr-code text-action-600">{% qr_code "WISE-2026-0042" scale=3 %}</div>
+        <div class="text-sm text-gray-600">The second inherits <code>text-action-600</code> — try switching theme.</div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_codes %}
+
+<div class="qr-code">{% qr_code product.get_absolute_url scale=3 %}</div>
+
+<!-- dark modules default to currentColor, so the code follows the text color -->
+<div class="qr-code text-action-600">{% qr_code order.reference %}</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            Defaulting to <code>currentColor</code> rather than black matters: a hardcoded black QR
+            code becomes unscannable on a dark panel. Scanners need contrast, not any particular
+            color — but they do need the dark modules to be the darker of the two.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Barcode</h2>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-6">
+        <div class="barcode" style="max-width:18rem">{% barcode "WISE-2026-001" %}</div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="barcode">{% barcode product.sku %}</div>
+
+<!-- other symbologies -->
+{% barcode product.ean "ean13" %}
+{% barcode product.sku "code39" write_text=False %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Installing</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}pip install segno           # for {% qr_code %}
+pip install python-barcode  # for {% barcode %}{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="text-gray-700">
+        Without them the tags emit an HTML comment naming the missing package rather than raising —
+        a page keeps rendering. Check availability from a template when you need a fallback:
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% qr_code_available as has_qr %}
+{% if has_qr %}
+    <div class="qr-code">{% qr_code order.reference %}</div>
+{% else %}
+    <code>{{ order.reference }}</code>
+{% endif %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">On a printed document</h2>
+    <p class="text-gray-700">
+        The usual reason for these: a picking slip or label that a scanner reads back. Inline SVG
+        prints at the printer's own resolution, so it stays sharp where a raster image would not.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="flex items-start justify-between border border-divider p-4">
+    <div>
+        <div class="card-kicker">Order</div>
+        <h2>{{ order.reference }}</h2>
+        <div class="barcode mt-2">{% barcode order.reference %}</div>
+    </div>
+    <div class="qr-code">{% qr_code order.tracking_url scale=3 %}</div>
+</div>
+
+<div class="hidden-print">
+    <button class="btn btn-secondary" onclick="window.print()">Print</button>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Tag / class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>{% templatetag openblock %} qr_code data scale border dark {% templatetag closeblock %}</code></td><td>Inline SVG QR code.</td></tr>
+                <tr><td><code>{% templatetag openblock %} barcode data symbology write_text {% templatetag closeblock %}</code></td><td>Inline SVG barcode; Code 128 by default.</td></tr>
+                <tr><td><code>{% templatetag openblock %} qr_code_available {% templatetag closeblock %}</code></td><td>True when <code>segno</code> is importable.</td></tr>
+                <tr><td><code>qr-code</code> / <code>barcode</code></td><td>Bordered container with crisp-edge rendering.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

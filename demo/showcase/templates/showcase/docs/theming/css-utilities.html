@@ -1,0 +1,79 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}CSS Utilities{% endblock %}
+{% block doc_section %}Theming &amp; Utilities{% endblock %}
+{% block doc_title %}CSS Utilities{% endblock %}
+{% block doc_intro %}
+    You get the whole Tailwind v4 utility set, repointed at this system's tokens, plus a handful of
+    utilities the design system adds for cases Tailwind does not cover.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Added utilities</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Does</th></tr></thead>
+            <tbody>
+                <tr><td><code>scrollbar-thin</code></td><td>Narrow scrollbar for an inner scroll region (sidebars, drawers, the scroller).</td></tr>
+                <tr><td><code>disabled</code></td><td>Marks a non-<code>&lt;button&gt;</code> element inert and dimmed — pointer events off, reduced opacity.</td></tr>
+                <tr><td><code>hidden-print</code></td><td>Drops the element from printed output; use it on nav chrome and action bars.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <a href="#" class="pagination-link disabled">{% lucide "chevron-left" size=16 %}Disabled link</a>
+        <div class="scrollbar-thin max-h-20 w-48 overflow-y-auto border border-divider bg-panel p-2 text-xs">
+            <p>Scroll me.</p><p class="mt-6">Still scrolling.</p><p class="mt-6">Nearly there.</p><p class="mt-6">End.</p>
+        </div>
+    </div>
+
+    <h2 class="mt-8">Token-aware utilities</h2>
+    <p class="text-gray-700">
+        These are stock Tailwind classes, but they resolve to this system's tokens — which is why
+        they theme. There is nothing to import and nothing to rename.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<!-- neutrals: the ramp inverts in dark mode -->
+<p class="text-gray-900">Primary text</p>
+<p class="text-gray-600">Secondary text</p>
+
+<!-- surfaces and hairlines -->
+<div class="bg-panel border border-divider">Raised surface</div>
+<div class="bg-panel-alt">Second level</div>
+<body class="bg-page">Canvas</body>
+
+<!-- accents -->
+<a class="text-action-600 underline">A link</a>
+<span class="bg-brand-100 text-brand-800">Brand tint</span>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reaching a token directly</h2>
+    <p class="text-gray-700">
+        A few tokens have no utility of their own — the shadows, the z-index scale, the motion and
+        control-sizing values. Use the custom property in an inline style or your own CSS.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div style="box-shadow: var(--shadow-blueprint-lg)">Elevated</div>
+<div style="z-index: var(--z-dialog)">Above the drawer</div>
+
+/* in your own stylesheet */
+.my-panel {
+    height: var(--control-height-lg);
+    transition: opacity var(--transition-normal) ease;
+}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Printing</h2>
+    <p class="text-gray-700">
+        Detail and list pages are routinely printed in the kind of application this system targets,
+        so <code>hidden-print</code> is worth applying to nav chrome and action bars as you build,
+        not afterwards.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="top-actions-header hidden-print">
+    <a class="top-nav-item" href="{% url 'category_list_view' %}">Back</a>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <div class="callout callout-info mt-6">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Utilities compose with components</div>
+            <code>class="btn btn-primary mt-4 w-full"</code> is fine and expected. The component
+            class carries the design decisions; utilities handle placement in a specific layout.
+        </div>
+    </div>
+{% endblock %}

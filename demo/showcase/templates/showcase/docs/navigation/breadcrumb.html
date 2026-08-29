@@ -1,0 +1,94 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Breadcrumb{% endblock %}
+{% block doc_section %}Navigation{% endblock %}
+{% block doc_title %}Breadcrumb{% endblock %}
+{% block doc_intro %}
+    Shows where the current page sits in the hierarchy and gives one-click access to its ancestors.
+    Most useful on nested records — a child page reached from a parent's detail view.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a class="breadcrumb-item" href="#">Categories</a>
+            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+            <a class="breadcrumb-item" href="#">Electronics</a>
+            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+            <span class="breadcrumb-item" aria-current="page">USB-C hub</span>
+        </nav>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<nav class="breadcrumb" aria-label="Breadcrumb">
+    <a class="breadcrumb-item" href="{% url 'category_list_view' %}">Categories</a>
+    <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+    <a class="breadcrumb-item" href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
+    <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+    <span class="breadcrumb-item" aria-current="page">{{ product.name }}</span>
+</nav>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The last item is the current page, so it is a <code>&lt;span&gt;</code>, not a link — linking
+        a page to itself is a dead end for keyboard and screen-reader users. CSS styles it as the
+        emphasised one automatically.
+    </p>
+
+    <h2 class="mt-8">With a home icon</h2>
+    <div class="doc-preview mt-4">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a class="breadcrumb-item" href="#">{% lucide "house" size=14 %}<span class="sr-only">Home</span></a>
+            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+            <a class="breadcrumb-item" href="#">Products</a>
+            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+            <span class="breadcrumb-item" aria-current="page">USB-C hub</span>
+        </nav>
+    </div>
+    <p class="mt-2 text-gray-700">
+        An icon-only crumb still needs a name — <code>.sr-only</code> text supplies one without
+        showing it.
+    </p>
+
+    <h2 class="mt-8">Building it from data</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# In the view
+def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context["crumbs"] = [
+        {"label": "Categories", "url": reverse("category_list_view")},
+        {"label": self.object.category.name, "url": self.object.category.get_absolute_url()},
+        {"label": self.object.name, "url": None},   # current page
+    ]
+    return context{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<nav class="breadcrumb" aria-label="Breadcrumb">
+    {% for crumb in crumbs %}
+        {% if not forloop.first %}
+            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+        {% endif %}
+        {% if crumb.url %}
+            <a class="breadcrumb-item" href="{{ crumb.url }}">{{ crumb.label }}</a>
+        {% else %}
+            <span class="breadcrumb-item" aria-current="page">{{ crumb.label }}</span>
+        {% endif %}
+    {% endfor %}
+</nav>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Breadcrumb or back link?</h2>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            At two levels deep, the plain Back link in <code>.top-actions-header</code> — what the
+            generic detail template already renders — is usually enough. Breadcrumbs earn their space
+            from three levels down, or when the hierarchy itself is information the user needs.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>breadcrumb</code></td><td>Container; use <code>&lt;nav aria-label="Breadcrumb"&gt;</code>.</td></tr>
+                <tr><td><code>breadcrumb-item</code></td><td>One crumb. The last gets emphasis automatically.</td></tr>
+                <tr><td><code>breadcrumb-separator</code></td><td>The chevron between crumbs.</td></tr>
+                <tr><td><code>aria-current="page"</code></td><td>On the final crumb.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

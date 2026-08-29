@@ -1,0 +1,95 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}OTP Input{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}OTP Input{% endblock %}
+{% block doc_intro %}
+    One box per digit of a one-time code. Rendering the boxes is the easy half; the useful half is
+    <code>OTPField</code>, which recombines them into a single validated string so your view sees an
+    ordinary <code>"123456"</code>.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Try it</h2>
+    <p class="text-gray-700">Type, and focus advances; backspace steps back; paste a whole code and it spreads across the boxes.</p>
+    <div class="doc-preview mt-4">
+        <div class="form-field">
+            <span class="form-label">{{ sink_form.verification_code.label }}</span>
+            {{ sink_form.verification_code }}
+            <span class="helptext">{{ sink_form.verification_code.help_text }}</span>
+        </div>
+    </div>
+
+    <h2 class="mt-8">The field</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.widgets import OTPField
+
+class VerifyForm(forms.Form):
+    verification_code = OTPField(length=6)
+
+# In the view, cleaned_data holds the joined string:
+form.cleaned_data["verification_code"]   # "123456"{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Validation</h2>
+    <p class="text-gray-700">
+        <code>OTPField</code> is a <code>MultiValueField</code> with
+        <code>require_all_fields=False</code>, so a half-filled code produces <em>one</em> "enter all
+        6 digits" error rather than six "this field is required" errors — which is what you'd get
+        from the naive implementation.
+    </p>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Input</th><th>Result</th></tr></thead>
+            <tbody>
+                <tr><td><code>123456</code></td><td><code>cleaned_data == "123456"</code></td></tr>
+                <tr><td><code>12</code> (partial)</td><td>One error: "Enter all 6 digits of the code."</td></tr>
+                <tr><td><code>12345x</code></td><td>Same error — the value must be all digits.</td></tr>
+                <tr><td>empty, <code>required=False</code></td><td><code>""</code>, no error</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}def compress(self, data_list):
+    code = "".join((d or "").strip() for d in data_list)
+    if not code:
+        return ""
+    if len(code) != self.length or not re.fullmatch(r"\d+", code):
+        raise ValidationError("Enter all %(n)d digits of the code.",
+                              params={"n": self.length})
+    return code{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Autofill</h2>
+    <p class="text-gray-700">
+        Only the first box carries <code>autocomplete="one-time-code"</code>. Putting it on every box
+        makes browsers offer to fill the whole code into each one.
+    </p>
+
+    <h2 class="mt-8">Verifying it</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class VerifyView(FormView):
+    form_class = VerifyForm
+    template_name = "accounts/verify.html"
+
+    def form_valid(self, form):
+        code = form.cleaned_data["verification_code"]
+        if not self.request.user.check_otp(code):
+            form.add_error("verification_code", "That code is not valid or has expired.")
+            return self.form_invalid(form)
+        return super().form_valid(form){% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            Rate-limit verification attempts server-side. A six-digit code is only a million
+            possibilities — without a limit it is brute-forceable in minutes.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class / API</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>otp-group</code></td><td>Row wrapper.</td></tr>
+                <tr><td><code>otp-input</code></td><td>One digit box.</td></tr>
+                <tr><td><code>OTPField(length=6)</code></td><td>Form field; joins and validates.</td></tr>
+                <tr><td><code>OTPInput(length=6)</code></td><td>The widget, if you need it directly.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

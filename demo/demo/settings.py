@@ -58,6 +58,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'wise_core.context_processors.nav',
+                'showcase.context_processors.docs_nav',
             ],
         },
     },
@@ -99,25 +100,24 @@ PROJECT_NAME = 'Wise Design System'
 
 # Fed to wise_core/components/nav_menu.html by wise_core.context_processors.nav.
 # See docs/getting-started.md for the shape.
+# Fed to wise_core/components/nav_menu.html. The *documentation* tree is a
+# separate, much deeper structure - it lives in showcase/navigation.py and is
+# rendered by showcase/components/_docs_tree.html, not by nav_menu.html.
 WISE_NAV_SECTIONS = [
     {
-        'title': 'Foundations',
+        'title': 'Documentation',
         'items': [
-            {'label': 'Design tokens', 'url_name': 'tokens', 'icon': 'layout-dashboard', 'match': 'tokens'},
-            {'label': 'Components', 'url_name': 'components', 'icon': 'zap', 'match': 'components'},
-            {'label': 'Icons', 'url_name': 'icons', 'icon': 'star', 'match': 'icons'},
+            {'label': 'Browse the docs', 'url_name': 'docs', 'icon': 'file-text', 'match': 'docs'},
         ],
     },
     {
-        'title': 'Datatable & CRUD',
+        'title': 'Playground',
         'items': [
             {'label': 'Categories', 'url_name': 'category_list_view', 'icon': 'tag', 'match': 'category_'},
-        ],
-    },
-    {
-        'title': 'Widgets',
-        'items': [
-            {'label': 'Products (autocomplete + rich text)', 'url_name': 'product_list_view', 'icon': 'pill', 'match': 'product_'},
+            {'label': 'Products', 'url_name': 'product_list_view', 'icon': 'pill', 'match': 'product_'},
         ],
     },
 ]
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'

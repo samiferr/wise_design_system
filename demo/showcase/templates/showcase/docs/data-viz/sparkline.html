@@ -1,0 +1,90 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Sparkline{% endblock %}
+{% block doc_section %}Data Viz{% endblock %}
+{% block doc_title %}Sparkline{% endblock %}
+{% block doc_intro %}
+    A word-sized trend line with no axes, labels or gridlines — meant to sit inline, in a table cell
+    or beside a number, where a full chart would be too much.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 max-w-xs">
+        <svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:2.5rem">
+            <polyline class="chart-series-line" points="{{ sparkline }}"/>
+        </svg>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_charts %}
+
+<svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:2.5rem">
+    <polyline class="chart-series-line" points="{% chart_polyline revenue 100 30 3 %}"/>
+</svg>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        This is the one chart where the template tag is usually the right call — a single element,
+        one series, nothing else to share.
+    </p>
+
+    <h2 class="mt-8">In a stat tile</h2>
+    <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-2">
+        <div class="card">
+            <div class="card-kicker">Revenue</div>
+            <div class="mt-1 font-heading text-3xl font-semibold">£66k</div>
+            <svg class="chart-svg mt-2" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:2rem">
+                <polyline class="chart-series-line" points="{{ sparkline }}"/>
+            </svg>
+            <div class="card-meta mt-2">{% lucide "activity" size=13 %} last 6 months</div>
+        </div>
+        <div class="card">
+            <div class="card-kicker">Orders</div>
+            <div class="mt-1 font-heading text-3xl font-semibold">1,284</div>
+            <svg class="chart-svg mt-2" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:2rem">
+                <polyline class="chart-series-line" points="{{ sparkline }}" style="stroke:var(--color-warning-400)"/>
+            </svg>
+            <div class="card-meta mt-2">{% lucide "activity" size=13 %} last 6 months</div>
+        </div>
+    </div>
+
+    <h2 class="mt-8">In a table cell</h2>
+    <div class="doc-preview mt-4 p-0">
+        <table class="data-table">
+            <thead><tr><th>Product</th><th>Stock</th><th class="w-32">Trend</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td>USB-C hub</td><td>412</td>
+                    <td><svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:1.5rem"><polyline class="chart-series-line" points="{{ sparkline }}"/></svg></td>
+                </tr>
+                <tr>
+                    <td>Standing desk</td><td>38</td>
+                    <td><svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:1.5rem"><polyline class="chart-series-line" points="0,4 20,10 40,8 60,18 80,22 100,26" style="stroke:var(--color-accent-500)"/></svg></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<td class="w-32">
+    <svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:1.5rem">
+        <polyline class="chart-series-line" points="{% chart_polyline product.stock_history 100 30 3 %}"/>
+    </svg>
+</td>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Keep it honest</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            Each sparkline is scaled to its own range, so two of them side by side are <em>not</em>
+            comparable — a line that climbs steeply may be moving by three units. Always show the
+            actual number next to it, and pass explicit <code>minimum</code>/<code>maximum</code> if
+            rows must be compared.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>API</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>{% templatetag openblock %} chart_polyline values width height padding {% templatetag closeblock %}</code></td><td>The <code>points</code> string.</td></tr>
+                <tr><td><code>preserveAspectRatio="none"</code></td><td>Lets the line stretch to the cell's width.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

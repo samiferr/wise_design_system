@@ -1,0 +1,149 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Data Table{% endblock %}
+{% block doc_section %}Data Viz{% endblock %}
+{% block doc_title %}Data Table{% endblock %}
+{% block doc_intro %}
+    The datatable: a list of records with sorting, filtering, pagination and row actions. Driven by
+    <code>WiseListView</code> + <code>django-filter</code>, so the queryset stays the source of truth
+    and the browser only ever receives one page of rows.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 overflow-x-auto p-0">
+        <table class="data-table">
+            <thead><tr><th>Name</th><th>Color</th><th>Products</th><th class="w-px"></th></tr></thead>
+            <tbody>
+                <tr>
+                    <td><a class="font-semibold text-action-700 no-underline hover:underline" href="#">Electronics</a></td>
+                    <td><span class="inline-block h-4 w-4 border border-divider align-middle" style="background:#15803d"></span></td>
+                    <td>12</td>
+                    <td class="whitespace-nowrap"><a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a><a class="btn-ghost" href="#">{% lucide "trash-2" size=14 %}</a></td>
+                </tr>
+                <tr>
+                    <td><a class="font-semibold text-action-700 no-underline hover:underline" href="#">Stationery</a></td>
+                    <td><span class="inline-block h-4 w-4 border border-divider align-middle" style="background:#16a34a"></span></td>
+                    <td>34</td>
+                    <td class="whitespace-nowrap"><a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a><a class="btn-ghost" href="#">{% lucide "trash-2" size=14 %}</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="mt-5 overflow-x-auto border border-divider bg-panel">
+    <table class="data-table">
+        <thead>
+            <tr><th>Name</th><th>Color</th><th class="w-px"></th></tr>
+        </thead>
+        <tbody>
+            {% for item in object_list %}
+                <tr>
+                    <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
+                    <td>{{ item.color }}</td>
+                    <td class="whitespace-nowrap">
+                        {% if perms.showcase.change_category %}
+                            <a class="btn-ghost" href="{% url 'category_update_view' pk=item.pk %}">
+                                {% lucide "pencil" size=14 %}
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="3">{% include 'wise_core/components/_no_data.html' %}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="pt-4">{% include 'wise_core/components/_pagination.html' %}</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        Always wrap the table in <code>overflow-x-auto</code>. A table is the one thing that cannot
+        reflow to a narrow screen, so it needs somewhere to scroll.
+    </p>
+
+    <h2 class="mt-8">Column ordering</h2>
+    <p class="text-gray-700">
+        Sorting is a query parameter, applied to the queryset — not a client-side re-sort, which would
+        only reorder the current page and silently lie about the rest.
+    </p>
+    <div class="doc-preview mt-4 overflow-x-auto p-0">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th><a class="inline-flex items-center gap-1 no-underline text-gray-600 hover:text-action-600" href="#">Name {% lucide "chevron-up" size=12 %}</a></th>
+                    <th><a class="inline-flex items-center gap-1 no-underline text-gray-600 hover:text-action-600" href="#">Products {% lucide "chevron-down" size=12 %}</a></th>
+                </tr>
+            </thead>
+            <tbody><tr><td>Electronics</td><td>12</td></tr></tbody>
+        </table>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class CategoryListView(WiseListView):
+    model = Category
+    ORDERABLE = {"name", "created_at"}      # allowlist - never trust the raw param
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        sort = self.request.GET.get("sort", "name")
+        field = sort.lstrip("-")
+        if field in self.ORDERABLE:
+            qs = qs.order_by(sort)
+        return qs{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Allowlist the sortable fields</div>
+            Passing <code>request.GET["sort"]</code> straight into <code>order_by()</code> lets a
+            visitor order by any field or traverse relations — a slow-query and information-disclosure
+            hazard. And always include a deterministic tiebreak (a final <code>"pk"</code>), or
+            pagination will repeat and skip rows across pages.
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{# a header cell that toggles direction and keeps other params #}
+<th>
+    <a href="?sort={% if current_sort == 'name' %}-{% endif %}name">
+        Name
+        {% if current_sort == 'name' %}{% lucide "chevron-up" size=12 %}
+        {% elif current_sort == '-name' %}{% lucide "chevron-down" size=12 %}{% endif %}
+    </a>
+</th>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Empty state</h2>
+    <div class="doc-preview mt-4 p-0">{% include 'wise_core/components/_no_data.html' %}</div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<tr><td colspan="4">{% include 'wise_core/components/_no_data.html' %}</td></tr>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Density</h2>
+    <p class="text-gray-700">
+        Row padding reads <code>--table-padding-y</code>, so <code>data-density="compact"</code>
+        tightens every table at once.
+    </p>
+    <div class="doc-preview mt-4 flex gap-2">
+        <button class="btn btn-secondary" onclick="wiseSetDensity('compact')">Compact</button>
+        <button class="btn btn-secondary" onclick="wiseSetDensity('')">Comfortable</button>
+    </div>
+
+    <h2 class="mt-8">Detail panel</h2>
+    <p class="text-gray-700">The read-only counterpart for a single record:</p>
+    <div class="doc-preview mt-4 p-0">
+        <table class="detail-panel">
+            <tbody><tr><th>Name</th><td>Electronics</td></tr><tr><th>Products</th><td>12</td></tr></tbody>
+        </table>
+    </div>
+
+    <p class="mt-6 text-gray-700">
+        See all of it working together on
+        <a class="text-action-600 underline" href="{% url 'category_list_view' %}">Categories</a>, and
+        the full page composition on
+        <a class="text-action-600 underline" href="{% url 'docs_patterns_simple_data_page' %}">Simple Data Page</a>.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>data-table</code></td><td>Record list.</td></tr>
+                <tr><td><code>detail-panel</code></td><td>Read-only key/value table for one record.</td></tr>
+                <tr><td><code>_no_data.html</code></td><td>Empty state partial.</td></tr>
+                <tr><td><code>_pagination.html</code></td><td>Pager partial.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

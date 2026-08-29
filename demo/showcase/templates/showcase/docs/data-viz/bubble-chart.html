@@ -1,0 +1,71 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Bubble Chart{% endblock %}
+{% block doc_section %}Data Viz{% endblock %}
+{% block doc_title %}Bubble Chart{% endblock %}
+{% block doc_intro %}
+    A <a class="text-action-600 underline" href="{% url 'docs_data_viz_scatter_chart' %}">scatter chart</a>
+    with a third variable encoded as the size of each point — price against units sold, sized by
+    total revenue.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4">
+        <svg class="chart-svg" viewBox="0 0 300 140" style="height:180px" role="img" aria-label="Price against units, sized by revenue">
+            {% for y in grid_lines %}<line class="chart-grid-line" x1="0" y1="{{ y }}" x2="300" y2="{{ y }}"/>{% endfor %}
+            <line class="chart-axis" x1="0" y1="140" x2="300" y2="140"/>
+            <line class="chart-axis" x1="0" y1="0" x2="0" y2="140"/>
+            {% for bubble in bubble_points %}<circle class="chart-point" cx="{{ bubble.cx }}" cy="{{ bubble.cy }}" r="{{ bubble.r }}" opacity="0.55"/>{% endfor %}
+        </svg>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py - triples of (x, y, size)
+context["bubble_points"] = charts.bubbles(
+    [(p.price, p.units_sold, p.revenue) for p in products],
+    300, 140, max_radius=18,
+){% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% for bubble in bubble_points %}
+    <circle class="chart-point" cx="{{ bubble.cx }}" cy="{{ bubble.cy }}"
+            r="{{ bubble.r }}" opacity="0.55"/>
+{% endfor %}{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">Always set an opacity — bubbles overlap by nature, and opaque ones hide each other entirely.</p>
+
+    <h2 class="mt-8">Size is scaled by area</h2>
+    <p class="text-gray-700">
+        Radius is proportional to the square root of the value. Doubling the radius would quadruple
+        the visible area, so a linear mapping silently overstates large values — a genuinely common
+        way for bubble charts to mislead.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}charts.bubbles([(1, 1, 1), (2, 2, 4)], max_radius=10)
+# radii: [5.0, 10.0]   - a 4x value gives a 2x radius, hence 4x the area{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Legend for size</h2>
+    <p class="text-gray-700">
+        Size has no axis, so it needs explaining. A couple of reference bubbles do the job better than
+        a sentence.
+    </p>
+    <div class="doc-preview mt-4 flex items-end gap-4">
+        <span class="inline-flex items-end gap-2"><svg width="20" height="20"><circle class="chart-point" cx="10" cy="10" r="5" opacity="0.55"/></svg><span class="text-xs text-gray-600">£5k</span></span>
+        <span class="inline-flex items-end gap-2"><svg width="36" height="36"><circle class="chart-point" cx="18" cy="18" r="14" opacity="0.55"/></svg><span class="text-xs text-gray-600">£40k</span></span>
+    </div>
+
+    <h2 class="mt-8">Three variables is a lot</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            Position is read accurately; area is not. If the third variable is the one that matters,
+            put it on an axis and use a scatter or bar chart instead — reserve bubbles for when size
+            is genuinely secondary context.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>API</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>charts.bubbles(triples, width, height, padding, max_radius)</code></td><td>Dicts with <code>cx</code>, <code>cy</code>, <code>r</code>.</td></tr>
+                <tr><td><code>max_radius</code></td><td>Radius of the largest bubble, in viewBox units.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Select{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Select{% endblock %}
+{% block doc_intro %}
+    A native <code>&lt;select&gt;</code>. Native is a deliberate choice: it is keyboard accessible,
+    it renders as the platform picker on mobile, and it needs no JavaScript. Reach for
+    <a class="text-action-600 underline" href="{% url 'docs_forms_combobox' %}">Combobox</a> or
+    <a class="text-action-600 underline" href="{% url 'docs_forms_autocomplete_input' %}">Autocomplete</a>
+    only when the option list is too long to scroll or must be searched server-side.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <select class="select">
+            <option>Electronics</option>
+            <option>Kitchenware</option>
+            <option>Furniture</option>
+        </select>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<select class="select">
+    <option>Electronics</option>
+    <option>Kitchenware</option>
+</select>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Option groups</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <select class="select">
+            <optgroup label="Hardware">
+                <option>Laptop</option><option>Monitor</option>
+            </optgroup>
+            <optgroup label="Consumables">
+                <option>Paper</option><option>Toner</option>
+            </optgroup>
+        </select>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<select class="select">
+    <optgroup label="Hardware">
+        <option>Laptop</option>
+    </optgroup>
+</select>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        Django emits these automatically from grouped choices — a list of
+        <code>(group_label, [(value, label), ...])</code> tuples.
+    </p>
+
+    <h2 class="mt-8">Rendered by Django</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-stack">
+            <div class="form-field">
+                <label class="form-label" for="{{ sink_form.category.id_for_label }}">{{ sink_form.category.label }}</label>
+                {{ sink_form.category }}
+            </div>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}category = forms.ChoiceField(choices=[
+    ("", "---------"),
+    ("electronics", "Electronics"),
+    ("kitchen", "Kitchenware"),
+])
+
+# From a model, use ModelChoiceField so the queryset stays the source of truth:
+category = forms.ModelChoiceField(queryset=Category.objects.all()){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Multiple</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <select class="select" multiple size="4" style="height:auto">
+            <option selected>Design</option><option>Code</option><option selected>Ops</option><option>Support</option>
+        </select>
+    </div>
+    <p class="mt-2 text-gray-700">
+        Multi-selects are hard to use — most people don't discover ctrl-click. Prefer
+        <a class="text-action-600 underline" href="{% url 'docs_forms_checkbox' %}">a checkbox group</a>
+        unless the list is long.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>select</code></td><td>Standalone select; same height tokens as <code>.input</code>.</td></tr>
+                <tr><td><code>select-sm</code> / <code>select-lg</code></td><td>Smaller / larger control height.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

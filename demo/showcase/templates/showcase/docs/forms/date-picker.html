@@ -1,0 +1,93 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Date Picker{% endblock %}
+{% block doc_section %}Forms{% endblock %}
+{% block doc_title %}Date Picker{% endblock %}
+{% block doc_intro %}
+    For picking a single date, the design system deliberately has no custom picker — the native one
+    is better than anything worth hand-rolling. This page covers when that is not enough, and what
+    to reach for instead.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Use the native picker</h2>
+    <div class="doc-preview mt-4 max-w-sm">
+        <div class="form-field">
+            <label class="form-label" for="{{ sink_form.starts_on.id_for_label }}">{{ sink_form.starts_on.label }}</label>
+            {{ sink_form.starts_on }}
+        </div>
+    </div>
+    <p class="mt-2 text-gray-700">
+        It is keyboard accessible, localized, works offline, opens the platform date wheel on mobile,
+        and costs zero bytes. See
+        <a class="text-action-600 underline" href="{% url 'docs_forms_date_input' %}">Date Input</a> for the details.
+    </p>
+
+    <h2 class="mt-8">When the native picker isn't enough</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Need</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td>One date</td><td>Native <code>type="date"</code>.</td></tr>
+                <tr><td>A date range</td><td>Two native inputs, or <code>django-filter</code>'s <code>DateFromToRangeFilter</code>.</td></tr>
+                <tr><td>Year/month only</td><td>Native <code>type="month"</code>.</td></tr>
+                <tr><td>Explicit day/month/year fields</td><td><a class="text-action-600 underline" href="{% url 'docs_forms_split_date' %}">Split Date</a>.</td></tr>
+                <tr><td>Availability, bookings, "which days have events"</td><td>The <a class="text-action-600 underline" href="{% url 'docs_patterns_calendar' %}">Calendar</a> pattern.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Picking from a calendar</h2>
+    <p class="text-gray-700">
+        When the choice depends on what is <em>on</em> each day — a booking screen, a shift roster —
+        a dropdown picker is the wrong shape. Render the month grid server-side and make each day a
+        link or a radio.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="calendar-grid">
+    {% for week in weeks %}
+        {% for day in week %}
+            <div class="calendar-day{% if day.is_outside %} is-outside{% endif %}">
+                <span class="calendar-day-number">{{ day.number }}</span>
+                {% if day.slots_free %}
+                    <a class="calendar-event" href="?date={{ day.iso }}">{{ day.slots_free }} free</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The full worked example, including the Python that builds the grid, is on the
+        <a class="text-action-600 underline" href="{% url 'docs_patterns_calendar' %}">Calendar</a> page.
+    </p>
+
+    <h2 class="mt-8">Constraining the range</h2>
+    <p class="text-gray-700">
+        <code>min</code> and <code>max</code> grey out impossible dates in the native picker. As
+        always, they are a hint — the field validator is what enforces it.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from django.utils import timezone
+
+class BookingForm(forms.Form):
+    day = forms.DateField(
+        widget=forms.DateInput(attrs={
+            "type": "date",
+            "min": timezone.localdate().isoformat(),
+        }),
+    )
+
+    def clean_day(self):
+        day = self.cleaned_data["day"]
+        if day < timezone.localdate():
+            raise ValidationError("Pick a date in the future.")
+        return day{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="doc-preview mt-4 max-w-[12rem]">
+        <input class="input" type="date" min="2026-08-27" value="2026-08-27">
+    </div>
+
+    <h2 class="mt-8">If you must add a JS picker</h2>
+    <p class="text-gray-700">
+        Keep it progressive: start from a working <code>type="date"</code> input and enhance it, so
+        the form still submits if the script fails. Style the popup with the system's tokens
+        (<code>--color-panel</code>, <code>--color-divider</code>, <code>--z-dropdown</code>) so it
+        themes with everything else.
+    </p>
+{% endblock %}

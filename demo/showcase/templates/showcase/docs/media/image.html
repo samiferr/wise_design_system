@@ -1,0 +1,87 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Image{% endblock %}
+{% block doc_section %}Media{% endblock %}
+{% block doc_title %}Image{% endblock %}
+{% block doc_intro %}
+    A bordered image, optionally with a caption. Mostly this is about getting the boring parts right:
+    reserving space so the page does not jump, and not distorting uploads of unpredictable shape.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4">
+        <figure class="image-figure">
+            <svg class="image" width="240" height="140" viewBox="0 0 240 140" role="img" aria-label="Placeholder">
+                <rect width="240" height="140" fill="var(--color-panel-alt)"/>
+                <path d="M0 110 L70 60 L120 95 L175 55 L240 100 L240 140 L0 140 Z" fill="var(--color-action-600)" opacity="0.25"/>
+                <circle cx="185" cy="35" r="14" fill="var(--color-warning-400)"/>
+            </svg>
+            <figcaption class="image-caption">Figure 1 — a placeholder, drawn inline.</figcaption>
+        </figure>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<figure class="image-figure">
+    <img class="image" src="{{ product.photo.url }}" alt="{{ product.name }}"
+         width="240" height="140" loading="lazy">
+    <figcaption class="image-caption">{{ product.photo_caption }}</figcaption>
+</figure>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Always set width and height</h2>
+    <div class="callout callout-warning mt-4">
+        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Otherwise the page reflows as images arrive</div>
+            With both attributes set, the browser derives an aspect ratio and reserves the space
+            before the file loads. Tailwind's reset makes images fluid
+            (<code>max-width:100%</code>), so the attributes act as a ratio hint, not a fixed size.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Uploads of unknown shape</h2>
+    <p class="text-gray-700">
+        User uploads are never the aspect ratio your layout wants. Constrain the box and let the
+        image cover it, rather than stretching it.
+    </p>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="h-40 w-full overflow-hidden border border-divider bg-panel-alt">
+    <img src="{{ product.photo.url }}" alt="{{ product.name }}"
+         class="h-full w-full object-cover">
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-3">
+        <div class="h-24 overflow-hidden border border-divider" style="background:var(--color-panel-alt)"></div>
+        <div class="h-24 overflow-hidden border border-divider" style="background:var(--color-action-100)"></div>
+        <div class="h-24 overflow-hidden border border-divider" style="background:var(--color-warning-50)"></div>
+    </div>
+
+    <h2 class="mt-8">Empty state</h2>
+    <p class="text-gray-700">A record with no image still needs to occupy its slot, or the grid collapses unevenly.</p>
+    <div class="doc-preview mt-4 max-w-[12rem]">
+        <div class="flex h-24 w-full items-center justify-center border border-divider bg-panel-alt text-gray-400">
+            {% lucide "image" size=24 %}
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% if product.photo %}
+    <img class="image" src="{{ product.photo.url }}" alt="{{ product.name }}">
+{% else %}
+    <div class="flex h-24 items-center justify-center border border-divider bg-panel-alt text-gray-400">
+        {% lucide "image" size=24 %}
+    </div>
+{% endif %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Alt text</h2>
+    <p class="text-gray-700">
+        Describe what the image conveys, not that it is an image. If it is decorative and the
+        surrounding text already says everything, use <code>alt=""</code> so it is skipped rather than
+        read as a filename.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>image</code></td><td>Bordered, fluid image.</td></tr>
+                <tr><td><code>image-figure</code></td><td>On a <code>&lt;figure&gt;</code> wrapping image + caption.</td></tr>
+                <tr><td><code>image-caption</code></td><td>On the <code>&lt;figcaption&gt;</code>.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

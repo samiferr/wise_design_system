@@ -1,0 +1,106 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Accordion{% endblock %}
+{% block doc_section %}Layout{% endblock %}
+{% block doc_title %}Accordion{% endblock %}
+{% block doc_intro %}
+    Collapsible sections built on <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code>. Expand
+    and collapse, keyboard support and the open/closed state are all native — there is no JavaScript
+    and no ARIA to add.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Basic</h2>
+    <div class="doc-preview mt-4 p-0">
+        <div class="accordion">
+            <details class="accordion-item" open>
+                <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}Shipping</summary>
+                <div class="accordion-content">Dispatched within two working days. Tracked delivery on every order.</div>
+            </details>
+            <details class="accordion-item">
+                <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}Returns</summary>
+                <div class="accordion-content">30 days, unused and in original packaging.</div>
+            </details>
+            <details class="accordion-item">
+                <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}Warranty</summary>
+                <div class="accordion-content">Two years against manufacturing defects.</div>
+            </details>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="accordion">
+    <details class="accordion-item" open>
+        <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}Shipping</summary>
+        <div class="accordion-content">Dispatched within two working days.</div>
+    </details>
+    <details class="accordion-item">
+        <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}Returns</summary>
+        <div class="accordion-content">30 days, unused and in original packaging.</div>
+    </details>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The chevron rotates via <code>.accordion-item[open] .accordion-chevron</code> — CSS reacting
+        to the element's own state, not a class toggled by script.
+    </p>
+
+    <h2 class="mt-8">From a queryset</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="accordion">
+    {% for faq in faqs %}
+        <details class="accordion-item" {% if forloop.first %}open{% endif %}>
+            <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}{{ faq.question }}</summary>
+            <div class="accordion-content">{{ faq.answer|linebreaks }}</div>
+        </details>
+    {% endfor %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">One at a time</h2>
+    <p class="text-gray-700">
+        Give every <code>&lt;details&gt;</code> the same <code>name</code> and the browser closes the
+        others for you — an exclusive accordion with no script.
+    </p>
+    <div class="doc-preview mt-4 p-0">
+        <div class="accordion">
+            <details class="accordion-item" name="doc-exclusive" open>
+                <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}First</summary>
+                <div class="accordion-content">Opening another closes this one.</div>
+            </details>
+            <details class="accordion-item" name="doc-exclusive">
+                <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}Second</summary>
+                <div class="accordion-content">And this closes the first.</div>
+            </details>
+        </div>
+    </div>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<details class="accordion-item" name="faq" open>…</details>
+<details class="accordion-item" name="faq">…</details>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            The <code>name</code> attribute on <code>&lt;details&gt;</code> is recent. Where it is
+            unsupported the accordion still works — sections just open independently, which is a
+            reasonable fallback.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Accordion vs. tabs vs. tree</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Use</th><th>When</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Accordion</strong></td><td>Sections of one page; several can be open; content is on the page already.</td></tr>
+                <tr><td><a class="text-action-600 underline" href="{% url 'docs_navigation_tab_group' %}">Tabs</a></td><td>Alternative views of one record, each with its own URL.</td></tr>
+                <tr><td><a class="text-action-600 underline" href="{% url 'docs_navigation_tree' %}">Tree</a></td><td>Hierarchical navigation, arbitrarily deep.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>accordion</code></td><td>Bordered container around the items.</td></tr>
+                <tr><td><code>accordion-item</code></td><td>On each <code>&lt;details&gt;</code>.</td></tr>
+                <tr><td><code>accordion-chevron</code></td><td>Icon in the summary; rotates when open.</td></tr>
+                <tr><td><code>accordion-content</code></td><td>The revealed panel.</td></tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
