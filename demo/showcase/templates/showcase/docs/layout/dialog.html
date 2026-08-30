@@ -47,7 +47,7 @@
     </dialog>
 
     <h2 class="mt-8">Markup</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" onclick="wiseOpenDialog('edit_dialog')">Edit</button>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" onclick="wiseOpenDialog('edit_dialog')">Edit</button>
 
 <dialog class="dialog" id="edit_dialog">
     <div class="dialog-header">
@@ -69,7 +69,7 @@
         button wants. The real submit is an ordinary POST, so the flow works without JavaScript once
         the dialog is open.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<dialog class="dialog" id="edit_dialog">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<dialog class="dialog" id="edit_dialog">
     <form method="post" action="{% url 'category_update_view' pk=object.pk %}">
         {% csrf_token %}
         <div class="dialog-header"><h3 class="dialog-title">Edit</h3></div>
@@ -90,7 +90,7 @@
         A modal form that fails validation must come back open, or the user sees a page that appears
         to have done nothing. Render it open when the bound form has errors.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<script>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<script>
     {% if form.errors %}wiseOpenDialog('edit_dialog'){% endif %}
 </script>{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">

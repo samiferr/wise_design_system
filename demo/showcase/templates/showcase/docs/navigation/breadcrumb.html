@@ -28,7 +28,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<nav class="breadcrumb" aria-label="Breadcrumb">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<nav class="breadcrumb" aria-label="Breadcrumb">
     <a class="breadcrumb-item" href="{% url 'category_list_view' %}">Categories</a>
     <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
     <a class="breadcrumb-item" href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
@@ -59,7 +59,7 @@
     </p>
 
     <h2 class="mt-8">Building it from data</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# In the view
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# In the view
 def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
     context["crumbs"] = [
@@ -68,7 +68,7 @@ def get_context_data(self, **kwargs):
         {"label": self.object.name, "url": None},   # current page
     ]
     return context{% endverbatim %}{% endfilter %}</code></pre>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<nav class="breadcrumb" aria-label="Breadcrumb">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<nav class="breadcrumb" aria-label="Breadcrumb">
     {% for crumb in crumbs %}
         {% if not forloop.first %}
             <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>

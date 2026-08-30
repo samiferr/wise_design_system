@@ -25,7 +25,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
     <input class="radio" type="radio" name="plan" value="free" checked><span>Free</span>
 </label>
 <label class="form-checkbox-label">
@@ -58,7 +58,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}plan = forms.ChoiceField(
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}plan = forms.ChoiceField(
     choices=[("free", "Free"), ("pro", "Pro"), ("team", "Team")],
     widget=forms.RadioSelect,
     initial="pro",
@@ -72,7 +72,7 @@
         <code>&lt;fieldset&gt;</code>/<code>&lt;legend&gt;</code>, so assistive tech announces the
         question along with each option.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<fieldset>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<fieldset>
     <legend class="form-label">Plan</legend>
     {{ form.plan }}
 </fieldset>{% endverbatim %}{% endfilter %}</code></pre>

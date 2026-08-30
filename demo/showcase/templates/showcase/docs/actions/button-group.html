@@ -26,7 +26,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="btn-group">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="btn-group">
     <button class="btn btn-secondary">Day</button>
     <button class="btn btn-secondary">Week</button>
     <button class="btn btn-secondary">Month</button>
@@ -56,7 +56,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="btn-group">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="btn-group">
     {% for option in ranges %}
         <a class="btn btn-secondary {% if option.slug == current %}selected{% endif %}"
            href="?range={{ option.slug }}">{{ option.label }}</a>
@@ -82,7 +82,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="btn-group">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="btn-group">
     <button class="btn btn-icon btn-secondary selected" aria-label="List view">{% lucide "menu" size=15 %}</button>
     <button class="btn btn-icon btn-secondary" aria-label="Grid view">{% lucide "layout-dashboard" size=15 %}</button>
 </div>{% endverbatim %}{% endfilter %}</code></pre>

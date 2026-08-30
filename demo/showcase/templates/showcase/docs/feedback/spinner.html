@@ -25,7 +25,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="spinner spinner-sm"></span>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<span class="spinner spinner-sm"></span>
 <span class="spinner"></span>
 <span class="spinner spinner-lg"></span>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
@@ -46,7 +46,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" disabled>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" disabled>
     <span class="spinner spinner-sm"></span><span>Saving…</span>
 </button>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
@@ -72,7 +72,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="flex items-center justify-center gap-3 p-8 text-sm text-gray-600"
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="flex items-center justify-center gap-3 p-8 text-sm text-gray-600"
      role="status" aria-live="polite">
     <span class="spinner"></span> Loading details…
 </div>{% endverbatim %}{% endfilter %}</code></pre>
@@ -88,14 +88,14 @@
             announced.
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="spinner" role="status"><span class="sr-only">Loading…</span></span>{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<span class="spinner" role="status"><span class="sr-only">Loading…</span></span>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Reduced motion</h2>
     <p class="text-gray-700">
         Under <code>prefers-reduced-motion</code> the spin slows from 0.7s to 2s rather than stopping
         — a frozen spinner reads as a hung page, which is worse than a slow one.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}@media (prefers-reduced-motion: reduce) {
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}@media (prefers-reduced-motion: reduce) {
     .spinner { animation-duration: 2s; }
 }{% endverbatim %}{% endfilter %}</code></pre>
 

@@ -1,5 +1,5 @@
 {% extends 'wise_core/base.html' %}
-{% load wise_icons %}
+{% load static wise_icons %}
 {% comment %}
 Shell for every documentation page: the tree sidebar, the page header
 (breadcrumb + title + intro), and the prev/next pager.
@@ -72,4 +72,27 @@ not need to touch the layout blocks below.
             </div>
         </main>
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    {% comment %}
+    Prism.js (vendored - see static/showcase/js/vendor/prism/NOTICE.md), for
+    the `.doc-code` blocks' syntax colors. Runs on every doc page rather than
+    only pages with code, since nearly all of them have at least one example
+    and the whole bundle is ~27KB. highlightAll() walks the DOM for text
+    content regardless of which .doc-example tab panel is currently hidden,
+    so a code panel is fully highlighted even before its tab is ever clicked.
+    Load order matters: markup-templating and clike are grammars the later
+    ones (django, javascript) extend or hook into, so they load first.
+    {% endcomment %}
+    <script src="{% static 'showcase/js/vendor/prism/prism-core.min.js' %}"></script>
+    <script src="{% static 'showcase/js/vendor/prism/prism-markup-templating.min.js' %}"></script>
+    <script src="{% static 'showcase/js/vendor/prism/prism-markup.min.js' %}"></script>
+    <script src="{% static 'showcase/js/vendor/prism/prism-clike.min.js' %}"></script>
+    <script src="{% static 'showcase/js/vendor/prism/prism-django.min.js' %}"></script>
+    <script src="{% static 'showcase/js/vendor/prism/prism-css.min.js' %}"></script>
+    <script src="{% static 'showcase/js/vendor/prism/prism-javascript.min.js' %}"></script>
+    <script src="{% static 'showcase/js/vendor/prism/prism-python.min.js' %}"></script>
+    <script src="{% static 'showcase/js/vendor/prism/prism-bash.min.js' %}"></script>
+    <script>Prism.highlightAll()</script>
 {% endblock %}

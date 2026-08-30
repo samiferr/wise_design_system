@@ -26,7 +26,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="card">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="card">
     <div class="card-kicker">Kicker</div>
     <h3 class="card-title mt-1">Card title</h3>
     <p class="card-content mt-2">Card body copy.</p>
@@ -57,7 +57,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="card" href="{% url 'category_detail_view' pk=category.pk %}">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<a class="card" href="{% url 'category_detail_view' pk=category.pk %}">
     <div class="card-kicker">Linked</div>
     <h3 class="card-title mt-1">{{ category.name }}</h3>
 </a>{% endverbatim %}{% endfilter %}</code></pre>
@@ -83,7 +83,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="card-meta mt-3">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="card-meta mt-3">
     {% lucide "clock" size=13 %} Updated {{ object.updated_at|timesince }} ago
 </div>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
@@ -107,7 +107,7 @@
     </div>
 
     <h2 class="mt-8">Grid</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     {% for category in categories %}
         <a class="card" href="{{ category.get_absolute_url }}">
             <div class="card-kicker">{{ category.products.count }} products</div>

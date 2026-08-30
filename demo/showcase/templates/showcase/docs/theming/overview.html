@@ -14,7 +14,7 @@
         This is the whole mechanism. A utility class is not a literal color; it is a pointer to a
         variable:
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}/* what Tailwind v4 emits for bg-panel */
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}/* what Tailwind v4 emits for bg-panel */
 .bg-panel { background-color: var(--color-panel); }
 
 /* ...and for a component rule that @applies it */
@@ -85,7 +85,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}wiseSetTheme('dark')       // or 'light'
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}wiseSetTheme('dark')       // or 'light'
 wiseSetPalette('violet')   // '' resets to the default palette
 wiseSetDensity('compact')  // '' resets to comfortable
 wiseToggleTheme(){% endverbatim %}{% endfilter %}</code></pre>
@@ -98,7 +98,7 @@ wiseToggleTheme(){% endverbatim %}{% endfilter %}</code></pre>
         the stylesheet paints — a deferred script would run after first paint and a dark page would
         flash white. Override the <code>theme_bootstrap</code> block with an empty one to opt out.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% block theme_bootstrap %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% block theme_bootstrap %}
     <script>
         (function () {
             try {

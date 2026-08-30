@@ -42,7 +42,7 @@
         a dropdown picker is the wrong shape. Render the month grid server-side and make each day a
         link or a radio.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="calendar-grid">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="calendar-grid">
     {% for week in weeks %}
         {% for day in week %}
             <div class="calendar-day{% if day.is_outside %} is-outside{% endif %}">
@@ -64,7 +64,7 @@
         <code>min</code> and <code>max</code> grey out impossible dates in the native picker. As
         always, they are a hint — the field validator is what enforces it.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from django.utils import timezone
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}from django.utils import timezone
 
 class BookingForm(forms.Form):
     day = forms.DateField(

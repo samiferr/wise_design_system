@@ -28,14 +28,14 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py - triples of (x, y, size)
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}# views.py - triples of (x, y, size)
 context["bubble_points"] = charts.bubbles(
     [(p.price, p.units_sold, p.revenue) for p in products],
     300, 140, max_radius=18,
 ){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% for bubble in bubble_points %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% for bubble in bubble_points %}
     <circle class="chart-point" cx="{{ bubble.cx }}" cy="{{ bubble.cy }}"
             r="{{ bubble.r }}" opacity="0.55"/>
 {% endfor %}{% endverbatim %}{% endfilter %}</code></pre>
@@ -47,7 +47,7 @@ context["bubble_points"] = charts.bubbles(
         the visible area, so a linear mapping silently overstates large values — a genuinely common
         way for bubble charts to mislead.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}charts.bubbles([(1, 1, 1), (2, 2, 4)], max_radius=10)
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}charts.bubbles([(1, 1, 1), (2, 2, 4)], max_radius=10)
 # radii: [5.0, 10.0]   - a 4x value gives a 2x radius, hence 4x the area{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Legend for size</h2>

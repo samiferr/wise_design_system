@@ -26,7 +26,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="pt-4">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="pt-4">
     {% include 'wise_core/components/_pagination.html' %}
 </div>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
@@ -39,7 +39,7 @@
         also carries the current search parameter across page links, so paging through filtered
         results does not silently reset the filter.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class CategoryListView(WiseListView):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class CategoryListView(WiseListView):
     model = Category
     filterset_class = CategoryFilter
     template_name = 'showcase/category/list.html'
@@ -64,14 +64,14 @@
             current <code>request.GET</code> with the new page number is the tidiest fix.
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}@register.simple_tag(takes_context=True)
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}@register.simple_tag(takes_context=True)
 def query_replace(context, **kwargs):
     """{% query_replace page=3 %} -> keeps every other param intact."""
     query = context['request'].GET.copy()
     for key, value in kwargs.items():
         query[key] = value
     return query.urlencode(){% endverbatim %}{% endfilter %}</code></pre>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="pagination-link" href="?{% query_replace page=page_obj.next_page_number %}">Next</a>{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<a class="pagination-link" href="?{% query_replace page=page_obj.next_page_number %}">Next</a>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Large tables</h2>
     <p class="text-gray-700">

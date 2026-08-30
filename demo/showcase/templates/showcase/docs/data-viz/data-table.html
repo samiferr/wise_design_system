@@ -39,7 +39,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="mt-5 overflow-x-auto border border-divider bg-panel">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="mt-5 overflow-x-auto border border-divider bg-panel">
     <table class="data-table">
         <thead>
             <tr><th>Name</th><th>Color</th><th class="w-px"></th></tr>
@@ -97,7 +97,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class CategoryListView(WiseListView):
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class CategoryListView(WiseListView):
     model = Category
     ORDERABLE = {"name", "created_at"}      # allowlist - never trust the raw param
 
@@ -120,7 +120,7 @@
             pagination will repeat and skip rows across pages.
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{# a header cell that toggles direction and keeps other params #}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{# a header cell that toggles direction and keeps other params #}
 <th>
     <a href="?sort={% if current_sort == 'name' %}-{% endif %}name">
         Name
@@ -141,7 +141,7 @@
         <div class="doc-preview p-0">{% include 'wise_core/components/_no_data.html' %}</div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<tr><td colspan="4">{% include 'wise_core/components/_no_data.html' %}</td></tr>{% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<tr><td colspan="4">{% include 'wise_core/components/_no_data.html' %}</td></tr>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
 

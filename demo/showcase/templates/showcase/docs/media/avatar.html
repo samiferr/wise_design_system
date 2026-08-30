@@ -25,13 +25,13 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="avatar">AL</span>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<span class="avatar">AL</span>
 <span class="avatar avatar-lg avatar-circle">AL</span>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
 
     <h2 class="mt-8">From a user</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="avatar">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<span class="avatar">
     {{ user.first_name|default:user.username|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
 </span>{% endverbatim %}{% endfilter %}</code></pre>
     <p class="mt-2 text-gray-700">This is exactly what the sidebar's account row renders.</p>
@@ -41,7 +41,7 @@
         The image fills the box with <code>object-cover</code>, so a non-square upload crops rather
         than distorting.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="avatar avatar-circle">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<span class="avatar avatar-circle">
     {% if user.profile.photo %}
         <img src="{{ user.profile.photo.url }}" alt="{{ user.get_full_name }}">
     {% else %}
@@ -68,7 +68,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="avatar-group">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="avatar-group">
     {% for member in team.members.all|slice:":3" %}
         <span class="avatar avatar-circle">{{ member.initials }}</span>
     {% endfor %}

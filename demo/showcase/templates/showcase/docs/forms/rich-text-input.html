@@ -19,7 +19,7 @@
     </div>
 
     <h2 class="mt-8">Usage</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_richtext.widgets import RichTextInputWidget
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}from wise_richtext.widgets import RichTextInputWidget
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -40,7 +40,7 @@ class Product(models.Model):
             allowlist, and treat the stored value as untrusted until you have.
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# pip install nh3
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# pip install nh3
 import nh3
 
 def clean_notes(self):
@@ -49,14 +49,14 @@ def clean_notes(self):
         tags={"p", "br", "strong", "em", "u", "ol", "ul", "li", "a", "h2", "h3", "blockquote"},
         attributes={"a": {"href", "title", "rel"}},
     ){% endverbatim %}{% endfilter %}</code></pre>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="prose-content">{{ object.notes|safe }}</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="prose-content">{{ object.notes|safe }}</div>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Plain-text excerpts</h2>
     <p class="text-gray-700">
         In a datatable cell or a card summary, strip the markup rather than rendering it — a
         half-closed tag in a truncated string will break the surrounding layout.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<td class="text-gray-600">{{ product.notes|striptags|truncatechars:60 }}</td>{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<td class="text-gray-600">{{ product.notes|striptags|truncatechars:60 }}</td>{% endverbatim %}{% endfilter %}</code></pre>
     <div class="doc-preview mt-4">
         <table class="data-table">
             <thead><tr><th>Product</th><th>Notes</th></tr></thead>

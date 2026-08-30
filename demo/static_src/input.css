@@ -20,20 +20,111 @@
         @apply border border-divider bg-panel p-6;
     }
 
-    /* Literal colors, not gray-900/gray-100: the neutral ramp inverts under
-     * data-theme="dark", which would flip the code block to light-on-dark in
-     * light mode and dark-on-light in dark mode. A code block reads as a
-     * terminal in both themes, so it opts out of theming deliberately. */
+    /* Literal colors, not gray-900/gray-100/var(--color-divider): the neutral
+     * ramp inverts under data-theme="dark", which would flip this from a
+     * light code editor to a dark one depending on the *site's* theme rather
+     * than staying the fixed light-gray, syntax-colored look asked for. A
+     * code block opts out of the site theme deliberately, the same as it did
+     * when it used to render as a fixed dark terminal instead. */
     .doc-code {
-        @apply m-0 overflow-x-auto border border-t-0 border-divider p-4 text-[12.5px]
-        leading-relaxed;
-        background: #18181a;
-        color: #e7e7ea;
-        border-color: #18181a;
+        @apply m-0 overflow-x-auto border border-t-0 p-4 text-[12.5px] leading-relaxed;
+        background: #f5f5f8;
+        color: #18181a;
+        border-color: #d4d4d7;
     }
 
     .doc-code code {
         @apply font-mono whitespace-pre;
+    }
+
+    /* Prism's markup grammar names its element-name token "tag" - the exact
+     * same bare class as this system's own Tag component (.tag: a bordered,
+     * padded, flex chip). Nothing scopes that component rule to exclude a
+     * `<span class="token tag">`, so without this reset every highlighted
+     * HTML tag rendered as a bordered chip instead of colored text. This
+     * selector is two classes (0,0,2,0), more specific than the bare `.tag`
+     * component rule (0,0,1,0), so it wins regardless of source order; the
+     * per-token color rules below are three classes and layer on top of it
+     * setting only `color`/`font-style`, so there's no conflict between the
+     * two rule sets. */
+    .doc-code .token {
+        @apply inline border-0 bg-transparent p-0 gap-0;
+        font-size: inherit;
+        line-height: inherit;
+    }
+
+    /* Syntax colors for the Prism.js tokens produced by
+     * demo/showcase/static/showcase/js/vendor/prism (see its NOTICE.md) -
+     * Prism's own well-tested default light-theme palette, just remapped
+     * onto this site's `.doc-code` card instead of Prism's plain <pre>.
+     * Two token classes can land on one element (a Django tag name comes
+     * out as `token tag keyword` at once - see the vendored `django`
+     * grammar), so within one specificity tier, rule ORDER decides the
+     * color; keyword is intentionally the last of the exact-tag-name rules
+     * so a template tag like {% lucide %} reads as a keyword, not a
+     * bracket. */
+    .doc-code .token.comment,
+    .doc-code .token.prolog,
+    .doc-code .token.doctype,
+    .doc-code .token.cdata {
+        color: #6b7280;
+        font-style: italic;
+    }
+
+    .doc-code .token.punctuation,
+    .doc-code .token.delimiter {
+        color: #6e7781;
+    }
+
+    .doc-code .token.tag,
+    .doc-code .token.property,
+    .doc-code .token.boolean,
+    .doc-code .token.number,
+    .doc-code .token.constant,
+    .doc-code .token.symbol,
+    .doc-code .token.deleted {
+        color: #b5124e;
+    }
+
+    .doc-code .token.selector,
+    .doc-code .token.attr-name,
+    .doc-code .token.string,
+    .doc-code .token.char,
+    .doc-code .token.builtin,
+    .doc-code .token.inserted {
+        color: #116329;
+    }
+
+    .doc-code .token.operator,
+    .doc-code .token.entity,
+    .doc-code .token.url {
+        color: #9a6e3a;
+    }
+
+    .doc-code .token.atrule,
+    .doc-code .token.attr-value,
+    .doc-code .token.keyword {
+        color: #0550ae;
+    }
+
+    .doc-code .token.function,
+    .doc-code .token.class-name {
+        color: #8250df;
+    }
+
+    .doc-code .token.regex,
+    .doc-code .token.important,
+    .doc-code .token.variable {
+        color: #953800;
+    }
+
+    .doc-code .token.important,
+    .doc-code .token.bold {
+        font-weight: 700;
+    }
+
+    .doc-code .token.italic {
+        font-style: italic;
     }
 
     .doc-props th {
