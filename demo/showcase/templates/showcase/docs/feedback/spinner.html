@@ -10,38 +10,74 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Sizes</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-6">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex32" id="ex32-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex32" id="ex32-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex32-preview">Preview</label>
+        <label class="doc-example-tab" for="ex32-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-6">
         <span class="spinner spinner-sm"></span>
         <span class="spinner"></span>
         <span class="spinner spinner-lg"></span>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="spinner spinner-sm"></span>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="spinner spinner-sm"></span>
 <span class="spinner"></span>
 <span class="spinner spinner-lg"></span>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">In a button</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex33" id="ex33-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex33" id="ex33-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex33-preview">Preview</label>
+        <label class="doc-example-tab" for="ex33-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-3">
         <button class="btn btn-primary" disabled><span class="spinner spinner-sm"></span><span>Saving…</span></button>
         <button class="btn btn-secondary" disabled><span class="spinner spinner-sm"></span><span>Loading</span></button>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" disabled>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" disabled>
     <span class="spinner spinner-sm"></span><span>Saving…</span>
 </button>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         Disable the button while it spins — otherwise an impatient double-click submits the form
         twice.
     </p>
 
     <h2 class="mt-8">Filling a region</h2>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex34" id="ex34-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex34" id="ex34-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex34-preview">Preview</label>
+        <label class="doc-example-tab" for="ex34-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <div class="flex items-center justify-center gap-3 border border-divider bg-panel p-8 text-sm text-gray-600">
             <span class="spinner"></span> Loading details…
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="flex items-center justify-center gap-3 p-8 text-sm text-gray-600"
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="flex items-center justify-center gap-3 p-8 text-sm text-gray-600"
      role="status" aria-live="polite">
     <span class="spinner"></span> Loading details…
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Announcing it</h2>
     <div class="callout callout-warning mt-4">

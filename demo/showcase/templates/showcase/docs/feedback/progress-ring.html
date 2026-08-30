@@ -11,7 +11,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-8">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex31" id="ex31-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex31" id="ex31-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex31-preview">Preview</label>
+        <label class="doc-example-tab" for="ex31-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-8">
         <div class="progress-ring">
             <svg width="{{ ring.size }}" height="{{ ring.size }}">
                 <circle class="progress-ring-track" cx="{{ ring.center }}" cy="{{ ring.center }}" r="{{ ring.radius }}" stroke-width="{{ ring.stroke }}"></circle>
@@ -22,10 +30,14 @@
         </div>
         <div class="text-sm text-gray-600">Geometry computed in the view by <code>charts.progress_ring(68)</code>.</div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
 from wise_core import charts
 
 context["ring"] = charts.progress_ring(68){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="progress-ring">
     <svg width="{{ ring.size }}" height="{{ ring.size }}">
         <circle class="progress-ring-track"

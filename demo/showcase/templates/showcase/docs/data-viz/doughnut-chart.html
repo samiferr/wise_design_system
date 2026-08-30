@@ -9,7 +9,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-8">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex16" id="ex16-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex16" id="ex16-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex16-preview">Preview</label>
+        <label class="doc-example-tab" for="ex16-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-8">
         <div class="relative inline-flex items-center justify-center">
             <svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px" role="img" aria-label="Revenue by month">
                 {% for slice in doughnut_slices %}<path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}"/>{% endfor %}
@@ -25,7 +33,11 @@
             {% endfor %}
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}context["doughnut_slices"] = charts.doughnut(revenue, labels=months, thickness=18){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}context["doughnut_slices"] = charts.doughnut(revenue, labels=months, thickness=18){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="relative inline-flex items-center justify-center">
     <svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px">
         {% for slice in doughnut_slices %}
@@ -47,16 +59,28 @@
         For a single percentage, <code>.donut-chart</code> needs no SVG at all — it is one element
         with a <code>conic-gradient</code>.
     </p>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-8">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex17" id="ex17-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex17" id="ex17-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex17-preview">Preview</label>
+        <label class="doc-example-tab" for="ex17-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-8">
         <div class="donut-chart" style="--value: 68"><span class="donut-chart-label">68%</span></div>
         <div class="chart-legend">
             <span class="chart-legend-item"><span class="chart-legend-dot bg-action-600"></span>Completed</span>
             <span class="chart-legend-item"><span class="chart-legend-dot bg-gray-200"></span>Remaining</span>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="donut-chart" style="--value: {{ percent }}">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="donut-chart" style="--value: {{ percent }}">
     <span class="donut-chart-label">{{ percent }}%</span>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Which to use</h2>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">

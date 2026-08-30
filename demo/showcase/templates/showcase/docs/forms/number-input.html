@@ -11,25 +11,57 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 max-w-[10rem]">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex53" id="ex53-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex53" id="ex53-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex53-preview">Preview</label>
+        <label class="doc-example-tab" for="ex53-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-[10rem]">
         <input class="input" type="number" value="1" min="0" max="999" step="1">
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="number" value="1" min="0" max="999" step="1">{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="number" value="1" min="0" max="999" step="1">{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">With units</h2>
-    <div class="doc-preview mt-4 max-w-xs">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex54" id="ex54-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex54" id="ex54-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex54-preview">Preview</label>
+        <label class="doc-example-tab" for="ex54-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-xs">
         <div class="input-group">
             <input class="input" type="number" value="30" min="1">
             <span class="input-group-addon">days</span>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="input-group">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="input-group">
     <input class="input" type="number" value="30" min="1">
     <span class="input-group-addon">days</span>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Rendered by Django</h2>
-    <div class="doc-preview mt-4 max-w-[12rem]">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex55" id="ex55-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex55" id="ex55-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex55-preview">Preview</label>
+        <label class="doc-example-tab" for="ex55-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-[12rem]">
         <div class="form-stack">
             <div class="form-field">
                 <label class="form-label" for="{{ sink_form.quantity.id_for_label }}">{{ sink_form.quantity.label }}</label>
@@ -37,10 +69,14 @@
             </div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}quantity = forms.IntegerField(
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}quantity = forms.IntegerField(
     min_value=0, max_value=999, initial=1,
     widget=forms.NumberInput(attrs={"step": 1}),
 ){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <div class="callout callout-warning mt-4">
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>

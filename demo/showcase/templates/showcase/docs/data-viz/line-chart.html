@@ -9,7 +9,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">With area, grid and points</h2>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex18" id="ex18-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex18" id="ex18-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex18-preview">Preview</label>
+        <label class="doc-example-tab" for="ex18-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <svg class="chart-svg" viewBox="0 0 300 120" preserveAspectRatio="none" style="height:140px" role="img" aria-label="Monthly revenue trend">
             {% for y in grid_lines %}<line class="chart-grid-line" x1="0" y1="{{ y }}" x2="300" y2="{{ y }}"/>{% endfor %}
             <path class="chart-series-area" d="{{ revenue_area }}"/>
@@ -19,7 +27,9 @@
             {% for label in months %}<span>{{ label }}</span>{% endfor %}
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
 from wise_core import charts
 
 context.update({
@@ -28,6 +38,8 @@ context.update({
     "grid_lines": charts.grid_lines(4, 300, 120, 6),
     "months": months,
 }){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 300 120" preserveAspectRatio="none"
      style="height:140px" role="img" aria-label="Monthly revenue trend">
     {% for y in grid_lines %}

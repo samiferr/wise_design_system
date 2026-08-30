@@ -10,16 +10,36 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 flex flex-wrap gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex44" id="ex44-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex44" id="ex44-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex44-preview">Preview</label>
+        <label class="doc-example-tab" for="ex44-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap gap-3">
         <input class="input max-w-[12rem]" type="date" value="2026-08-27">
         <input class="input max-w-[12rem]" type="month" value="2026-08">
         <input class="input max-w-[12rem]" type="week" value="2026-W35">
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="date" value="2026-08-27">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="date" value="2026-08-27">
 <input class="input" type="month" value="2026-08">{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Rendered by Django</h2>
-    <div class="doc-preview mt-4 max-w-sm">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex45" id="ex45-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex45" id="ex45-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex45-preview">Preview</label>
+        <label class="doc-example-tab" for="ex45-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-sm">
         <div class="form-stack">
             <div class="form-field">
                 <label class="form-label" for="{{ sink_form.starts_on.id_for_label }}">{{ sink_form.starts_on.label }}</label>
@@ -27,7 +47,11 @@
             </div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}starts_on = forms.DateField(widget=forms.DateInput(attrs={"type": "date"})){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}starts_on = forms.DateField(widget=forms.DateInput(attrs={"type": "date"})){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <div class="callout callout-warning mt-4">
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>
@@ -50,15 +74,27 @@
         }{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Ranges</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-end gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex46" id="ex46-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex46" id="ex46-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex46-preview">Preview</label>
+        <label class="doc-example-tab" for="ex46-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-end gap-3">
         <div><label class="form-label mb-1 block text-xs">From</label><input class="input max-w-[11rem]" type="date" value="2026-08-01"></div>
         <div><label class="form-label mb-1 block text-xs">To</label><input class="input max-w-[11rem]" type="date" value="2026-08-31"></div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# django-filter gives you both ends of a range from one declaration
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# django-filter gives you both ends of a range from one declaration
 class ProductFilter(django_filters.FilterSet):
     available_from = django_filters.DateFromToRangeFilter(
         widget=django_filters.widgets.RangeWidget(attrs={"type": "date"}),
     ){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Datetime and time</h2>
     <div class="doc-preview mt-4 flex flex-wrap gap-3">

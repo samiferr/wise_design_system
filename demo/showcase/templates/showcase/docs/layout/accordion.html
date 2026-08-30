@@ -10,7 +10,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 p-0">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex72" id="ex72-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex72" id="ex72-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex72-preview">Preview</label>
+        <label class="doc-example-tab" for="ex72-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview p-0">
         <div class="accordion">
             <details class="accordion-item" open>
                 <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}Shipping</summary>
@@ -26,7 +34,9 @@
             </details>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="accordion">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="accordion">
     <details class="accordion-item" open>
         <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}Shipping</summary>
         <div class="accordion-content">Dispatched within two working days.</div>
@@ -36,6 +46,8 @@
         <div class="accordion-content">30 days, unused and in original packaging.</div>
     </details>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         The chevron rotates via <code>.accordion-item[open] .accordion-chevron</code> — CSS reacting
         to the element's own state, not a class toggled by script.
@@ -56,7 +68,15 @@
         Give every <code>&lt;details&gt;</code> the same <code>name</code> and the browser closes the
         others for you — an exclusive accordion with no script.
     </p>
-    <div class="doc-preview mt-4 p-0">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex73" id="ex73-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex73" id="ex73-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex73-preview">Preview</label>
+        <label class="doc-example-tab" for="ex73-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview p-0">
         <div class="accordion">
             <details class="accordion-item" name="doc-exclusive" open>
                 <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}First</summary>
@@ -68,8 +88,12 @@
             </details>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<details class="accordion-item" name="faq" open>…</details>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<details class="accordion-item" name="faq" open>…</details>
 <details class="accordion-item" name="faq">…</details>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <div class="callout callout-info mt-4">
         {% lucide "info" size=16 cls="callout-icon" %}
         <div>

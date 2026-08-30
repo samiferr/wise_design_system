@@ -10,7 +10,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-8">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex19" id="ex19-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex19" id="ex19-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex19-preview">Preview</label>
+        <label class="doc-example-tab" for="ex19-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-8">
         <svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px" role="img" aria-label="Revenue by month">
             {% for slice in pie_slices %}<path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}"/>{% endfor %}
         </svg>
@@ -20,8 +28,12 @@
             {% endfor %}
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
 context["pie_slices"] = charts.pie(revenue, labels=months){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px"
      role="img" aria-label="Revenue by month">
     {% for slice in pie_slices %}

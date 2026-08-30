@@ -9,7 +9,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Frame</h2>
-    <div class="doc-preview mt-4 max-w-lg">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex91" id="ex91-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex91" id="ex91-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex91-preview">Preview</label>
+        <label class="doc-example-tab" for="ex91-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-lg">
         <div class="aspect-video-frame">
             <svg viewBox="0 0 320 180" role="img" aria-label="Video placeholder">
                 <rect width="320" height="180" fill="var(--color-gray-800)"/>
@@ -18,12 +26,16 @@
             </svg>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="aspect-video-frame">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="aspect-video-frame">
     <video controls preload="metadata" poster="{{ clip.poster.url }}">
         <source src="{{ clip.file.url }}" type="video/mp4">
         <track kind="captions" src="{{ clip.captions.url }}" srclang="en" label="English" default>
     </video>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Embedded player</h2>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="aspect-video-frame">

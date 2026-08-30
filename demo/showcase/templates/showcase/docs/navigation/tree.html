@@ -11,7 +11,15 @@
 {% block doc_body %}
     <h2 class="mt-8">Real data</h2>
     <p class="text-gray-700">Rendered from the demo's <code>Department</code> model — an actual self-referencing table, not hand-written markup:</p>
-    <div class="doc-preview mt-4 max-w-xs">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex98" id="ex98-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex98" id="ex98-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex98-preview">Preview</label>
+        <label class="doc-example-tab" for="ex98-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-xs">
         <nav class="tree">
             {% for root in departments %}
                 <details class="tree-item" {% if forloop.first %}open{% endif %}>
@@ -29,7 +37,9 @@
             {% endfor %}
         </nav>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<nav class="tree">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<nav class="tree">
     {% for root in departments %}
         <details class="tree-item" {% if root.contains_current %}open{% endif %}>
             <summary class="tree-item-label">
@@ -45,6 +55,8 @@
         </details>
     {% endfor %}
 </nav>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">The model</h2>
     <p class="text-gray-700">
@@ -78,7 +90,15 @@ Department.objects.filter(parent=None).prefetch_related("children"){% endverbati
         indent guide line comes from a left border, so it stays continuous at every depth. A
         recursive include keeps the template flat.
     </p>
-    <div class="doc-preview mt-4 max-w-xs">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex99" id="ex99-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex99" id="ex99-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex99-preview">Preview</label>
+        <label class="doc-example-tab" for="ex99-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-xs">
         <nav class="tree">
             <details class="tree-item" open>
                 <summary class="tree-item-label">{% lucide "chevron-right" size=14 cls="tree-item-chevron" %}{% lucide "building-2" size=15 %}<span>Engineering</span></summary>
@@ -96,7 +116,9 @@ Department.objects.filter(parent=None).prefetch_related("children"){% endverbati
             </details>
         </nav>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{# _tree_node.html - includes itself for each child #}
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{# _tree_node.html - includes itself for each child #}
 {% load wise_icons %}
 {% if node.children.all %}
     <details class="tree-item" {% if node.is_open %}open{% endif %}>
@@ -115,6 +137,8 @@ Department.objects.filter(parent=None).prefetch_related("children"){% endverbati
         {{ node.name }}
     </a>
 {% endif %}{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Marking the current node</h2>
     <p class="text-gray-700">

@@ -10,7 +10,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 overflow-x-auto p-0">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex13" id="ex13-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex13" id="ex13-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex13-preview">Preview</label>
+        <label class="doc-example-tab" for="ex13-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview overflow-x-auto p-0">
         <table class="data-table">
             <thead><tr><th>Name</th><th>Color</th><th>Products</th><th class="w-px"></th></tr></thead>
             <tbody>
@@ -29,7 +37,9 @@
             </tbody>
         </table>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="mt-5 overflow-x-auto border border-divider bg-panel">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="mt-5 overflow-x-auto border border-divider bg-panel">
     <table class="data-table">
         <thead>
             <tr><th>Name</th><th>Color</th><th class="w-px"></th></tr>
@@ -54,6 +64,8 @@
     </table>
 </div>
 <div class="pt-4">{% include 'wise_core/components/_pagination.html' %}</div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         Always wrap the table in <code>overflow-x-auto</code>. A table is the one thing that cannot
         reflow to a narrow screen, so it needs somewhere to scroll.
@@ -64,7 +76,15 @@
         Sorting is a query parameter, applied to the queryset — not a client-side re-sort, which would
         only reorder the current page and silently lie about the rest.
     </p>
-    <div class="doc-preview mt-4 overflow-x-auto p-0">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex14" id="ex14-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex14" id="ex14-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex14-preview">Preview</label>
+        <label class="doc-example-tab" for="ex14-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview overflow-x-auto p-0">
         <table class="data-table">
             <thead>
                 <tr>
@@ -75,7 +95,9 @@
             <tbody><tr><td>Electronics</td><td>12</td></tr></tbody>
         </table>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class CategoryListView(WiseListView):
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class CategoryListView(WiseListView):
     model = Category
     ORDERABLE = {"name", "created_at"}      # allowlist - never trust the raw param
 
@@ -86,6 +108,8 @@
         if field in self.ORDERABLE:
             qs = qs.order_by(sort)
         return qs{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <div class="callout callout-warning mt-4">
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>
@@ -106,8 +130,20 @@
 </th>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Empty state</h2>
-    <div class="doc-preview mt-4 p-0">{% include 'wise_core/components/_no_data.html' %}</div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<tr><td colspan="4">{% include 'wise_core/components/_no_data.html' %}</td></tr>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex15" id="ex15-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex15" id="ex15-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex15-preview">Preview</label>
+        <label class="doc-example-tab" for="ex15-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview p-0">{% include 'wise_core/components/_no_data.html' %}</div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<tr><td colspan="4">{% include 'wise_core/components/_no_data.html' %}</td></tr>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Density</h2>
     <p class="text-gray-700">

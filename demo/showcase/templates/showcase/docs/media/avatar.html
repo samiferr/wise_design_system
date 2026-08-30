@@ -9,14 +9,26 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Initials</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex82" id="ex82-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex82" id="ex82-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex82-preview">Preview</label>
+        <label class="doc-example-tab" for="ex82-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-3">
         <span class="avatar avatar-sm">AL</span>
         <span class="avatar">AL</span>
         <span class="avatar avatar-lg">AL</span>
         <span class="avatar avatar-circle">AL</span>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="avatar">AL</span>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="avatar">AL</span>
 <span class="avatar avatar-lg avatar-circle">AL</span>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">From a user</h2>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="avatar">
@@ -38,7 +50,15 @@
 </span>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Groups</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-6">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex83" id="ex83-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex83" id="ex83-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex83-preview">Preview</label>
+        <label class="doc-example-tab" for="ex83-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-6">
         <div class="avatar-group">
             <span class="avatar avatar-circle">AL</span>
             <span class="avatar avatar-circle">BM</span>
@@ -46,7 +66,9 @@
             <span class="avatar avatar-circle">+4</span>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="avatar-group">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="avatar-group">
     {% for member in team.members.all|slice:":3" %}
         <span class="avatar avatar-circle">{{ member.initials }}</span>
     {% endfor %}
@@ -54,6 +76,8 @@
         <span class="avatar avatar-circle">+{{ team.members.count|add:"-3" }}</span>
     {% endif %}
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">In a table</h2>
     <div class="doc-preview mt-4 p-0">

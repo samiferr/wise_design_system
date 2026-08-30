@@ -9,17 +9,29 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Try it</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-6 py-10">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex37" id="ex37-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex37" id="ex37-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex37-preview">Preview</label>
+        <label class="doc-example-tab" for="ex37-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-6 py-10">
         <span class="tooltip" data-tooltip="Edit this record"><button class="btn btn-icon btn-secondary" aria-label="Edit">{% lucide "pencil" size=15 %}</button></span>
         <span class="tooltip" data-tooltip="Delete permanently"><button class="btn btn-icon btn-secondary" aria-label="Delete">{% lucide "trash-2" size=15 %}</button></span>
         <span class="tooltip tooltip-bottom" data-tooltip="Appears below instead"><button class="btn btn-secondary">Below</button></span>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="tooltip" data-tooltip="Edit this record">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="tooltip" data-tooltip="Edit this record">
     <button class="btn btn-icon btn-secondary" aria-label="Edit">{% lucide "pencil" size=15 %}</button>
 </span>
 
 <!-- flip it below the trigger when there's no room above -->
 <span class="tooltip tooltip-bottom" data-tooltip="Appears below">…</span>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">A tooltip is not a label</h2>
     <div class="callout callout-warning mt-4">

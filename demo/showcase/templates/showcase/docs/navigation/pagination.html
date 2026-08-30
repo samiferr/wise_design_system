@@ -9,16 +9,28 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Appearance</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center justify-center gap-1">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex93" id="ex93-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex93" id="ex93-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex93-preview">Preview</label>
+        <label class="doc-example-tab" for="ex93-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center justify-center gap-1">
         <a href="#" class="pagination-link disabled">{% lucide "chevrons-left" size=16 %}</a>
         <a href="#" class="pagination-link disabled">{% lucide "chevron-left" size=16 %}Prev.</a>
         <div class="px-2 text-sm text-gray-600">Page 1 / 3</div>
         <a href="#" class="pagination-link">Next{% lucide "chevron-right" size=16 %}</a>
         <a href="#" class="pagination-link">{% lucide "chevrons-right" size=16 %}</a>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="pt-4">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="pt-4">
     {% include 'wise_core/components/_pagination.html' %}
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">What it needs</h2>
     <p class="text-gray-700">

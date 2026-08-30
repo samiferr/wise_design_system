@@ -9,17 +9,37 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 flex flex-wrap gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex68" id="ex68-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex68" id="ex68-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex68-preview">Preview</label>
+        <label class="doc-example-tab" for="ex68-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap gap-3">
         <input class="input max-w-[8rem]" type="time" value="09:30">
         <input class="input max-w-[10rem]" type="time" value="09:30:00" step="1">
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="time" value="09:30">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="time" value="09:30">
 
 <!-- step="1" adds a seconds field; step="900" snaps to 15-minute slots -->
 <input class="input" type="time" value="09:30" step="900">{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Rendered by Django</h2>
-    <div class="doc-preview mt-4 max-w-sm">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex69" id="ex69-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex69" id="ex69-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex69-preview">Preview</label>
+        <label class="doc-example-tab" for="ex69-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-sm">
         <div class="form-stack">
             <div class="form-field">
                 <label class="form-label" for="{{ sink_form.starts_at.id_for_label }}">{{ sink_form.starts_at.label }}</label>
@@ -27,24 +47,40 @@
             </div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}starts_at = forms.TimeField(widget=forms.TimeInput(attrs={"type": "time"}))
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}starts_at = forms.TimeField(widget=forms.TimeInput(attrs={"type": "time"}))
 
 # On an edit form, pin the format so the existing value prefills:
 widgets = {
     "starts_at": forms.TimeInput(attrs={"type": "time"}, format="%H:%M"),
 }{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Time ranges</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-end gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex70" id="ex70-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex70" id="ex70-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex70-preview">Preview</label>
+        <label class="doc-example-tab" for="ex70-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-end gap-3">
         <div><label class="form-label mb-1 block text-xs">Opens</label><input class="input max-w-[8rem]" type="time" value="09:00"></div>
         <div><label class="form-label mb-1 block text-xs">Closes</label><input class="input max-w-[8rem]" type="time" value="17:30"></div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}def clean(self):
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}def clean(self):
     cleaned = super().clean()
     opens, closes = cleaned.get("opens"), cleaned.get("closes")
     if opens and closes and closes <= opens:
         raise ValidationError("Closing time must be after opening time.")
     return cleaned{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Time zones</h2>
     <div class="callout callout-warning mt-4">

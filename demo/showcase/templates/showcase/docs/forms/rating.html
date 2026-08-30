@@ -9,13 +9,23 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Read-only</h2>
-    <div class="doc-preview mt-4 flex flex-col gap-2">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex58" id="ex58-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex58" id="ex58-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex58-preview">Preview</label>
+        <label class="doc-example-tab" for="ex58-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-col gap-2">
         <div class="rating">
             {% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star" %}
             <span class="ml-1.5 text-xs text-gray-600">4 / 5</span>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="rating">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="rating">
     {% for i in "12345"|make_list %}
         {% if forloop.counter <= object.rating %}
             {% lucide "star" size=18 cls="rating-star is-on" %}
@@ -25,16 +35,28 @@
     {% endfor %}
     <span class="ml-1.5 text-xs text-gray-600">{{ object.rating }} / 5</span>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Input</h2>
     <p class="text-gray-700">Real Django widget output — hover and click it:</p>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex59" id="ex59-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex59" id="ex59-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex59-preview">Preview</label>
+        <label class="doc-example-tab" for="ex59-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <div class="form-field">
             <span class="form-label">{{ sink_form.rating.label }}</span>
             {{ sink_form.rating }}
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.widgets import RatingInput
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.widgets import RatingInput
 
 rating = forms.ChoiceField(
     choices=[(i, str(i)) for i in range(1, 6)],
@@ -47,6 +69,8 @@ class Meta:
     model = Product
     fields = ["name", "rating"]
     widgets = {"rating": RatingInput()}{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">How the CSS-only highlight works</h2>
     <p class="text-gray-700">

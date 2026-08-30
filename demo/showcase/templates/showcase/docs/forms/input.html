@@ -9,7 +9,15 @@
 {% block doc_body %}
     <h2 class="mt-8">Types</h2>
     <p class="text-gray-700">One class covers every text-like input type; the browser supplies the keyboard and validation.</p>
-    <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-2">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex49" id="ex49-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex49" id="ex49-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex49-preview">Preview</label>
+        <label class="doc-example-tab" for="ex49-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview grid gap-3 sm:grid-cols-2">
         <input class="input" type="text" placeholder="Text">
         <input class="input" type="email" placeholder="ada@example.com">
         <input class="input" type="tel" placeholder="+1 555 0100">
@@ -17,24 +25,48 @@
         <input class="input" type="url" placeholder="https://example.com">
         <input class="input" type="search" placeholder="Search…">
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="text" placeholder="Text">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="text" placeholder="Text">
 <input class="input" type="email" placeholder="ada@example.com">
 <input class="input" type="tel" placeholder="+1 555 0100">
 <input class="input" type="password">{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Sizes</h2>
-    <div class="doc-preview mt-4 flex flex-col gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex50" id="ex50-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex50" id="ex50-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex50-preview">Preview</label>
+        <label class="doc-example-tab" for="ex50-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-col gap-3">
         <input class="input input-sm" placeholder="Small">
         <input class="input" placeholder="Medium (default)">
         <input class="input input-lg" placeholder="Large">
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input input-sm" placeholder="Small">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input input-sm" placeholder="Small">
 <input class="input" placeholder="Medium">
 <input class="input input-lg" placeholder="Large">{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">Heights come from <code>--control-height-*</code>, so all three shrink under <code>data-density="compact"</code>.</p>
 
     <h2 class="mt-8">With a prefix or suffix</h2>
-    <div class="doc-preview mt-4 flex flex-col gap-3 max-w-sm">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex51" id="ex51-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex51" id="ex51-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex51-preview">Preview</label>
+        <label class="doc-example-tab" for="ex51-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-col gap-3 max-w-sm">
         <div class="input-group">
             <span class="input-group-addon">{% lucide "search" size=15 %}</span>
             <input class="input" placeholder="Search products">
@@ -45,15 +77,27 @@
             <span class="input-group-addon">per month</span>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="input-group">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="input-group">
     <span class="input-group-addon">€</span>
     <input class="input" type="number" value="49.00">
     <span class="input-group-addon">per month</span>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Rendered by Django</h2>
     <p class="text-gray-700">This is real output from the demo form — not hand-written markup.</p>
-    <div class="doc-preview mt-4 max-w-sm">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex52" id="ex52-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex52" id="ex52-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex52-preview">Preview</label>
+        <label class="doc-example-tab" for="ex52-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-sm">
         <div class="form-stack">
             <div class="form-field">
                 <label class="form-label" for="{{ sink_form.full_name.id_for_label }}">{{ sink_form.full_name.label }}<span class="form-required">*</span></label>
@@ -62,11 +106,15 @@
             </div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}full_name = forms.CharField(
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}full_name = forms.CharField(
     label="Full name",
     widget=forms.TextInput(attrs={"placeholder": "Ada Lovelace"}),
     help_text="Shown to other members of your team.",
 ){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Reference</h2>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">

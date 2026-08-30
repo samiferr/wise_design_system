@@ -10,12 +10,24 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 max-w-sm">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex47" id="ex47-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex47" id="ex47-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex47-preview">Preview</label>
+        <label class="doc-example-tab" for="ex47-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-sm">
         <div class="form-field"><input type="file"></div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="form-field">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="form-field">
     <input type="file">
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         The styling is scoped to <code>.form-field input[type="file"]</code>, so a file input picks
         it up from the surrounding field with no extra class.

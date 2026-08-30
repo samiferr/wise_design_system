@@ -10,17 +10,29 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">QR code</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-6">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex89" id="ex89-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex89" id="ex89-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex89-preview">Preview</label>
+        <label class="doc-example-tab" for="ex89-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-6">
         <div class="qr-code">{% qr_code "https://example.com/products/1042" scale=3 %}</div>
         <div class="qr-code text-action-600">{% qr_code "WISE-2026-0042" scale=3 %}</div>
         <div class="text-sm text-gray-600">The second inherits <code>text-action-600</code> — try switching theme.</div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_codes %}
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_codes %}
 
 <div class="qr-code">{% qr_code product.get_absolute_url scale=3 %}</div>
 
 <!-- dark modules default to currentColor, so the code follows the text color -->
 <div class="qr-code text-action-600">{% qr_code order.reference %}</div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <div class="callout callout-info mt-4">
         {% lucide "info" size=16 cls="callout-icon" %}
         <div>
@@ -31,14 +43,26 @@
     </div>
 
     <h2 class="mt-8">Barcode</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-6">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex90" id="ex90-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex90" id="ex90-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex90-preview">Preview</label>
+        <label class="doc-example-tab" for="ex90-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-6">
         <div class="barcode" style="max-width:18rem">{% barcode "WISE-2026-001" %}</div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="barcode">{% barcode product.sku %}</div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="barcode">{% barcode product.sku %}</div>
 
 <!-- other symbologies -->
 {% barcode product.ean "ean13" %}
 {% barcode product.sku "code39" write_text=False %}{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Installing</h2>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}pip install segno           # for {% qr_code %}

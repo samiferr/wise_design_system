@@ -9,7 +9,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex92" id="ex92-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex92" id="ex92-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex92-preview">Preview</label>
+        <label class="doc-example-tab" for="ex92-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <nav class="breadcrumb" aria-label="Breadcrumb">
             <a class="breadcrumb-item" href="#">Categories</a>
             <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
@@ -18,13 +26,17 @@
             <span class="breadcrumb-item" aria-current="page">USB-C hub</span>
         </nav>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<nav class="breadcrumb" aria-label="Breadcrumb">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<nav class="breadcrumb" aria-label="Breadcrumb">
     <a class="breadcrumb-item" href="{% url 'category_list_view' %}">Categories</a>
     <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
     <a class="breadcrumb-item" href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
     <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
     <span class="breadcrumb-item" aria-current="page">{{ product.name }}</span>
 </nav>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         The last item is the current page, so it is a <code>&lt;span&gt;</code>, not a link — linking
         a page to itself is a dead end for keyboard and screen-reader users. CSS styles it as the

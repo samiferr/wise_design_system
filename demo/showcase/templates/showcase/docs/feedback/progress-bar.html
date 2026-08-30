@@ -10,7 +10,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Determinate</h2>
-    <div class="doc-preview mt-4 flex flex-col gap-5">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex29" id="ex29-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex29" id="ex29-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex29-preview">Preview</label>
+        <label class="doc-example-tab" for="ex29-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-col gap-5">
         <div>
             <div class="progress"><span class="progress-value" style="--value: 25%"></span></div>
             <div class="progress-label"><span>Importing</span><span>25%</span></div>
@@ -21,12 +29,16 @@
         </div>
         <div class="progress progress-lg"><span class="progress-value" style="--value: 92%"></span></div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="progress">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="progress">
     <span class="progress-value" style="--value: {{ job.percent }}%"></span>
 </div>
 <div class="progress-label">
     <span>Importing</span><span>{{ job.percent }}%</span>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         The width comes from a <code>--value</code> custom property rather than a utility class,
         because Tailwind cannot express a number only known at runtime.
@@ -48,12 +60,24 @@
         <code>.progress-bar</code> — a different class — is the animated strip shown when there is no
         percentage to report. The autocomplete widget uses it while a request is in flight.
     </p>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex30" id="ex30-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex30" id="ex30-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex30-preview">Preview</label>
+        <label class="doc-example-tab" for="ex30-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <div class="h-1 w-full overflow-hidden bg-gray-200"><div class="progress-bar h-full bg-action-600"></div></div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="h-1 w-full overflow-hidden bg-gray-200">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="h-1 w-full overflow-hidden bg-gray-200">
     <div class="progress-bar h-full bg-action-600"></div>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <div class="callout callout-info mt-4">
         {% lucide "info" size=16 cls="callout-icon" %}
         <div>

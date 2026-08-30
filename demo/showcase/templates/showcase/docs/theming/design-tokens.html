@@ -15,7 +15,15 @@
         copy uses <code>--font-body</code> (Barlow). Both apply automatically to their elements — the
         utility classes are only for forcing one onto something else. The scale is fixed, not fluid.
     </p>
-    <div class="doc-preview mt-4 space-y-1">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex104" id="ex104-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex104" id="ex104-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex104-preview">Preview</label>
+        <label class="doc-example-tab" for="ex104-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview space-y-1">
         <h1>Heading 1 / 42px</h1>
         <h2>Heading 2 / 32px</h2>
         <h3>Heading 3 / 25px</h3>
@@ -24,25 +32,41 @@
         <h6>Heading 6 / 13px uppercase</h6>
         <p class="pt-2 text-base">Body text (Barlow, 16px default) — the quick brown fox jumps over the lazy dog.</p>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<h2>Section title</h2>   <!-- font-heading applied automatically -->
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<h2>Section title</h2>   <!-- font-heading applied automatically -->
 <p>Body copy needs no class.</p>
 
 <!-- forcing the heading font onto a non-heading element -->
 <div class="font-heading font-semibold uppercase tracking-wide">Eyebrow label</div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Radius</h2>
     <p class="text-gray-700">
         The whole radius scale is zeroed, so every <code>rounded-*</code> utility resolves to a
         square corner with no template changes. Write markup as if this were any Tailwind project.
     </p>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex105" id="ex105-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex105" id="ex105-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex105-preview">Preview</label>
+        <label class="doc-example-tab" for="ex105-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-3">
         <div class="rounded-lg border border-divider bg-panel px-3 py-2 text-xs">rounded-lg → square</div>
         <div class="border border-divider bg-panel px-3 py-2 text-xs" style="border-radius:9999px">explicit circle</div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="rounded-lg border">Square corner — rounded-lg resolves to 0</div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="rounded-lg border">Square corner — rounded-lg resolves to 0</div>
 
 <!-- for a true circle (status dot, avatar), bypass the token -->
 <div class="h-2 w-2 bg-action-600" style="border-radius: 9999px;"></div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Elevation</h2>
     <p class="text-gray-700">
