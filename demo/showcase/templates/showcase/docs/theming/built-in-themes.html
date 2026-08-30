@@ -47,16 +47,28 @@
         paint their label with <code>--color-on-action</code> rather than a hardcoded
         <code>text-white</code>, and the theme flips it to a near-black.
     </p>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex103" id="ex103-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex103" id="ex103-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex103-preview">Preview</label>
+        <label class="doc-example-tab" for="ex103-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-3">
         <button class="btn btn-primary">Primary</button>
         <button class="btn btn-brand">Brand</button>
         <button class="btn btn-danger">Danger</button>
         <span class="badge badge-action">Badge</span>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}.btn-primary {
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}.btn-primary {
     @apply bg-action-600 border-action-600 hover:bg-action-700;
     color: var(--color-on-action);   /* not text-white */
 }{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <div class="callout callout-warning mt-4">
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>

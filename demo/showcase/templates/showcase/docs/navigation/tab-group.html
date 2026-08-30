@@ -10,32 +10,56 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 p-0">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex95" id="ex95-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex95" id="ex95-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex95-preview">Preview</label>
+        <label class="doc-example-tab" for="ex95-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview p-0">
         <div class="tab-bar border-b border-divider px-4">
             <a class="bar-item selected" href="#">Overview</a>
             <a class="bar-item" href="#">History</a>
             <a class="bar-item" href="#">Settings</a>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="tab-bar border-b border-divider px-4">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="tab-bar border-b border-divider px-4">
     <a class="bar-item {% if request.resolver_match.url_name == 'record_overview' %}selected{% endif %}"
        href="{% url 'record_overview' pk=object.pk %}">Overview</a>
     <a class="bar-item {% if request.resolver_match.url_name == 'record_history' %}selected{% endif %}"
        href="{% url 'record_history' pk=object.pk %}">History</a>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">With icons and counts</h2>
-    <div class="doc-preview mt-4 p-0">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex96" id="ex96-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex96" id="ex96-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex96-preview">Preview</label>
+        <label class="doc-example-tab" for="ex96-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview p-0">
         <div class="tab-bar border-b border-divider px-4">
             <a class="bar-item selected inline-flex items-center gap-1.5" href="#">{% lucide "layout-dashboard" size=15 %}Overview</a>
             <a class="bar-item inline-flex items-center gap-1.5" href="#">{% lucide "clipboard-list" size=15 %}Products <span class="badge badge-grey">12</span></a>
             <a class="bar-item inline-flex items-center gap-1.5" href="#">{% lucide "clock" size=15 %}History</a>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="bar-item inline-flex items-center gap-1.5" href="{% url 'category_products' pk=object.pk %}">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="bar-item inline-flex items-center gap-1.5" href="{% url 'category_products' pk=object.pk %}">
     {% lucide "clipboard-list" size=15 %}Products
     <span class="badge badge-grey">{{ object.products.count }}</span>
 </a>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">The views behind them</h2>
     <p class="text-gray-700">

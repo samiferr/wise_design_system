@@ -10,7 +10,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-8">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex20" id="ex20-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex20" id="ex20-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex20-preview">Preview</label>
+        <label class="doc-example-tab" for="ex20-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-8">
         <svg class="chart-svg" viewBox="0 0 100 100" style="width:200px;height:200px" role="img" aria-label="Revenue by month">
             {% for slice in polar_slices %}<path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}" opacity="0.85"/>{% endfor %}
         </svg>
@@ -20,7 +28,11 @@
             {% endfor %}
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}context["polar_slices"] = charts.polar_area(revenue, labels=months){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}context["polar_slices"] = charts.polar_area(revenue, labels=months){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:200px;height:200px">
     {% for slice in polar_slices %}
         <path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}" opacity="0.85"/>

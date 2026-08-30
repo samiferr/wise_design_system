@@ -10,7 +10,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Horizontal</h2>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex80" id="ex80-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex80" id="ex80-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex80-preview">Preview</label>
+        <label class="doc-example-tab" for="ex80-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <div class="scroller">
             <div class="card w-48">
                 <div class="card-kicker">Tile 1</div><h3 class="card-title mt-1">Orders</h3>
@@ -29,18 +37,30 @@
             </div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="scroller">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="scroller">
     {% for tile in tiles %}
         <div class="card w-48">…</div>
     {% endfor %}
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         Children are automatically <code>shrink-0</code> and get a snap alignment, so items keep
         their width and scrolling settles on an item boundary rather than mid-card.
     </p>
 
     <h2 class="mt-8">Vertical</h2>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex81" id="ex81-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex81" id="ex81-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex81-preview">Preview</label>
+        <label class="doc-example-tab" for="ex81-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <div class="scroller scroller-vertical max-h-40 border border-divider bg-panel p-2">
             <div class="p-2 text-sm">Logistics</div>
             <div class="p-2 text-sm">Facilities</div>
@@ -51,7 +71,11 @@
             <div class="p-2 text-sm">Support</div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="scroller scroller-vertical max-h-40 border border-divider bg-panel p-2">…</div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="scroller scroller-vertical max-h-40 border border-divider bg-panel p-2">…</div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">A wide table is not a scroller</h2>
     <div class="callout callout-warning mt-4">

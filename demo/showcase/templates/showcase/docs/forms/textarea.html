@@ -7,11 +7,31 @@
     disabled.{% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 max-w-sm"><textarea class="textarea" placeholder="Notes…"></textarea></div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<textarea class="textarea" placeholder="Notes…"></textarea>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex66" id="ex66-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex66" id="ex66-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex66-preview">Preview</label>
+        <label class="doc-example-tab" for="ex66-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-sm"><textarea class="textarea" placeholder="Notes…"></textarea></div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<textarea class="textarea" placeholder="Notes…"></textarea>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Rendered by Django</h2>
-    <div class="doc-preview mt-4 max-w-sm">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex67" id="ex67-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex67" id="ex67-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex67-preview">Preview</label>
+        <label class="doc-example-tab" for="ex67-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-sm">
         <div class="form-stack">
             <div class="form-field">
                 <label class="form-label" for="{{ sink_form.bio.id_for_label }}">{{ sink_form.bio.label }}</label>
@@ -19,7 +39,11 @@
             </div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}bio = forms.CharField(required=False, widget=forms.Textarea){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}bio = forms.CharField(required=False, widget=forms.Textarea){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         Need formatting rather than plain text? Use the
         <a class="text-action-600 underline" href="{% url 'docs_forms_rich_text_input' %}">Rich Text Input</a>.

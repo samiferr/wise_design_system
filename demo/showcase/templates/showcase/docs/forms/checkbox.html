@@ -11,15 +11,27 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Single</h2>
-    <div class="doc-preview mt-4 flex flex-col gap-2">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex38" id="ex38-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex38" id="ex38-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex38-preview">Preview</label>
+        <label class="doc-example-tab" for="ex38-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-col gap-2">
         <label class="form-checkbox-label"><input class="checkbox" type="checkbox" checked><span>Subscribe to updates</span></label>
         <label class="form-checkbox-label"><input class="checkbox" type="checkbox"><span>Send me a copy</span></label>
         <label class="form-checkbox-label"><input class="checkbox" type="checkbox" disabled><span>Unavailable</span></label>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
     <input class="checkbox" type="checkbox" checked>
     <span>Subscribe to updates</span>
 </label>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         Wrapping the input in its <code>&lt;label&gt;</code> makes the text part of the hit target —
         worth doing every time; a bare 16px box is a poor click target.
@@ -27,24 +39,44 @@
 
     <h2 class="mt-8">Checkbox group</h2>
     <p class="text-gray-700">Django's <code>CheckboxSelectMultiple</code> renders the group; this is its real output:</p>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex39" id="ex39-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex39" id="ex39-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex39-preview">Preview</label>
+        <label class="doc-example-tab" for="ex39-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <div class="form-field">
             <span class="form-label">{{ sink_form.interests.label }}</span>
             {{ sink_form.interests }}
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}interests = forms.MultipleChoiceField(
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}interests = forms.MultipleChoiceField(
     required=False,
     choices=[("design", "Design"), ("code", "Code"), ("ops", "Ops")],
     widget=forms.CheckboxSelectMultiple,
 ){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">As a form field</h2>
     <p class="text-gray-700">
         <code>_form_fields.html</code> detects a checkbox widget and switches to the horizontal
         layout automatically — you don't select it yourself.
     </p>
-    <div class="doc-preview mt-4 max-w-sm">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex40" id="ex40-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex40" id="ex40-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex40-preview">Preview</label>
+        <label class="doc-example-tab" for="ex40-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-sm">
         <div class="form-stack">
             <div class="form-field form-field-checkbox">
                 <label class="form-checkbox-label" for="{{ sink_form.subscribe.id_for_label }}">
@@ -53,7 +85,11 @@
             </div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}subscribe = forms.BooleanField(required=False, initial=True, label="Subscribe to updates"){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}subscribe = forms.BooleanField(required=False, initial=True, label="Subscribe to updates"){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <div class="callout callout-warning mt-4">
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>

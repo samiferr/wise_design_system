@@ -10,7 +10,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Colors</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex25" id="ex25-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex25" id="ex25-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex25-preview">Preview</label>
+        <label class="doc-example-tab" for="ex25-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-2">
         <span class="badge">Default</span>
         <span class="badge badge-action">Action</span>
         <span class="badge badge-brand">Brand</span>
@@ -20,7 +28,11 @@
         <span class="badge badge-red">Red</span>
         <span class="badge badge-blue">Blue</span>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="badge badge-green">Confirmed</span>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="badge badge-green">Confirmed</span>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Workflow states</h2>
     <p class="text-gray-700">
@@ -28,14 +40,24 @@
         "success"/"error" — that keeps it mappable onto any domain's status field without the names
         lying about what they mean.
     </p>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex26" id="ex26-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex26" id="ex26-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex26-preview">Preview</label>
+        <label class="doc-example-tab" for="ex26-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-2">
         <span class="badge badge-grey">Draft</span>
         <span class="badge badge-orange">Pending</span>
         <span class="badge badge-green">Confirmed</span>
         <span class="badge badge-red">Cancelled</span>
         <span class="badge badge-blue">Invoiced</span>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class Order(models.Model):
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class Order(models.Model):
     class Status(models.TextChoices):
         DRAFT = "draft", "Draft"
         PENDING = "pending", "Pending"
@@ -50,6 +72,8 @@
             self.Status.PENDING: "badge-orange",
             self.Status.CONFIRMED: "badge-green",
         }[self.status]{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="badge {{ order.status_badge }}">{{ order.get_status_display }}</span>{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-info mt-4">
         {% lucide "info" size=16 cls="callout-icon" %}
@@ -61,19 +85,31 @@
     </div>
 
     <h2 class="mt-8">As a counter</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex27" id="ex27-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex27" id="ex27-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex27-preview">Preview</label>
+        <label class="doc-example-tab" for="ex27-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-4">
         <div class="btn btn-secondary btn-icon relative">
             {% lucide "filter" size=16 %}
             <span class="badge badge-red absolute -left-2 -top-1 shadow">3</span>
         </div>
         <a class="bar-item inline-flex items-center gap-1.5" href="#">Products <span class="badge badge-grey">12</span></a>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="btn btn-secondary btn-icon relative">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="btn btn-secondary btn-icon relative">
     {% lucide "filter" size=16 %}
     {% if filter_kwargs_count %}
         <span class="badge badge-red absolute -left-2 -top-1 shadow">{{ filter_kwargs_count }}</span>
     {% endif %}
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">In a datatable</h2>
     <div class="doc-preview mt-4 p-0">

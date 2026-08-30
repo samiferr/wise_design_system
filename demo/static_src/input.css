@@ -76,4 +76,52 @@
     .doc-section-grid {
         @apply mt-4 grid gap-4 sm:grid-cols-2;
     }
+
+    /* Preview/Code tabs on a live example. Pure CSS (the checkbox-hack's
+     * radio sibling) so it works with JavaScript disabled, matching this
+     * site's own "no JS needed" components (Tabs, Accordion, Tree). The
+     * radios and both panels are direct children of .doc-example, in that
+     * order, which is what lets the general-sibling selectors below reach
+     * across from the checked radio to the tab label and the matching
+     * panel without needing a per-instance CSS rule - only the `id`/`name`
+     * need to be unique per example, not anything in this stylesheet. */
+    .doc-example {
+        @apply mt-4;
+    }
+
+    .doc-example-radio {
+        @apply sr-only;
+    }
+
+    .doc-example-tabs {
+        @apply flex items-center gap-4 border border-b-0 border-divider bg-panel-alt px-4 pt-2;
+    }
+
+    .doc-example-tab {
+        @apply -mb-px cursor-pointer border-b-2 border-transparent py-2 text-xs font-semibold
+        uppercase tracking-wide text-gray-600 transition-colors hover:text-gray-900;
+    }
+
+    .doc-example-radio[value="preview"]:checked ~ .doc-example-tabs .doc-example-tab[for$="-preview"],
+    .doc-example-radio[value="code"]:checked ~ .doc-example-tabs .doc-example-tab[for$="-code"] {
+        @apply border-action-600 text-action-700;
+    }
+
+    .doc-example-panel-preview,
+    .doc-example-panel-code {
+        display: none;
+    }
+
+    .doc-example-radio[value="preview"]:checked ~ .doc-example-panel-preview,
+    .doc-example-radio[value="code"]:checked ~ .doc-example-panel-code {
+        display: block;
+    }
+
+    .doc-example .doc-preview {
+        @apply mt-0;
+    }
+
+    .doc-example .doc-code {
+        @apply mt-0;
+    }
 }

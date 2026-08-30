@@ -9,7 +9,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-8">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex21" id="ex21-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex21" id="ex21-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex21-preview">Preview</label>
+        <label class="doc-example-tab" for="ex21-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-8">
         <svg class="chart-svg" viewBox="0 0 100 100" style="width:220px;height:220px" role="img" aria-label="Score profile">
             {% for ring in radar_rings %}<polygon class="chart-grid-line" points="{{ ring }}" fill="none"/>{% endfor %}
             {% for axis in radar_axes %}<line class="chart-grid-line" x1="50" y1="50" x2="{{ axis.x }}" y2="{{ axis.y }}"/>{% endfor %}
@@ -18,12 +26,16 @@
         </svg>
         <div class="text-sm text-gray-600">Six axes, three guide rings.</div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
 context.update({
     "radar_points": charts.radar(scores),
     "radar_axes": charts.radar_axes(len(scores)),
     "radar_rings": charts.radar_rings(3, spokes=len(scores)),
 }){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:220px;height:220px">
     {# guide rings, then spokes, then the series on top #}
     {% for ring in radar_rings %}

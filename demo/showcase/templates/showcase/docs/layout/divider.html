@@ -9,36 +9,72 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Horizontal</h2>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex77" id="ex77-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex77" id="ex77-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex77-preview">Preview</label>
+        <label class="doc-example-tab" for="ex77-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <p class="text-sm">Above the rule.</p>
         <hr class="divider">
         <p class="text-sm">Below the rule.</p>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<hr class="divider">{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<hr class="divider">{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Labelled</h2>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex78" id="ex78-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex78" id="ex78-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex78-preview">Preview</label>
+        <label class="doc-example-tab" for="ex78-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <div class="divider-labeled">or continue with</div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="divider-labeled">or continue with</div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="divider-labeled">or continue with</div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         The lines are <code>::before</code>/<code>::after</code> pseudo-elements, so the label
         centres itself at any width without measuring anything.
     </p>
 
     <h2 class="mt-8">Vertical</h2>
-    <div class="doc-preview mt-4 flex h-10 items-center">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex79" id="ex79-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex79" id="ex79-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex79-preview">Preview</label>
+        <label class="doc-example-tab" for="ex79-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex h-10 items-center">
         <span class="text-sm">Draft</span>
         <hr class="divider divider-vertical">
         <span class="text-sm">Pending</span>
         <hr class="divider divider-vertical">
         <span class="text-sm">Confirmed</span>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="flex h-10 items-center">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="flex h-10 items-center">
     <span>Draft</span>
     <hr class="divider divider-vertical">
     <span>Pending</span>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         <code>.divider-vertical</code> uses <code>self-stretch</code>, so it fills the flex row's
         height rather than needing one set.

@@ -10,7 +10,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex84" id="ex84-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex84" id="ex84-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex84-preview">Preview</label>
+        <label class="doc-example-tab" for="ex84-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <div class="carousel">
             <div class="carousel-track">
                 <div class="carousel-item" id="doc_slide_1">
@@ -36,7 +44,9 @@
             </div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="carousel">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="carousel">
     <div class="carousel-track">
         {% for photo in product.photos.all %}
             <div class="carousel-item" id="photo_{{ photo.pk }}">
@@ -51,6 +61,8 @@
         {% endfor %}
     </div>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         Anchor navigation means the dots work with JavaScript disabled, and
         <code>scroll-behavior: smooth</code> on the track animates the jump.
@@ -58,7 +70,15 @@
 
     <h2 class="mt-8">Multiple items in view</h2>
     <p class="text-gray-700">Narrow the items and several fit at once — a product shelf rather than a hero slider.</p>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex85" id="ex85-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex85" id="ex85-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex85-preview">Preview</label>
+        <label class="doc-example-tab" for="ex85-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <div class="carousel-track gap-3">
             <div class="carousel-item w-40"><div class="card"><div class="card-kicker">SKU 1</div><h3 class="card-title mt-1">Pen</h3></div></div>
             <div class="carousel-item w-40"><div class="card"><div class="card-kicker">SKU 2</div><h3 class="card-title mt-1">Hub</h3></div></div>
@@ -67,11 +87,15 @@
             <div class="carousel-item w-40"><div class="card"><div class="card-kicker">SKU 5</div><h3 class="card-title mt-1">Lamp</h3></div></div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="carousel-track gap-3">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="carousel-track gap-3">
     {% for product in featured %}
         <div class="carousel-item w-40">…</div>
     {% endfor %}
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Think twice</h2>
     <div class="callout callout-warning mt-4">

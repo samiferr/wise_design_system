@@ -14,7 +14,15 @@
 
 {% block doc_body %}
     <h2 class="mt-8">Signed in</h2>
-    <div class="doc-preview mt-4 p-0">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex97" id="ex97-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex97" id="ex97-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex97-preview">Preview</label>
+        <label class="doc-example-tab" for="ex97-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview p-0">
         <div class="top-bar">
             <div class="flex items-center px-2 py-1.5">
                 <div class="pr-1">
@@ -27,7 +35,9 @@
             </div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="top-bar md:hidden">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="top-bar md:hidden">
     <div class="flex items-center px-2 py-1.5">
         {% if user.is_authenticated %}
             <div class="pr-1">
@@ -49,6 +59,8 @@
         </div>
     </div>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">How the toggle works</h2>
     <p class="text-gray-700">

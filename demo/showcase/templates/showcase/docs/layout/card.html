@@ -9,18 +9,30 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 max-w-sm">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex74" id="ex74-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex74" id="ex74-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex74-preview">Preview</label>
+        <label class="doc-example-tab" for="ex74-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-sm">
         <div class="card">
             <div class="card-kicker">Kicker</div>
             <h3 class="card-title mt-1">Card title</h3>
             <p class="card-content mt-2">Card body copy sits at 0.85em relative to the surrounding text.</p>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="card">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="card">
     <div class="card-kicker">Kicker</div>
     <h3 class="card-title mt-1">Card title</h3>
     <p class="card-content mt-2">Card body copy.</p>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Clickable</h2>
     <p class="text-gray-700">
@@ -28,20 +40,40 @@
         underline and adds a hover tint. Making the whole card the link, rather than nesting one
         inside, keeps the hit target large and the markup honest.
     </p>
-    <div class="doc-preview mt-4 max-w-sm">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex75" id="ex75-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex75" id="ex75-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex75-preview">Preview</label>
+        <label class="doc-example-tab" for="ex75-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-sm">
         <a class="card" href="#">
             <div class="card-kicker">Linked</div>
             <h3 class="card-title mt-1">A clickable card</h3>
             <p class="card-content mt-2">The whole card is the hit target.</p>
         </a>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="card" href="{% url 'category_detail_view' pk=category.pk %}">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="card" href="{% url 'category_detail_view' pk=category.pk %}">
     <div class="card-kicker">Linked</div>
     <h3 class="card-title mt-1">{{ category.name }}</h3>
 </a>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">With a meta row</h2>
-    <div class="doc-preview mt-4 max-w-sm">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex76" id="ex76-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex76" id="ex76-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex76-preview">Preview</label>
+        <label class="doc-example-tab" for="ex76-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-sm">
         <div class="card">
             <div class="card-kicker">Kicker</div>
             <h3 class="card-title mt-1">Card title</h3>
@@ -49,9 +81,13 @@
             <div class="card-meta mt-3">{% lucide "clock" size=13 %} Updated 2 days ago</div>
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="card-meta mt-3">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="card-meta mt-3">
     {% lucide "clock" size=13 %} Updated {{ object.updated_at|timesince }} ago
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Stat tiles</h2>
     <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-3">

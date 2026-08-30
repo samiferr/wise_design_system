@@ -9,16 +9,28 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 max-w-xs">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex23" id="ex23-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex23" id="ex23-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex23-preview">Preview</label>
+        <label class="doc-example-tab" for="ex23-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview max-w-xs">
         <svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:2.5rem">
             <polyline class="chart-series-line" points="{{ sparkline }}"/>
         </svg>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_charts %}
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_charts %}
 
 <svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:2.5rem">
     <polyline class="chart-series-line" points="{% chart_polyline revenue 100 30 3 %}"/>
 </svg>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         This is the one chart where the template tag is usually the right call — a single element,
         one series, nothing else to share.
@@ -45,7 +57,15 @@
     </div>
 
     <h2 class="mt-8">In a table cell</h2>
-    <div class="doc-preview mt-4 p-0">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex24" id="ex24-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex24" id="ex24-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex24-preview">Preview</label>
+        <label class="doc-example-tab" for="ex24-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview p-0">
         <table class="data-table">
             <thead><tr><th>Product</th><th>Stock</th><th class="w-32">Trend</th></tr></thead>
             <tbody>
@@ -60,11 +80,15 @@
             </tbody>
         </table>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<td class="w-32">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<td class="w-32">
     <svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:1.5rem">
         <polyline class="chart-series-line" points="{% chart_polyline product.stock_history 100 30 3 %}"/>
     </svg>
 </td>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Keep it honest</h2>
     <div class="callout callout-warning mt-4">

@@ -10,42 +10,78 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Variants</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex4" id="ex4-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex4" id="ex4-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex4-preview">Preview</label>
+        <label class="doc-example-tab" for="ex4-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-3">
         <button class="btn btn-primary">Primary</button>
         <button class="btn btn-brand">Brand</button>
         <button class="btn btn-secondary">Secondary</button>
         <button class="btn btn-danger">Danger</button>
         <button class="btn btn-ghost">Ghost</button>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary">Primary</button>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary">Primary</button>
 <button class="btn btn-brand">Brand</button>
 <button class="btn btn-secondary">Secondary</button>
 <button class="btn btn-danger">Danger</button>
 <button class="btn btn-ghost">Ghost</button>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Disabled</h2>
     <p class="text-gray-700">
         The native <code>disabled</code> attribute dims the button and blocks pointer events. An
         <code>&lt;a&gt;</code> has no such attribute, so use <code>.btn-disabled</code> there.
     </p>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex5" id="ex5-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex5" id="ex5-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex5-preview">Preview</label>
+        <label class="doc-example-tab" for="ex5-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-3">
         <button class="btn btn-primary" disabled>Disabled</button>
         <a class="btn btn-secondary btn-disabled" href="#">Disabled link</a>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" disabled>Disabled</button>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" disabled>Disabled</button>
 <a class="btn btn-secondary btn-disabled" href="#">Disabled link</a>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Icon buttons</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex6" id="ex6-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex6" id="ex6-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex6-preview">Preview</label>
+        <label class="doc-example-tab" for="ex6-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-3">
         <button class="btn btn-icon btn-secondary">{% lucide "plus" size=16 %}</button>
         <button class="btn btn-icon btn-primary">{% lucide "search" size=16 %}</button>
         <a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a>
         <a class="btn-ghost" href="#">{% lucide "trash-2" size=14 %}</a>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-icon btn-secondary">{% lucide "plus" size=16 %}</button>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-icon btn-secondary">{% lucide "plus" size=16 %}</button>
 
 <!-- .btn-ghost: borderless, for datatable row actions -->
 <a class="btn-ghost" href="{% url 'category_update_view' pk=item.pk %}">{% lucide "pencil" size=14 %}</a>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <div class="callout callout-warning mt-4">
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>
@@ -55,25 +91,61 @@
     </div>
 
     <h2 class="mt-8">Icon + label</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex7" id="ex7-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex7" id="ex7-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex7-preview">Preview</label>
+        <label class="doc-example-tab" for="ex7-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-3">
         <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>New</span></a>
         <button class="btn btn-secondary">{% lucide "download" size=16 %}<span>Export</span></button>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="btn btn-primary" href="{% url 'category_create_view' %}">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="btn btn-primary" href="{% url 'category_create_view' %}">
     {% lucide "plus" size=16 %}<span>New</span>
 </a>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Loading state</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex8" id="ex8-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex8" id="ex8-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex8-preview">Preview</label>
+        <label class="doc-example-tab" for="ex8-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-3">
         <button class="btn btn-primary" disabled><span class="spinner spinner-sm"></span><span>Saving…</span></button>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" disabled>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary" disabled>
     <span class="spinner spinner-sm"></span><span>Saving…</span>
 </button>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Full width</h2>
-    <div class="doc-preview mt-4"><button class="btn btn-primary large-button">Continue</button></div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary large-button">Continue</button>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex9" id="ex9-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex9" id="ex9-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex9-preview">Preview</label>
+        <label class="doc-example-tab" for="ex9-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview"><button class="btn btn-primary large-button">Continue</button></div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary large-button">Continue</button>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Reference</h2>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">

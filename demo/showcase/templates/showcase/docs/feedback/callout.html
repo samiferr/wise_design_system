@@ -10,20 +10,32 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Variants</h2>
-    <div class="doc-preview mt-4 flex flex-col gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex28" id="ex28-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex28" id="ex28-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex28-preview">Preview</label>
+        <label class="doc-example-tab" for="ex28-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-col gap-3">
         <div class="callout">{% lucide "info" size=16 cls="callout-icon" %}<div>A neutral callout with no variant class.</div></div>
         <div class="callout callout-info">{% lucide "info" size=16 cls="callout-icon" %}<div><div class="callout-title">Heads up</div>Informational context the reader needs before continuing.</div></div>
         <div class="callout callout-success">{% lucide "check" size=16 cls="callout-icon" %}<div><div class="callout-title">All set</div>Your changes have been published.</div></div>
         <div class="callout callout-warning">{% lucide "alert-triangle" size=16 cls="callout-icon" %}<div><div class="callout-title">Check this first</div>Deleting a category also deletes its products.</div></div>
         <div class="callout callout-danger">{% lucide "circle-x" size=16 cls="callout-icon" %}<div><div class="callout-title">This cannot be undone</div>The records will be permanently removed.</div></div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="callout callout-warning">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="callout callout-warning">
     {% lucide "alert-triangle" size=16 cls="callout-icon" %}
     <div>
         <div class="callout-title">Check this first</div>
         Deleting a category also deletes its products.
     </div>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Without a title</h2>
     <div class="doc-preview mt-4">

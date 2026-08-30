@@ -10,17 +10,29 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Radio group</h2>
-    <div class="doc-preview mt-4 flex flex-col gap-2">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex56" id="ex56-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex56" id="ex56-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex56-preview">Preview</label>
+        <label class="doc-example-tab" for="ex56-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-col gap-2">
         <label class="form-checkbox-label"><input class="radio" type="radio" name="doc-plan" checked><span>Free</span></label>
         <label class="form-checkbox-label"><input class="radio" type="radio" name="doc-plan"><span>Pro</span></label>
         <label class="form-checkbox-label"><input class="radio" type="radio" name="doc-plan"><span>Team</span></label>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
     <input class="radio" type="radio" name="plan" value="free" checked><span>Free</span>
 </label>
 <label class="form-checkbox-label">
     <input class="radio" type="radio" name="plan" value="pro"><span>Pro</span>
 </label>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <div class="callout callout-warning mt-4">
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>
@@ -30,17 +42,29 @@
     </div>
 
     <h2 class="mt-8">Rendered by Django</h2>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex57" id="ex57-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex57" id="ex57-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex57-preview">Preview</label>
+        <label class="doc-example-tab" for="ex57-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <div class="form-field">
             <span class="form-label">{{ sink_form.plan.label }}</span>
             {{ sink_form.plan }}
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}plan = forms.ChoiceField(
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}plan = forms.ChoiceField(
     choices=[("free", "Free"), ("pro", "Pro"), ("team", "Team")],
     widget=forms.RadioSelect,
     initial="pro",
 ){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Grouping semantics</h2>
     <p class="text-gray-700">

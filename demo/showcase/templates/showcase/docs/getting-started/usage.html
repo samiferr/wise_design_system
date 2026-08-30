@@ -15,14 +15,26 @@
         template, compose with Tailwind utilities, and stay stable when tokens change. Change a
         token and every component follows; change a class name and you've made a breaking change.
     </p>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex71" id="ex71-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex71" id="ex71-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex71-preview">Preview</label>
+        <label class="doc-example-tab" for="ex71-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-3">
         <button class="btn btn-primary">Save</button>
         <button class="btn btn-secondary mt-0">Cancel</button>
         <span class="badge badge-green">Confirmed</span>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary">Save</button>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary">Save</button>
 <button class="btn btn-secondary mt-0">Cancel</button>
 <span class="badge badge-green">Confirmed</span>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">The view mixins</h2>
     <p class="text-gray-700">

@@ -10,7 +10,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex22" id="ex22-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex22" id="ex22-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex22-preview">Preview</label>
+        <label class="doc-example-tab" for="ex22-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <svg class="chart-svg" viewBox="0 0 300 140" style="height:180px" role="img" aria-label="Price against units sold">
             {% for y in grid_lines %}<line class="chart-grid-line" x1="0" y1="{{ y }}" x2="300" y2="{{ y }}"/>{% endfor %}
             <line class="chart-axis" x1="0" y1="140" x2="300" y2="140"/>
@@ -18,10 +26,14 @@
             {% for point in scatter_points %}<circle class="chart-point" cx="{{ point.cx }}" cy="{{ point.cy }}" r="4"/>{% endfor %}
         </svg>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py - pairs of (x, y)
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py - pairs of (x, y)
 context["scatter_points"] = charts.scatter(
     list(Product.objects.values_list("price", "units_sold")), 300, 140,
 ){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 300 140" style="height:180px">
     <line class="chart-axis" x1="0" y1="140" x2="300" y2="140"/>
     <line class="chart-axis" x1="0" y1="0" x2="0" y2="140"/>

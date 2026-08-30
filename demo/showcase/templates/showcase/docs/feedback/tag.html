@@ -10,24 +10,48 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex35" id="ex35-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex35" id="ex35-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex35-preview">Preview</label>
+        <label class="doc-example-tab" for="ex35-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-2">
         <span class="tag">design</span>
         <span class="tag">accessibility</span>
         <span class="tag tag-action">{% lucide "star" size=12 %}featured</span>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="tag">design</span>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="tag">design</span>
 <span class="tag tag-action">{% lucide "star" size=12 %}featured</span>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Removable</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex36" id="ex36-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex36" id="ex36-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex36-preview">Preview</label>
+        <label class="doc-example-tab" for="ex36-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-2">
         <span class="tag">design<button class="tag-remove" aria-label="Remove design">{% lucide "x" size=12 %}</button></span>
         <span class="tag">code<button class="tag-remove" aria-label="Remove code">{% lucide "x" size=12 %}</button></span>
         <span class="tag">{% lucide "file-text" size=12 %}datasheet-v2.pdf<button class="tag-remove" aria-label="Remove file">{% lucide "x" size=12 %}</button></span>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="tag">
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="tag">
     {{ tag.name }}
     <button class="tag-remove" aria-label="Remove {{ tag.name }}">{% lucide "x" size=12 %}</button>
 </span>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <p class="mt-2 text-gray-700">
         The remove control is a <code>&lt;button&gt;</code>, so it is focusable and keyboard
         operable. Give it an <code>aria-label</code> naming <em>which</em> tag it removes — a page of

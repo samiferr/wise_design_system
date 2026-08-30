@@ -10,7 +10,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
-    <div class="doc-preview mt-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex12" id="ex12-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex12" id="ex12-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex12-preview">Preview</label>
+        <label class="doc-example-tab" for="ex12-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
         <svg class="chart-svg" viewBox="0 0 300 140" style="height:180px" role="img" aria-label="Price against units, sized by revenue">
             {% for y in grid_lines %}<line class="chart-grid-line" x1="0" y1="{{ y }}" x2="300" y2="{{ y }}"/>{% endfor %}
             <line class="chart-axis" x1="0" y1="140" x2="300" y2="140"/>
@@ -18,11 +26,15 @@
             {% for bubble in bubble_points %}<circle class="chart-point" cx="{{ bubble.cx }}" cy="{{ bubble.cy }}" r="{{ bubble.r }}" opacity="0.55"/>{% endfor %}
         </svg>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py - triples of (x, y, size)
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py - triples of (x, y, size)
 context["bubble_points"] = charts.bubbles(
     [(p.price, p.units_sold, p.revenue) for p in products],
     300, 140, max_radius=18,
 ){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
     <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% for bubble in bubble_points %}
     <circle class="chart-point" cx="{{ bubble.cx }}" cy="{{ bubble.cy }}"
             r="{{ bubble.r }}" opacity="0.55"/>

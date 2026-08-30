@@ -11,7 +11,15 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Usage</h2>
-    <div class="doc-preview mt-4 flex flex-wrap items-center gap-4">
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex86" id="ex86-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex86" id="ex86-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex86-preview">Preview</label>
+        <label class="doc-example-tab" for="ex86-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-4">
         {% lucide "search" size=16 %}
         {% lucide "search" size=24 %}
         {% lucide "search" size=32 %}
@@ -19,7 +27,9 @@
         {% lucide "search" size=24 cls="text-accent-500" %}
         {% lucide "search" size=24 stroke_width="2.5" %}
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_icons %}
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_icons %}
 
 {% lucide "search" %}                          {# 18px default #}
 {% lucide "search" size=24 %}
@@ -28,6 +38,8 @@
 
 {# the icon name can be a variable - this is how nav_menu.html works #}
 {% lucide item.icon size=20 %}{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
 
     <h2 class="mt-8">Color follows text</h2>
     <p class="text-gray-700">
