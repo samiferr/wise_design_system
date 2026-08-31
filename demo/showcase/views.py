@@ -136,7 +136,14 @@ class DocsIndexView(TemplateView):
     template_name = 'showcase/docs/index.html'
 
 
-# ── Playground: the live Django CRUD demo the docs link out to ────────────
+# ── The demo app: a live Django CRUD app the docs link out to ─────────────
+# Kept under its own /demo/ prefix and chrome (see urls.py and
+# showcase/context_processors.site_chrome) so it reads as its own product
+# rather than a page mixed into the documentation site above.
+
+class DemoIndexView(TemplateView):
+    template_name = 'showcase/demo/index.html'
+
 
 class CategoryListView(WiseListView):
     model = Category

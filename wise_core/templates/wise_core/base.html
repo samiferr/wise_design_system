@@ -6,20 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block theme_bootstrap %}
         {% comment %}
-        Applies the stored theme/density before the stylesheet paints, so a dark
-        page never flashes light on load. Inline and blocking on purpose - a
-        deferred script would run after first paint. Override this block with
-        an empty one to opt a project out of theme switching entirely.
+        Applies every stored design-token axis (theme/palette/density/radius/
+        shadow/bg - see tokens.css) before the stylesheet paints, so a page
+        never flashes back to defaults on load. Inline and blocking on
+        purpose - a deferred script would run after first paint. Override
+        this block with an empty one to opt a project out of the switching
+        entirely.
         {% endcomment %}
         <script>
             (function () {
                 try {
-                    var t = localStorage.getItem('wise-theme')
-                    if (t) document.documentElement.setAttribute('data-theme', t)
-                    var p = localStorage.getItem('wise-palette')
-                    if (p) document.documentElement.setAttribute('data-palette', p)
-                    var d = localStorage.getItem('wise-density')
-                    if (d) document.documentElement.setAttribute('data-density', d)
+                    ['theme', 'palette', 'density', 'radius', 'shadow', 'bg'].forEach(function (key) {
+                        var v = localStorage.getItem('wise-' + key)
+                        if (v) document.documentElement.setAttribute('data-' + key, v)
+                    })
                 } catch (e) { /* private mode / storage disabled - keep defaults */ }
             })()
         </script>
@@ -37,11 +37,16 @@
         {% if request.user.is_authenticated %}
             <aside class="hidden md:sticky md:top-0 md:flex md:h-screen md:w-[232px] md:flex-shrink-0
                 md:flex-col md:border-r md:border-divider">
-                <a href="{% url 'home' %}" class="flex items-center gap-2 px-6 py-6 no-underline text-gray-900 font-heading font-semibold uppercase tracking-wide">
-                    {% block brand %}{{ project_name|default:"Wise" }}{% endblock %}
-                </a>
+                <div class="flex items-center justify-between gap-2 px-6 py-6">
+                    <a href="{% url 'home' %}" class="min-w-0 truncate no-underline text-gray-900 font-heading font-semibold uppercase tracking-wide">
+                        {% block brand %}{{ project_name|default:"Wise" }}{% endblock %}
+                    </a>
+                    {% block sidebar_extra %}
+                        {% include 'wise_core/components/_settings_toggle.html' %}
+                    {% endblock %}
+                </div>
                 <div class="min-h-0 flex-1 overflow-y-auto px-3 pb-4">
-                    {% include 'wise_core/components/nav_menu.html' %}
+                    {% block sidebar_nav %}{% include 'wise_core/components/nav_menu.html' %}{% endblock %}
                 </div>
             </aside>
         {% endif %}
@@ -56,7 +61,7 @@
     </div>
 {% endblock %}
 
-{% block modal %}{% endblock %}
+{% block modal %}{% include 'wise_core/components/_settings_panel.html' %}{% endblock %}
 {% block footer %}{% endblock %}
 
 <script src="{% static 'wise_core/js/common.js' %}"></script>

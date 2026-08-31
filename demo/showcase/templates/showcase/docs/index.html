@@ -47,22 +47,23 @@
         {% endfor %}
     </div>
 
-    <h2 class="mt-10">Playground</h2>
+    <h2 class="mt-10">Demo app</h2>
     <p class="text-gray-700">
-        The docs describe components; the playground runs them. It's a small Django app built
-        entirely from this system — a full <code>WiseListView</code> datatable with filtering and
-        CRUD, and a form using the autocomplete and rich text widgets.
+        The docs describe components; the <a class="text-action-600 underline" href="{% url 'demo' %}">demo
+        app</a> runs them — a separate section of this site, not a page mixed into this one. It's a
+        small Django app built entirely from this system: a full <code>WiseListView</code> datatable
+        with filtering and CRUD, and a form using the autocomplete and rich text widgets.
     </p>
     <div class="doc-section-grid">
         <a class="card" href="{% url 'category_list_view' %}">
-            <div class="card-kicker">Playground</div>
+            <div class="card-kicker">Demo app</div>
             <h3 class="card-title mt-1">Categories</h3>
-            <p class="card-content mt-2">Datatable, filter panel, pagination and full CRUD.</p>
+            <p class="card-content mt-2">Datatable, filter panel, pagination, full CRUD — and a card-view toggle.</p>
         </a>
         <a class="card" href="{% url 'product_list_view' %}">
-            <div class="card-kicker">Playground</div>
+            <div class="card-kicker">Demo app</div>
             <h3 class="card-title mt-1">Products</h3>
-            <p class="card-content mt-2">Autocomplete, rich text, rating and file upload on one form.</p>
+            <p class="card-content mt-2">Autocomplete, rich text, rating and file upload — and a table-view toggle.</p>
         </a>
     </div>
 {% endblock %}

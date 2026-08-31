@@ -24,7 +24,10 @@ not need to touch the layout blocks below.
                 <a href="{% url 'home' %}" class="min-w-0 flex-1 truncate font-heading font-semibold uppercase tracking-wide text-gray-900 no-underline">
                     Wise
                 </a>
-                {% include 'wise_core/components/_theme_toggle.html' %}
+                <a class="btn btn-secondary btn-icon" href="{% url 'demo' %}" title="Try the demo app" aria-label="Try the demo app">
+                    {% lucide "layout-dashboard" size=16 %}
+                </a>
+                {% include 'wise_core/components/_settings_toggle.html' %}
             </div>
             <div class="min-h-0 flex-1 overflow-y-auto scrollbar-thin px-2 pb-6">
                 {% include 'showcase/components/_docs_tree.html' %}

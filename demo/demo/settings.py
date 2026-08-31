@@ -58,6 +58,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'wise_core.context_processors.nav',
+                'showcase.context_processors.site_chrome',
                 'showcase.context_processors.docs_nav',
             ],
         },
@@ -100,21 +101,27 @@ PROJECT_NAME = 'Wise Design System'
 
 # Fed to wise_core/components/nav_menu.html by wise_core.context_processors.nav.
 # See docs/getting-started.md for the shape.
-# Fed to wise_core/components/nav_menu.html. The *documentation* tree is a
-# separate, much deeper structure - it lives in showcase/navigation.py and is
-# rendered by showcase/components/_docs_tree.html, not by nav_menu.html.
+#
+# This is the *demo app's* own nav (it only ever renders on /demo/... pages -
+# see wise_core/base.html, which only shows the sidebar for authenticated
+# requests, and seed_demo's demo/wise-demo-2026 account). The documentation
+# site is a separate, much deeper tree that lives in showcase/navigation.py
+# and is rendered by showcase/components/_docs_tree.html, not by
+# nav_menu.html - the one "Documentation" entry below is a cross-link
+# between the two, not a merge of them.
 WISE_NAV_SECTIONS = [
     {
-        'title': 'Documentation',
+        'title': 'Demo App',
         'items': [
-            {'label': 'Browse the docs', 'url_name': 'docs', 'icon': 'file-text', 'match': 'docs'},
+            {'label': 'Overview', 'url_name': 'demo', 'icon': 'house', 'match': 'demo'},
+            {'label': 'Categories', 'url_name': 'category_list_view', 'icon': 'tag', 'match': 'category_'},
+            {'label': 'Products', 'url_name': 'product_list_view', 'icon': 'pill', 'match': 'product_'},
         ],
     },
     {
-        'title': 'Playground',
+        'title': 'Wise Design System',
         'items': [
-            {'label': 'Categories', 'url_name': 'category_list_view', 'icon': 'tag', 'match': 'category_'},
-            {'label': 'Products', 'url_name': 'product_list_view', 'icon': 'pill', 'match': 'product_'},
+            {'label': 'Documentation', 'url_name': 'docs', 'icon': 'file-text', 'match': 'docs'},
         ],
     },
 ]

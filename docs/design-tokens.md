@@ -5,7 +5,11 @@ a Tailwind CSS v4 partial (an `@theme` block plus `@layer base`/`components`/`ut
 from DCMS7's `core/static/core/css/input.css`. See [getting-started.md](getting-started.md) for how
 a project builds this into a real stylesheet.
 
-Live, rendered version: run the demo site and visit `/tokens/` and `/components/`.
+Live, rendered version: run the demo site and visit `/docs/theming/design-tokens/` (and the rest of
+the Theming & Utilities section) — every example on that page is a real, running control, not a
+screenshot. `/demo/` is a separate section of the same site: a small CRUD app built from these
+tokens, with a settings panel (see [Switchable axes](#switchable-axes) below) for trying them
+against real data.
 
 ## Color
 
@@ -86,15 +90,16 @@ no class at all); reach for the utility classes only to force one onto something
 
 ## Radius
 
-The entire Tailwind radius scale (`--radius-xs` through `--radius-4xl`) is zeroed, so every
-`rounded-*` utility across your templates resolves to a square corner with **no template changes
-needed**. If you want rounded corners in your own project, redefine the radius scale back to
-Tailwind's defaults in your own `@theme` — the component layer never hardcodes a radius, it only
-reads these variables (`rounded-full` on a status dot, etc., is the one thing this breaks; give
-those elements an explicit inline `border-radius: 9999px` if you need an actual circle).
+The entire Tailwind radius scale (`--radius-xs` through `--radius-4xl`) is zeroed **by default**, so
+every `rounded-*` utility across your templates resolves to a square corner with **no template
+changes needed** — this system's baseline look. The component layer (`.btn`, `.card`,
+`.detail-panel`, `.input`, `.select`, `.textarea`, `.badge`, `.tag`, `.dialog`, `.dropdown-panel`,
+`.toast`, `.callout`, `.avatar`, ...) reads this same scale rather than hardcoding a radius, so
+redefining it moves the whole UI together — either permanently in your own `@theme` block, or live
+via the `data-radius` attribute (see [Switchable axes](#switchable-axes)).
 
 ```html
-<div class="rounded-lg border">Square corner — rounded-lg resolves to 0</div>
+<div class="rounded-lg border">Square corner — rounded-lg resolves to 0 by default</div>
 
 <!-- to force an actual circle (status dot, avatar), bypass the token -->
 <div class="h-2 w-2 bg-action-600" style="border-radius: 9999px;"></div>
@@ -102,15 +107,50 @@ those elements an explicit inline `border-radius: 9999px` if you need an actual 
 
 ## Shadows
 
-Three elevation levels only, named for what they're used for rather than a generic sm/md/lg scale
-confusion: `--shadow-blueprint-sm/md/lg`. Used by the flash-message stack, the filter side-panel,
-and the autocomplete dropdown.
+Three fixed elevation levels for chrome that's always elevated, named for what they're used for
+rather than a generic sm/md/lg scale: `--shadow-blueprint-sm/md/lg`, used by the flash-message
+stack, the filter side-panel, the autocomplete dropdown, `.dialog`, `.dropdown-panel` and `.toast`.
 
 **Usage** — there's no `shadow-blueprint-*` Tailwind utility; reach these with the raw CSS custom
 property in an inline `style` or your own CSS:
 
 ```html
 <div class="filter-panel" style="box-shadow: var(--shadow-blueprint-lg)">...</div>
+```
+
+`.card` and `.detail-panel` are the exception: both read the same `--shadow-card` token (`none` by
+default — a border, not a shadow, separates a raised panel from the page) rather than the
+blueprint scale directly, so a project can retune *just* panel elevation without touching
+dropdowns/dialogs/toasts. See `data-shadow` below.
+
+## Switchable axes
+
+Six independent attributes on `<html>`, each redefining a handful of the tokens above at runtime
+(no rebuild, no second stylesheet) — they compose freely, so e.g. a compact dark violet UI with
+round corners and a warm background is a valid combination. `base.html` applies whatever's in
+`localStorage` before first paint; `wise_core/static/wise_core/js/common.js` exposes one setter per
+axis (`wiseSetTheme`/`wiseSetPalette`/`wiseSetDensity`/`wiseSetRadius`/`wiseSetShadow`/`wiseSetBg`),
+and `wise_core/components/_settings_panel.html` is a ready-made drawer UI for all six — open it with
+`wiseOpenDrawer('wise-settings-drawer')`, normally via `_settings_toggle.html`. It ships wired into
+`wise_core/base.html`'s default authenticated chrome (sidebar + mobile topbar), so any project
+pulling in `wise_core` gets it for free.
+
+| Attribute | Values | Retunes |
+|---|---|---|
+| `data-theme` | `light` (default), `dark` | Neutral ramp, surfaces, shadows, on-colors |
+| `data-palette` | `green` (default), `blue`, `violet`, `amber` | Brand/action ramps only |
+| `data-density` | `comfortable` (default), `compact` | Control heights, form/table rhythm |
+| `data-radius` | `sharp` (default), `soft`, `round` | The whole radius scale |
+| `data-shadow` | `flat` (default), `soft`, `elevated` | `--shadow-card` only |
+| `data-bg` | `neutral` (default), `warm`, `cool` | `--color-page`/`-panel-alt`/`-surface` (never `-panel`) |
+
+```js
+wiseSetTheme('dark')       // '' or 'light' resets to light
+wiseSetPalette('violet')   // '' resets to green
+wiseSetDensity('compact')  // '' resets to comfortable
+wiseSetRadius('round')     // '' resets to sharp
+wiseSetShadow('elevated')  // '' resets to flat
+wiseSetBg('warm')          // '' resets to neutral
 ```
 
 ## Component class names
@@ -120,4 +160,5 @@ The component layer (`.btn`, `.card`, `.badge`, `.form-stack`, `.detail-panel`, 
 across token changes, matched 1:1 to DCMS7's own class names so templates ported from DCMS7 don't
 need renaming. See [template-tags-and-filters.md](template-tags-and-filters.md) and
 [generic-views-and-mixins.md](generic-views-and-mixins.md) for how the generic templates use them,
-or `/components/` on the demo site for a rendered catalog.
+or the Components sections (Actions, Forms, Layout, Navigation, Feedback, Media, Data Viz) of
+`/docs/` for a rendered catalog.
