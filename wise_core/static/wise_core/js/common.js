@@ -115,6 +115,18 @@ function wiseSetDensity(density) {
     wiseSetPreference('wise-density', density)
 }
 
+function wiseSetRadius(radius) {
+    wiseSetPreference('wise-radius', radius)
+}
+
+function wiseSetShadow(shadow) {
+    wiseSetPreference('wise-shadow', shadow)
+}
+
+function wiseSetBg(bg) {
+    wiseSetPreference('wise-bg', bg)
+}
+
 function wiseToggleTheme() {
     var current = document.documentElement.getAttribute('data-theme')
     wiseSetTheme(current === 'dark' ? 'light' : 'dark')

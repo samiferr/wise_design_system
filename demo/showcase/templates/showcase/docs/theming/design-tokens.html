@@ -44,8 +44,11 @@
 
     <h2 class="mt-8">Radius</h2>
     <p class="text-gray-700">
-        The whole radius scale is zeroed, so every <code>rounded-*</code> utility resolves to a
-        square corner with no template changes. Write markup as if this were any Tailwind project.
+        The default (no <code>data-radius</code> attribute) zeroes the whole radius scale, so every
+        <code>rounded-*</code> utility resolves to a square corner with no template changes — this
+        system's baseline look. <code>data-radius="soft"</code> and <code>data-radius="round"</code>
+        retune the same scale to non-zero values instead; nothing in the component layer hardcodes a
+        radius, every rule below reads this scale, so the whole UI moves together. Try it:
     </p>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex105" id="ex105-preview" value="preview" checked>
@@ -55,13 +58,23 @@
         <label class="doc-example-tab" for="ex105-code">Code</label>
     </div>
     <div class="doc-example-panel-preview">
-        <div class="doc-preview flex flex-wrap items-center gap-3">
-        <div class="rounded-lg border border-divider bg-panel px-3 py-2 text-xs">rounded-lg → square</div>
-        <div class="border border-divider bg-panel px-3 py-2 text-xs" style="border-radius:9999px">explicit circle</div>
+        <div class="doc-preview">
+        <div class="flex flex-wrap items-center gap-3">
+            <button class="btn btn-secondary" onclick="wiseSetRadius('')">Sharp (default)</button>
+            <button class="btn btn-secondary" onclick="wiseSetRadius('soft')">Soft</button>
+            <button class="btn btn-secondary" onclick="wiseSetRadius('round')">Round</button>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+            <button class="btn btn-primary">Button</button>
+            <div class="card !p-3 w-40 text-xs">Card</div>
+            <span class="badge badge-action">Badge</span>
+            <div class="border border-divider bg-panel px-3 py-2 text-xs" style="border-radius:9999px">explicit circle</div>
+        </div>
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="rounded-lg border">Square corner — rounded-lg resolves to 0</div>
+        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}.btn { border-radius: var(--radius-md); }
+.card, .detail-panel { border-radius: var(--radius-lg); }
 
 <!-- for a true circle (status dot, avatar), bypass the token -->
 <div class="h-2 w-2 bg-action-600" style="border-radius: 9999px;"></div>{% endverbatim %}{% endfilter %}</code></pre>
@@ -70,8 +83,8 @@
 
     <h2 class="mt-8">Elevation</h2>
     <p class="text-gray-700">
-        Three shadow levels, plus a named z-index scale so two components never have to guess whether
-        20 beats 10.
+        Three fixed shadow levels for chrome that's always elevated (dropdowns, dialogs, toasts),
+        plus a named z-index scale so two components never have to guess whether 20 beats 10.
     </p>
     <div class="doc-preview mt-4 flex flex-wrap gap-6">
         <div class="bg-panel p-4 text-xs" style="box-shadow:var(--shadow-blueprint-sm)">blueprint-sm</div>
@@ -90,6 +103,67 @@
                 <tr><td><code>--z-tooltip</code></td><td>80</td><td>Tooltips — always on top.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    <h2 class="mt-8">Card shadow</h2>
+    <p class="text-gray-700">
+        <code>.card</code> and <code>.detail-panel</code> are flat by default — they separate from
+        the page with a border, not a shadow — because a page full of shadowed panels reads as
+        noisy. <code>--shadow-card</code> (declared as <code>none</code> in the <code>@theme</code>
+        block) is the one token that controls both, retuned by <code>data-shadow</code> against the
+        same blueprint scale above so "elevated" panels still look consistent with the
+        dropdown/dialog/toast shadows.
+    </p>
+    <div class="doc-preview mt-4">
+        <div class="flex flex-wrap items-center gap-3">
+            <button class="btn btn-secondary" onclick="wiseSetShadow('')">Flat (default)</button>
+            <button class="btn btn-secondary" onclick="wiseSetShadow('soft')">Soft</button>
+            <button class="btn btn-secondary" onclick="wiseSetShadow('elevated')">Elevated</button>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-4">
+            <div class="card max-w-xs">
+                <div class="card-kicker">Card</div>
+                <h3 class="card-title mt-1">--shadow-card</h3>
+                <p class="card-content mt-2">Toggle the buttons above to see this card's elevation change.</p>
+            </div>
+            <div class="detail-panel max-w-xs !p-4">
+                <table>
+                    <tr><th>Panel</th><td>detail-panel</td></tr>
+                    <tr><th>Shadow</th><td>same token</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mt-8">Background</h2>
+    <p class="text-gray-700">
+        <code>data-bg</code> retunes the neutral page/surface trio (<code>--color-page</code>,
+        <code>--color-panel-alt</code>, <code>--color-surface</code>) toward a warm or cool cast,
+        independently of <code>data-palette</code> — palette moves the brand/action ramps, this
+        moves the ground they sit on. <code>--color-panel</code> never moves, so raised content still
+        reads as raised in every combination.
+    </p>
+    <div class="doc-preview mt-4">
+        <div class="flex flex-wrap items-center gap-3">
+            <button class="btn btn-secondary" onclick="wiseSetBg('')">Neutral (default)</button>
+            <button class="btn btn-secondary" onclick="wiseSetBg('warm')">Warm</button>
+            <button class="btn btn-secondary" onclick="wiseSetBg('cool')">Cool</button>
+        </div>
+        <div class="mt-4 grid gap-3 sm:grid-cols-3">
+            <div class="border border-divider p-4 text-xs" style="background:var(--color-page)">--color-page</div>
+            <div class="border border-divider p-4 text-xs" style="background:var(--color-panel-alt)">--color-panel-alt</div>
+            <div class="border border-divider p-4 text-xs" style="background:var(--color-surface)">--color-surface</div>
+        </div>
+    </div>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Six axes, one panel</div>
+            Theme, palette, density, radius, shadow and background all switch this way — one
+            attribute on <code>&lt;html&gt;</code>, persisted to <code>localStorage</code>. The demo
+            app's sidebar (and this site's own header) opens the same settings panel these buttons
+            drive individually — see <code>wise_core/components/_settings_panel.html</code>.
+        </div>
     </div>
 
     <h2 class="mt-8">Motion &amp; focus</h2>

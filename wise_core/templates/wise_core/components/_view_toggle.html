@@ -1,0 +1,20 @@
+{% load wise_icons i18n %}
+{% comment %}
+Switches a list page between a card-grid and a data-table rendering of the
+exact same queryset, via a `?view=` query param - see the Patterns section
+of the docs (Card list vs. Data table) and the Categories/Products demo
+pages for the two call sites. The including template decides `view_mode`
+(e.g. `{% with view_mode=request.GET.view|default:"table" %}`) and branches
+its own `list_body` block on it; this component only renders the two
+buttons that link between the states.
+{% endcomment %}
+<div class="btn-group" role="group" aria-label="{% trans 'List layout' %}">
+    <a class="btn btn-secondary btn-icon {% if view_mode == 'cards' %}selected{% endif %}"
+       href="?view=cards" title="{% trans 'Card view' %}" aria-label="{% trans 'Card view' %}">
+        {% lucide "layout-dashboard" size=16 %}
+    </a>
+    <a class="btn btn-secondary btn-icon {% if view_mode == 'table' %}selected{% endif %}"
+       href="?view=table" title="{% trans 'Table view' %}" aria-label="{% trans 'Table view' %}">
+        {% lucide "menu" size=16 %}
+    </a>
+</div>

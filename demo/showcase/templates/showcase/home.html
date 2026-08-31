@@ -1,80 +1,201 @@
-{% extends 'wise_core/base.html' %}
+{% extends 'showcase/marketing/_base.html' %}
 {% load wise_icons %}
 
-{% block title %}Wise Design System{% endblock %}
+{% block title %}Wise Design System — a Tailwind CSS v4 design system for Django{% endblock %}
 
-{% block body %}
-    <div class="page-panel mx-auto max-w-5xl">
-        <div class="flex items-start justify-between gap-4">
-            <div>
-                <div class="card-kicker">Design system</div>
-                <h1 class="mt-1">Wise Design System</h1>
-            </div>
-            {% include 'wise_core/components/_theme_toggle.html' %}
-        </div>
-
-        <p class="mt-3 max-w-2xl text-gray-700">
-            A Tailwind CSS v4 design system for Django projects. Datatables, autocomplete widgets and
-            rich text editing are backed by Django and its ecosystem — <code>django-filter</code>,
-            Django REST Framework — not a JavaScript framework. The JS each widget ships is a thin
-            layer over a real Django form field or class-based view.
+{% block marketing_body %}
+    <section class="marketing-hero">
+        <span class="marketing-hero-kicker">{% lucide "zap" size=13 %}Tailwind CSS v4 · Django-native</span>
+        <h1 class="marketing-hero-title">Ship Django UI that looks<br class="hidden sm:block"> like a product, not an admin.</h1>
+        <p class="marketing-hero-subtitle">
+            A Tailwind CSS v4 design system built for Django projects. Datatables, autocomplete and
+            rich text editing are backed by Django itself and its ecosystem — <code>django-filter</code>,
+            Django REST Framework — not a JavaScript framework. Every color, radius, shadow and
+            spacing rule is one design token, switchable at runtime.
         </p>
-
-        <div class="mt-6 flex flex-wrap items-center gap-3">
-            <a class="btn btn-primary" href="{% url 'docs' %}">
+        <div class="marketing-hero-actions">
+            <a class="btn btn-primary large-button" href="{% url 'docs' %}">
                 {% lucide "file-text" size=16 %}<span>Read the docs</span>
             </a>
-            <a class="btn btn-secondary" href="{% url 'docs_theming_built_in_themes' %}">
-                {% lucide "settings" size=16 %}<span>Try the themes</span>
+            <a class="btn btn-secondary large-button" href="{% url 'demo' %}">
+                {% lucide "layout-dashboard" size=16 %}<span>Launch the demo app</span>
             </a>
         </div>
 
-        <h2 class="mt-12">Documentation</h2>
-        <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {% for section in docs_nav %}
-                <a class="card" href="{% url section.items.0.url_name %}">
-                    <div class="card-kicker">{{ section.items|length }} pages</div>
-                    <h3 class="card-title mt-1">{{ section.title }}</h3>
-                    <p class="card-content mt-2">
-                        {% for item in section.items|slice:":4" %}{{ item.title }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if section.items|length > 4 %}…{% endif %}
-                    </p>
-                </a>
-            {% endfor %}
+        <div class="marketing-stats">
+            <div>
+                <div class="marketing-stat-value">60+</div>
+                <div class="marketing-stat-label">Components</div>
+            </div>
+            <div>
+                <div class="marketing-stat-value">6</div>
+                <div class="marketing-stat-label">Live design tokens</div>
+            </div>
+            <div>
+                <div class="marketing-stat-value">3</div>
+                <div class="marketing-stat-label">Installable Django apps</div>
+            </div>
+            <div>
+                <div class="marketing-stat-value">0</div>
+                <div class="marketing-stat-label">JS frameworks required</div>
+            </div>
         </div>
+    </section>
 
-        <h2 class="mt-12">Playground</h2>
-        <p class="text-gray-700">
-            A small Django app built entirely from this system. Sign in as
-            <code>demo</code> / <code>wise-demo-2026</code> to browse it.
-        </p>
-        <div class="mt-4 grid gap-4 sm:grid-cols-2">
-            <a class="card" href="{% url 'category_list_view' %}">
-                <div class="card-kicker">Datatable &amp; CRUD</div>
-                <h3 class="card-title mt-1">Categories</h3>
+    <section class="marketing-section">
+        <div class="marketing-section-header">
+            <div class="card-kicker">Why teams reach for it</div>
+            <h2 class="mt-2">Built for the app you already have</h2>
+            <p class="mt-3 text-gray-700">
+                Not a component playground you glue onto a React frontend — a CSS layer and a set of
+                Django class-based views meant to sit directly on top of your models.
+            </p>
+        </div>
+        <div class="marketing-feature-grid">
+            <div class="card">
+                {% lucide "settings" size=20 cls="text-action-600" %}
+                <h3 class="card-title mt-3">Tokens, not magic numbers</h3>
                 <p class="card-content mt-2">
-                    A full <code>WiseListView</code> + <code>django-filter</code> datatable with the
-                    filter drawer, pagination and create/update/delete.
+                    Theme, palette, density, corner radius, card shadow and background are each one
+                    CSS custom property, switched by one HTML attribute — no second stylesheet, no
+                    rebuild.
                 </p>
-            </a>
-            <a class="card" href="{% url 'product_list_view' %}">
-                <div class="card-kicker">Form widgets</div>
-                <h3 class="card-title mt-1">Products</h3>
+            </div>
+            <div class="card">
+                {% lucide "activity" size=20 cls="text-action-600" %}
+                <h3 class="card-title mt-3">Django-native, not a JS framework</h3>
                 <p class="card-content mt-2">
-                    One form exercising the autocomplete, rich text, rating, date and file
-                    widgets together.
+                    Datatables, autocomplete and rich text are thin JS layers over a real Django form
+                    field or class-based view — <code>django-filter</code> and DRF do the work.
                 </p>
-            </a>
+            </div>
+            <div class="card">
+                {% lucide "zap" size=20 cls="text-action-600" %}
+                <h3 class="card-title mt-3">Dark mode, four palettes, zero rebuild</h3>
+                <p class="card-content mt-2">
+                    Dark mode inverts the whole neutral ramp rather than tinting the light theme, so
+                    every existing <code>text-gray-600</code> lands the right way up automatically.
+                </p>
+            </div>
+            <div class="card">
+                {% lucide "layout-dashboard" size=20 cls="text-action-600" %}
+                <h3 class="card-title mt-3">Card list or data table — your call</h3>
+                <p class="card-content mt-2">
+                    The same queryset renders as either pattern behind one query-param toggle. See it
+                    live on the Categories and Products pages in the demo app.
+                </p>
+            </div>
         </div>
+    </section>
 
-        {% if not request.user.is_authenticated %}
-            <div class="callout callout-info mt-6">
-                {% lucide "info" size=16 cls="callout-icon" %}
-                <div>
-                    The documentation needs no login. The playground does —
-                    <a class="underline" href="{% url 'login' %}">sign in</a> as
-                    <code>demo</code> / <code>wise-demo-2026</code>.
+    <section class="marketing-section bg-panel-alt">
+        <div class="marketing-section-header">
+            <div class="card-kicker">Try it now</div>
+            <h2 class="mt-2">Every token, switched live — right here</h2>
+            <p class="mt-3 text-gray-700">
+                Open the settings panel and change theme, palette, density, radius, shadow or
+                background. This whole page re-renders instantly, with no reload.
+            </p>
+            <div class="mt-5">
+                <button type="button" class="btn btn-primary large-button" onclick="wiseOpenDrawer('wise-settings-drawer')">
+                    {% lucide "settings" size=16 %}<span>Open design settings</span>
+                </button>
+            </div>
+        </div>
+        <div class="mt-10 grid gap-4 sm:grid-cols-3">
+            <div class="card">
+                <div class="card-kicker">Card</div>
+                <h3 class="card-title mt-1">Surfaces follow every token</h3>
+                <p class="card-content mt-2">Radius, shadow and background all update on this card.</p>
+                <div class="mt-3 flex flex-wrap items-center gap-2">
+                    <button class="btn btn-primary" type="button">Primary</button>
+                    <span class="badge badge-action">Badge</span>
                 </div>
             </div>
-        {% endif %}
-    </div>
+            <div class="card">
+                <div class="card-kicker">Form controls</div>
+                <h3 class="card-title mt-1">Inputs, not just buttons</h3>
+                <p class="card-content mt-2">The radius token reaches inputs, selects and textareas too.</p>
+                <input class="input mt-3" placeholder="Type something…">
+            </div>
+            <div class="card">
+                <div class="card-kicker">Feedback</div>
+                <h3 class="card-title mt-1">Tags, badges, callouts</h3>
+                <div class="callout callout-info mt-3">
+                    {% lucide "info" size=15 cls="callout-icon" %}<div>A themed callout.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="marketing-section">
+        <div class="marketing-section-header">
+            <div class="card-kicker">Markup, not magic</div>
+            <h2 class="mt-2">Plain HTML classes, no build step in your templates</h2>
+            <p class="mt-3 text-gray-700">Every component is a documented class name — copy it straight into a Django template.</p>
+        </div>
+        <div class="mt-8 mx-auto max-w-2xl">
+            <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_icons %}
+<div class="card">
+    <div class="card-kicker">Category</div>
+    <h3 class="card-title">Electronics</h3>
+    <p class="card-content">128 products</p>
+    <span class="badge badge-action">Active</span>
+</div>
+
+<button class="btn btn-primary">
+    {% lucide "plus" size=16 %}<span>New</span>
+</button>{% endverbatim %}{% endfilter %}</code></pre>
+        </div>
+    </section>
+
+    <section class="marketing-section bg-panel-alt">
+        <div class="marketing-section-header">
+            <div class="card-kicker">What's in the box</div>
+            <h2 class="mt-2">Three installable apps, one demo site</h2>
+        </div>
+        <div class="marketing-feature-grid sm:grid-cols-3 lg:grid-cols-3">
+            <div class="card">
+                <div class="card-kicker">wise_core</div>
+                <h3 class="card-title mt-1">Tokens &amp; components</h3>
+                <p class="card-content mt-2">
+                    Design tokens, the component CSS layer, <code>base.html</code>, generic CRUD
+                    templates, the <code>{% templatetag openblock %} lucide {% templatetag closeblock %}</code>
+                    icon tag and the <code>Wise*View</code> class-based view mixins.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-kicker">wise_autocomplete</div>
+                <h3 class="card-title mt-1">Search-as-you-type</h3>
+                <p class="card-content mt-2">
+                    <code>AutocompleteInputWidget</code> (DRF-backed) and <code>AutoSuggestInputWidget</code>
+                    (client-side filter over a JS array).
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-kicker">wise_richtext</div>
+                <h3 class="card-title mt-1">Rich text editing</h3>
+                <p class="card-content mt-2">
+                    <code>RichTextInputWidget</code>, a Quill-backed form widget for a real Django
+                    model field.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="marketing-section text-center">
+        <h2>Stop hand-rolling admin CSS</h2>
+        <p class="mx-auto mt-3 max-w-xl text-gray-700">
+            Install the apps, wire up Tailwind, and build your next internal tool on top of a system
+            that already handles theming, forms and CRUD for you.
+        </p>
+        <div class="marketing-hero-actions">
+            <a class="btn btn-primary large-button" href="{% url 'docs_getting_started_installation' %}">
+                {% lucide "download" size=16 %}<span>Installation guide</span>
+            </a>
+            <a class="btn btn-secondary large-button" href="{% url 'demo' %}">
+                {% lucide "arrow-right" size=16 %}<span>See it running</span>
+            </a>
+        </div>
+    </section>
 {% endblock %}

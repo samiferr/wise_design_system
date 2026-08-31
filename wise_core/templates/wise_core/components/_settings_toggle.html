@@ -1,0 +1,13 @@
+{% load wise_icons i18n %}
+{% comment %}
+Opens the design settings drawer (_settings_panel.html below) - the fuller
+sibling of _theme_toggle.html, covering all six token axes (theme, palette,
+density, radius, shadow, background) instead of just light/dark. Pair the
+two: include this button wherever you'd include _theme_toggle.html, and
+include _settings_panel.html once per page (wise_core/base.html already
+does both by default for its authenticated chrome).
+{% endcomment %}
+<button type="button" class="btn btn-icon btn-secondary" onclick="wiseOpenDrawer('wise-settings-drawer')"
+        title="{% trans 'Design settings' %}" aria-label="{% trans 'Design settings' %}">
+    {% lucide "settings" size=16 %}
+</button>

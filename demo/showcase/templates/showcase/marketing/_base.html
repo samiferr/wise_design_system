@@ -1,0 +1,57 @@
+{% extends 'wise_core/base.html' %}
+{% load wise_icons %}
+{% comment %}
+Shell for the public marketing site (the "/" landing page): a plain top
+navbar and footer, no authenticated app chrome. Kept apart from both the
+docs shell (showcase/docs/_base.html) and the demo app (which uses
+wise_core/base.html's own authenticated chrome directly) so each of the
+three surfaces - marketing, docs, demo app - reads as its own product
+instead of one page mixing all of them.
+{% endcomment %}
+
+{% block sidebar %}{% endblock %}
+{% block topBar %}{% endblock %}
+
+{% block content %}
+    <header class="marketing-nav">
+        <div class="marketing-nav-inner">
+            <a class="marketing-brand" href="{% url 'home' %}">
+                <span class="marketing-brand-mark" aria-hidden="true"></span>
+                Wise
+            </a>
+            <nav class="marketing-nav-links" aria-label="Primary">
+                <a href="{% url 'docs' %}">Docs</a>
+                <a href="{% url 'demo' %}">Demo app</a>
+                <a href="https://github.com/samiferr/wise_design_system" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+            <div class="flex items-center gap-2">
+                {% include 'wise_core/components/_settings_toggle.html' %}
+                <a class="btn btn-primary" href="{% url 'docs_getting_started_installation' %}">
+                    <span>Get started</span>{% lucide "arrow-right" size=15 %}
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block marketing_body %}{% endblock %}
+    </main>
+
+    <footer class="marketing-footer">
+        <div class="marketing-footer-inner">
+            <div>
+                <div class="marketing-brand">Wise Design System</div>
+                <p class="mt-1.5 max-w-sm text-sm text-gray-600">
+                    A Tailwind CSS v4 design system for Django projects, extracted from the DCMS7
+                    application.
+                </p>
+            </div>
+            <nav class="marketing-footer-links" aria-label="Footer">
+                <a href="{% url 'docs' %}">Documentation</a>
+                <a href="{% url 'demo' %}">Demo app</a>
+                <a href="{% url 'docs_theming_overview' %}">Theming</a>
+                <a href="https://github.com/samiferr/wise_design_system" target="_blank" rel="noopener">GitHub ↗</a>
+            </nav>
+        </div>
+    </footer>
+{% endblock %}

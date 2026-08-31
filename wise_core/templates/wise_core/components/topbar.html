@@ -16,8 +16,11 @@
                 {% block topbar_brand %}{{ project_name|default:"Wise" }}{% endblock %}
             </a>
         </div>
-        <div class="ml-auto truncate text-sm text-gray-600">
-            {% if request.user.is_authenticated %}{{ request.user.get_full_name }}{% endif %}
+        <div class="ml-auto flex items-center gap-2 truncate text-sm text-gray-600">
+            {% if request.user.is_authenticated %}
+                {{ request.user.get_full_name }}
+                {% include 'wise_core/components/_settings_toggle.html' %}
+            {% endif %}
         </div>
     </div>
 </div>

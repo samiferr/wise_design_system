@@ -132,4 +132,13 @@ class CategoryListView(WiseListView):
             </tbody>
         </table>
     </div>
+
+    <div class="callout mt-6">
+        {% lucide "layout-dashboard" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Not every list wants a table</div>
+            The live Categories page above also ships a card-grid alternative behind one toggle -
+            see <a class="text-action-600 underline" href="{% url 'docs_patterns_list_view_toggle' %}">Card List vs. Data Table</a>.
+        </div>
+    </div>
 {% endblock %}

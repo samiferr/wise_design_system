@@ -116,7 +116,7 @@ WISE_NAV_SECTIONS = [
 ```
 
 - `url_name` is reversed with no arguments (`{% url item.url_name %}`).
-- `icon` is a vendored Lucide icon name (see `/icons/` on the demo site, or
+- `icon` is a vendored Lucide icon name (see `/docs/media/icons/` on the demo site, or
   `wise_core/static/wise_core/icons/lucide/`).
 - `match` marks the item `.selected` when it's a substring of `request.resolver_match.url_name`.
 
