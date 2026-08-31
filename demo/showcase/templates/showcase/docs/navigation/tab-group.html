@@ -27,7 +27,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="tab-bar border-b border-divider px-4">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="tab-bar border-b border-divider px-4">
     <a class="bar-item {% if request.resolver_match.url_name == 'record_overview' %}selected{% endif %}"
        href="{% url 'record_overview' pk=object.pk %}">Overview</a>
     <a class="bar-item {% if request.resolver_match.url_name == 'record_history' %}selected{% endif %}"
@@ -54,7 +54,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="bar-item inline-flex items-center gap-1.5" href="{% url 'category_products' pk=object.pk %}">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<a class="bar-item inline-flex items-center gap-1.5" href="{% url 'category_products' pk=object.pk %}">
     {% lucide "clipboard-list" size=15 %}Products
     <span class="badge badge-grey">{{ object.products.count }}</span>
 </a>{% endverbatim %}{% endfilter %}</code></pre>
@@ -66,7 +66,7 @@
         One view per tab, each rendering the same shell. A shared base view keeps the tab bar and the
         record lookup in one place.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}# views.py
 class CategoryTabMixin(WiseDetailView):
     model = Category
 
@@ -84,7 +84,7 @@ class CategoryProductsView(CategoryTabMixin):
 # urls.py
 path('categories/<int:pk>/', CategoryOverviewView.as_view(), name='category_overview'),
 path('categories/<int:pk>/products/', CategoryProductsView.as_view(), name='category_products'),{% endverbatim %}{% endfilter %}</code></pre>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{# _tabs.html - included by every tab template #}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{# _tabs.html - included by every tab template #}
 <div class="tab-bar border-b border-divider px-4">
     <a class="bar-item {% if active == 'overview' %}selected{% endif %}"
        href="{% url 'category_overview' pk=object.pk %}">Overview</a>

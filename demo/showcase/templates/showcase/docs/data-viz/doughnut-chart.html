@@ -35,10 +35,10 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}context["doughnut_slices"] = charts.doughnut(revenue, labels=months, thickness=18){% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}context["doughnut_slices"] = charts.doughnut(revenue, labels=months, thickness=18){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="relative inline-flex items-center justify-center">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="relative inline-flex items-center justify-center">
     <svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px">
         {% for slice in doughnut_slices %}
             <path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}"/>
@@ -76,7 +76,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="donut-chart" style="--value: {{ percent }}">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="donut-chart" style="--value: {{ percent }}">
     <span class="donut-chart-label">{{ percent }}%</span>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
     </div>

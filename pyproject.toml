@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wise-design-system"
+version = "0.1.0"
+description = "A set of plain Django apps providing a design system: tokens, component CSS, generic CRUD views/templates, and a couple of form widgets."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Samy FERRADJI" },
+]
+dependencies = [
+    "Django>=5.0",
+    "django-filter>=24.0",
+]
+
+[project.optional-dependencies]
+autocomplete = ["djangorestframework>=3.15"]
+richtext = []
+codes = ["segno>=1.6", "python-barcode>=0.15"]
+
+[project.urls]
+Homepage = "https://github.com/samiferr/wise_design_system"
+
+[tool.setuptools.packages.find]
+include = ["wise_core*", "wise_autocomplete*", "wise_richtext*"]
+
+[tool.setuptools.package-data]
+wise_core = ["**/*"]
+wise_autocomplete = ["**/*"]
+wise_richtext = ["**/*"]

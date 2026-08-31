@@ -10,7 +10,7 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Rebranding</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}/* your-project/static_src/input.css */
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}/* your-project/static_src/input.css */
 @import "tailwindcss";
 
 @source "../myapp/templates";
@@ -42,7 +42,7 @@
         The component layer never hardcodes a radius — it only reads the scale. Restore Tailwind's
         defaults and every component rounds off at once.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}@theme {
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}@theme {
     --radius-sm: 0.125rem;
     --radius-md: 0.375rem;
     --radius-lg: 0.5rem;
@@ -54,7 +54,7 @@
         A theme is just an attribute selector redefining tokens. Add one, and
         <code>wiseSetTheme('sepia')</code> switches to it — no other wiring needed.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}:root[data-theme="sepia"] {
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}:root[data-theme="sepia"] {
     --color-page: #f4ecd8;
     --color-panel: #fbf6ea;
     --color-panel-alt: #efe5cd;
@@ -73,7 +73,7 @@
         Prefer changing a token — it propagates. Reach for a rule override only when one component
         genuinely needs to differ, and put it in your own CSS, after the import.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}/* Only this project's cards get a heavier border. */
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}/* Only this project's cards get a heavier border. */
 @layer components {
     .card { border-width: 2px; }
 }{% endverbatim %}{% endfilter %}</code></pre>
@@ -84,7 +84,7 @@
         contract: read <code>var(--color-*)</code> (directly or through a utility) and your component
         themes exactly like the shipped ones.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}@layer components {
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}@layer components {
     .stat-tile {
         @apply border border-divider bg-panel p-4;
     }

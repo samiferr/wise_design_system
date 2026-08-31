@@ -27,7 +27,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="text" placeholder="Text">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<input class="input" type="text" placeholder="Text">
 <input class="input" type="email" placeholder="ada@example.com">
 <input class="input" type="tel" placeholder="+1 555 0100">
 <input class="input" type="password">{% endverbatim %}{% endfilter %}</code></pre>
@@ -50,7 +50,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input input-sm" placeholder="Small">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<input class="input input-sm" placeholder="Small">
 <input class="input" placeholder="Medium">
 <input class="input input-lg" placeholder="Large">{% endverbatim %}{% endfilter %}</code></pre>
     </div>
@@ -79,7 +79,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="input-group">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="input-group">
     <span class="input-group-addon">€</span>
     <input class="input" type="number" value="49.00">
     <span class="input-group-addon">per month</span>
@@ -108,7 +108,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}full_name = forms.CharField(
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}full_name = forms.CharField(
     label="Full name",
     widget=forms.TextInput(attrs={"placeholder": "Ada Lovelace"}),
     help_text="Shown to other members of your team.",

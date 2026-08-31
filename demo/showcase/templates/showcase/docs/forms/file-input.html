@@ -23,7 +23,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="form-field">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="form-field">
     <input type="file">
 </div>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
@@ -52,14 +52,14 @@
             <code>request.FILES</code> is empty and the field looks blank with no error.
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<form method="post" enctype="multipart/form-data">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% include 'wise_core/components/_form_fields.html' with form=form %}
     <div class="form-actions">
         <button class="btn btn-primary" type="submit">Save</button>
     </div>
 </form>{% endverbatim %}{% endfilter %}</code></pre>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ProductForm(forms.ModelForm):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ["name", "datasheet"]
@@ -77,7 +77,7 @@ MEDIA_ROOT = BASE_DIR / "media"{% endverbatim %}{% endfilter %}</code></pre>
         <code>clean_&lt;field&gt;</code> — and validate the content type from the file, not from the
         filename extension.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}datasheet = forms.FileField(
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}datasheet = forms.FileField(
     required=False,
     widget=forms.ClearableFileInput(attrs={"accept": ".pdf,application/pdf"}),
 )

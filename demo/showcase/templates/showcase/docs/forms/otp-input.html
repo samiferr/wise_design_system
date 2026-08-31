@@ -20,7 +20,7 @@
     </div>
 
     <h2 class="mt-8">The field</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.widgets import OTPField
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}from wise_core.widgets import OTPField
 
 class VerifyForm(forms.Form):
     verification_code = OTPField(length=6)
@@ -46,7 +46,7 @@ form.cleaned_data["verification_code"]   # "123456"{% endverbatim %}{% endfilter
             </tbody>
         </table>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}def compress(self, data_list):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}def compress(self, data_list):
     code = "".join((d or "").strip() for d in data_list)
     if not code:
         return ""
@@ -62,7 +62,7 @@ form.cleaned_data["verification_code"]   # "123456"{% endverbatim %}{% endfilter
     </p>
 
     <h2 class="mt-8">Verifying it</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class VerifyView(FormView):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class VerifyView(FormView):
     form_class = VerifyForm
     template_name = "accounts/verify.html"
 

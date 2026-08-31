@@ -91,7 +91,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="calendar">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="calendar">
     <div class="calendar-header">
         <div class="font-heading text-lg font-semibold uppercase tracking-wide">{{ month_label }}</div>
         <div class="flex items-center gap-1">
@@ -123,7 +123,7 @@
         Python's own <code>calendar</code> module already produces the 6×7 day grid — no extra
         dependency needed. Group your events by date, then annotate each day in the view:
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}import calendar
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}import calendar
 from datetime import date
 
 class ScheduleView(TemplateView):
@@ -171,7 +171,7 @@ class ScheduleView(TemplateView):
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="date" name="due_date">{% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<input class="input" type="date" name="due_date">{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
 

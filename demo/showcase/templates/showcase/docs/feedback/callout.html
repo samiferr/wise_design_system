@@ -27,7 +27,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="callout callout-warning">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="callout callout-warning">
     {% lucide "alert-triangle" size=16 cls="callout-icon" %}
     <div>
         <div class="callout-title">Check this first</div>
@@ -55,7 +55,7 @@
     </div>
 
     <h2 class="mt-8">On a delete confirmation</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/confirm_generic.html' %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/confirm_generic.html' %}
 
 {% block confirm_rows %}
     <tr><th>Name</th><td>{{ object.name }}</td></tr>

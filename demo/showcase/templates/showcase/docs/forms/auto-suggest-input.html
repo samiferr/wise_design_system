@@ -33,17 +33,17 @@
         widget seeds itself from its <code>&lt;option&gt;</code> values. The datalist is only a data
         carrier here — the visible panel is the widget's own.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_autocomplete.widgets import AutoSuggestInputWidget
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}from wise_autocomplete.widgets import AutoSuggestInputWidget
 
 tag = forms.CharField(
     widget=AutoSuggestInputWidget(attrs={"data-list": "tag_suggestions"}),
 ){% endverbatim %}{% endfilter %}</code></pre>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<datalist id="tag_suggestions">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<datalist id="tag_suggestions">
     {% for tag in available_tags %}<option value="{{ tag }}"></option>{% endfor %}
 </datalist>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Or assign the array directly</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}document.getElementById('id_tag').arr = ['Draft', 'Pending', 'Confirmed']{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-javascript">{% filter force_escape %}{% verbatim %}document.getElementById('id_tag').arr = ['Draft', 'Pending', 'Confirmed']{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">When to use which</h2>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">

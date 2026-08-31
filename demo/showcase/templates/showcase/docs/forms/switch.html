@@ -26,7 +26,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
     <input class="switch" type="checkbox" checked>
     <span>Email notifications</span>
 </label>{% endverbatim %}{% endfilter %}</code></pre>
@@ -52,7 +52,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.widgets import SwitchInput
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}from wise_core.widgets import SwitchInput
 
 notifications = forms.BooleanField(
     required=False, initial=True, label="Email notifications", widget=SwitchInput,
@@ -87,7 +87,7 @@ notifications = forms.BooleanField(
         A switch usually implies the change takes effect at once. Post it rather than waiting for a
         Save button — and keep it a real form post so it works without JS.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<form method="post" action="{% url 'toggle_setting' key='digest' %}">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<form method="post" action="{% url 'toggle_setting' key='digest' %}">
     {% csrf_token %}
     <input class="switch" type="checkbox" name="enabled" onchange="this.form.submit()"
            {% if settings.digest %}checked{% endif %} aria-label="Weekly digest">

@@ -14,7 +14,7 @@
         Nest the child routes under the parent. This single decision does most of the work: the
         parent is always available, the queryset is always scoped, and "back" is always obvious.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}urlpatterns = [
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}urlpatterns = [
     path('categories/<int:pk>/',                    CategoryDetailView.as_view(),  name='category_detail_view'),
 
     # children, always under their parent
@@ -26,7 +26,7 @@
 ]{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">One mixin does the scoping</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ChildOfCategoryMixin:
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class ChildOfCategoryMixin:
     """Resolves the parent once and scopes every child query to it."""
 
     @cached_property
@@ -54,7 +54,7 @@
     </div>
 
     <h2 class="mt-8">The five views</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ProductListView(ChildOfCategoryMixin, WiseListView):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class ProductListView(ChildOfCategoryMixin, WiseListView):
     model = Product
     template_name = 'showcase/product/list.html'
     paginate_by = 10
@@ -126,7 +126,7 @@ class ProductDeleteView(ChildOfCategoryMixin, WiseDeleteView):
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/list_generic.html' %}
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/list_generic.html' %}
 
 {% block list_title %}{{ parent.name }}{% endblock %}
 
@@ -152,7 +152,7 @@ class ProductDeleteView(ChildOfCategoryMixin, WiseDeleteView):
         Say what will be destroyed. <code>on_delete=CASCADE</code> quietly removing dozens of children
         is the kind of surprise that costs trust.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/confirm_generic.html' %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/confirm_generic.html' %}
 
 {% block confirm_rows %}
     <tr><th>Name</th><td>{{ object.name }}</td></tr>
@@ -171,7 +171,7 @@ class ProductDeleteView(ChildOfCategoryMixin, WiseDeleteView):
         <code>inlineformset_factory</code> avoids a page per row. Render each form as a
         <code>.form-stack-compact</code> inside a table row.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}ProductFormSet = inlineformset_factory(
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}ProductFormSet = inlineformset_factory(
     Category, Product, form=ProductForm, extra=1, can_delete=True,
 )
 

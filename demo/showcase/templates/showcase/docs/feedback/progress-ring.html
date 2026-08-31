@@ -32,13 +32,13 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# views.py
 from wise_core import charts
 
 context["ring"] = charts.progress_ring(68){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="progress-ring">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="progress-ring">
     <svg width="{{ ring.size }}" height="{{ ring.size }}">
         <circle class="progress-ring-track"
                 cx="{{ ring.center }}" cy="{{ ring.center }}" r="{{ ring.radius }}"
@@ -53,7 +53,7 @@ context["ring"] = charts.progress_ring(68){% endverbatim %}{% endfilter %}</code
 </div>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Straight from the template</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_charts %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_charts %}
 {% chart_progress_ring 42 radius=20 stroke=4 as small_ring %}{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">How it works</h2>
@@ -62,7 +62,7 @@ context["ring"] = charts.progress_ring(68){% endverbatim %}{% endfilter %}</code
         offset by the unfilled remainder. CSS rotates the SVG <code>-90deg</code> so the arc starts at
         twelve o'clock instead of three.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}circumference = 2 * math.pi * radius
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}circumference = 2 * math.pi * radius
 dasharray  = circumference
 dashoffset = circumference * (1 - percent / 100)   # 100% -> 0 offset -> full ring{% endverbatim %}{% endfilter %}</code></pre>
     <p class="mt-2 text-gray-700">

@@ -23,7 +23,7 @@
     </div>
 
     <h2 class="mt-8">The widget</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_autocomplete.widgets import AutocompleteInputWidget
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}from wise_autocomplete.widgets import AutocompleteInputWidget
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -43,7 +43,7 @@ class ProductForm(forms.ModelForm):
         parameter and exposes a detail route at <code>&lt;url&gt;/&lt;pk&gt;/</code> — it uses the
         latter to resolve the label for an already-saved value when an edit form loads.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# api.py
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# api.py
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CategorySerializer
 
@@ -72,7 +72,7 @@ router.register("categories", CategoryViewSet, basename="category-api"){% endver
         results can be narrowed — cities within the selected country, products within the selected
         category.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}"product": AutocompleteInputWidget(attrs={
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}"product": AutocompleteInputWidget(attrs={
     "data-url": reverse_lazy("product-api-list"),
     "data-text_field": "name",
     "data-parent": "id_category",   # the parent field's input id

@@ -31,7 +31,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="progress">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="progress">
     <span class="progress-value" style="--value: {{ job.percent }}%"></span>
 </div>
 <div class="progress-label">
@@ -45,7 +45,7 @@
     </p>
 
     <h2 class="mt-8">Computing it</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ImportJob(models.Model):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class ImportJob(models.Model):
     total_rows = models.PositiveIntegerField(default=0)
     processed_rows = models.PositiveIntegerField(default=0)
 
@@ -73,7 +73,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="h-1 w-full overflow-hidden bg-gray-200">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="h-1 w-full overflow-hidden bg-gray-200">
     <div class="progress-bar h-full bg-action-600"></div>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
@@ -90,7 +90,7 @@
     </div>
 
     <h2 class="mt-8">Accessibility</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="progress" role="progressbar"
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="progress" role="progressbar"
      aria-valuenow="{{ job.percent }}" aria-valuemin="0" aria-valuemax="100"
      aria-label="Import progress">
     <span class="progress-value" style="--value: {{ job.percent }}%"></span>
@@ -101,7 +101,7 @@
         For a long job, a meta refresh is the no-JS option; a small fetch loop against a JSON endpoint
         is the better one. Either way the percentage is computed server-side.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}async function pollProgress(url, el) {
+    <pre class="doc-code"><code class="language-javascript">{% filter force_escape %}{% verbatim %}async function pollProgress(url, el) {
     const {percent, done} = await (await fetch(url)).json()
     el.style.setProperty('--value', percent + '%')
     if (!done) setTimeout(() => pollProgress(url, el), 2000)

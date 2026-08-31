@@ -29,7 +29,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<figure class="image-figure">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<figure class="image-figure">
     <img class="image" src="{{ product.photo.url }}" alt="{{ product.name }}"
          width="240" height="140" loading="lazy">
     <figcaption class="image-caption">{{ product.photo_caption }}</figcaption>
@@ -53,7 +53,7 @@
         User uploads are never the aspect ratio your layout wants. Constrain the box and let the
         image cover it, rather than stretching it.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="h-40 w-full overflow-hidden border border-divider bg-panel-alt">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="h-40 w-full overflow-hidden border border-divider bg-panel-alt">
     <img src="{{ product.photo.url }}" alt="{{ product.name }}"
          class="h-full w-full object-cover">
 </div>{% endverbatim %}{% endfilter %}</code></pre>
@@ -80,7 +80,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% if product.photo %}
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% if product.photo %}
     <img class="image" src="{{ product.photo.url }}" alt="{{ product.name }}">
 {% else %}
     <div class="flex h-24 items-center justify-center border border-divider bg-panel-alt text-gray-400">

@@ -23,7 +23,7 @@
         <code>_messages.html</code> is included once in <code>base.html</code>, so every page already
         renders whatever messages are pending. You only emit them.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from django.contrib import messages
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}from django.contrib import messages
 
 def publish(request, pk):
     product = get_object_or_404(Product, pk=pk)
@@ -35,7 +35,7 @@ def publish(request, pk):
         <a class="text-action-600 underline" href="{% url 'category_create_view' %}">Category</a> to
         see one fire.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class CategoryCreateView(WiseCreateView):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class CategoryCreateView(WiseCreateView):
     model = Category
     form_class = CategoryForm
     success_message = 'Category "%(name)s" created.'{% endverbatim %}{% endfilter %}</code></pre>
@@ -55,7 +55,7 @@ def publish(request, pk):
 
     <h2 class="mt-8">Building one by hand</h2>
     <p class="text-gray-700">Only needed outside the messages framework — a client-side action with no page reload:</p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<ul class="toast-stack" id="toasts"></ul>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<ul class="toast-stack" id="toasts"></ul>
 
 <script>
 function showToast(text, variant) {

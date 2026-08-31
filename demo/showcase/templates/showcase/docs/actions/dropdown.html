@@ -22,7 +22,7 @@
             </div>
         </details>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<details class="dropdown">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<details class="dropdown">
     <summary class="btn btn-secondary">
         {% lucide "settings" size=15 %}<span>Actions</span>{% lucide "chevron-down" size=14 %}
     </summary>
@@ -50,7 +50,7 @@
             </div>
         </details>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="dropdown-panel">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="dropdown-panel">
     <div class="dropdown-header">This record</div>
     <a class="dropdown-item" href="#">Edit</a>
     <a class="dropdown-item selected" href="#">Mark reviewed</a>
@@ -63,7 +63,7 @@
         <code>GET</code> that mutates state will eventually be triggered by a crawler or a prefetch.
         <code>.dropdown-item</code> styles a <code>&lt;button&gt;</code> identically to an anchor.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<form method="post" action="{% url 'product_archive' pk=object.pk %}">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<form method="post" action="{% url 'product_archive' pk=object.pk %}">
     {% csrf_token %}
     <button class="dropdown-item" type="submit">{% lucide "save" size=14 %}Archive</button>
 </form>{% endverbatim %}{% endfilter %}</code></pre>
@@ -74,7 +74,7 @@
         click-away to close it, <code>common.js</code> ships one delegated listener that closes any
         open dropdown when the click lands elsewhere — no per-dropdown wiring.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}document.addEventListener('click', function (e) {
+    <pre class="doc-code"><code class="language-javascript">{% filter force_escape %}{% verbatim %}document.addEventListener('click', function (e) {
     document.querySelectorAll('details.dropdown[open]').forEach(function (d) {
         if (!d.contains(e.target)) d.removeAttribute('open')
     })
