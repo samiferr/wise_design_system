@@ -23,12 +23,12 @@
     /* Literal colors, not gray-900/gray-100/var(--color-divider): the neutral
      * ramp inverts under data-theme="dark", which would flip this from a
      * light code editor to a dark one depending on the *site's* theme rather
-     * than staying the fixed light-gray, syntax-colored look asked for. A
+     * than staying the fixed white, syntax-colored look asked for. A
      * code block opts out of the site theme deliberately, the same as it did
      * when it used to render as a fixed dark terminal instead. */
     .doc-code {
         @apply m-0 overflow-x-auto border border-t-0 p-4 text-[12.5px] leading-relaxed;
-        background: #f5f5f8;
+        background: #ffffff;
         color: #18181a;
         border-color: #d4d4d7;
     }
@@ -128,27 +128,35 @@
     }
 
     /* Wraps every `.doc-code` block (added by showcase/components/
-     * _code_highlight.html, after Prism.highlightAll()) so the copy button
-     * can be pinned to a corner that stays put while the code scrolls
-     * horizontally underneath it, the same trick the "Copy tokens" settings
-     * panel already uses for its own <pre>. */
+     * _code_highlight.html, after Prism.highlightAll()) and hosts the
+     * language tab bar that tops it plus the copy button inside that bar. */
     .doc-code-wrap {
-        @apply relative;
+        @apply relative mt-4;
     }
 
-    .doc-code-wrap .doc-code {
-        @apply pr-11;
+    /* Language tab bar added to every code snippet: a single "tab link"
+     * naming the snippet's language, with the copy button right-aligned.
+     * White like the code below, so the whole snippet reads as one card. */
+    .doc-code-tabs {
+        @apply flex items-center border border-b-0 px-3;
+        background: #ffffff;
+        border-color: #d4d4d7;
+    }
+
+    .doc-code-tab {
+        @apply inline-flex items-center border-b-2 border-action-600 py-2 text-[11px] font-semibold
+        uppercase tracking-wider text-action-700;
     }
 
     /* Literal colors, not `.btn-secondary`'s theme-aware ones, for the same
      * reason `.doc-code` above uses them: this button sits on the code
-     * block's permanently-light background, so it has to stay legible
+     * block's permanently-white background, so it has to stay legible
      * regardless of the *site's* theme rather than washing out (or
      * inverting to near-white) on a dark-themed page. */
     .doc-code-copy {
-        @apply absolute right-2 top-2 inline-flex h-7 w-7 cursor-pointer items-center justify-center
+        @apply ml-auto inline-flex h-7 w-7 cursor-pointer items-center justify-center
         border p-0 transition-colors;
-        background: #f5f5f8;
+        background: #ffffff;
         border-color: #d4d4d7;
         color: #3f3f42;
         border-radius: var(--radius-md);
@@ -254,6 +262,12 @@
     }
 
     .doc-example .doc-code {
+        @apply mt-0;
+    }
+
+    /* Inside a Preview/Code example the tab bar already provides the
+     * separation, so the snippet's own top margin is redundant. */
+    .doc-example .doc-code-wrap {
         @apply mt-0;
     }
 

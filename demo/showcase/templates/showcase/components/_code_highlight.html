@@ -13,11 +13,13 @@ highlighted even before its tab is ever clicked. Load order matters:
 markup-templating and clike are grammars the later ones (django, javascript)
 extend or hook into, so they load first.
 
-The copy button is added here, once, for every `.doc-code` block on the
-page rather than by hand in each doc template - with 70+ examples across the
-site, a per-template checklist item is one a new page eventually misses.
-It runs after highlightAll() so `pre.textContent` copies the plain code, not
-Prism's `<span class="token">` wrapper markup.
+The copy button and language tab are added here, once, for every
+`.doc-code` block on the page rather than by hand in each doc template - with
+70+ examples across the site, a per-template checklist item is one a new
+page eventually misses. Each snippet gets a single tab link naming its
+language, with the copy button in the same bar. This runs after
+highlightAll() so `pre.textContent` copies the plain code, not Prism's
+`<span class="token">` wrapper markup.
 {% endcomment %}
 <script src="{% static 'showcase/js/vendor/prism/prism-core.min.js' %}"></script>
 <script src="{% static 'showcase/js/vendor/prism/prism-markup-templating.min.js' %}"></script>
@@ -41,15 +43,40 @@ Prism's `<span class="token">` wrapper markup.
 
     var docCodeCopyTemplate = document.getElementById('doc-code-copy-template')
     if (docCodeCopyTemplate) {
+        var langLabels = {
+            django: 'HTML',
+            python: 'Python',
+            css: 'CSS',
+            javascript: 'JavaScript',
+            bash: 'Bash'
+        }
         document.querySelectorAll('pre.doc-code').forEach(function (pre) {
+            var code = pre.querySelector('code')
+            var lang = ''
+            if (code) {
+                var match = code.className.match(/language-([\w-]+)/) || []
+                lang = match[1] || ''
+            }
+            var label = langLabels[lang] || (lang ? lang.charAt(0).toUpperCase() + lang.slice(1) : 'Code')
+
             var wrap = document.createElement('div')
             wrap.className = 'doc-code-wrap'
             pre.replaceWith(wrap)
-            wrap.appendChild(pre)
+
+            // One language tab per snippet, with the copy button in the same bar.
+            var tabs = document.createElement('div')
+            tabs.className = 'doc-code-tabs'
+            var tab = document.createElement('span')
+            tab.className = 'doc-code-tab'
+            tab.textContent = label
+            tabs.appendChild(tab)
 
             var button = docCodeCopyTemplate.content.firstElementChild.cloneNode(true)
             button.dataset.copy = pre.textContent
-            wrap.appendChild(button)
+            tabs.appendChild(button)
+
+            wrap.appendChild(tabs)
+            wrap.appendChild(pre)
         })
     }
 </script>
