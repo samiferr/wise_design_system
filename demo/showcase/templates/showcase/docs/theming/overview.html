@@ -47,7 +47,10 @@
         See <a class="text-action-600 underline" href="{% url 'docs_theming_design_tokens' %}">Design
         Tokens</a> for radius/shadow/background in depth. All six are one settings panel — see
         <code>wise_core/components/_settings_panel.html</code>, opened from the icon next to the
-        brand in this site's own sidebar and the demo app's.
+        brand in this site's own sidebar and the demo app's. Its <strong>Copy tokens</strong> tab
+        turns whatever combination you land on into a paste-ready <code>&lt;html data-*&gt;</code>
+        line plus the resolved <code>:root { --token: value; }</code> block behind it, via one
+        <code>.copy-button</code>.
     </p>
 
     <h2 class="mt-8">Try it</h2>

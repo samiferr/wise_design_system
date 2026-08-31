@@ -135,6 +135,13 @@ and `wise_core/components/_settings_panel.html` is a ready-made drawer UI for al
 `wise_core/base.html`'s default authenticated chrome (sidebar + mobile topbar), so any project
 pulling in `wise_core` gets it for free.
 
+The panel has two tabs: **Settings** (the controls above) and **Copy tokens**, which renders the
+exact combination currently selected — the `<html data-*>` attribute line to reproduce it at
+runtime, and the resolved `:root { --token: value; }` block behind it (a curated subset — brand/
+action colors, page/panel/surface, radius, `--shadow-card`, control heights — not the full
+`@theme`) — behind one `.copy-button`. See `wiseBuildTokenExport()` in `common.js` if you need to
+change which tokens it exports.
+
 | Attribute | Values | Retunes |
 |---|---|---|
 | `data-theme` | `light` (default), `dark` | Neutral ramp, surfaces, shadows, on-colors |

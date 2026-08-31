@@ -1,12 +1,25 @@
 {% load wise_icons i18n %}
 {% comment %}
-Live design-token settings drawer. Every control below calls one of the
-wiseSet*() helpers in common.js, each of which writes one `data-*` attribute
-on <html> and persists it to localStorage - see the axis list at the top of
-tokens.css. Nothing here talks to the server: the whole panel works with
-zero backend support, which is what makes it safe to ship in every project
-that pulls in wise_core (open it with wiseOpenDrawer('wise-settings-drawer'),
-normally via _settings_toggle.html).
+Live design-token settings drawer, two tabs:
+
+  - Settings: every control calls one of the wiseSet*() helpers in
+    common.js, each of which writes one `data-*` attribute on <html> and
+    persists it to localStorage - see the axis list at the top of
+    tokens.css.
+  - Copy tokens: read-only. wiseRefreshTokenExport() (common.js) reads back
+    the resolved value of a curated set of custom properties plus whichever
+    `data-*` attributes are currently set, so the *exact* combination
+    chosen on the Settings tab can be copied out - as the attribute line to
+    reproduce it at runtime, or the resolved values to bake it in
+    permanently.
+
+Nothing here talks to the server: the whole panel works with zero backend
+support, which is what makes it safe to ship in every project that pulls in
+wise_core (open it with wiseOpenDrawer('wise-settings-drawer'), normally via
+_settings_toggle.html). The tab switch itself is plain JS rather than the
+one-URL-per-tab pattern the Tab Group doc page recommends for real pages -
+this is a floating, ephemeral panel, not page content, so there's no URL to
+give it.
 
 Include this once per page - wise_core/base.html's default `modal` block
 already does, so most pages get it for free. Override that block (or this
@@ -20,78 +33,113 @@ one) to opt out.
             {% lucide "x" size=16 %}
         </button>
     </div>
-    <div class="drawer-body space-y-6">
-        <p class="text-xs text-gray-600">
-            {% trans "Every control here flips one design token at runtime - no reload, no server round-trip. Your choices are remembered on this device." %}
-        </p>
 
-        <div>
-            <div class="form-label mb-2">{% trans "Theme" %}</div>
-            <div class="flex flex-wrap gap-2">
-                <button type="button" class="btn btn-secondary" onclick="wiseSetTheme('light')">{% lucide "zap" size=15 %}<span>{% trans "Light" %}</span></button>
-                <button type="button" class="btn btn-secondary" onclick="wiseSetTheme('dark')">{% lucide "star" size=15 %}<span>{% trans "Dark" %}</span></button>
-            </div>
-        </div>
-
-        <div>
-            <div class="form-label mb-2">{% trans "Palette" %}</div>
-            <div class="flex flex-wrap gap-2">
-                <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('')">{% trans "Green" %}</button>
-                <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('blue')">{% trans "Blue" %}</button>
-                <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('violet')">{% trans "Violet" %}</button>
-                <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('amber')">{% trans "Amber" %}</button>
-            </div>
-        </div>
-
-        <div>
-            <div class="form-label mb-2">{% trans "Density" %}</div>
-            <div class="flex flex-wrap gap-2">
-                <button type="button" class="btn btn-secondary" onclick="wiseSetDensity('')">{% trans "Comfortable" %}</button>
-                <button type="button" class="btn btn-secondary" onclick="wiseSetDensity('compact')">{% trans "Compact" %}</button>
-            </div>
-        </div>
-
-        <div>
-            <div class="form-label mb-2">{% trans "Corner radius" %}</div>
-            <div class="flex flex-wrap gap-2">
-                <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('')">{% trans "Sharp" %}</button>
-                <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('soft')">{% trans "Soft" %}</button>
-                <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('round')">{% trans "Round" %}</button>
-            </div>
-        </div>
-
-        <div>
-            <div class="form-label mb-2">{% trans "Card shadow" %}</div>
-            <div class="flex flex-wrap gap-2">
-                <button type="button" class="btn btn-secondary" onclick="wiseSetShadow('')">{% trans "Flat" %}</button>
-                <button type="button" class="btn btn-secondary" onclick="wiseSetShadow('soft')">{% trans "Soft" %}</button>
-                <button type="button" class="btn btn-secondary" onclick="wiseSetShadow('elevated')">{% trans "Elevated" %}</button>
-            </div>
-        </div>
-
-        <div>
-            <div class="form-label mb-2">{% trans "Background" %}</div>
-            <div class="flex flex-wrap gap-2">
-                <button type="button" class="btn btn-secondary" onclick="wiseSetBg('')">{% trans "Neutral" %}</button>
-                <button type="button" class="btn btn-secondary" onclick="wiseSetBg('warm')">{% trans "Warm" %}</button>
-                <button type="button" class="btn btn-secondary" onclick="wiseSetBg('cool')">{% trans "Cool" %}</button>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-kicker">{% trans "Live preview" %}</div>
-            <h3 class="card-title mt-1">{% trans "This card follows your settings" %}</h3>
-            <p class="card-content mt-2">{% trans "Radius, shadow and background update instantly - no reload." %}</p>
-            <div class="mt-3 flex flex-wrap items-center gap-2">
-                <button class="btn btn-primary" type="button">{% trans "Primary" %}</button>
-                <span class="badge badge-action">{% trans "Badge" %}</span>
-                <span class="tag">{% trans "Tag" %}</span>
-            </div>
-        </div>
-
-        <button type="button" class="btn btn-secondary w-full justify-center" onclick="
-            wiseSetTheme('');wiseSetPalette('');wiseSetDensity('');wiseSetRadius('');wiseSetShadow('');wiseSetBg('')">
-            {% lucide "power" size=15 %}<span>{% trans "Reset to defaults" %}</span>
+    {% comment %}
+    shrink-0: .tab-bar's own overflow-x-auto makes it a flex-basis-shrinkable
+    item once it sits directly inside .drawer's flex-col layout (an
+    overflow value other than visible zeroes a flex item's automatic
+    min-height) - without this it collapses to ~1px instead of its
+    content's height.
+    {% endcomment %}
+    <div class="tab-bar shrink-0 border-b border-divider px-5" role="tablist" aria-label="{% trans 'Design settings' %}">
+        <button type="button" id="wise-settings-tabbtn-controls" class="bar-item selected" role="tab"
+                aria-selected="true" aria-controls="wise-settings-tab-controls" onclick="wiseShowSettingsTab('controls')">
+            {% trans "Settings" %}
         </button>
+        <button type="button" id="wise-settings-tabbtn-tokens" class="bar-item" role="tab"
+                aria-selected="false" aria-controls="wise-settings-tab-tokens" onclick="wiseShowSettingsTab('tokens')">
+            {% trans "Copy tokens" %}
+        </button>
+    </div>
+
+    <div class="drawer-body">
+        <div id="wise-settings-tab-controls" class="space-y-6">
+            <p class="text-xs text-gray-600">
+                {% trans "Every control here flips one design token at runtime - no reload, no server round-trip. Your choices are remembered on this device." %}
+            </p>
+
+            <div>
+                <div class="form-label mb-2">{% trans "Theme" %}</div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetTheme('light')">{% lucide "zap" size=15 %}<span>{% trans "Light" %}</span></button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetTheme('dark')">{% lucide "star" size=15 %}<span>{% trans "Dark" %}</span></button>
+                </div>
+            </div>
+
+            <div>
+                <div class="form-label mb-2">{% trans "Palette" %}</div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('')">{% trans "Green" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('blue')">{% trans "Blue" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('violet')">{% trans "Violet" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('amber')">{% trans "Amber" %}</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="form-label mb-2">{% trans "Density" %}</div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetDensity('')">{% trans "Comfortable" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetDensity('compact')">{% trans "Compact" %}</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="form-label mb-2">{% trans "Corner radius" %}</div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('')">{% trans "Sharp" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('soft')">{% trans "Soft" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('round')">{% trans "Round" %}</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="form-label mb-2">{% trans "Card shadow" %}</div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetShadow('')">{% trans "Flat" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetShadow('soft')">{% trans "Soft" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetShadow('elevated')">{% trans "Elevated" %}</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="form-label mb-2">{% trans "Background" %}</div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetBg('')">{% trans "Neutral" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetBg('warm')">{% trans "Warm" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetBg('cool')">{% trans "Cool" %}</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-kicker">{% trans "Live preview" %}</div>
+                <h3 class="card-title mt-1">{% trans "This card follows your settings" %}</h3>
+                <p class="card-content mt-2">{% trans "Radius, shadow and background update instantly - no reload." %}</p>
+                <div class="mt-3 flex flex-wrap items-center gap-2">
+                    <button class="btn btn-primary" type="button">{% trans "Primary" %}</button>
+                    <span class="badge badge-action">{% trans "Badge" %}</span>
+                    <span class="tag">{% trans "Tag" %}</span>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-secondary w-full justify-center" onclick="
+                wiseSetTheme('');wiseSetPalette('');wiseSetDensity('');wiseSetRadius('');wiseSetShadow('');wiseSetBg('')">
+                {% lucide "power" size=15 %}<span>{% trans "Reset to defaults" %}</span>
+            </button>
+        </div>
+
+        <div id="wise-settings-tab-tokens" class="hidden space-y-4">
+            <p class="text-xs text-gray-600">
+                {% trans "The exact combination chosen on the Settings tab: the attribute line to switch to it at runtime, and the resolved values below to bake it in permanently." %}
+            </p>
+            <div class="relative">
+                <pre id="wise-token-export" class="max-h-80 overflow-auto whitespace-pre-wrap break-all bg-gray-900 p-3 pr-10 font-mono text-[11px] leading-relaxed text-gray-100" style="border-radius: var(--radius-md)"></pre>
+                <button type="button" class="btn btn-icon btn-secondary copy-button absolute right-2 top-2"
+                        data-copy-target="#wise-token-export" aria-label="{% trans 'Copy tokens' %}">
+                    <span class="copy-button-idle">{% lucide "link" size=14 %}</span>
+                    <span class="copy-button-done">{% lucide "check" size=14 %}</span>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
