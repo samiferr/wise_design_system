@@ -1256,6 +1256,46 @@
         @apply border-action-500 text-action-700;
     }
 
+    /* ── Token export panel ──────────────────────────────────────────────
+       The "Copy tokens" settings tab's read-only <pre> and its copy button.
+       Literal colors, not `bg-gray-900`/`text-gray-100`/`border-divider` -
+       the neutral ramp inverts under [data-theme="dark"] (see the ramp
+       comment above), which would flip this from a dark code panel to a
+       near-white one depending on the *site's* theme, and - since the old
+       markup colored the button with that same inverting ramp - made the
+       copy button's icon exactly the same color as its own background in
+       both themes, rendering it invisible. Fixed colors sidestep both
+       problems at once, the same fix `.doc-code` already needed. */
+    .token-export {
+        @apply max-h-80 overflow-auto whitespace-pre-wrap break-all p-3 pr-10 font-mono text-[11px] leading-relaxed;
+        background: #18181a;
+        color: #f2f2f3;
+        border-radius: var(--radius-md);
+    }
+
+    .token-export-copy {
+        @apply absolute right-2 top-2 inline-flex h-7 w-7 cursor-pointer items-center justify-center border p-0
+        transition-colors;
+        background: #18181a;
+        border-color: rgba(255, 255, 255, 0.16);
+        color: #f2f2f3;
+        border-radius: var(--radius-md);
+    }
+
+    .token-export-copy:hover {
+        background: #232327;
+    }
+
+    .token-export-copy:focus-visible {
+        outline: var(--focus-ring-width) solid var(--color-action-500);
+        outline-offset: var(--focus-ring-offset);
+    }
+
+    .token-export-copy.is-copied {
+        border-color: #34d17a;
+        color: #34d17a;
+    }
+
     /* ── Dropdown ────────────────────────────────────────────────────────
        Positioning only - toggling is one line of JS (wiseToggleDropdown) or
        a <details> wrapper if you'd rather not use any. */
