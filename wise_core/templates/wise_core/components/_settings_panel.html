@@ -133,8 +133,8 @@ one) to opt out.
                 {% trans "The exact combination chosen on the Settings tab: the attribute line to switch to it at runtime, and the resolved values below to bake it in permanently." %}
             </p>
             <div class="relative">
-                <pre id="wise-token-export" class="max-h-80 overflow-auto whitespace-pre-wrap break-all bg-gray-900 p-3 pr-10 font-mono text-[11px] leading-relaxed text-gray-100" style="border-radius: var(--radius-md)"></pre>
-                <button type="button" class="btn btn-icon btn-secondary copy-button absolute right-2 top-2"
+                <pre id="wise-token-export" class="token-export"></pre>
+                <button type="button" class="copy-button token-export-copy"
                         data-copy-target="#wise-token-export" aria-label="{% trans 'Copy tokens' %}">
                     <span class="copy-button-idle">{% lucide "link" size=14 %}</span>
                     <span class="copy-button-done">{% lucide "check" size=14 %}</span>

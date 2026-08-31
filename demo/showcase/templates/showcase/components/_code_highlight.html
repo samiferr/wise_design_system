@@ -1,0 +1,55 @@
+{% load static wise_icons i18n %}
+{% comment %}
+Syntax highlighting and copy buttons for every `.doc-code` block on the page.
+Shared by the docs shell (showcase/docs/_base.html) and the marketing home
+page (showcase/marketing/_base.html), which both show `.doc-code` examples,
+so the setup lives in one include instead of two copies drifting apart.
+
+Prism.js (vendored - see static/showcase/js/vendor/prism/NOTICE.md) supplies
+the `.token` spans `.doc-code`'s CSS colors in demo/static_src/input.css.
+highlightAll() walks the DOM for text content regardless of which
+.doc-example tab panel is currently hidden, so a code panel is fully
+highlighted even before its tab is ever clicked. Load order matters:
+markup-templating and clike are grammars the later ones (django, javascript)
+extend or hook into, so they load first.
+
+The copy button is added here, once, for every `.doc-code` block on the
+page rather than by hand in each doc template - with 70+ examples across the
+site, a per-template checklist item is one a new page eventually misses.
+It runs after highlightAll() so `pre.textContent` copies the plain code, not
+Prism's `<span class="token">` wrapper markup.
+{% endcomment %}
+<script src="{% static 'showcase/js/vendor/prism/prism-core.min.js' %}"></script>
+<script src="{% static 'showcase/js/vendor/prism/prism-markup-templating.min.js' %}"></script>
+<script src="{% static 'showcase/js/vendor/prism/prism-markup.min.js' %}"></script>
+<script src="{% static 'showcase/js/vendor/prism/prism-clike.min.js' %}"></script>
+<script src="{% static 'showcase/js/vendor/prism/prism-django.min.js' %}"></script>
+<script src="{% static 'showcase/js/vendor/prism/prism-css.min.js' %}"></script>
+<script src="{% static 'showcase/js/vendor/prism/prism-javascript.min.js' %}"></script>
+<script src="{% static 'showcase/js/vendor/prism/prism-python.min.js' %}"></script>
+<script src="{% static 'showcase/js/vendor/prism/prism-bash.min.js' %}"></script>
+
+<template id="doc-code-copy-template">
+    <button type="button" class="copy-button doc-code-copy" aria-label="{% trans 'Copy code' %}">
+        <span class="copy-button-idle">{% lucide "link" size=14 %}</span>
+        <span class="copy-button-done">{% lucide "check" size=14 %}</span>
+    </button>
+</template>
+
+<script>
+    Prism.highlightAll()
+
+    var docCodeCopyTemplate = document.getElementById('doc-code-copy-template')
+    if (docCodeCopyTemplate) {
+        document.querySelectorAll('pre.doc-code').forEach(function (pre) {
+            var wrap = document.createElement('div')
+            wrap.className = 'doc-code-wrap'
+            pre.replaceWith(wrap)
+            wrap.appendChild(pre)
+
+            var button = docCodeCopyTemplate.content.firstElementChild.cloneNode(true)
+            button.dataset.copy = pre.textContent
+            wrap.appendChild(button)
+        })
+    }
+</script>
