@@ -1,11 +1,12 @@
 {% extends 'showcase/docs/_base.html' %}
-{% load wise_icons %}
+{% load static wise_icons wise_charts %}
 {% block doc_title_tag %}Sparkline{% endblock %}
 {% block doc_section %}Data Viz{% endblock %}
 {% block doc_title %}Sparkline{% endblock %}
 {% block doc_intro %}
     A word-sized trend line with no axes, labels or gridlines — meant to sit inline, in a table cell
-    or beside a number, where a full chart would be too much.
+    or beside a number, where a full chart would be too much. Still a real Chart.js line chart, just
+    with every affordance except the line itself turned off.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
@@ -18,22 +19,22 @@
     </div>
     <div class="doc-example-panel-preview">
         <div class="doc-preview max-w-xs">
-        <svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:2.5rem">
-            <polyline class="chart-series-line" points="{{ sparkline }}"/>
-        </svg>
+        <div class="chart-frame" style="height:2.5rem">
+            <canvas class="chart-canvas" data-chart="{% chart_json revenue_sparkline %}"></canvas>
+        </div>
     </div>
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_charts %}
 
-<svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:2.5rem">
-    <polyline class="chart-series-line" points="{% chart_polyline revenue 100 30 3 %}"/>
-</svg>{% endverbatim %}{% endfilter %}</code></pre>
+<div class="chart-frame" style="height:2.5rem">
+    <canvas class="chart-canvas" data-chart="{% chart_json revenue_sparkline %}"></canvas>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
     <p class="mt-2 text-gray-700">
-        This is the one chart where the template tag is usually the right call — a single element,
-        one series, nothing else to share.
+        <code>charts.sparkline_chart(values)</code> is a one-liner - axes, legend and tooltip are
+        already off, so the view has nothing else to configure.
     </p>
 
     <h2 class="mt-8">In a stat tile</h2>
@@ -41,20 +42,21 @@
         <div class="card">
             <div class="card-kicker">Revenue</div>
             <div class="mt-1 font-heading text-3xl font-semibold">£66k</div>
-            <svg class="chart-svg mt-2" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:2rem">
-                <polyline class="chart-series-line" points="{{ sparkline }}"/>
-            </svg>
+            <div class="chart-frame mt-2" style="height:2rem">
+                <canvas class="chart-canvas" data-chart="{% chart_json revenue_sparkline %}"></canvas>
+            </div>
             <div class="card-meta mt-2">{% lucide "activity" size=13 %} last 6 months</div>
         </div>
         <div class="card">
             <div class="card-kicker">Orders</div>
             <div class="mt-1 font-heading text-3xl font-semibold">1,284</div>
-            <svg class="chart-svg mt-2" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:2rem">
-                <polyline class="chart-series-line" points="{{ sparkline }}" style="stroke:var(--color-warning-400)"/>
-            </svg>
+            <div class="chart-frame mt-2" style="height:2rem">
+                <canvas class="chart-canvas" data-chart="{% chart_json orders_sparkline %}"></canvas>
+            </div>
             <div class="card-meta mt-2">{% lucide "activity" size=13 %} last 6 months</div>
         </div>
     </div>
+    <pre class="doc-code mt-4"><code class="language-python">{% filter force_escape %}{% verbatim %}context["orders_sparkline"] = charts.sparkline_chart(orders, color="var(--color-warning-400)"){% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">In a table cell</h2>
     <div class="doc-example">
@@ -71,11 +73,11 @@
             <tbody>
                 <tr>
                     <td>USB-C hub</td><td>412</td>
-                    <td><svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:1.5rem"><polyline class="chart-series-line" points="{{ sparkline }}"/></svg></td>
+                    <td><div class="chart-frame" style="height:1.5rem"><canvas class="chart-canvas" data-chart="{% chart_json revenue_sparkline %}"></canvas></div></td>
                 </tr>
                 <tr>
                     <td>Standing desk</td><td>38</td>
-                    <td><svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:1.5rem"><polyline class="chart-series-line" points="0,4 20,10 40,8 60,18 80,22 100,26" style="stroke:var(--color-accent-500)"/></svg></td>
+                    <td><div class="chart-frame" style="height:1.5rem"><canvas class="chart-canvas" data-chart="{% chart_json stock_sparkline %}"></canvas></div></td>
                 </tr>
             </tbody>
         </table>
@@ -83,9 +85,9 @@
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<td class="w-32">
-    <svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:1.5rem">
-        <polyline class="chart-series-line" points="{% chart_polyline product.stock_history 100 30 3 %}"/>
-    </svg>
+    <div class="chart-frame" style="height:1.5rem">
+        <canvas class="chart-canvas" data-chart="{% chart_json product.stock_sparkline %}"></canvas>
+    </div>
 </td>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
@@ -96,8 +98,8 @@
         <div>
             Each sparkline is scaled to its own range, so two of them side by side are <em>not</em>
             comparable — a line that climbs steeply may be moving by three units. Always show the
-            actual number next to it, and pass explicit <code>minimum</code>/<code>maximum</code> if
-            rows must be compared.
+            actual number next to it, and pass a shared <code>scales</code> override if rows must be
+            compared.
         </div>
     </div>
 
@@ -106,9 +108,14 @@
         <table class="doc-props w-full">
             <thead><tr><th>API</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td><code>{% templatetag openblock %} chart_polyline values width height padding {% templatetag closeblock %}</code></td><td>The <code>points</code> string.</td></tr>
-                <tr><td><code>preserveAspectRatio="none"</code></td><td>Lets the line stretch to the cell's width.</td></tr>
+                <tr><td><code>charts.sparkline_chart(values, color)</code></td><td>A minimal Chart.js line config - no axes, legend or tooltip.</td></tr>
+                <tr><td><code>chart-frame</code></td><td>The sizing anchor - give <em>this</em> the explicit <code>height</code>, never the canvas.</td></tr>
             </tbody>
         </table>
     </div>
+{% endblock %}
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'wise_core/js/chart.umd.min.js' %}"></script>
+    <script src="{% static 'wise_core/js/charts.js' %}"></script>
 {% endblock %}

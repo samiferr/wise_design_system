@@ -1,5 +1,5 @@
 {% extends 'showcase/docs/_base.html' %}
-{% load wise_icons %}
+{% load static wise_icons wise_charts %}
 {% block doc_title_tag %}Radar Chart{% endblock %}
 {% block doc_section %}Data Viz{% endblock %}
 {% block doc_title %}Radar Chart{% endblock %}
@@ -17,57 +17,41 @@
         <label class="doc-example-tab" for="ex21-code">Code</label>
     </div>
     <div class="doc-example-panel-preview">
-        <div class="doc-preview flex flex-wrap items-center gap-8">
-        <svg class="chart-svg" viewBox="0 0 100 100" style="width:220px;height:220px" role="img" aria-label="Score profile">
-            {% for ring in radar_rings %}<polygon class="chart-grid-line" points="{{ ring }}" fill="none"/>{% endfor %}
-            {% for axis in radar_axes %}<line class="chart-grid-line" x1="50" y1="50" x2="{{ axis.x }}" y2="{{ axis.y }}"/>{% endfor %}
-            <polygon points="{{ radar_points }}" fill="var(--color-action-600)" fill-opacity="0.22" stroke="var(--color-action-600)" stroke-width="2" stroke-linejoin="round"/>
-            {% for axis in radar_axes %}<text class="chart-axis-label" x="{{ axis.label_x }}" y="{{ axis.label_y }}" text-anchor="middle" dominant-baseline="middle">{{ months|slice:forloop.counter0 }}</text>{% endfor %}
-        </svg>
-        <div class="text-sm text-gray-600">Six axes, three guide rings.</div>
+        <div class="doc-preview">
+        <div class="chart-frame" style="height:280px;max-width:420px">
+            <canvas class="chart-canvas" data-chart="{% chart_json revenue_radar %}"
+                    role="img" aria-label="Revenue profile across the year"></canvas>
+        </div>
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}# views.py
-context.update({
-    "radar_points": charts.radar(scores),
-    "radar_axes": charts.radar_axes(len(scores)),
-    "radar_rings": charts.radar_rings(3, spokes=len(scores)),
-}){% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# views.py
+context["revenue_radar"] = charts.radar_chart(
+    months, [charts.dataset("Revenue", revenue, fill=True)],
+){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:220px;height:220px">
-    {# guide rings, then spokes, then the series on top #}
-    {% for ring in radar_rings %}
-        <polygon class="chart-grid-line" points="{{ ring }}" fill="none"/>
-    {% endfor %}
-    {% for axis in radar_axes %}
-        <line class="chart-grid-line" x1="50" y1="50" x2="{{ axis.x }}" y2="{{ axis.y }}"/>
-    {% endfor %}
-    <polygon points="{{ radar_points }}"
-             fill="var(--color-action-600)" fill-opacity="0.22"
-             stroke="var(--color-action-600)" stroke-width="2" stroke-linejoin="round"/>
-</svg>{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="chart-frame" style="height:280px">
+    <canvas class="chart-canvas" data-chart="{% chart_json revenue_radar %}"></canvas>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Zero baseline by default</h2>
     <p class="text-gray-700">
-        <code>charts.radar()</code> scales from <strong>0</strong>, not from the series minimum. A
-        radar chart is read as "how full is each spoke", so anchoring to the smallest value would draw
-        the weakest axis as empty no matter how high the actual score was.
+        <code>charts.radar_chart()</code> sets the radial scale's <code>beginAtZero</code>, so it
+        scales from <strong>0</strong>, not from the series minimum. A radar chart is read as "how
+        full is each spoke", so anchoring to the smallest value would draw the weakest axis as empty
+        no matter how high the actual score was.
     </p>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}charts.radar(scores)                    # 0 .. max(scores)
-charts.radar(scores, maximum=10)        # fixed 0..10 scale - use this to
-                                        # compare two subjects fairly{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Two series</h2>
     <p class="text-gray-700">
-        Overlay a second polygon with a different colour and a low fill opacity. Two is the practical
-        limit — three overlapping shapes stop being readable.
+        Give <code>radar_chart()</code> a second dataset to overlay a second shape. Two is the
+        practical limit — three overlapping shapes stop being readable.
     </p>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<polygon points="{{ before_points }}" fill="var(--color-gray-500)" fill-opacity="0.15"
-         stroke="var(--color-gray-500)" stroke-width="1.5"/>
-<polygon points="{{ after_points }}" fill="var(--color-action-600)" fill-opacity="0.22"
-         stroke="var(--color-action-600)" stroke-width="2"/>{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}charts.radar_chart(dimensions, [
+    charts.dataset("Before", before_scores, index=5, fill=False),
+    charts.dataset("After", after_scores, index=0, fill=True),
+], plugins={"legend": {"display": True}}){% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Limits</h2>
     <div class="callout callout-warning mt-4">
@@ -85,10 +69,14 @@ charts.radar(scores, maximum=10)        # fixed 0..10 scale - use this to
         <table class="doc-props w-full">
             <thead><tr><th>API</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td><code>charts.radar(values, cx, cy, radius, minimum, maximum)</code></td><td>The series polygon's <code>points</code>.</td></tr>
-                <tr><td><code>charts.radar_axes(count, ...)</code></td><td>Spoke ends plus label positions.</td></tr>
-                <tr><td><code>charts.radar_rings(count, ..., spokes)</code></td><td>Concentric guide polygons.</td></tr>
+                <tr><td><code>charts.radar_chart(labels, datasets, **options)</code></td><td>A Chart.js <code>type: "radar"</code> config, zero-based by default.</td></tr>
+                <tr><td><code>charts.dataset(label, data, index, color, fill)</code></td><td>One shape; <code>fill=True</code> tints the enclosed area.</td></tr>
             </tbody>
         </table>
     </div>
+{% endblock %}
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'wise_core/js/chart.umd.min.js' %}"></script>
+    <script src="{% static 'wise_core/js/charts.js' %}"></script>
 {% endblock %}

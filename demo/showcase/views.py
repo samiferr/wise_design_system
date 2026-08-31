@@ -50,38 +50,45 @@ def _tree_context():
 # numbers and the reader can compare how each chart type reads them.
 MONTHS = ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']
 REVENUE = [42, 58, 35, 74, 91, 66]
+STOCK_TREND = [96, 80, 84, 64, 56, 48]
+PRICE_VS_UNITS = [(1, 12), (2, 30), (3, 22), (4, 48), (5, 41), (6, 66), (7, 58)]
+PRICE_VS_UNITS_BY_REVENUE = [(1, 12, 3), (2, 30, 9), (3, 22, 5), (4, 48, 14), (5, 41, 7), (6, 66, 20)]
 
 
 def _chart_context():
     """
-    Chart geometry computed in the view.
+    Chart.js configs computed in the view.
 
-    This is the pattern the Data Viz pages recommend over the template tags:
-    the same series feeds several elements (a line, its area fill, its points
-    and its axis labels), so it is worth computing once.
+    This is the pattern the Data Viz pages recommend over building a config
+    inline in the template: the config is one plain dict, easiest to shape
+    where the rest of the page's data already lives.
     """
     return {
         'months': MONTHS,
         'revenue': REVENUE,
-        'revenue_pairs': list(zip(MONTHS, charts.percentages(REVENUE))),
-        'revenue_line': charts.polyline(REVENUE, 300, 120, padding=6),
-        'revenue_area': charts.area_path(REVENUE, 300, 120, padding=6),
-        'revenue_points': charts.points(REVENUE, 300, 120, padding=6),
-        'grid_lines': charts.grid_lines(4, 300, 120, 6),
-        'pie_slices': charts.pie(REVENUE[:4], MONTHS[:4]),
-        'doughnut_slices': charts.doughnut(REVENUE[:4], MONTHS[:4]),
-        'polar_slices': charts.polar_area(REVENUE, MONTHS),
-        'radar_points': charts.radar(REVENUE),
-        'radar_axes': charts.radar_axes(len(REVENUE)),
-        'radar_rings': charts.radar_rings(3, spokes=len(REVENUE)),
-        'scatter_points': charts.scatter(
-            [(1, 12), (2, 30), (3, 22), (4, 48), (5, 41), (6, 66), (7, 58)], 300, 140,
+        'revenue_bar': charts.bar_chart(MONTHS, [charts.dataset('Revenue', REVENUE)]),
+        'revenue_bar_warning': charts.bar_chart(
+            MONTHS, [charts.dataset('Revenue', REVENUE, color='var(--color-warning-400)')],
         ),
-        'bubble_points': charts.bubbles(
-            [(1, 12, 3), (2, 30, 9), (3, 22, 5), (4, 48, 14), (5, 41, 7), (6, 66, 20)],
-            300, 140, max_radius=18,
+        'revenue_line': charts.line_chart(MONTHS, [charts.dataset('Revenue', REVENUE, fill=True)]),
+        'revenue_sparkline': charts.sparkline_chart(REVENUE),
+        'orders_sparkline': charts.sparkline_chart(REVENUE, color='var(--color-warning-400)'),
+        'stock_sparkline': charts.sparkline_chart(STOCK_TREND, color='var(--color-accent-500)'),
+        'revenue_pie': charts.pie_chart(MONTHS[:4], REVENUE[:4]),
+        'revenue_doughnut': charts.doughnut_chart(MONTHS[:4], REVENUE[:4]),
+        'revenue_total': sum(REVENUE[:4]),
+        'revenue_polar': charts.polar_area_chart(MONTHS, REVENUE),
+        'revenue_radar': charts.radar_chart(MONTHS, [charts.dataset('Revenue', REVENUE, fill=True)]),
+        'price_scatter': charts.scatter_chart(
+            [charts.dataset('Price vs units sold', charts.scatter_points(PRICE_VS_UNITS))],
         ),
-        'sparkline': charts.polyline(REVENUE, 100, 30, padding=3),
+        'price_bubble': charts.bubble_chart(
+            [charts.dataset(
+                'Price vs units, sized by revenue',
+                charts.bubble_points(PRICE_VS_UNITS_BY_REVENUE, max_radius=18),
+                fill=True, fill_alpha=0.55,
+            )],
+        ),
         'ring': charts.progress_ring(68),
     }
 
