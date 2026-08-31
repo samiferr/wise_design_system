@@ -132,6 +132,63 @@ function wiseToggleTheme() {
     wiseSetTheme(current === 'dark' ? 'light' : 'dark')
 }
 
+// ── Settings panel: "Copy tokens" tab ───────────────────────────────────────
+// Reads back the *resolved* value of a curated set of custom properties
+// (not the full @theme block - that's 150+ vars, most of them irrelevant to
+// a quick copy/paste) plus whichever data-* axis attributes are actually set
+// on <html>, so a developer can lift the exact combination chosen on the
+// Settings tab out of the live page instead of re-deriving it from
+// tokens.css by hand.
+
+var WISE_EXPORT_TOKENS = [
+    '--color-brand-500', '--color-brand-600', '--color-brand-700',
+    '--color-action-500', '--color-action-600', '--color-on-action', '--color-on-brand',
+    '--color-page', '--color-panel', '--color-panel-alt', '--color-surface', '--color-divider',
+    '--color-gray-500', '--color-gray-900',
+    '--radius-sm', '--radius-md', '--radius-lg', '--radius-xl',
+    '--shadow-card',
+    '--control-height-sm', '--control-height-md', '--control-height-lg', '--control-padding-y',
+]
+
+function wiseBuildTokenExport() {
+    var root = document.documentElement
+    var attrs = ['theme', 'palette', 'density', 'radius', 'shadow', 'bg']
+        .map(function (key) {
+            var value = root.getAttribute('data-' + key)
+            return value ? 'data-' + key + '="' + value + '"' : null
+        })
+        .filter(Boolean)
+        .join(' ')
+
+    var style = getComputedStyle(root)
+    var lines = WISE_EXPORT_TOKENS.map(function (name) {
+        return '    ' + name + ': ' + style.getPropertyValue(name).trim() + ';'
+    })
+
+    return (attrs ? '<html ' + attrs + '>' : '<html> (all defaults)') +
+        '\n\n:root {\n' + lines.join('\n') + '\n}'
+}
+
+function wiseRefreshTokenExport() {
+    var el = document.getElementById('wise-token-export')
+    if (el) el.textContent = wiseBuildTokenExport()
+}
+
+function wiseShowSettingsTab(tab) {
+    var showTokens = tab === 'tokens'
+    var panels = {controls: !showTokens, tokens: showTokens}
+    Object.keys(panels).forEach(function (name) {
+        var panel = document.getElementById('wise-settings-tab-' + name)
+        var tabButton = document.getElementById('wise-settings-tabbtn-' + name)
+        if (panel) panel.classList.toggle('hidden', !panels[name])
+        if (tabButton) {
+            tabButton.classList.toggle('selected', panels[name])
+            tabButton.setAttribute('aria-selected', String(panels[name]))
+        }
+    })
+    if (showTokens) wiseRefreshTokenExport()
+}
+
 // ── Copy button ────────────────────────────────────────────────────────────
 // One delegated listener, so buttons rendered later (in a drawer, a dialog, an
 // HTMX swap) work with no re-binding.
