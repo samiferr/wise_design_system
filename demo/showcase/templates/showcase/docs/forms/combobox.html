@@ -28,7 +28,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.widgets import ComboboxInput
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}from wise_core.widgets import ComboboxInput
 
 country = forms.CharField(
     widget=ComboboxInput(choices=["Belgium", "Brazil", "Canada", "France"]),
@@ -38,7 +38,7 @@ country = forms.CharField(
 </div>
 
     <h2 class="mt-8">The markup it emits</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="text" name="country" list="id_country_list" id="id_country">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<input class="input" type="text" name="country" list="id_country_list" id="id_country">
 <datalist id="id_country_list">
     <option value="Belgium"></option>
     <option value="Brazil"></option>
@@ -88,7 +88,7 @@ country = forms.CharField(
         Fine for a bounded list — existing tag names, say. Above a few hundred options, inlining them
         into every page render stops being reasonable; switch to Autocomplete.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ProductForm(forms.ModelForm):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class ProductForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["supplier"].widget = ComboboxInput(

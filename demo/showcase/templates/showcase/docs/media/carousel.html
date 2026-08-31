@@ -46,7 +46,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="carousel">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="carousel">
     <div class="carousel-track">
         {% for photo in product.photos.all %}
             <div class="carousel-item" id="photo_{{ photo.pk }}">
@@ -89,7 +89,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="carousel-track gap-3">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="carousel-track gap-3">
     {% for product in featured %}
         <div class="carousel-item w-40">…</div>
     {% endfor %}

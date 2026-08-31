@@ -28,7 +28,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="aspect-video-frame">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="aspect-video-frame">
     <video controls preload="metadata" poster="{{ clip.poster.url }}">
         <source src="{{ clip.file.url }}" type="video/mp4">
         <track kind="captions" src="{{ clip.captions.url }}" srclang="en" label="English" default>
@@ -38,7 +38,7 @@
 </div>
 
     <h2 class="mt-8">Embedded player</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="aspect-video-frame">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="aspect-video-frame">
     <iframe src="https://player.example.com/embed/{{ clip.external_id }}"
             title="{{ clip.title }}" allowfullscreen loading="lazy"></iframe>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
@@ -48,7 +48,7 @@
     </p>
 
     <h2 class="mt-8">Other ratios</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<!-- the class is 16/9; override for anything else -->
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<!-- the class is 16/9; override for anything else -->
 <div class="aspect-video-frame" style="aspect-ratio: 4 / 3">…</div>
 <div class="aspect-video-frame" style="aspect-ratio: 1 / 1">…</div>{% endverbatim %}{% endfilter %}</code></pre>
 
@@ -75,7 +75,7 @@
     </div>
 
     <h2 class="mt-8">Serving uploads</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class Clip(models.Model):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class Clip(models.Model):
     file = models.FileField(upload_to="clips/")
     poster = models.ImageField(upload_to="clips/posters/", blank=True)
 

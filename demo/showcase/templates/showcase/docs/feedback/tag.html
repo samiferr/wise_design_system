@@ -25,7 +25,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="tag">design</span>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<span class="tag">design</span>
 <span class="tag tag-action">{% lucide "star" size=12 %}featured</span>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
@@ -46,7 +46,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="tag">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<span class="tag">
     {{ tag.name }}
     <button class="tag-remove" aria-label="Remove {{ tag.name }}">{% lucide "x" size=12 %}</button>
 </span>{% endverbatim %}{% endfilter %}</code></pre>
@@ -60,7 +60,7 @@
 
     <h2 class="mt-8">Removing server-side</h2>
     <p class="text-gray-700">A removal changes data, so it should be a POST rather than a link:</p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% for tag in product.tags.all %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% for tag in product.tags.all %}
     <span class="tag">
         {{ tag.name }}
         <form method="post" action="{% url 'product_tag_remove' pk=product.pk tag=tag.pk %}">

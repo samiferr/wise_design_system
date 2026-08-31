@@ -24,7 +24,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_charts %}
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_charts %}
 
 <svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:2.5rem">
     <polyline class="chart-series-line" points="{% chart_polyline revenue 100 30 3 %}"/>
@@ -82,7 +82,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<td class="w-32">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<td class="w-32">
     <svg class="chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none" style="height:1.5rem">
         <polyline class="chart-series-line" points="{% chart_polyline product.stock_history 100 30 3 %}"/>
     </svg>

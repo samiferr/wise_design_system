@@ -31,7 +31,7 @@
         These are stock Tailwind classes, but they resolve to this system's tokens — which is why
         they theme. There is nothing to import and nothing to rename.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<!-- neutrals: the ramp inverts in dark mode -->
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<!-- neutrals: the ramp inverts in dark mode -->
 <p class="text-gray-900">Primary text</p>
 <p class="text-gray-600">Secondary text</p>
 
@@ -49,7 +49,7 @@
         A few tokens have no utility of their own — the shadows, the z-index scale, the motion and
         control-sizing values. Use the custom property in an inline style or your own CSS.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div style="box-shadow: var(--shadow-blueprint-lg)">Elevated</div>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div style="box-shadow: var(--shadow-blueprint-lg)">Elevated</div>
 <div style="z-index: var(--z-dialog)">Above the drawer</div>
 
 /* in your own stylesheet */
@@ -64,7 +64,7 @@
         so <code>hidden-print</code> is worth applying to nav chrome and action bars as you build,
         not afterwards.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="top-actions-header hidden-print">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="top-actions-header hidden-print">
     <a class="top-nav-item" href="{% url 'category_list_view' %}">Back</a>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
 

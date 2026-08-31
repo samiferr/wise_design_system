@@ -40,7 +40,7 @@
         each, and switches to the checkbox layout based on the widget's <code>input_type</code>.
         Non-field errors get a <code>.form-alert</code> banner above the stack.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<form method="post" enctype="multipart/form-data">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="form-stack">
         {% include 'wise_core/components/_form_fields.html' with form=form %}
@@ -112,7 +112,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}/* in your own CSS, name the fields that should span both columns */
+        <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}/* in your own CSS, name the fields that should span both columns */
 .form-stack-compact .form-field[data-field="notes"] { @apply col-span-2; }{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>

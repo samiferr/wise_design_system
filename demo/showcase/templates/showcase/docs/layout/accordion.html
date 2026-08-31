@@ -36,7 +36,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="accordion">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="accordion">
     <details class="accordion-item" open>
         <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}Shipping</summary>
         <div class="accordion-content">Dispatched within two working days.</div>
@@ -54,7 +54,7 @@
     </p>
 
     <h2 class="mt-8">From a queryset</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="accordion">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="accordion">
     {% for faq in faqs %}
         <details class="accordion-item" {% if forloop.first %}open{% endif %}>
             <summary>{% lucide "chevron-right" size=14 cls="accordion-chevron" %}{{ faq.question }}</summary>
@@ -90,7 +90,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<details class="accordion-item" name="faq" open>…</details>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<details class="accordion-item" name="faq" open>…</details>
 <details class="accordion-item" name="faq">…</details>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>

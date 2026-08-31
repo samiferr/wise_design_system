@@ -28,7 +28,7 @@
         toggle uses. The script only toggles a class, so there is no innerHTML rewriting and the
         button's width does not jump.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-icon btn-secondary copy-button"
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<button class="btn btn-icon btn-secondary copy-button"
         data-copy="{{ object.reference }}" aria-label="Copy reference">
     <span class="copy-button-idle">{% lucide "link" size=15 %}</span>
     <span class="copy-button-done">{% lucide "check" size=15 %}</span>
@@ -56,7 +56,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<code id="install-cmd">python manage.py migrate</code>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<code id="install-cmd">python manage.py migrate</code>
 <button class="btn btn-icon btn-secondary copy-button" data-copy-target="#install-cmd" aria-label="Copy">
     <span class="copy-button-idle">{% lucide "link" size=15 %}</span>
     <span class="copy-button-done">{% lucide "check" size=15 %}</span>
@@ -71,7 +71,7 @@
         <code>navigator.clipboard</code> needs a secure context; over plain HTTP the handler falls
         back to selecting the text so the user can copy manually.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}document.addEventListener('click', function (e) {
+    <pre class="doc-code"><code class="language-javascript">{% filter force_escape %}{% verbatim %}document.addEventListener('click', function (e) {
     var button = e.target.closest('.copy-button')
     if (!button) return
     var text = button.dataset.copy

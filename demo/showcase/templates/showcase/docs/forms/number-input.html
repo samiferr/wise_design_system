@@ -24,7 +24,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="number" value="1" min="0" max="999" step="1">{% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<input class="input" type="number" value="1" min="0" max="999" step="1">{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
 
@@ -45,7 +45,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="input-group">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="input-group">
     <input class="input" type="number" value="30" min="1">
     <span class="input-group-addon">days</span>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
@@ -71,7 +71,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}quantity = forms.IntegerField(
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}quantity = forms.IntegerField(
     min_value=0, max_value=999, initial=1,
     widget=forms.NumberInput(attrs={"step": 1}),
 ){% endverbatim %}{% endfilter %}</code></pre>
@@ -91,7 +91,7 @@
         Use <code>DecimalField</code>, never a float, and set <code>step</code> to the currency's
         smallest unit so the stepper doesn't produce unrepresentable values.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}price = forms.DecimalField(
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}price = forms.DecimalField(
     max_digits=9, decimal_places=2,
     widget=forms.NumberInput(attrs={"step": "0.01", "class": "input"}),
 ){% endverbatim %}{% endfilter %}</code></pre>

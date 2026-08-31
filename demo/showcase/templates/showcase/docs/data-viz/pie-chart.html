@@ -30,11 +30,11 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}# views.py
 context["pie_slices"] = charts.pie(revenue, labels=months){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px"
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px"
      role="img" aria-label="Revenue by month">
     {% for slice in pie_slices %}
         <path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}"/>

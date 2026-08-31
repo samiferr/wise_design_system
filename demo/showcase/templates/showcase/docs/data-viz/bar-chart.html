@@ -29,13 +29,13 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# views.py
 from wise_core import charts
 
 context["revenue_pairs"] = list(zip(months, charts.percentages(revenue))){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="bar-chart">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="bar-chart">
     {% for label, percent in revenue_pairs %}
         <div class="bar-chart-bar">
             <div class="bar-chart-bar-fill" style="--value: {{ percent }}%"></div>
@@ -50,7 +50,7 @@ context["revenue_pairs"] = list(zip(months, charts.percentages(revenue))){% endv
     </p>
 
     <h2 class="mt-8">From the template</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_charts %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_charts %}
 {% chart_percentages revenue as percents %}{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Recoloring</h2>
@@ -72,7 +72,7 @@ context["revenue_pairs"] = list(zip(months, charts.percentages(revenue))){% endv
             <code>&lt;table&gt;</code> is often the most honest fallback.
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="bar-chart" role="img"
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="bar-chart" role="img"
      aria-label="Monthly revenue: Mar 42, Apr 58, May 35, Jun 74, Jul 91, Aug 66">
     …
 </div>{% endverbatim %}{% endfilter %}</code></pre>

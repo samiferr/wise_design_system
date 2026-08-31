@@ -26,7 +26,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<label class="form-checkbox-label">
     <input class="checkbox" type="checkbox" checked>
     <span>Subscribe to updates</span>
 </label>{% endverbatim %}{% endfilter %}</code></pre>
@@ -55,7 +55,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}interests = forms.MultipleChoiceField(
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}interests = forms.MultipleChoiceField(
     required=False,
     choices=[("design", "Design"), ("code", "Code"), ("ops", "Ops")],
     widget=forms.CheckboxSelectMultiple,
@@ -87,7 +87,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}subscribe = forms.BooleanField(required=False, initial=True, label="Subscribe to updates"){% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}subscribe = forms.BooleanField(required=False, initial=True, label="Subscribe to updates"){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
     <div class="callout callout-warning mt-4">
@@ -104,7 +104,7 @@
         For a "select all" that reflects a partial selection. It is a DOM property, not an attribute,
         so it can only be set from script.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}document.querySelector('#select-all').indeterminate = someButNotAllChecked{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-javascript">{% filter force_escape %}{% verbatim %}document.querySelector('#select-all').indeterminate = someButNotAllChecked{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Reference</h2>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">

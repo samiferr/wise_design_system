@@ -30,7 +30,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<button class="btn btn-primary">Save</button>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<button class="btn btn-primary">Save</button>
 <button class="btn btn-secondary mt-0">Cancel</button>
 <span class="badge badge-green">Confirmed</span>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
@@ -43,7 +43,7 @@
         They add the context the generic templates need — the filterset, the applied-filter count,
         the success message — so a full CRUD screen is a handful of attributes.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.mixins import WiseListView, WiseCreateView
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}from wise_core.mixins import WiseListView, WiseCreateView
 
 class CategoryListView(WiseListView):
     model = Category
@@ -76,7 +76,7 @@ class CategoryCreateView(WiseCreateView):
             </tbody>
         </table>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/list_generic.html' %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/list_generic.html' %}
 {% load wise_icons %}
 
 {% block list_icon %}{% lucide "tag" size=28 cls="text-brand-600" %}{% endblock %}
@@ -98,6 +98,6 @@ class CategoryCreateView(WiseCreateView):
         <code>currentColor</code> and scale with a <code>size</code> argument. See
         <a class="text-action-600 underline" href="{% url 'docs_media_icons' %}">Media → Icons</a>.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% load wise_icons %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_icons %}
 {% lucide "search" size=16 cls="text-gray-500" %}{% endverbatim %}{% endfilter %}</code></pre>
 {% endblock %}

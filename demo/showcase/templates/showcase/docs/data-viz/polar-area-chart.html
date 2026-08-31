@@ -30,10 +30,10 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}context["polar_slices"] = charts.polar_area(revenue, labels=months){% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}context["polar_slices"] = charts.polar_area(revenue, labels=months){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:200px;height:200px">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:200px;height:200px">
     {% for slice in polar_slices %}
         <path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}" opacity="0.85"/>
     {% endfor %}
@@ -45,7 +45,7 @@
         itself. Scaling radius linearly would make a doubled value cover four times the area, which
         the eye reads as four times bigger — the classic way to overstate a difference by accident.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}radius = math.sqrt(value / max_value) * outer_radius{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}radius = math.sqrt(value / max_value) * outer_radius{% endverbatim %}{% endfilter %}</code></pre>
     <p class="mt-2 text-gray-700">
         The <a class="text-action-600 underline" href="{% url 'docs_data_viz_bubble_chart' %}">bubble chart</a>
         does the same thing for the same reason.

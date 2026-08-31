@@ -25,7 +25,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="rating">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="rating">
     {% for i in "12345"|make_list %}
         {% if forloop.counter <= object.rating %}
             {% lucide "star" size=18 cls="rating-star is-on" %}
@@ -56,7 +56,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}from wise_core.widgets import RatingInput
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}from wise_core.widgets import RatingInput
 
 rating = forms.ChoiceField(
     choices=[(i, str(i)) for i in range(1, 6)],
@@ -80,7 +80,7 @@ class Meta:
         <code>input:checked ~ label</code> matches exactly the stars visually to the left of the
         checked one.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}.rating-input {
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}.rating-input {
     @apply inline-flex flex-row-reverse items-center justify-end gap-0.5;
 }
 .rating-input input { @apply sr-only; }
@@ -100,7 +100,7 @@ class Meta:
     </div>
 
     <h2 class="mt-8">Storing it</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class Product(models.Model):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class Product(models.Model):
     rating = models.PositiveSmallIntegerField(null=True, blank=True){% endverbatim %}{% endfilter %}</code></pre>
     <p class="mt-2 text-gray-700">
         See it on a real record in the

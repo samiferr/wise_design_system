@@ -30,7 +30,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="badge badge-green">Confirmed</span>{% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<span class="badge badge-green">Confirmed</span>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
 
@@ -57,7 +57,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class Order(models.Model):
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class Order(models.Model):
     class Status(models.TextChoices):
         DRAFT = "draft", "Draft"
         PENDING = "pending", "Pending"
@@ -74,7 +74,7 @@
         }[self.status]{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<span class="badge {{ order.status_badge }}">{{ order.get_status_display }}</span>{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<span class="badge {{ order.status_badge }}">{{ order.get_status_display }}</span>{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-info mt-4">
         {% lucide "info" size=16 cls="callout-icon" %}
         <div>
@@ -102,7 +102,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<div class="btn btn-secondary btn-icon relative">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="btn btn-secondary btn-icon relative">
     {% lucide "filter" size=16 %}
     {% if filter_kwargs_count %}
         <span class="badge badge-red absolute -left-2 -top-1 shadow">{{ filter_kwargs_count }}</span>

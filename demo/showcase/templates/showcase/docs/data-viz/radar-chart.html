@@ -28,7 +28,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}# views.py
 context.update({
     "radar_points": charts.radar(scores),
     "radar_axes": charts.radar_axes(len(scores)),
@@ -36,7 +36,7 @@ context.update({
 }){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:220px;height:220px">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:220px;height:220px">
     {# guide rings, then spokes, then the series on top #}
     {% for ring in radar_rings %}
         <polygon class="chart-grid-line" points="{{ ring }}" fill="none"/>
@@ -55,7 +55,7 @@ context.update({
         radar chart is read as "how full is each spoke", so anchoring to the smallest value would draw
         the weakest axis as empty no matter how high the actual score was.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}charts.radar(scores)                    # 0 .. max(scores)
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}charts.radar(scores)                    # 0 .. max(scores)
 charts.radar(scores, maximum=10)        # fixed 0..10 scale - use this to
                                         # compare two subjects fairly{% endverbatim %}{% endfilter %}</code></pre>
 
@@ -64,7 +64,7 @@ charts.radar(scores, maximum=10)        # fixed 0..10 scale - use this to
         Overlay a second polygon with a different colour and a low fill opacity. Two is the practical
         limit — three overlapping shapes stop being readable.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<polygon points="{{ before_points }}" fill="var(--color-gray-500)" fill-opacity="0.15"
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<polygon points="{{ before_points }}" fill="var(--color-gray-500)" fill-opacity="0.15"
          stroke="var(--color-gray-500)" stroke-width="1.5"/>
 <polygon points="{{ after_points }}" fill="var(--color-action-600)" fill-opacity="0.22"
          stroke="var(--color-action-600)" stroke-width="2"/>{% endverbatim %}{% endfilter %}</code></pre>

@@ -9,7 +9,7 @@
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Enabling translations</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# settings.py
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}# settings.py
 USE_I18N = True
 LANGUAGE_CODE = 'en-us'
 LANGUAGES = [('en', 'English'), ('fr', 'Français'), ('ar', 'العربية')]
@@ -28,7 +28,7 @@ MIDDLEWARE = [
         — "Filter", "Apply", "Reset filter", "No records.", "Home". Running
         <code>makemessages</code> over the app picks them up along with your own.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}django-admin makemessages -l fr -l ar
+    <pre class="doc-code"><code class="language-bash">{% filter force_escape %}{% verbatim %}django-admin makemessages -l fr -l ar
 django-admin compilemessages{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Right-to-left</h2>
@@ -38,7 +38,7 @@ django-admin compilemessages{% endverbatim %}{% endfilter %}</code></pre>
         template changes. Because the component layer is built from Tailwind's logical properties
         and flexbox rather than hardcoded left/right offsets, panels, menus and tables flip with it.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>
@@ -53,9 +53,9 @@ django-admin compilemessages{% endverbatim %}{% endfilter %}</code></pre>
         <code>wise_core/components/_language_switcher.html</code> posts to Django's built-in
         <code>set_language</code> view — include it anywhere in your chrome.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# urls.py
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}# urls.py
 urlpatterns += [path('i18n/', include('django.conf.urls.i18n'))]{% endverbatim %}{% endfilter %}</code></pre>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% include 'wise_core/components/_language_switcher.html' %}{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% include 'wise_core/components/_language_switcher.html' %}{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Formatting</h2>
     <p class="text-gray-700">

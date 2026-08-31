@@ -39,7 +39,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<nav class="tree">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<nav class="tree">
     {% for root in departments %}
         <details class="tree-item" {% if root.contains_current %}open{% endif %}>
             <summary class="tree-item-label">
@@ -64,7 +64,7 @@
         package needed: rendering only ever walks <em>down</em> from the roots, which a
         <code>prefetch_related</code> handles in two queries.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class Department(models.Model):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class Department(models.Model):
     name = models.CharField(max_length=100)
     parent = models.ForeignKey(
         "self", null=True, blank=True,
@@ -118,7 +118,7 @@ Department.objects.filter(parent=None).prefetch_related("children"){% endverbati
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{# _tree_node.html - includes itself for each child #}
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{# _tree_node.html - includes itself for each child #}
 {% load wise_icons %}
 {% if node.children.all %}
     <details class="tree-item" {% if node.is_open %}open{% endif %}>
@@ -146,7 +146,7 @@ Department.objects.filter(parent=None).prefetch_related("children"){% endverbati
         <code>open</code> to each ancestor so it is visible on load. This site's sidebar does exactly
         that by comparing the section and page slugs.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<a class="tree-leaf {% if item.slug == current_page_slug %}selected{% endif %}"
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<a class="tree-leaf {% if item.slug == current_page_slug %}selected{% endif %}"
    href="{% url item.url_name %}">{{ item.title }}</a>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Reference</h2>

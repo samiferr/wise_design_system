@@ -25,7 +25,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<input class="input" type="date" value="2026-08-27">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<input class="input" type="date" value="2026-08-27">
 <input class="input" type="month" value="2026-08">{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
@@ -49,7 +49,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}starts_on = forms.DateField(widget=forms.DateInput(attrs={"type": "date"})){% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}starts_on = forms.DateField(widget=forms.DateInput(attrs={"type": "date"})){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
     <div class="callout callout-warning mt-4">
@@ -62,7 +62,7 @@
             input cannot parse and the field appears empty.
         </div>
     </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}class ProductForm(forms.ModelForm):
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ["name", "available_from"]
@@ -88,7 +88,7 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# django-filter gives you both ends of a range from one declaration
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# django-filter gives you both ends of a range from one declaration
 class ProductFilter(django_filters.FilterSet):
     available_from = django_filters.DateFromToRangeFilter(
         widget=django_filters.widgets.RangeWidget(attrs={"type": "date"}),

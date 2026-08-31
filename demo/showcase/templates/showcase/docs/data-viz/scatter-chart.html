@@ -28,13 +28,13 @@
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}# views.py - pairs of (x, y)
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}# views.py - pairs of (x, y)
 context["scatter_points"] = charts.scatter(
     list(Product.objects.values_list("price", "units_sold")), 300, 140,
 ){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 300 140" style="height:180px">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 300 140" style="height:180px">
     <line class="chart-axis" x1="0" y1="140" x2="300" y2="140"/>
     <line class="chart-axis" x1="0" y1="0" x2="0" y2="140"/>
     {% for point in scatter_points %}
@@ -48,7 +48,7 @@ context["scatter_points"] = charts.scatter(
         price in the hundreds against a count in the tens still spreads out. <code>padding</code>
         keeps points near the extremes from being clipped at the edge.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}charts.scatter([(0, 0), (10, 100), (5, 50)], 100, 60, padding=3)
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}charts.scatter([(0, 0), (10, 100), (5, 50)], 100, 60, padding=3)
 # [{'cx': 3.0, 'cy': 57.0}, {'cx': 97.0, 'cy': 3.0}, {'cx': 50.0, 'cy': 30.0}]{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Labelling points</h2>
@@ -56,10 +56,10 @@ context["scatter_points"] = charts.scatter(
         Zip the geometry back onto the records so each point can carry a tooltip or a link — the
         return order matches the input order.
     </p>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}products = list(Product.objects.all())
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}products = list(Product.objects.all())
 geometry = charts.scatter([(p.price, p.units_sold) for p in products], 300, 140)
 context["points"] = list(zip(products, geometry)){% endverbatim %}{% endfilter %}</code></pre>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% for product, point in points %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% for product, point in points %}
     <a href="{{ product.get_absolute_url }}">
         <circle class="chart-point" cx="{{ point.cx }}" cy="{{ point.cy }}" r="4">
             <title>{{ product.name }} - {{ product.price }}</title>
