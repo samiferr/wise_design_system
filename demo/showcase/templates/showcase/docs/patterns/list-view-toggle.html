@@ -1,0 +1,88 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Card List vs. Data Table{% endblock %}
+{% block doc_section %}Patterns{% endblock %}
+{% block doc_title %}Card List vs. Data Table{% endblock %}
+{% block doc_intro %}
+    The exact same queryset, rendered two ways. A data table reads best when a row's fields matter
+    more than the row itself (scanning a status column); a card grid reads best when each record is
+    a thing you'd click into (a product, a document). This page shows a list page offering both
+    behind one query-param toggle, instead of picking one and living with it forever.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">See it live</h2>
+    <p class="text-gray-700">
+        Both demo list pages ship this toggle — one defaults to a table, the other to cards, so you
+        can compare the same interaction pattern from either starting point.
+    </p>
+    <div class="doc-section-grid">
+        <a class="card" href="{% url 'category_list_view' %}">
+            <div class="card-kicker">Table by default</div>
+            <h3 class="card-title mt-1">Categories</h3>
+            <p class="card-content mt-2">Add <code>?view=cards</code> to switch, or use the toggle in the header.</p>
+        </a>
+        <a class="card" href="{% url 'product_list_view' %}">
+            <div class="card-kicker">Cards by default</div>
+            <h3 class="card-title mt-1">Products</h3>
+            <p class="card-content mt-2">Add <code>?view=table</code> to switch, or use the toggle in the header.</p>
+        </a>
+    </div>
+
+    <h2 class="mt-8">The toggle</h2>
+    <div class="doc-preview mt-4">
+        {% with view_mode="cards" %}
+            {% include 'wise_core/components/_view_toggle.html' %}
+        {% endwith %}
+    </div>
+    <p class="mt-2 text-gray-700">
+        <code>wise_core/components/_view_toggle.html</code> renders two links to <code>?view=cards</code>
+        and <code>?view=table</code>. It only needs one thing from the including template: a
+        <code>view_mode</code> variable telling it which one is active.
+    </p>
+
+    <h2 class="mt-8">Wiring it into a list template</h2>
+    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/list_generic.html' %}
+
+{% block list_actions %}
+    {% with view_mode=request.GET.view|default:"table" %}
+        {% include 'wise_core/components/_view_toggle.html' %}
+    {% endwith %}
+    {% include 'wise_core/components/filter_button.html' %}
+{% endblock %}
+
+{% block list_body %}
+    {% with view_mode=request.GET.view|default:"table" %}
+        {% if view_mode == 'cards' %}
+            <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {% for item in object_list %}
+                    <a class="card" href="{{ item.get_absolute_url }}">
+                        <h4 class="card-title">{{ item.name }}</h4>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <table class="data-table">…</table>
+        {% endif %}
+    {% endwith %}
+{% endblock %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Pick a sensible default, not a coin flip</div>
+            A model with a short list of columns and a status-heavy workflow (an approvals queue)
+            defaults to <code>table</code>; a model where each row is a visual thing (a product with
+            an image, a category with a color swatch) defaults to <code>cards</code>. Let the toggle
+            handle the exception, not the common case.
+        </div>
+    </div>
+
+    <h2 class="mt-8">What's not handled</h2>
+    <p class="text-gray-700">
+        This is a small, self-contained pattern, not a new view mixin: it doesn't persist the choice
+        across visits or preserve other query params (filters, <code>page</code>) when switching -
+        the same tradeoff <code>_pagination.html</code> already makes with its own query string. If
+        your project needs either, wrap <code>request.GET</code> in a small templatetag that copies
+        it forward with one key replaced.
+    </p>
+{% endblock %}

@@ -25,10 +25,10 @@
         never seen.
     </p>
 
-    <h2 class="mt-8">Three independent axes</h2>
+    <h2 class="mt-8">Six independent axes</h2>
     <p class="text-gray-700">
         Each is one attribute on <code>&lt;html&gt;</code>, and they compose freely — a compact dark
-        violet UI is a valid combination.
+        violet UI with round corners and a warm background is a valid combination.
     </p>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">
         <table class="doc-props w-full">
@@ -37,9 +37,18 @@
                 <tr><td><code>data-theme</code></td><td><code>light</code> (default), <code>dark</code></td><td>Neutral ramp, surfaces, shadows, on-colors.</td></tr>
                 <tr><td><code>data-palette</code></td><td><code>green</code> (default), <code>blue</code>, <code>violet</code>, <code>amber</code></td><td>Brand and action ramps only.</td></tr>
                 <tr><td><code>data-density</code></td><td><code>comfortable</code> (default), <code>compact</code></td><td>Control heights, form and table rhythm.</td></tr>
+                <tr><td><code>data-radius</code></td><td><code>sharp</code> (default), <code>soft</code>, <code>round</code></td><td>The whole radius scale — buttons, cards, inputs, dialogs…</td></tr>
+                <tr><td><code>data-shadow</code></td><td><code>flat</code> (default), <code>soft</code>, <code>elevated</code></td><td><code>--shadow-card</code>, i.e. <code>.card</code>'s elevation.</td></tr>
+                <tr><td><code>data-bg</code></td><td><code>neutral</code> (default), <code>warm</code>, <code>cool</code></td><td>Page/panel-alt/surface — never <code>--color-panel</code>.</td></tr>
             </tbody>
         </table>
     </div>
+    <p class="mt-3 text-gray-700">
+        See <a class="text-action-600 underline" href="{% url 'docs_theming_design_tokens' %}">Design
+        Tokens</a> for radius/shadow/background in depth. All six are one settings panel — see
+        <code>wise_core/components/_settings_panel.html</code>, opened from the icon next to the
+        brand in this site's own sidebar and the demo app's.
+    </p>
 
     <h2 class="mt-8">Try it</h2>
     <p class="text-gray-700">These switch the page you are reading right now, and the choice persists.</p>
@@ -75,6 +84,30 @@
                 <button class="btn btn-secondary" onclick="wiseSetDensity('compact')">Compact</button>
             </div>
         </div>
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="w-20 text-xs font-semibold uppercase tracking-wider text-gray-600">Radius</span>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="wiseSetRadius('')">Sharp</button>
+                <button class="btn btn-secondary" onclick="wiseSetRadius('soft')">Soft</button>
+                <button class="btn btn-secondary" onclick="wiseSetRadius('round')">Round</button>
+            </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="w-20 text-xs font-semibold uppercase tracking-wider text-gray-600">Shadow</span>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="wiseSetShadow('')">Flat</button>
+                <button class="btn btn-secondary" onclick="wiseSetShadow('soft')">Soft</button>
+                <button class="btn btn-secondary" onclick="wiseSetShadow('elevated')">Elevated</button>
+            </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="w-20 text-xs font-semibold uppercase tracking-wider text-gray-600">Background</span>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="wiseSetBg('')">Neutral</button>
+                <button class="btn btn-secondary" onclick="wiseSetBg('warm')">Warm</button>
+                <button class="btn btn-secondary" onclick="wiseSetBg('cool')">Cool</button>
+            </div>
+        </div>
         <hr class="divider">
         <div class="flex flex-wrap items-end gap-3">
             <button class="btn btn-primary">Primary</button>
@@ -88,6 +121,9 @@
         <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}wiseSetTheme('dark')       // or 'light'
 wiseSetPalette('violet')   // '' resets to the default palette
 wiseSetDensity('compact')  // '' resets to comfortable
+wiseSetRadius('round')     // '' resets to sharp
+wiseSetShadow('elevated')  // '' resets to flat
+wiseSetBg('warm')          // '' resets to neutral
 wiseToggleTheme(){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
@@ -102,8 +138,10 @@ wiseToggleTheme(){% endverbatim %}{% endfilter %}</code></pre>
     <script>
         (function () {
             try {
-                var t = localStorage.getItem('wise-theme')
-                if (t) document.documentElement.setAttribute('data-theme', t)
+                ['theme', 'palette', 'density', 'radius', 'shadow', 'bg'].forEach(function (key) {
+                    var v = localStorage.getItem('wise-' + key)
+                    if (v) document.documentElement.setAttribute('data-' + key, v)
+                })
             } catch (e) {}
         })()
     </script>

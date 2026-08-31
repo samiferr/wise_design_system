@@ -124,4 +124,97 @@
     .doc-example .doc-code {
         @apply mt-0;
     }
+
+    /* ── Marketing site chrome (the public landing page only) ────────────
+     * Showcase-app-only, like the docs chrome above - not part of the
+     * design system's own component layer, since a project consuming
+     * wise_core builds its own app, not a marketing site alongside it. */
+    .marketing-nav {
+        @apply sticky top-0 z-40 border-b border-divider bg-panel/90;
+        backdrop-filter: blur(6px);
+    }
+
+    .marketing-nav-inner {
+        @apply mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6;
+    }
+
+    .marketing-brand {
+        @apply flex items-center gap-2 font-heading text-lg font-semibold uppercase tracking-wide
+        text-gray-900 no-underline;
+    }
+
+    .marketing-brand-mark {
+        @apply inline-block h-3 w-3 bg-action-600;
+    }
+
+    .marketing-nav-links {
+        @apply hidden items-center gap-6 text-sm font-medium text-gray-700 sm:flex;
+    }
+
+    .marketing-nav-links a {
+        @apply no-underline hover:text-action-600;
+    }
+
+    .marketing-hero {
+        @apply mx-auto max-w-4xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24;
+    }
+
+    .marketing-hero-kicker {
+        @apply inline-flex items-center gap-1.5 border border-divider bg-panel px-3 py-1 text-xs
+        font-semibold uppercase tracking-wider text-action-700;
+        border-radius: var(--radius-lg);
+    }
+
+    .marketing-hero-title {
+        @apply mt-5 text-4xl sm:text-5xl;
+    }
+
+    .marketing-hero-subtitle {
+        @apply mx-auto mt-5 max-w-2xl text-lg text-gray-700;
+    }
+
+    .marketing-hero-actions {
+        @apply mt-8 flex flex-wrap items-center justify-center gap-3;
+    }
+
+    .marketing-stats {
+        @apply mx-auto mt-14 grid max-w-2xl grid-cols-2 gap-6 border-t border-divider pt-8 sm:grid-cols-4;
+    }
+
+    .marketing-stat-value {
+        @apply font-heading text-3xl font-semibold text-gray-900;
+    }
+
+    .marketing-stat-label {
+        @apply mt-1 text-xs uppercase tracking-wider text-gray-600;
+    }
+
+    .marketing-section {
+        @apply px-4 py-14 sm:px-6;
+    }
+
+    .marketing-section-header {
+        @apply mx-auto max-w-2xl text-center;
+    }
+
+    .marketing-feature-grid {
+        @apply mx-auto mt-10 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-4;
+    }
+
+    .marketing-footer {
+        @apply border-t border-divider bg-panel;
+    }
+
+    .marketing-footer-inner {
+        @apply mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-4 py-10 sm:flex-row
+        sm:items-center sm:px-6;
+    }
+
+    .marketing-footer-links {
+        @apply flex flex-wrap items-center gap-5 text-sm text-gray-700;
+    }
+
+    .marketing-footer-links a {
+        @apply no-underline hover:text-action-600;
+    }
 }

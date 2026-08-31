@@ -1,0 +1,65 @@
+{% extends 'wise_core/base.html' %}
+{% load wise_icons %}
+
+{% block title %}Demo App – {{ project_name }}{% endblock %}
+
+{% block body %}
+    <div class="page-panel mx-auto max-w-4xl">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <div class="card-kicker">Demo app</div>
+                <h1 class="mt-1">A real Django app, not a screenshot</h1>
+            </div>
+        </div>
+
+        <p class="mt-3 max-w-2xl text-gray-700">
+            Everything below is a working <code>WiseListView</code>/<code>WiseCreateView</code>/
+            <code>WiseUpdateView</code>/<code>WiseDeleteView</code> app — permissions, pagination,
+            <code>django-filter</code> filtering and CRUD all included — built entirely from this
+            design system. It's a separate section from the <a class="text-action-600 underline"
+            href="{% url 'docs' %}">documentation site</a>: the docs describe the components, this
+            runs them against a real (if tiny) database.
+        </p>
+
+        {% if not request.user.is_authenticated %}
+            <div class="callout callout-info mt-6">
+                {% lucide "info" size=16 cls="callout-icon" %}
+                <div>
+                    <div class="callout-title">Sign in to browse</div>
+                    <a class="underline" href="{% url 'login' %}?next={% url 'demo' %}">Sign in</a> as
+                    <code>demo</code> / <code>wise-demo-2026</code> (created by
+                    <code>python manage.py seed_demo</code>).
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            <a class="card" href="{% url 'category_list_view' %}">
+                <div class="card-kicker">Card list ⇄ data table</div>
+                <h3 class="card-title mt-1">Categories</h3>
+                <p class="card-content mt-2">
+                    A full datatable with the filter drawer, pagination and CRUD — with a toggle to
+                    switch the whole list to a card grid instead.
+                </p>
+            </a>
+            <a class="card" href="{% url 'product_list_view' %}">
+                <div class="card-kicker">Card list ⇄ data table</div>
+                <h3 class="card-title mt-1">Products</h3>
+                <p class="card-content mt-2">
+                    Renders as cards by default and exercises the autocomplete, rich text, rating,
+                    date and file widgets on one form — with a toggle to switch to a table.
+                </p>
+            </a>
+        </div>
+
+        <div class="callout mt-6">
+            {% lucide "settings" size=16 cls="callout-icon" %}
+            <div>
+                <div class="callout-title">Try the design tokens live</div>
+                Open the settings icon in the sidebar (or the topbar on mobile) to switch theme,
+                palette, density, corner radius, card shadow and background — every page here
+                re-renders instantly, with no reload.
+            </div>
+        </div>
+    </div>
+{% endblock %}
