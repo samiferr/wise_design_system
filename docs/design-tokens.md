@@ -92,11 +92,11 @@ no class at all); reach for the utility classes only to force one onto something
 
 The entire Tailwind radius scale (`--radius-xs` through `--radius-4xl`) is zeroed **by default**, so
 every `rounded-*` utility across your templates resolves to a square corner with **no template
-changes needed** — this system's baseline look. The component layer (`.btn`, `.card`, `.input`,
-`.select`, `.textarea`, `.badge`, `.tag`, `.dialog`, `.dropdown-panel`, `.toast`, `.callout`,
-`.avatar`, ...) reads this same scale rather than hardcoding a radius, so redefining it moves the
-whole UI together — either permanently in your own `@theme` block, or live via the `data-radius`
-attribute (see [Switchable axes](#switchable-axes)).
+changes needed** — this system's baseline look. The component layer (`.btn`, `.card`,
+`.detail-panel`, `.input`, `.select`, `.textarea`, `.badge`, `.tag`, `.dialog`, `.dropdown-panel`,
+`.toast`, `.callout`, `.avatar`, ...) reads this same scale rather than hardcoding a radius, so
+redefining it moves the whole UI together — either permanently in your own `@theme` block, or live
+via the `data-radius` attribute (see [Switchable axes](#switchable-axes)).
 
 ```html
 <div class="rounded-lg border">Square corner — rounded-lg resolves to 0 by default</div>
@@ -118,10 +118,10 @@ property in an inline `style` or your own CSS:
 <div class="filter-panel" style="box-shadow: var(--shadow-blueprint-lg)">...</div>
 ```
 
-`.card` is the one exception: it reads its own `--shadow-card` token (`none` by default — a border,
-not a shadow, separates a card from the page) rather than the blueprint scale directly, so a
-project can retune *just* card elevation without touching dropdowns/dialogs/toasts. See
-`data-shadow` below.
+`.card` and `.detail-panel` are the exception: both read the same `--shadow-card` token (`none` by
+default — a border, not a shadow, separates a raised panel from the page) rather than the
+blueprint scale directly, so a project can retune *just* panel elevation without touching
+dropdowns/dialogs/toasts. See `data-shadow` below.
 
 ## Switchable axes
 

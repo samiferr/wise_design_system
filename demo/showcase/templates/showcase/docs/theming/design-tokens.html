@@ -74,7 +74,7 @@
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}.btn { border-radius: var(--radius-md); }
-.card { border-radius: var(--radius-lg); }
+.card, .detail-panel { border-radius: var(--radius-lg); }
 
 <!-- for a true circle (status dot, avatar), bypass the token -->
 <div class="h-2 w-2 bg-action-600" style="border-radius: 9999px;"></div>{% endverbatim %}{% endfilter %}</code></pre>
@@ -107,11 +107,12 @@
 
     <h2 class="mt-8">Card shadow</h2>
     <p class="text-gray-700">
-        <code>.card</code> is flat by default — it separates from the page with a border, not a
-        shadow — because a page full of shadowed cards reads as noisy. <code>--shadow-card</code>
-        (declared as <code>none</code> in the <code>@theme</code> block) is the one token that
-        controls it, retuned by <code>data-shadow</code> against the same blueprint scale above so
-        "elevated" cards still look consistent with the dropdown/dialog/toast shadows.
+        <code>.card</code> and <code>.detail-panel</code> are flat by default — they separate from
+        the page with a border, not a shadow — because a page full of shadowed panels reads as
+        noisy. <code>--shadow-card</code> (declared as <code>none</code> in the <code>@theme</code>
+        block) is the one token that controls both, retuned by <code>data-shadow</code> against the
+        same blueprint scale above so "elevated" panels still look consistent with the
+        dropdown/dialog/toast shadows.
     </p>
     <div class="doc-preview mt-4">
         <div class="flex flex-wrap items-center gap-3">
@@ -119,10 +120,18 @@
             <button class="btn btn-secondary" onclick="wiseSetShadow('soft')">Soft</button>
             <button class="btn btn-secondary" onclick="wiseSetShadow('elevated')">Elevated</button>
         </div>
-        <div class="card mt-4 max-w-xs">
-            <div class="card-kicker">Card</div>
-            <h3 class="card-title mt-1">--shadow-card</h3>
-            <p class="card-content mt-2">Toggle the buttons above to see this card's elevation change.</p>
+        <div class="mt-4 flex flex-wrap gap-4">
+            <div class="card max-w-xs">
+                <div class="card-kicker">Card</div>
+                <h3 class="card-title mt-1">--shadow-card</h3>
+                <p class="card-content mt-2">Toggle the buttons above to see this card's elevation change.</p>
+            </div>
+            <div class="detail-panel max-w-xs !p-4">
+                <table>
+                    <tr><th>Panel</th><td>detail-panel</td></tr>
+                    <tr><th>Shadow</th><td>same token</td></tr>
+                </table>
+            </div>
         </div>
     </div>
 

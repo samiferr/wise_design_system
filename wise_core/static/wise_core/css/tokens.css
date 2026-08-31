@@ -841,6 +841,8 @@
        plain <table> for a record's detail page. */
     .detail-panel {
         @apply w-full border border-divider bg-panel p-6 text-left font-body;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-card);
     }
 
     .detail-panel table {
