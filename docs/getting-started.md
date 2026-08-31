@@ -1,8 +1,20 @@
 # Getting started
 
-The Wise Design System is a set of plain Django apps, not a package you `pip install` yet — vendor
-the ones you need into your project (as a git submodule, a copy, or by pointing your `sys.path` at
-this repo, the way `demo/manage.py` does for the demo site).
+The Wise Design System is a set of plain Django apps, distributed as one `pip`-installable package
+(`wise-design-system`, providing the `wise_core`/`wise_autocomplete`/`wise_richtext` top-level
+packages) rather than published to PyPI — install it straight from this repository:
+
+```bash
+pip install "wise-design-system @ git+https://github.com/samiferr/wise_design_system.git"
+```
+
+Pin to a commit or tag for reproducible installs
+(`...wise_design_system.git@<sha-or-tag>`) rather than tracking a branch in a real project's
+`requirements.txt`. `wise_autocomplete`'s `AutocompleteInputWidget` needs Django REST Framework —
+pull it in with the `autocomplete` extra (`wise-design-system[autocomplete] @ git+...`).
+
+Vendoring a copy (or a git submodule) still works if you'd rather patch the design system in place
+alongside your project — nothing here depends on it being pip-installed specifically.
 
 ## What's in the box
 
@@ -15,9 +27,9 @@ this repo, the way `demo/manage.py` does for the demo site).
 
 ## 1. Install the apps
 
-```bash
-pip install django django-filter djangorestframework
-```
+`pip install wise-design-system @ git+...` (see above) pulls in `Django` and `django-filter`
+automatically — `djangorestframework` is only needed for `wise_autocomplete`'s
+`AutocompleteInputWidget` (the `autocomplete` extra installs it for you).
 
 Add the ones you use to `INSTALLED_APPS`:
 
@@ -56,7 +68,12 @@ Tailwind v4 needs to scan your templates (`@source`) to know which utility class
 just link to. `wise_core/static/wise_core/css/tokens.css` is a *partial*: the `@theme` tokens and
 `@layer components` rules, with no `@import "tailwindcss"` and no `@source` of its own.
 
-Your project's own entry CSS file does both:
+Your project's own entry CSS file does both. `@source`/`@import` paths are resolved relative to the
+CSS file, which works differently depending on how you got `wise_core` onto disk:
+
+**Vendored / git submodule** (wise_core sits at a fixed path relative to your project — this is what
+`demo/static_src/input.css` in this repo does, since `wise_core` is right there in the same
+checkout):
 
 ```css
 /* your_project/static_src/input.css */
@@ -70,7 +87,58 @@ Your project's own entry CSS file does both:
 @import "../../wise_core/static/wise_core/css/tokens.css";
 ```
 
-Then build it with the Tailwind CLI (see this repo's root `package.json` for the exact command):
+**Installed via `pip`** (the default per "Install the apps" above): `wise_core` lives wherever your
+virtualenv put it, not at a fixed path relative to your project, so the `@source`/`@import` paths
+above have to be resolved at build time instead of hardcoded. Generate a small partial before every
+build and `@import` it from your entry file:
+
+```python
+# your_project/static_src/generate_wise_sources.py
+# Run before every Tailwind build - see the "prebuild:css"/"prewatch:css"
+# npm hooks below. Writes absolute @source/@import lines for whichever
+# wise_* packages are actually installed, so input.css itself stays a
+# portable, checked-in file with no environment-specific paths in it.
+import importlib.util
+from pathlib import Path
+
+OUT = Path(__file__).parent / "_wise_sources.css"
+
+lines = []
+for package in ["wise_core", "wise_autocomplete", "wise_richtext"]:
+    spec = importlib.util.find_spec(package)
+    if spec is None or not spec.submodule_search_locations:
+        continue
+    package_dir = Path(spec.submodule_search_locations[0])
+    lines.append(f'@source "{package_dir / "templates"}";')
+
+tokens_css = importlib.util.find_spec("wise_core")
+if tokens_css and tokens_css.submodule_search_locations:
+    tokens_path = Path(tokens_css.submodule_search_locations[0]) / "static/wise_core/css/tokens.css"
+    lines.append(f'@import "{tokens_path}";')
+
+OUT.write_text("\n".join(lines) + "\n")
+```
+
+```css
+/* your_project/static_src/input.css - checked in, no absolute paths */
+@import "tailwindcss";
+@import "./_wise_sources.css";   /* generated - gitignore it */
+
+@source "../your_app/templates";
+```
+
+```json
+{
+  "scripts": {
+    "prebuild:css": "python static_src/generate_wise_sources.py",
+    "build:css": "tailwindcss -i ./static_src/input.css -o ./your_app/static/your_app/css/tailwind.css --minify",
+    "prewatch:css": "python static_src/generate_wise_sources.py",
+    "watch:css": "tailwindcss -i ./static_src/input.css -o ./your_app/static/your_app/css/tailwind.css --watch"
+  }
+}
+```
+
+Either way, build it with the Tailwind CLI (see this repo's root `package.json` for the vendored-case command):
 
 ```bash
 npm install
