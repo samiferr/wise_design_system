@@ -1,4 +1,4 @@
-{% load static wise_icons i18n %}
+{% load static i18n %}
 {% comment %}
 Syntax highlighting and copy buttons for every `.doc-code` block on the page.
 Shared by the docs shell (showcase/docs/_base.html) and the marketing home
@@ -32,9 +32,9 @@ highlightAll() so `pre.textContent` copies the plain code, not Prism's
 <script src="{% static 'showcase/js/vendor/prism/prism-bash.min.js' %}"></script>
 
 <template id="doc-code-copy-template">
-    <button type="button" class="copy-button doc-code-copy" aria-label="{% trans 'Copy code' %}">
-        <span class="copy-button-idle">{% lucide "link" size=14 %}</span>
-        <span class="copy-button-done">{% lucide "check" size=14 %}</span>
+    <button type="button" class="copy-button doc-code-copy">
+        <span class="copy-button-idle">{% trans "Copy" %}</span>
+        <span class="copy-button-done">{% trans "Copied" %}</span>
     </button>
 </template>
 
