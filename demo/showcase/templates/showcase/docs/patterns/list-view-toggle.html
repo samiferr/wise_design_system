@@ -41,7 +41,7 @@
     </p>
 
     <h2 class="mt-8">Wiring it into a list template</h2>
-    <pre class="doc-code"><code>{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/list_generic.html' %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/list_generic.html' %}
 
 {% block list_actions %}
     {% with view_mode=request.GET.view|default:"table" %}

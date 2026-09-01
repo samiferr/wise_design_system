@@ -1,5 +1,5 @@
 {% extends 'showcase/docs/_base.html' %}
-{% load wise_icons %}
+{% load static wise_icons wise_charts %}
 {% block doc_title_tag %}Doughnut Chart{% endblock %}
 {% block doc_section %}Data Viz{% endblock %}
 {% block doc_title %}Doughnut Chart{% endblock %}
@@ -17,47 +17,39 @@
         <label class="doc-example-tab" for="ex16-code">Code</label>
     </div>
     <div class="doc-example-panel-preview">
-        <div class="doc-preview flex flex-wrap items-center gap-8">
-        <div class="relative inline-flex items-center justify-center">
-            <svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px" role="img" aria-label="Revenue by month">
-                {% for slice in doughnut_slices %}<path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}"/>{% endfor %}
-            </svg>
-            <div class="absolute text-center">
-                <div class="font-heading text-2xl font-semibold">209</div>
+        <div class="doc-preview">
+        <div class="chart-frame inline-flex items-center justify-center" style="width:220px;height:220px">
+            <canvas class="chart-canvas" data-chart="{% chart_json revenue_doughnut %}"
+                    role="img" aria-label="Revenue by month"></canvas>
+            <div class="pointer-events-none absolute text-center">
+                <div class="font-heading text-2xl font-semibold">{{ revenue_total }}</div>
                 <div class="text-[10px] uppercase tracking-wider text-gray-600">total</div>
             </div>
-        </div>
-        <div class="chart-legend" style="flex-direction:column;align-items:flex-start">
-            {% for slice in doughnut_slices %}
-                <span class="chart-legend-item"><span class="chart-legend-dot" style="background:{{ slice.color }}"></span>{{ slice.label }} — {{ slice.value }}</span>
-            {% endfor %}
         </div>
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}context["doughnut_slices"] = charts.doughnut(revenue, labels=months, thickness=18){% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}context["revenue_doughnut"] = charts.doughnut_chart(months, revenue)
+context["revenue_total"] = sum(revenue){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="relative inline-flex items-center justify-center">
-    <svg class="chart-svg" viewBox="0 0 100 100" style="width:180px;height:180px">
-        {% for slice in doughnut_slices %}
-            <path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}"/>
-        {% endfor %}
-    </svg>
-    <div class="absolute text-center">
-        <div class="font-heading text-2xl font-semibold">{{ total }}</div>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="chart-frame inline-flex items-center justify-center" style="width:220px;height:220px">
+    <canvas class="chart-canvas" data-chart="{% chart_json revenue_doughnut %}"></canvas>
+    <div class="pointer-events-none absolute text-center">
+        <div class="font-heading text-2xl font-semibold">{{ revenue_total }}</div>
         <div class="text-[10px] uppercase tracking-wider text-gray-600">total</div>
     </div>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
     <p class="mt-2 text-gray-700">
-        <code>doughnut()</code> is <code>pie()</code> with an inner radius — each slice becomes a ring
-        segment drawn as an outer arc, a line inward, and an inner arc back.
+        The total sits in a plain positioned <code>&lt;div&gt;</code> over the canvas -
+        <code>doughnut_chart()</code> is a <code>pie_chart()</code> with the slices' <code>cutout</code>
+        set, nothing more, so there is no Chart.js plugin involved in drawing the centre label.
     </p>
 
     <h2 class="mt-8">The CSS-only alternative</h2>
     <p class="text-gray-700">
-        For a single percentage, <code>.donut-chart</code> needs no SVG at all — it is one element
-        with a <code>conic-gradient</code>.
+        For a single percentage, <code>.donut-chart</code> needs no canvas or JavaScript at all — it
+        is one element with a <code>conic-gradient</code>.
     </p>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex17" id="ex17-preview" value="preview" checked>
@@ -69,9 +61,9 @@
     <div class="doc-example-panel-preview">
         <div class="doc-preview flex flex-wrap items-center gap-8">
         <div class="donut-chart" style="--value: 68"><span class="donut-chart-label">68%</span></div>
-        <div class="chart-legend">
-            <span class="chart-legend-item"><span class="chart-legend-dot bg-action-600"></span>Completed</span>
-            <span class="chart-legend-item"><span class="chart-legend-dot bg-gray-200"></span>Remaining</span>
+        <div class="flex items-center gap-4 text-xs text-gray-700">
+            <span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-action-600"></span>Completed</span>
+            <span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-gray-200"></span>Remaining</span>
         </div>
     </div>
     </div>
@@ -87,7 +79,7 @@
         <table class="doc-props w-full">
             <thead><tr><th>Need</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td>Several categories summing to a whole</td><td><code>charts.doughnut()</code> + SVG.</td></tr>
+                <tr><td>Several categories summing to a whole</td><td><code>charts.doughnut_chart()</code> + <code>&lt;canvas&gt;</code>.</td></tr>
                 <tr><td>One percentage, no breakdown</td><td><code>.donut-chart</code> (CSS only).</td></tr>
                 <tr><td>Progress toward completion</td><td><a class="text-action-600 underline" href="{% url 'docs_feedback_progress_ring' %}">Progress ring</a>.</td></tr>
             </tbody>
@@ -99,10 +91,15 @@
         <table class="doc-props w-full">
             <thead><tr><th>API / class</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td><code>charts.doughnut(values, labels, cx, cy, radius, thickness)</code></td><td>Ring-segment slices.</td></tr>
+                <tr><td><code>charts.doughnut_chart(labels, values, cutout, **options)</code></td><td>A Chart.js <code>type: "doughnut"</code> config.</td></tr>
                 <tr><td><code>donut-chart</code></td><td>CSS-only ring; <code>--value</code> is a bare 0–100 number.</td></tr>
                 <tr><td><code>donut-chart-label</code></td><td>Centred text inside it.</td></tr>
             </tbody>
         </table>
     </div>
+{% endblock %}
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'wise_core/js/chart.umd.min.js' %}"></script>
+    <script src="{% static 'wise_core/js/charts.js' %}"></script>
 {% endblock %}

@@ -107,6 +107,7 @@
     --control-height-lg: 3rem;
     --control-padding-y: 0.5rem;
     --table-padding-y: 0.5rem;
+    --table-header-padding-y: 0.875rem;
 
     /* Override Tailwind's built-in gray scale with the system's own
        neutral ramp, so every gray-* utility (border-gray-200,
@@ -392,6 +393,7 @@
     --control-height-lg: 2.5rem;
     --control-padding-y: 0.3rem;
     --table-padding-y: 0.3rem;
+    --table-header-padding-y: 0.625rem;
 }
 
 /* ── Radius ─────────────────────────────────────────────────────────────
@@ -874,9 +876,29 @@
     }
 
     .data-table th {
-        @apply border-b border-divider px-3 text-left text-[11px] font-semibold uppercase
+        @apply border-b border-divider px-3 text-left text-xs font-semibold uppercase
         tracking-wider text-gray-600;
-        padding-block: var(--table-padding-y);
+        padding-block: var(--table-header-padding-y);
+    }
+
+    /* A sortable column header - the whole label + icon is one link, built by
+       wise_core/components/_sortable_th.html and WiseListView.sortable_fields
+       (see docs/generic-views-and-mixins.md). Every sortable header shows an
+       icon, even unsorted ones, so the capability reads as clickable before
+       the visitor ever hovers it. */
+    .data-table th a {
+        @apply flex w-full items-center justify-between gap-2 text-gray-600 no-underline hover:text-action-600;
+    }
+
+    /* Muted by default - the chevron only takes the theme color once its
+       column is the active sort; every other header stays a quiet gray so
+       the active column reads at a glance. */
+    .data-table th a svg {
+        @apply text-gray-400 transition-colors duration-150;
+    }
+
+    .data-table th a.is-sorted svg {
+        @apply text-action-600;
     }
 
     .data-table td {
@@ -1091,28 +1113,24 @@
         @apply mx-auto h-1 w-20 bg-action-500;
     }
 
-    /* Charts - lightweight, JS-free primitives, not a charting library.
-       Feed real values through the `--value` custom property (set inline,
-       per element, from your view) rather than utility classes, since
-       Tailwind can't express an arbitrary runtime number as a class. A
-       trend line has no equivalent primitive here - hand-author it as an
-       inline <svg><polyline> instead, the same way vendored icons are
-       inline SVG (see docs/design-tokens.md). */
-    .bar-chart {
-        @apply flex h-40 items-end gap-3;
+    /* Charts - rendered client-side by Chart.js onto a <canvas data-chart>,
+       configured from wise_core/charts.py (see the Data Viz docs).
+       `chart-frame` is the sizing anchor: give *it* the explicit height, on
+       a plain block/inline-block element, never the canvas. Chart.js
+       (responsive: true, maintainAspectRatio: false) resizes the canvas to
+       match its parent's height on every ResizeObserver tick; if that
+       parent's own height were derived from its content instead of fixed,
+       the canvas growing would grow the parent would regrow the canvas -
+       an infinite loop that is especially easy to trigger by accident in a
+       CSS grid, where a row stretches every cell to the tallest one.
+       Absolutely positioning the canvas inside a relatively positioned,
+       explicitly sized frame takes it out of that flow entirely. */
+    .chart-frame {
+        @apply relative block w-full;
     }
 
-    .bar-chart-bar {
-        @apply flex h-full flex-1 flex-col items-center justify-end gap-2;
-    }
-
-    .bar-chart-bar-fill {
-        @apply w-full bg-action-600;
-        height: var(--value, 0%);
-    }
-
-    .bar-chart-bar-label {
-        @apply text-center text-[11px] leading-tight text-gray-600;
+    .chart-canvas {
+        @apply absolute inset-0 h-full w-full;
     }
 
     /* A ring built from a conic-gradient, not an SVG - `--value` is a plain
@@ -1134,66 +1152,6 @@
 
     .donut-chart-label {
         @apply relative text-sm font-semibold text-gray-900;
-    }
-
-    .chart-legend {
-        @apply flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-700;
-    }
-
-    .chart-legend-item {
-        @apply inline-flex items-center gap-1.5;
-    }
-
-    .chart-legend-dot {
-        @apply inline-block h-2.5 w-2.5 shrink-0;
-        border-radius: 9999px;
-    }
-
-    /* SVG chart chrome, shared by the line/scatter/radar/polar/bubble charts.
-       Their geometry is computed server-side by wise_core/charts.py; these
-       rules only carry the colors so the charts re-theme like everything
-       else. Stroke/fill read tokens directly because SVG presentation
-       attributes can't use Tailwind utilities. */
-    .chart-svg {
-        @apply w-full overflow-visible;
-    }
-
-    .chart-grid-line {
-        stroke: var(--color-divider);
-        stroke-width: 1;
-    }
-
-    .chart-axis {
-        stroke: var(--color-gray-400);
-        stroke-width: 1;
-    }
-
-    .chart-axis-label {
-        fill: var(--color-gray-600);
-        font-size: 10px;
-    }
-
-    .chart-series-line {
-        fill: none;
-        stroke: var(--color-action-600);
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
-
-    .chart-series-area {
-        fill: var(--color-action-600);
-        opacity: 0.12;
-        stroke: none;
-    }
-
-    .chart-point {
-        fill: var(--color-action-600);
-    }
-
-    .chart-slice {
-        stroke: var(--color-panel);
-        stroke-width: 1.5;
     }
 
     /* ── Theme toggle ────────────────────────────────────────────────────
