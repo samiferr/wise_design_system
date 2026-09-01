@@ -1,0 +1,16 @@
+{% load wise_icons wise_tags %}
+{% with desc_field='-'|add:field %}
+<th>
+    <a class="{% if current_sort == field or current_sort == desc_field %}is-sorted{% endif %}"
+       href="{% sort_url field %}">
+        <span>{{ label }}</span>
+        {% if current_sort == field %}
+            {% lucide "chevron-up" size=14 %}
+        {% elif current_sort == desc_field %}
+            {% lucide "chevron-down" size=14 %}
+        {% else %}
+            {% lucide "chevrons-up-down" size=14 %}
+        {% endif %}
+    </a>
+</th>
+{% endwith %}

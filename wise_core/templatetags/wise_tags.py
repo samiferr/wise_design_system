@@ -97,6 +97,22 @@ def get_model_verbose_name_plural(obj):
     return obj._meta.verbose_name_plural
 
 
+@register.simple_tag(takes_context=True)
+def sort_url(context, field):
+    """
+    Build the `?sort=` URL for a `.data-table` sortable header: toggles
+    ascending/descending when `field` is already the active sort, defaults to
+    ascending otherwise, resets pagination back to page 1, and preserves
+    every other query parameter (active filters included). Pairs with
+    `WiseListView.sortable_fields` and `current_sort` in the context - see
+    `wise_core/components/_sortable_th.html`.
+    """
+    params = context['request'].GET.copy()
+    params['sort'] = '-' + field if context.get('current_sort') == field else field
+    params.pop('page', None)
+    return '?' + params.urlencode()
+
+
 @register.simple_tag
 def get_url_for_model(model_name, action, *args, **kwargs):
     """

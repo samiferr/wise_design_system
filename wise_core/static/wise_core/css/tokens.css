@@ -107,6 +107,7 @@
     --control-height-lg: 3rem;
     --control-padding-y: 0.5rem;
     --table-padding-y: 0.5rem;
+    --table-header-padding-y: 0.875rem;
 
     /* Override Tailwind's built-in gray scale with the system's own
        neutral ramp, so every gray-* utility (border-gray-200,
@@ -392,6 +393,7 @@
     --control-height-lg: 2.5rem;
     --control-padding-y: 0.3rem;
     --table-padding-y: 0.3rem;
+    --table-header-padding-y: 0.625rem;
 }
 
 /* ── Radius ─────────────────────────────────────────────────────────────
@@ -874,9 +876,29 @@
     }
 
     .data-table th {
-        @apply border-b border-divider px-3 text-left text-[11px] font-semibold uppercase
+        @apply border-b border-divider px-3 text-left text-xs font-semibold uppercase
         tracking-wider text-gray-600;
-        padding-block: var(--table-padding-y);
+        padding-block: var(--table-header-padding-y);
+    }
+
+    /* A sortable column header - the whole label + icon is one link, built by
+       wise_core/components/_sortable_th.html and WiseListView.sortable_fields
+       (see docs/generic-views-and-mixins.md). Every sortable header shows an
+       icon, even unsorted ones, so the capability reads as clickable before
+       the visitor ever hovers it. */
+    .data-table th a {
+        @apply flex w-full items-center justify-between gap-2 text-gray-600 no-underline hover:text-action-600;
+    }
+
+    /* Muted by default - the chevron only takes the theme color once its
+       column is the active sort; every other header stays a quiet gray so
+       the active column reads at a glance. */
+    .data-table th a svg {
+        @apply text-gray-400 transition-colors duration-150;
+    }
+
+    .data-table th a.is-sorted svg {
+        @apply text-action-600;
     }
 
     .data-table td {

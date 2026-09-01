@@ -14,7 +14,7 @@ write `get_permission_required()` yourself for a plain model.
 
 | View | Django base | Permission | Notes |
 |---|---|---|---|
-| `WiseListView` | `django_filters.views.FilterView` | `view` | Paginated (`paginate_by`), filtered (`filterset_class`/`filterset_fields`). This *is* the "datatable": pair it with `wise_core/generic/list_generic.html` and the `.data-table`/`.card` CSS. Context also gets `filter_kwargs_count` and `filter_kwarg` (the active filters as `{label: value}`, for the filter-panel badge). |
+| `WiseListView` | `django_filters.views.FilterView` | `view` | Paginated (`paginate_by`), filtered (`filterset_class`/`filterset_fields`), sortable (`sortable_fields`). This *is* the "datatable": pair it with `wise_core/generic/list_generic.html` and the `.data-table`/`.card` CSS. Context also gets `filter_kwargs_count` and `filter_kwarg` (the active filters as `{label: value}`, for the filter-panel badge) and `current_sort` (the active `?sort=` value, or `None`). |
 | `WiseDetailView` | `DetailView` | `view` | Pair with `wise_core/generic/detail_generic.html`. |
 | `WiseCreateView` | `CreateView` | `add` | Auto-populates `instance.created_by` from `request.user` if the model has that field (`AutoCreatedByMixin`). Catches a `ValidationError` raised from `form_valid()`/model `clean()`/`save()` and turns it into a form error instead of a 500 (`ValidationErrorFormMixin`) — on the field named in `error.params["field"]` if the model raised one with that param, else as a non-field error. |
 | `WiseUpdateView` | `UpdateView` | `change` | Same `ValidationError` handling as `WiseCreateView`. |
@@ -22,6 +22,25 @@ write `get_permission_required()` yourself for a plain model.
 
 All five mix in `SuccessMessageMixin` (set `success_message = "..."` , with `%(field)s`
 interpolation from the saved instance's `__dict__`, same as vanilla Django).
+
+## Column sorting: `WiseListView.sortable_fields`
+
+Off by default (an empty tuple). Set `sortable_fields` to the field names — or `__`-joined relation
+lookups — a visitor may pass as `?sort=<field>`/`?sort=-<field>`:
+
+```python
+class ProductListView(WiseListView):
+    model = Product
+    sortable_fields = {"name", "category__name", "rating"}
+```
+
+Anything outside the allowlist is ignored and the view falls back to `ordering` — never read
+`request.GET["sort"]` straight into `order_by()` yourself, since that lets a visitor order by any
+field, or traverse relations, as a slow-query and information-disclosure hazard. A deterministic `pk`
+tiebreak is always appended, so pagination can't repeat or skip rows across pages. Render header cells
+with `wise_core/components/_sortable_th.html` (`{% include ... with field="name" label="Name" %}`),
+which reads `current_sort` back out of the context and renders the right icon — see
+`docs/data-viz/data-table.html`'s "Column ordering" section.
 
 ## `OwnRecordsMixin` — opt-in "my records only" scoping
 
