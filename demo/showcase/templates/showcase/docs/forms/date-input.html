@@ -9,6 +9,20 @@
     what Django parses are cleanly separated.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Any single date field - birth date, due date, order date, expiry date.</li>
+        <li>A DateField in a Django form where the native browser calendar picker is enough (the common case).</li>
+        <li>Any date field where you want the value shown to the user formatted for their locale, while the server always receives/sends a clean ISO date.</li>
+        <li>For picking a date range or needing a custom appearance beyond what the native control offers, see the Date Picker page for what to reach for instead.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Date Input documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Basic</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex44" id="ex44-preview" value="preview" checked>
@@ -119,5 +133,24 @@ class ProductFilter(django_filters.FilterSet):
                 <tr><td><code>datetime-local</code></td><td><code>2026-08-27T09:30</code> (no timezone)</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Date Input implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Date Input - a native <input type="date">, not a JS date-picker library, for the common single-date case. Rules:
+- Base markup: <input type="date" class="input">, or let _form_fields.html render a Django DateField automatically.
+- The browser renders its own calendar UI and formats the displayed value for the user's OS/locale, but always POSTs a clean ISO YYYY-MM-DD - so what the user sees and what Django's DateField parses are cleanly separated; never try to reformat the value yourself.
+- Reuses the plain `.input` class - it is not a separate visual component, only a different `type` attribute.
+- For anything the native date input can't do (a date range, a custom calendar UI, non-Gregorian calendars), see the Date Picker page rather than reaching for a heavy JS library by default - the native control is deliberately the first choice.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L686-L701">tokens.css — .input</a></li>
+        </ul>
     </div>
 {% endblock %}

@@ -11,6 +11,20 @@
     the browser's <code>&lt;datalist&gt;</code> popup.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Filtering a list of string values that's already fully rendered on the page (existing tags, a small fixed vocabulary) with no per-keystroke request.</li>
+        <li>Pairing with a Tag list so existing tags get reused rather than re-typed with slight variations.</li>
+        <li>A lightweight, client-side-only suggestion UI where a full network-backed Autocomplete would be unnecessary overhead.</li>
+        <li>Not for a large related-object queryset that lives in the database and can't reasonably be sent to the client up front - use Autocomplete Input for that instead.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Auto Suggest Input documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Try it</h2>
     <p class="text-gray-700">Type "c", or "in":</p>
     <div class="doc-preview mt-4 max-w-md">
@@ -74,5 +88,24 @@ tag = forms.CharField(
                 <tr><td><code>.arr</code></td><td>JS property on the input; the option array, if set directly.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Auto Suggest Input implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Auto Suggest Input (wise_autocomplete app) for client-side filtering over values already on the page. Rules:
+- Requires 'wise_autocomplete' in INSTALLED_APPS. In forms.py: from wise_autocomplete.widgets import AutoSuggestInputWidget; tag_name = forms.CharField(widget=AutoSuggestInputWidget(suggestions=list_of_existing_tag_names)).
+- Unlike Autocomplete Input, this selects a *string* the user types, not a database record's primary key, and it never makes a network request per keystroke - all filtering happens client-side over the suggestion list already embedded in the page.
+- It renders its own suggestion panel (a `.autocomplete-panel`-style dropdown) rather than relying on the browser's native <datalist> popup that Combobox uses - use this when you need more control over the suggestion UI than a datalist offers, still without a server round-trip.
+- For a relation to a large database table that can't reasonably be sent to the client up front, use Autocomplete Input (server-backed) instead.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_autocomplete/widgets.py">wise_autocomplete/widgets.py — AutoSuggestInputWidget</a></li>
+        </ul>
     </div>
 {% endblock %}

@@ -8,6 +8,20 @@
     eyedroppers and recent-color memory that no custom widget will match.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Letting a user pick a brand/category/label color stored as a hex value on a model.</li>
+        <li>Any color field where you want the operating system's own picker, including its eyedropper tool and recent-color memory.</li>
+        <li>A settings page where a small swatch preview next to the label is enough - no custom palette UI needed.</li>
+        <li>Not for choosing from a small, fixed set of predefined colors (a status set) - a Select or Radio group of swatches communicates a constrained choice more clearly than a full color wheel.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Color Picker documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Basic</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex41" id="ex41-preview" value="preview" checked>
@@ -105,5 +119,25 @@ color = models.CharField(
                 <tr><td><code>wise_core.widgets.ColorInput</code></td><td>Django widget emitting <code>type="color"</code>.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Color Picker implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Color Picker - a native <input type="color">, not a JS color-picker library. Rules:
+- Base markup: <input type="color" class="color-input" value="#0d9488">.
+- The `.color-input` class zeroes the swatch's own padding so the color fills the whole control - the browser would otherwise paint the swatch inside a padding box that ignores the current theme, leaving a white frame around it. Don't add your own padding back.
+- The operating system supplies the picker UI itself, including eyedropper tools and recent-color memory on platforms that support it - none of that is something to reimplement.
+- Reserve this for a genuinely free-form color choice (a brand color, a custom label color). For choosing among a small, fixed set of predefined status colors, use Select or a Radio group of labeled swatches instead - that communicates the choice is constrained, which a full color wheel does not.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L716-L732">tokens.css — .color-input and its swatch pseudo-elements</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/widgets.py">widgets.py — ColorInput, a TextInput subclass rendering type="color"</a></li>
+        </ul>
     </div>
 {% endblock %}

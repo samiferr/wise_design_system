@@ -7,6 +7,20 @@
     error treatment of its own — an inline search box, a filter row. Inside a form, let
     <code>_form_fields.html</code> render it so it gets its label, help text and errorlist.{% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Any single-line text field inside a Django form - name, reference, email, phone.</li>
+        <li>A standalone control that needs no label/help/error treatment of its own, like an inline search box or a filter row.</li>
+        <li>Any HTML5 text-like input type (email, url, tel, search, password) - one class covers all of them, since the browser supplies the keyboard and validation per type.</li>
+        <li>Inside a real form, prefer letting _form_fields.html render the field automatically rather than writing the input tag by hand.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Input documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Types</h2>
     <p class="text-gray-700">One class covers every text-like input type; the browser supplies the keyboard and validation.</p>
     <div class="doc-example">
@@ -127,5 +141,27 @@
                 <tr><td><code>input-group-addon</code></td><td>The attached prefix or suffix.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Input implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Input for text fields. Rules:
+- Standalone control with no label needed: <input type="search" class="input" placeholder="Search...">. Use `.input` directly only for a control that doesn't need its own label/help/error treatment - an inline search box, a filter row.
+- Inside a real form, do NOT write <input class="input"> by hand - let wise_core/components/_form_fields.html render every BoundField from the form, so it automatically gets its label (.form-label), help text, required marker, and error list wrapped in .form-field / .form-field-error.
+- Size modifiers: input-sm, input-lg (default otherwise) - same modifiers apply to .select.
+- One class covers every text-like input type (text, email, url, tel, search, password) - the type attribute, not a different CSS class, is what changes the browser's keyboard and built-in validation.
+- To attach a prefix/suffix (currency symbol, unit, icon, inline button), wrap the input in `.input-group` with an `.input-group-addon` sibling rather than positioning your own absolutely-placed icon inside the input.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L686-L701">tokens.css — .input, .select, size modifiers</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templates/wise_core/components/_form_fields.html">_form_fields.html — renders every field with label/help/error automatically</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L1381-L1398">tokens.css — .input-group, .input-group-addon</a></li>
+        </ul>
     </div>
 {% endblock %}

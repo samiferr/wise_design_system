@@ -8,6 +8,20 @@
     fill, hover tooltips and point markers all come from the library's own line-chart renderer.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>A trend over time - revenue by month, active users by day, a KPI tracked across a date range.</li>
+        <li>Comparing several trends at once by passing multiple datasets (e.g. this year vs last year).</li>
+        <li>An area-filled variant (fill=True) to emphasize magnitude/volume under the line rather than just its shape.</li>
+        <li>For a compact, label-free inline trend (in a table cell or next to a stat), use the Sparkline variant instead.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Line Chart documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">With area, grid and points</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex18" id="ex18-preview" value="preview" checked>
@@ -82,4 +96,26 @@ charts.line_chart(months, [
     {{ block.super }}
     <script src="{% static 'wise_core/js/chart.umd.min.js' %}"></script>
     <script src="{% static 'wise_core/js/charts.js' %}"></script>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Line Chart implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Line Chart - built in the view with wise_core.charts, rendered by Chart.js. Rules:
+- In the view: from wise_core import charts; context['signups_line'] = charts.line_chart(days, [charts.dataset('Signups', values, fill=True)]) - pass fill=True on dataset() for a translucent area fill under the line; omit it for a plain line.
+- Multiple datasets overlay as separate lines (e.g. this year vs last year) - each dataset() call auto-picks the next color from the shared series palette unless you pass color= explicitly.
+- Template markup is identical to every other Chart.js-backed chart in this design system: {% load wise_charts %}, then a sized .chart-frame wrapping a .chart-canvas with data-chart="{% chart_json signups_line %}", role="img" and a real aria-label.
+- Line tension and point radius already have sensible defaults from line_chart() - only pass **options overrides for something genuinely different from the rest of the app, so charts stay visually consistent site-wide.
+- Reach for the Sparkline variant instead when you need a compact, label-free inline trend line (a table cell, next to a number) rather than a full chart with axes and a legend.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/charts.py">charts.py — line_chart(), dataset()</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templatetags/wise_charts.py">wise_charts.py — the chart_json template tag</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L1128-L1135">tokens.css — .chart-frame, .chart-canvas</a></li>
+        </ul>
+    </div>
 {% endblock %}

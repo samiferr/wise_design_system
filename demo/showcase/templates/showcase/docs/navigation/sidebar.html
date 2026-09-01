@@ -12,6 +12,20 @@
 {% endblock %}
 
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>The persistent desktop navigation column for any authenticated app built on wise_core's base.html - included automatically, not something you build per project.</li>
+        <li>Grouping a project's models/sections into labeled navigation groups (e.g. "Reference Data", "Purchasing", "Sales").</li>
+        <li>Highlighting the current section so the user always knows where they are in the app.</li>
+        <li>Not the place to add ad-hoc links by hand-editing HTML - configure the WISE_NAV_SECTIONS setting instead so the sidebar stays data-driven.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Sidebar documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Navigation menu</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex94" id="ex94-preview" value="preview" checked>
@@ -92,5 +106,33 @@
                 <tr><td><code>menu-node</code></td><td>A titled group of nav items (<code>&lt;h3&gt;</code> + items).</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Sidebar implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Sidebar by configuring WISE_NAV_SECTIONS in your Django settings - do not hand-edit the sidebar markup. Rules:
+- wise_core/base.html already includes the sidebar (via nav_menu.html) for every authenticated page - you get it for free once wise_core is installed and a user is logged in.
+- Define your app's navigation entirely as data in settings.py:
+  WISE_NAV_SECTIONS = [
+      {'title': 'Reference Data', 'items': [
+          {'label': 'Departments', 'url_name': 'department_list_view', 'icon': 'building-2', 'match': 'department_'},
+      ]},
+  ]
+- Each item's `match` is a substring of the current URL name that marks that link `.selected` when it appears in the resolved URL - choose a prefix shared by every view for that model (list/detail/create/update/delete) so the whole group highlights consistently.
+- `icon` is a Lucide icon name, rendered via the lucide template tag - keep icon choices consistent across sections (e.g. always building-2 for org-type entities).
+- The signed-in user's name is pinned to the bottom of the sidebar automatically from request.user - nothing to configure there.
+- To change which sections/links appear, edit WISE_NAV_SECTIONS in settings.py, never wise_core/templates/wise_core/components/nav_menu.html directly, since that file is shared, vendored package code.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templates/wise_core/components/nav_menu.html">nav_menu.html — renders WISE_NAV_SECTIONS into the sidebar</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/context_processors.py">context_processors.py — supplies wise_nav_sections to every template</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L1010-L1023">tokens.css — .menu-node, .menu-link</a></li>
+        </ul>
     </div>
 {% endblock %}

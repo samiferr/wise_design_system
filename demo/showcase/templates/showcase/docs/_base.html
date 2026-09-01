@@ -79,4 +79,22 @@ not need to touch the layout blocks below.
 
 {% block extra_js %}
     {% include 'showcase/components/_code_highlight.html' %}
+    <script>
+        // Toggles a component doc page's "Overview"/"AI Prompt" panels. Generic
+        // on purpose: it reads whichever .bar-item was clicked and its
+        // data-doc-tab-group's own [data-doc-tab] children, so every page can
+        // reuse this one function without unique IDs, and it never touches the
+        // per-example .doc-example-radio Preview/Code tabs (different markup).
+        function docShowPageTab(button, tab) {
+            var bar = button.closest('.tab-bar')
+            bar.querySelectorAll('.bar-item').forEach(function (item) {
+                var selected = item === button
+                item.classList.toggle('selected', selected)
+                item.setAttribute('aria-selected', String(selected))
+            })
+            bar.parentElement.querySelectorAll(':scope > [data-doc-tab]').forEach(function (panel) {
+                panel.classList.toggle('hidden', panel.dataset.docTab !== tab)
+            })
+        }
+    </script>
 {% endblock %}

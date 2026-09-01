@@ -6,6 +6,19 @@
 {% block doc_intro %}Multi-line text. Vertically resizable only — horizontal resizing breaks form layouts, so it is
     disabled.{% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Any multi-line text field - notes, addresses, descriptions, comments.</li>
+        <li>Content that needs to stay plain text (no formatting) - use Rich Text Input instead if the content genuinely needs structure like headings or lists.</li>
+        <li>A field where the user should control its height (vertical resize) without being able to widen it and break the form layout.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Textarea documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Basic</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex66" id="ex66-preview" value="preview" checked>
@@ -55,5 +68,24 @@
             <thead><tr><th>Class</th><th>Use</th></tr></thead>
             <tbody><tr><td><code>textarea</code></td><td>Min-height 7rem, vertically resizable.</td></tr></tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Textarea implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Textarea for multi-line plain text. Rules:
+- Base markup: <textarea class="textarea"></textarea>, or let _form_fields.html render it automatically inside a real Django form so it gets its .form-field wrapper, label, help text and error list.
+- Only vertical resizing is enabled (resize: vertical) - horizontal resize is disabled on purpose, since a wider textarea breaks the single-column form-stack layout.
+- min-height is set to a sensible default (7rem) so short content doesn't render as a cramped one-line box.
+- If the content genuinely needs structure (headings, lists, bold/italic), use the Rich Text Input component instead - a plain textarea is cheaper and much easier to sanitize/display safely when structure isn't actually needed.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L703-L708">tokens.css — .textarea</a></li>
+        </ul>
     </div>
 {% endblock %}
