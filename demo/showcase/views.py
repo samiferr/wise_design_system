@@ -157,6 +157,7 @@ class CategoryListView(WiseListView):
     filterset_class = CategoryFilter
     template_name = 'showcase/category/list.html'
     paginate_by = 10
+    sortable_fields = {'name'}
 
 
 class CategoryDetailView(WiseDetailView):
@@ -194,6 +195,7 @@ class ProductListView(WiseListView):
     filterset_class = ProductFilter
     template_name = 'showcase/product/list.html'
     paginate_by = 10
+    sortable_fields = {'name', 'category__name', 'rating'}
 
 
 class ProductDetailView(WiseDetailView):

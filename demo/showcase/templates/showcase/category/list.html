@@ -1,5 +1,5 @@
 {% extends 'wise_core/generic/list_generic.html' %}
-{% load wise_icons %}
+{% load wise_icons wise_tags %}
 {% comment %}
 Renders as a data table by default (?view=table, the historical behaviour)
 with a card-grid alternative (?view=cards) - same queryset, same actions,
@@ -48,7 +48,8 @@ mirror-image case.
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Name</th>
+                            <th class="w-px">ID</th>
+                            {% include 'wise_core/components/_sortable_th.html' with field='name' label='Name' %}
                             <th>Color</th>
                             <th>Description</th>
                             <th class="w-px"></th>
@@ -57,16 +58,22 @@ mirror-image case.
                     <tbody>
                         {% for item in object_list %}
                             <tr>
+                                <td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">{{ item.pk }}</td>
                                 <td><a class="font-semibold text-action-700 no-underline hover:underline" href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
                                 <td><span class="inline-block h-4 w-4 border border-divider align-middle" style="background:{{ item.color }}"></span></td>
                                 <td class="text-gray-600">{{ item.description|truncatechars:60 }}</td>
-                                <td class="whitespace-nowrap">
-                                    <a class="btn-ghost" href="{% url 'category_update_view' pk=item.pk %}">{% lucide "pencil" size=14 %}</a>
-                                    <a class="btn-ghost" href="{% url 'category_delete_view' pk=item.pk %}">{% lucide "trash-2" size=14 %}</a>
+                                <td class="w-px whitespace-nowrap text-right">
+                                    <details class="dropdown">
+                                        <summary class="btn btn-icon btn-secondary" aria-label="Row actions">{% lucide "menu" size=15 %}</summary>
+                                        <div class="dropdown-panel">
+                                            <a class="dropdown-item" href="{% url 'category_update_view' pk=item.pk %}">{% lucide "pencil" size=14 %}Edit</a>
+                                            <a class="dropdown-item dropdown-item-danger" href="{% url 'category_delete_view' pk=item.pk %}">{% lucide "trash-2" size=14 %}Delete</a>
+                                        </div>
+                                    </details>
                                 </td>
                             </tr>
                         {% empty %}
-                            <tr><td colspan="4">{% include 'wise_core/components/_no_data.html' %}</td></tr>
+                            <tr><td colspan="5">{% include 'wise_core/components/_no_data.html' %}</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>

@@ -20,45 +20,90 @@
     <div class="doc-example-panel-preview">
         <div class="doc-preview overflow-x-auto p-0">
         <table class="data-table">
-            <thead><tr><th>Name</th><th>Color</th><th>Products</th><th class="w-px"></th></tr></thead>
+            <thead>
+                <tr>
+                    <th class="w-px">ID</th>
+                    <th><a class="is-sorted" href="#">Name {% lucide "chevron-up" size=14 %}</a></th>
+                    <th>Color</th>
+                    <th><a href="#">Products {% lucide "chevrons-up-down" size=14 %}</a></th>
+                    <th class="w-px"></th>
+                </tr>
+            </thead>
             <tbody>
                 <tr>
+                    <td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">1</td>
                     <td><a class="font-semibold text-action-700 no-underline hover:underline" href="#">Electronics</a></td>
                     <td><span class="inline-block h-4 w-4 border border-divider align-middle" style="background:#15803d"></span></td>
                     <td>12</td>
-                    <td class="whitespace-nowrap"><a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a><a class="btn-ghost" href="#">{% lucide "trash-2" size=14 %}</a></td>
+                    <td class="w-px whitespace-nowrap text-right">
+                        <details class="dropdown">
+                            <summary class="btn btn-icon btn-secondary" aria-label="Row actions">{% lucide "menu" size=15 %}</summary>
+                            <div class="dropdown-panel">
+                                <a class="dropdown-item" href="#">{% lucide "pencil" size=14 %}Edit</a>
+                                <a class="dropdown-item dropdown-item-danger" href="#">{% lucide "trash-2" size=14 %}Delete</a>
+                            </div>
+                        </details>
+                    </td>
                 </tr>
                 <tr>
+                    <td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">2</td>
                     <td><a class="font-semibold text-action-700 no-underline hover:underline" href="#">Stationery</a></td>
                     <td><span class="inline-block h-4 w-4 border border-divider align-middle" style="background:#16a34a"></span></td>
                     <td>34</td>
-                    <td class="whitespace-nowrap"><a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a><a class="btn-ghost" href="#">{% lucide "trash-2" size=14 %}</a></td>
+                    <td class="w-px whitespace-nowrap text-right">
+                        <details class="dropdown">
+                            <summary class="btn btn-icon btn-secondary" aria-label="Row actions">{% lucide "menu" size=15 %}</summary>
+                            <div class="dropdown-panel">
+                                <a class="dropdown-item" href="#">{% lucide "pencil" size=14 %}Edit</a>
+                                <a class="dropdown-item dropdown-item-danger" href="#">{% lucide "trash-2" size=14 %}Delete</a>
+                            </div>
+                        </details>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="mt-5 overflow-x-auto border border-divider bg-panel">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_tags %}
+<div class="mt-5 overflow-x-auto border border-divider bg-panel">
     <table class="data-table">
         <thead>
-            <tr><th>Name</th><th>Color</th><th class="w-px"></th></tr>
+            <tr>
+                <th class="w-px">ID</th>
+                {% include 'wise_core/components/_sortable_th.html' with field='name' label='Name' %}
+                <th>Color</th>
+                <th class="w-px"></th>
+            </tr>
         </thead>
         <tbody>
             {% for item in object_list %}
                 <tr>
+                    <td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">{{ item.pk }}</td>
                     <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
                     <td>{{ item.color }}</td>
-                    <td class="whitespace-nowrap">
-                        {% if perms.showcase.change_category %}
-                            <a class="btn-ghost" href="{% url 'category_update_view' pk=item.pk %}">
-                                {% lucide "pencil" size=14 %}
-                            </a>
-                        {% endif %}
+                    <td class="w-px whitespace-nowrap text-right">
+                        <details class="dropdown">
+                            <summary class="btn btn-icon btn-secondary" aria-label="Row actions">
+                                {% lucide "menu" size=15 %}
+                            </summary>
+                            <div class="dropdown-panel">
+                                {% if perms.showcase.change_category %}
+                                    <a class="dropdown-item" href="{% url 'category_update_view' pk=item.pk %}">
+                                        {% lucide "pencil" size=14 %}Edit
+                                    </a>
+                                {% endif %}
+                                {% if perms.showcase.delete_category %}
+                                    <a class="dropdown-item dropdown-item-danger" href="{% url 'category_delete_view' pk=item.pk %}">
+                                        {% lucide "trash-2" size=14 %}Delete
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </details>
                     </td>
                 </tr>
             {% empty %}
-                <tr><td colspan="3">{% include 'wise_core/components/_no_data.html' %}</td></tr>
+                <tr><td colspan="4">{% include 'wise_core/components/_no_data.html' %}</td></tr>
             {% endfor %}
         </tbody>
     </table>
@@ -71,10 +116,55 @@
         reflow to a narrow screen, so it needs somewhere to scroll.
     </p>
 
+    <h2 class="mt-8">ID column</h2>
+    <p class="text-gray-700">
+        When a record's primary key is something people actually look up — a support ticket
+        reference, an API identifier, a value someone reads out over the phone — give it its own
+        column, first, narrow and muted so it doesn't compete with the row's real content:
+    </p>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<th class="w-px">ID</th>
+...
+<td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">{{ item.pk }}</td>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        It's opt-in per table, not automatic — skip it for internal-only lists where the ID is never
+        something a person needs to reference.
+    </p>
+
+    <h2 class="mt-8">Row actions</h2>
+    <p class="text-gray-700">
+        One trigger, not a row of icon buttons. Past two or three actions, inline
+        <code>btn-ghost</code> icons compete with each other and with the row's own content — a
+        <a class="text-action-600 underline" href="{% url 'docs_actions_dropdown' %}">dropdown</a>
+        keeps the row scannable and gives every action a text label instead of a tooltip:
+    </p>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<td class="w-px whitespace-nowrap text-right">
+    <details class="dropdown">
+        <summary class="btn btn-icon btn-secondary" aria-label="Row actions">
+            {% lucide "menu" size=15 %}
+        </summary>
+        <div class="dropdown-panel">
+            <a class="dropdown-item" href="{% url 'category_update_view' pk=item.pk %}">
+                {% lucide "pencil" size=14 %}Edit
+            </a>
+            <a class="dropdown-item dropdown-item-danger" href="{% url 'category_delete_view' pk=item.pk %}">
+                {% lucide "trash-2" size=14 %}Delete
+            </a>
+        </div>
+    </details>
+</td>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        <code>right-0</code> on <code>.dropdown-panel</code> anchors it to the trigger's right edge,
+        which is exactly right for the rightmost column — the menu opens flush against the table's own
+        edge instead of overflowing it.
+    </p>
+
     <h2 class="mt-8">Column ordering</h2>
     <p class="text-gray-700">
         Sorting is a query parameter, applied to the queryset — not a client-side re-sort, which would
-        only reorder the current page and silently lie about the rest.
+        only reorder the current page and silently lie about the rest. Every sortable header carries an
+        icon, including unsorted ones ({% lucide "chevrons-up-down" size=14 cls="inline align-[-2px] text-gray-400" %}), so the capability
+        reads as clickable before a visitor ever hovers it; the active column shows
+        {% lucide "chevron-up" size=14 cls="inline align-[-2px]" %}/{% lucide "chevron-down" size=14 cls="inline align-[-2px]" %} for its direction.
     </p>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex14" id="ex14-preview" value="preview" checked>
@@ -88,8 +178,8 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th><a class="inline-flex items-center gap-1 no-underline text-gray-600 hover:text-action-600" href="#">Name {% lucide "chevron-up" size=12 %}</a></th>
-                    <th><a class="inline-flex items-center gap-1 no-underline text-gray-600 hover:text-action-600" href="#">Products {% lucide "chevron-down" size=12 %}</a></th>
+                    <th><a class="is-sorted" href="#">Name {% lucide "chevron-up" size=14 %}</a></th>
+                    <th><a href="#">Products {% lucide "chevrons-up-down" size=14 %}</a></th>
                 </tr>
             </thead>
             <tbody><tr><td>Electronics</td><td>12</td></tr></tbody>
@@ -99,35 +189,30 @@
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class CategoryListView(WiseListView):
     model = Category
-    ORDERABLE = {"name", "created_at"}      # allowlist - never trust the raw param
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        sort = self.request.GET.get("sort", "name")
-        field = sort.lstrip("-")
-        if field in self.ORDERABLE:
-            qs = qs.order_by(sort)
-        return qs{% endverbatim %}{% endfilter %}</code></pre>
+    sortable_fields = {"name", "created_at"}   # allowlist - never trust the raw param{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
+    <p class="text-gray-700">
+        <code>sortable_fields</code> is <code>WiseListView</code>'s own allowlist — it reads
+        <code>?sort=name</code>/<code>?sort=-name</code>, orders the queryset, and puts
+        <code>current_sort</code> in the context, all without touching <code>get_queryset()</code>
+        yourself. Render each header with the partial, and it renders the right icon and toggles
+        direction on click automatically:
+    </p>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_tags %}
+<th>{% include 'wise_core/components/_sortable_th.html' with field='name' label='Name' %}</th>{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>
             <div class="callout-title">Allowlist the sortable fields</div>
             Passing <code>request.GET["sort"]</code> straight into <code>order_by()</code> lets a
             visitor order by any field or traverse relations — a slow-query and information-disclosure
-            hazard. And always include a deterministic tiebreak (a final <code>"pk"</code>), or
-            pagination will repeat and skip rows across pages.
+            hazard. <code>sortable_fields</code> handles this for you on <code>WiseListView</code>; if
+            you're building a sortable list outside it, allowlist the field yourself and always include
+            a deterministic tiebreak (a final <code>"pk"</code>), or pagination will repeat and skip
+            rows across pages.
         </div>
     </div>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{# a header cell that toggles direction and keeps other params #}
-<th>
-    <a href="?sort={% if current_sort == 'name' %}-{% endif %}name">
-        Name
-        {% if current_sort == 'name' %}{% lucide "chevron-up" size=12 %}
-        {% elif current_sort == '-name' %}{% lucide "chevron-down" size=12 %}{% endif %}
-    </a>
-</th>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Empty state</h2>
     <div class="doc-example">
@@ -177,6 +262,11 @@
             <tbody>
                 <tr><td><code>data-table</code></td><td>Record list.</td></tr>
                 <tr><td><code>detail-panel</code></td><td>Read-only key/value table for one record.</td></tr>
+                <tr><td><code>is-sorted</code></td><td>On a header's <code>&lt;a&gt;</code>, for the currently-sorted column.</td></tr>
+                <tr><td><code>_sortable_th.html</code></td><td>A <code>&lt;th&gt;</code> with a sort link and icon, given <code>field</code>/<code>label</code>.</td></tr>
+                <tr><td><code>sort_url</code></td><td>Tag: the <code>?sort=</code> URL for one field, params-preserving.</td></tr>
+                <tr><td><code>WiseListView.sortable_fields</code></td><td>The allowlist of fields <code>?sort=</code> may name.</td></tr>
+                <tr><td><code>dropdown</code> / <code>dropdown-panel</code> / <code>dropdown-item</code></td><td>Row actions menu — see <a class="text-action-600 underline" href="{% url 'docs_actions_dropdown' %}">Dropdown</a>.</td></tr>
                 <tr><td><code>_no_data.html</code></td><td>Empty state partial.</td></tr>
                 <tr><td><code>_pagination.html</code></td><td>Pager partial.</td></tr>
             </tbody>

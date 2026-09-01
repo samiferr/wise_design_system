@@ -63,21 +63,43 @@ class OwnRecordsMixin:
 
 class WiseListView(OwnRecordsMixin, LoginRequiredMixin, PermissionRequiredMixin, FilterView):
     """
-    The "datatable" view: a permission-gated, paginated, django-filter-backed
-    list view. Pair with `wise_core/generic/list_generic.html` (extend it and
-    fill in `list_title`/`card_item`/`list_actions`), a `filterset_fields`
-    list or a `filterset_class`, and the `.data-table`/`.card` CSS
-    components.
+    The "datatable" view: a permission-gated, paginated, django-filter-backed,
+    sortable list view. Pair with `wise_core/generic/list_generic.html`
+    (extend it and fill in `list_title`/`card_item`/`list_actions`), a
+    `filterset_fields` list or a `filterset_class`, and the
+    `.data-table`/`.card` CSS components.
+
+    Column sorting is opt-in and allowlisted: set `sortable_fields` to the
+    field names (or `__`-joined relation lookups) a visitor may pass as
+    `?sort=<field>`/`?sort=-<field>` - never read the raw query parameter
+    into `order_by()` yourself, since that lets a visitor order by any field,
+    or traverse relations, as a slow-query and information-disclosure
+    hazard. A deterministic `pk` tiebreak is always appended, so pagination
+    can't repeat or skip rows across pages. Render header links with
+    `wise_core/components/_sortable_th.html`, which reads `current_sort` back
+    out of this view's context.
     """
     login_url = reverse_lazy('login')
     paginate_by = 20
     ordering = ['-pk']
+    sortable_fields = ()
 
     def get_permission_required(self):
         return (permission_codename(self.model, 'view'),)
 
+    def get_current_sort(self):
+        sort = self.request.GET.get('sort', '')
+        return sort if sort.lstrip('-') in self.sortable_fields else None
+
+    def get_ordering(self):
+        current_sort = self.get_current_sort()
+        if current_sort is None:
+            return super().get_ordering()
+        return [current_sort, 'pk']
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        context['current_sort'] = self.get_current_sort()
         context['filter_kwargs_count'] = len(
             [key for key, value in self.request.GET.items() if value != '' and key in self.filterset.filters]
         )
