@@ -20,17 +20,47 @@
         @apply border border-divider bg-panel p-6;
     }
 
-    /* Literal colors, not gray-900/gray-100/var(--color-divider): the neutral
-     * ramp inverts under data-theme="dark", which would flip this from a
-     * light code editor to a dark one depending on the *site's* theme rather
-     * than staying the fixed light-gray, syntax-colored look asked for. A
-     * code block opts out of the site theme deliberately, the same as it did
-     * when it used to render as a fixed dark terminal instead. */
+    /* Fixed colors, not gray-900/gray-100/var(--color-divider): a code block
+     * opts out of the site's *palette* deliberately (it doesn't turn blue or
+     * violet with data-palette), the same as it did when it used to render
+     * as a plain dark terminal before syntax colors were added. It does
+     * still switch with data-theme though, between the two --doc-code-*
+     * variable sets below - a light-gray card glaring on an otherwise dark
+     * page would read as broken, not "deliberately themed". */
     .doc-code {
         @apply m-0 overflow-x-auto border border-t-0 p-4 text-[12.5px] leading-relaxed;
-        background: #f5f5f8;
-        color: #18181a;
-        border-color: #d4d4d7;
+        --doc-code-bg: #f5f5f8;
+        --doc-code-fg: #18181a;
+        --doc-code-border: #d4d4d7;
+        --doc-code-comment: #6b7280;
+        --doc-code-punctuation: #6e7781;
+        --doc-code-entity: #b5124e;
+        --doc-code-string: #116329;
+        --doc-code-operator: #9a6e3a;
+        --doc-code-keyword: #0550ae;
+        --doc-code-function: #8250df;
+        --doc-code-variable: #953800;
+        background: var(--doc-code-bg);
+        color: var(--doc-code-fg);
+        border-color: var(--doc-code-border);
+    }
+
+    /* The whole palette above swaps together for dark theme rather than
+     * just the background - the light-tuned token colors (e.g. the
+     * near-black base text, or a dark red/green/blue meant to sit on a
+     * near-white card) are too dark to read against a near-black one. */
+    :root[data-theme="dark"] .doc-code {
+        --doc-code-bg: #18181a;
+        --doc-code-fg: #f2f2f3;
+        --doc-code-border: rgba(255, 255, 255, 0.16);
+        --doc-code-comment: #8b949e;
+        --doc-code-punctuation: #8b949e;
+        --doc-code-entity: #ff7b72;
+        --doc-code-string: #7ee787;
+        --doc-code-operator: #ffa657;
+        --doc-code-keyword: #79c0ff;
+        --doc-code-function: #d2a8ff;
+        --doc-code-variable: #ffa657;
     }
 
     .doc-code code {
@@ -67,13 +97,13 @@
     .doc-code .token.prolog,
     .doc-code .token.doctype,
     .doc-code .token.cdata {
-        color: #6b7280;
+        color: var(--doc-code-comment);
         font-style: italic;
     }
 
     .doc-code .token.punctuation,
     .doc-code .token.delimiter {
-        color: #6e7781;
+        color: var(--doc-code-punctuation);
     }
 
     .doc-code .token.tag,
@@ -83,7 +113,7 @@
     .doc-code .token.constant,
     .doc-code .token.symbol,
     .doc-code .token.deleted {
-        color: #b5124e;
+        color: var(--doc-code-entity);
     }
 
     .doc-code .token.selector,
@@ -92,30 +122,30 @@
     .doc-code .token.char,
     .doc-code .token.builtin,
     .doc-code .token.inserted {
-        color: #116329;
+        color: var(--doc-code-string);
     }
 
     .doc-code .token.operator,
     .doc-code .token.entity,
     .doc-code .token.url {
-        color: #9a6e3a;
+        color: var(--doc-code-operator);
     }
 
     .doc-code .token.atrule,
     .doc-code .token.attr-value,
     .doc-code .token.keyword {
-        color: #0550ae;
+        color: var(--doc-code-keyword);
     }
 
     .doc-code .token.function,
     .doc-code .token.class-name {
-        color: #8250df;
+        color: var(--doc-code-function);
     }
 
     .doc-code .token.regex,
     .doc-code .token.important,
     .doc-code .token.variable {
-        color: #953800;
+        color: var(--doc-code-variable);
     }
 
     .doc-code .token.important,
@@ -140,22 +170,35 @@
         @apply pr-11;
     }
 
-    /* Literal colors, not `.btn-secondary`'s theme-aware ones, for the same
-     * reason `.doc-code` above uses them: this button sits on the code
-     * block's permanently-light background, so it has to stay legible
-     * regardless of the *site's* theme rather than washing out (or
-     * inverting to near-white) on a dark-themed page. */
+    /* Fixed colors, not `.btn-secondary`'s theme-aware ones, matching
+     * whichever `--doc-code-*` palette above is active: `.btn-secondary`'s
+     * colors are tuned for `.btn`'s own bg-panel/bg-page surfaces, not for
+     * sitting on top of a code block, so it would wash out (or invert to
+     * near-white) rather than tracking `.doc-code`'s light/dark swap. */
     .doc-code-copy {
         @apply absolute right-2 top-2 inline-flex h-7 w-7 cursor-pointer items-center justify-center
         border p-0 transition-colors;
-        background: #f5f5f8;
-        border-color: #d4d4d7;
-        color: #3f3f42;
+        --doc-code-copy-bg: #f5f5f8;
+        --doc-code-copy-hover-bg: #e7e7ea;
+        --doc-code-copy-border: #d4d4d7;
+        --doc-code-copy-fg: #3f3f42;
+        --doc-code-copy-done: #15803d;
+        background: var(--doc-code-copy-bg);
+        border-color: var(--doc-code-copy-border);
+        color: var(--doc-code-copy-fg);
         border-radius: var(--radius-md);
     }
 
+    :root[data-theme="dark"] .doc-code-copy {
+        --doc-code-copy-bg: #18181a;
+        --doc-code-copy-hover-bg: #232327;
+        --doc-code-copy-border: rgba(255, 255, 255, 0.16);
+        --doc-code-copy-fg: #f2f2f3;
+        --doc-code-copy-done: #34d17a;
+    }
+
     .doc-code-copy:hover {
-        background: #e7e7ea;
+        background: var(--doc-code-copy-hover-bg);
     }
 
     .doc-code-copy:focus-visible {
@@ -164,8 +207,8 @@
     }
 
     .doc-code-copy.is-copied {
-        border-color: #16a34a;
-        color: #15803d;
+        border-color: var(--doc-code-copy-done);
+        color: var(--doc-code-copy-done);
     }
 
     .doc-props th {
