@@ -9,6 +9,21 @@
     submit, JS handler) and an anchor for navigation.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Any in-page action that submits a form or runs a JS handler - use a real <button>, never a styled <a> or <div>.</li>
+        <li>Navigation that looks like a button (e.g. a prominent "New" call to action) - use an <a> with the same classes.</li>
+        <li>A datatable row action (edit/delete icon) - use the compact, borderless btn-ghost variant instead of a full-size button.</li>
+        <li>A submit control mid-request - pair btn-primary with disabled and an inline Spinner for a loading state.</li>
+        <li>A single-icon control with no visible label (search, add, filter) - use btn-icon, and always add an aria-label.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Button documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Variants</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex4" id="ex4-preview" value="preview" checked>
@@ -163,5 +178,29 @@
                 <tr><td><code>large-button</code></td><td>250px minimum width.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Button implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Button component. Rules:
+- Always pair the base `.btn` class with exactly one color modifier: btn-primary (default call to action), btn-brand (brand-colored alternative), btn-secondary (outlined/neutral, e.g. "Cancel"), btn-danger (destructive actions). Never combine two modifiers, never use `.btn` alone.
+- Use a <button> for an in-page action (form submit, JS handler) and an <a> for navigation - both take the identical classes.
+- Disabled state: the native `disabled` attribute on a <button>; `.btn-disabled` on an <a>, since anchors have no disabled attribute.
+- Icon-only button: add `.btn-icon` (fixed 36x36 square) and ALWAYS set aria-label (or a visually-hidden span) - an icon-only button otherwise has no accessible name.
+- Icon + label: put the {% lucide %} icon then a <span> with the text inside the button/anchor, e.g. <a class="btn btn-primary" href="...">{% lucide "plus" size=16 %}<span>New</span></a>.
+- Row-level action in a datatable (edit/delete): use `.btn-ghost` (borderless, compact) rather than a full `.btn`, e.g. <a class="btn-ghost" href="{% url 'category_update_view' pk=item.pk %}">{% lucide "pencil" size=14 %}</a>.
+- Loading state during a form submit: disable the button and prepend a Spinner: <button class="btn btn-primary" disabled><span class="spinner spinner-sm"></span><span>Saving...</span></button>.
+- Full-width/prominent button: add `large-button` (250px minimum width) alongside the color modifier.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L537-L575">tokens.css — .btn and its color/icon/disabled modifiers</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L1104-L1108">tokens.css — .large-button</a></li>
+        </ul>
     </div>
 {% endblock %}

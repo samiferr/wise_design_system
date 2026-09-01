@@ -9,6 +9,20 @@
     does the job better.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Showing parts of a whole with three or four categories - a status breakdown, a small category split.</li>
+        <li>A quick visual proportion check where exact values matter less than relative share.</li>
+        <li>Not for more than four or five slices - the wedges become too similar in size to compare accurately; use a Bar Chart instead once the category count grows.</li>
+        <li>Prefer a Doughnut Chart instead when you also want to display the total number in the center.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Pie Chart documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Basic</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex19" id="ex19-preview" value="preview" checked>
@@ -78,4 +92,24 @@ context["revenue_pie"] = charts.pie_chart(months, revenue){% endverbatim %}{% en
     {{ block.super }}
     <script src="{% static 'wise_core/js/chart.umd.min.js' %}"></script>
     <script src="{% static 'wise_core/js/charts.js' %}"></script>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Pie Chart implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Pie Chart - built in the view with wise_core.charts, rendered by Chart.js. Rules:
+- In the view: from wise_core import charts; context['status_pie'] = charts.pie_chart(labels, values) - one slice per value, colored automatically from the shared series palette; no dataset() wrapping needed (pie/doughnut/polar-area take plain labels + values lists directly).
+- Template markup matches every other chart: {% load wise_charts %}, a sized .chart-frame wrapping .chart-canvas with data-chart="{% chart_json status_pie %}", role="img" and a real aria-label describing what's shown.
+- Keep it to three or four slices at most - past that, wedges get too close in size to compare visually and a Bar Chart communicates the same data far more clearly.
+- If you also want the total shown in the center of the shape, use the Doughnut Chart instead (same API, plus a `cutout` for the hole) rather than overlaying text on a Pie Chart by hand.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/charts.py">charts.py — pie_chart(), _radial_chart()</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templatetags/wise_charts.py">wise_charts.py — the chart_json template tag</a></li>
+        </ul>
+    </div>
 {% endblock %}

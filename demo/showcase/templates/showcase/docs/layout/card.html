@@ -8,6 +8,20 @@
     a full datatable.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>A grid of navigational links or entry points (e.g. a settings hub, a picker of report types).</li>
+        <li>Dashboard summary tiles showing a metric, a chart, or a live-preview of current settings.</li>
+        <li>List items that carry more visual weight than a plain table row but don't need full datatable features (sorting, per-column filters).</li>
+        <li>Not a substitute for a Data Table when the content is genuinely tabular and needs sorting/scanning many rows at once - see the Card vs Table pattern doc.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Card documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Basic</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex74" id="ex74-preview" value="preview" checked>
@@ -129,5 +143,30 @@
                 <tr><td><code>card-meta</code></td><td>Icon + secondary detail row.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Card implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Card for a bordered content block. Rules:
+- Base markup, usually an <a> when the whole card navigates somewhere: <a class="card" href="...">...</a>; use a <div class="card"> when it is not a single link (e.g. a dashboard tile with its own internal actions).
+- Structure inside: card-kicker (small uppercase eyebrow label), card-title (the heading), card-content or card-body (supporting text), card-meta (a small icon+text row of metadata, e.g. a date or count).
+  <div class="card">
+      <div class="card-kicker">Category</div>
+      <h3 class="card-title mt-1">Title</h3>
+      <p class="card-content mt-2">Supporting text.</p>
+  </div>
+- Respects the data-radius/data-shadow/data-bg design tokens automatically - never hardcode a border-radius or box-shadow on a card, or it stops following the user's chosen design settings.
+- For a grid of these, wrap them in a responsive grid utility class rather than a flex row, so they reflow at narrow widths.
+- If the content is genuinely tabular and needs sorting or scanning across many rows, use the Data Table component instead - see the Patterns section's Card list vs Data table guidance.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L591-L611">tokens.css — .card and its kicker/title/content/meta parts</a></li>
+        </ul>
     </div>
 {% endblock %}

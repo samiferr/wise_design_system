@@ -8,6 +8,20 @@
     total, which is usually the number people actually want.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Parts of a whole where the total itself is the number people actually want to see - use the punched-out hole to show it.</li>
+        <li>A quota/usage breakdown (used vs remaining) with the overall total or percentage centered in the hole.</li>
+        <li>A compact status or category summary on a dashboard tile, more visually distinct from a plain Pie Chart.</li>
+        <li>Same slice-count caveat as Pie Chart - keep it to three or four categories before switching to a Bar Chart.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Doughnut Chart documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Basic</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex16" id="ex16-preview" value="preview" checked>
@@ -102,4 +116,24 @@ context["revenue_total"] = sum(revenue){% endverbatim %}{% endfilter %}</code></
     {{ block.super }}
     <script src="{% static 'wise_core/js/chart.umd.min.js' %}"></script>
     <script src="{% static 'wise_core/js/charts.js' %}"></script>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Doughnut Chart implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Doughnut Chart - a Pie Chart with the center removed, so there's somewhere to put the total. Rules:
+- In the view: from wise_core import charts; context['stock_donut'] = charts.doughnut_chart(labels, values, cutout='60%') - `cutout` controls how much of the radius the hole takes (a percentage string); omit it to use the 60% default.
+- Template markup matches every other chart: {% load wise_charts %}, a sized .chart-frame wrapping .chart-canvas with data-chart="{% chart_json stock_donut %}", role="img" and a real aria-label.
+- To show the total/percentage inside the hole, absolutely position a text element centered over the .chart-frame (it's already `position: relative`) rather than trying to render text onto the canvas itself.
+- Keep it to three or four slices, same as Pie Chart - past that, switch to a Bar Chart instead.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/charts.py">charts.py — doughnut_chart()</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templatetags/wise_charts.py">wise_charts.py — the chart_json template tag</a></li>
+        </ul>
+    </div>
 {% endblock %}

@@ -8,6 +8,20 @@
     positioning library, no script.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Labeling an icon-only button so its purpose is clear without adding visible text (e.g. a trash icon needs 'Delete').</li>
+        <li>A short clarification on a truncated value, abbreviation, or a field whose meaning isn't obvious from its label alone.</li>
+        <li>Any hint that should appear on hover AND keyboard focus, with zero JavaScript.</li>
+        <li>Not for content the user needs to read on page load or select/copy text from - a tooltip disappears when hover/focus ends, so use a Callout for anything that must persist.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Tooltip documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Try it</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex37" id="ex37-preview" value="preview" checked>
@@ -80,5 +94,26 @@
                 <tr><td><code>tooltip-bottom</code></td><td>Position below rather than above.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Tooltip implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Tooltip for a short hover/focus label. Rules:
+- Pure CSS, no script: wrap the trigger element with class="tooltip" and a data-tooltip attribute holding the label text:
+  <button class="btn btn-icon btn-secondary tooltip" data-tooltip="Delete">{% lucide "trash-2" size=16 %}</button>
+- It activates on :hover, :focus-visible, AND :focus-within, so keyboard users get the same information as mouse users - never rely on hover alone for an icon-only control's accessible label; also set aria-label (or a visually-hidden span) with the same text, since a CSS tooltip is not read by screen readers.
+- Default position is above the trigger; add tooltip-bottom to flip it below (e.g. for a trigger near the top of the viewport).
+- Keep the label to a few words - it does not wrap and is meant to be scanned instantly, not read.
+- Never use it for content the user needs to keep visible or select text from; use a Callout for standing content instead.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L1759-L1780">tokens.css — .tooltip, its ::after content, and .tooltip-bottom</a></li>
+        </ul>
     </div>
 {% endblock %}

@@ -10,6 +10,20 @@
     it accompanies a task.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>A dashboard or summary tile where the percentage is the headline number (storage used, quota consumed, goal completion).</li>
+        <li>A compact circular indicator next to other stats, where a horizontal bar would take too much width.</li>
+        <li>Any place a completion percentage needs a label centered inside the indicator itself.</li>
+        <li>When the progress accompanies a specific task or list row rather than being the tile's main figure, prefer a Progress Bar instead.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Progress Ring documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Basic</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex31" id="ex31-preview" value="preview" checked>
@@ -91,5 +105,26 @@ dashoffset = circumference * (1 - percent / 100)   # 100% -> 0 offset -> full ri
                 <tr><td><code>charts.progress_ring(percent, radius, stroke)</code></td><td>Returns size, center, radius, dasharray, dashoffset, percent.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Progress Ring implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Progress Ring for a circular, SVG-based percentage indicator. Rules:
+- It is a stroked SVG arc (not a conic-gradient), giving a real rounded stroke cap: .progress-ring wraps an <svg> with a .progress-ring-track circle (the full-circle background) and a .progress-ring-indicator circle (the arc, whose stroke-dashoffset encodes the percentage).
+- Compute stroke-dasharray/stroke-dashoffset in the view or a template tag from the circle's radius and the percentage - do not hardcode the dash values for a percentage that changes per record.
+- .progress-ring-label centers the percentage text inside the ring absolutely; keep it short (a percentage or short number, not a sentence).
+- Use this on a dashboard tile where the percentage is the headline figure. If the progress is secondary to a task row or list item, use the Progress Bar component instead - it reads better inline.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L1648-L1671">tokens.css — .progress-ring and its parts</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/charts.py">charts.py — progress_ring() helper that computes the SVG geometry</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templatetags/wise_charts.py">wise_charts.py — chart_progress_ring template tag</a></li>
+        </ul>
     </div>
 {% endblock %}

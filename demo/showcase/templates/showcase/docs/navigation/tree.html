@@ -9,6 +9,20 @@
     <code>open</code> to reveal the current node. The sidebar you are looking at is this component.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>A nestable hierarchy of navigation links or categories, more than one level deep (this docs site's own sidebar is built with it).</li>
+        <li>A folder/document structure, an org chart, or any parent-child navigation where children should collapse under their parent.</li>
+        <li>Marking the branch containing the current page open by default, so a deep link doesn't land the user in a fully-collapsed tree.</li>
+        <li>Not for a flat, single-level list of links - use the plain Sidebar/menu-link pattern for that instead, since Tree's nesting and nested collapse behavior is overkill for one level.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Tree documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Real data</h2>
     <p class="text-gray-700">Rendered from the demo's <code>Department</code> model — an actual self-referencing table, not hand-written markup:</p>
     <div class="doc-example">
@@ -163,5 +177,34 @@ Department.objects.filter(parent=None).prefetch_related("children"){% endverbati
                 <tr><td><code>tree-leaf.selected</code></td><td>The current node.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Tree implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Tree for nestable disclosure navigation. Rules:
+- Every branch is a real <details> element - expand/collapse works with no JavaScript, and a server-rendered page can mark a branch open (the `open` attribute) to reveal whichever node is currently active:
+  <div class="tree">
+      <details class="tree-item" {% if section.contains_current %}open{% endif %}>
+          <summary>{{ section.title }} <span class="tree-item-chevron">chevron-right icon</span></summary>
+          <div class="tree-item-children">
+              <a class="tree-leaf {% if page.is_current %}selected{% endif %}" href="{% url page.url_name %}">{{ page.title }}</a>
+          </div>
+      </details>
+  </div>
+- `.tree-item-chevron` auto-rotates on `[open]` - do not write your own open-state class or JS.
+- `.tree-item-children` indents nested content via a left border (a continuous guide line), not padding alone - do not override this with your own margin/padding scheme.
+- Mark the active leaf with `.tree-leaf.selected` server-side, based on the current URL/page, and mark every ancestor branch `open` so a deep link never lands in a fully-collapsed tree.
+- For a flat, single-level list of links with no nesting, use the simpler Sidebar/menu-link pattern instead - Tree is for genuinely hierarchical navigation.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L1553-L1590">tokens.css — .tree, .tree-item, .tree-item-chevron, .tree-leaf</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/demo/showcase/templates/showcase/components/_docs_tree.html">_docs_tree.html — this docs site's own sidebar, a real Tree in production use</a></li>
+        </ul>
     </div>
 {% endblock %}

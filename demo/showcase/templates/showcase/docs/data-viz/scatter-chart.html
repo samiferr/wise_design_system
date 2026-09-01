@@ -9,6 +9,20 @@
     trend over time.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Looking for correlation or outliers between two numeric variables - price vs units sold, age vs response time.</li>
+        <li>Plotting one point per record at its own (x, y) position rather than aggregating into bars or a line.</li>
+        <li>A dataset with no natural time ordering, where a Line Chart's implied sequence would be misleading.</li>
+        <li>When a third variable (magnitude) also needs encoding as point size, use the Bubble Chart variant instead.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Scatter Chart documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Basic</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex22" id="ex22-preview" value="preview" checked>
@@ -80,4 +94,24 @@ context["price_scatter"] = charts.scatter_chart([
     {{ block.super }}
     <script src="{% static 'wise_core/js/chart.umd.min.js' %}"></script>
     <script src="{% static 'wise_core/js/charts.js' %}"></script>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Scatter Chart implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Scatter Chart for the relationship between two numeric variables. Rules:
+- In the view: from wise_core import charts; context['price_vs_units'] = charts.scatter_chart([charts.dataset('Products', charts.scatter_points(pairs))]) - `charts.scatter_points()` turns a plain list of (x, y) tuples into the {x, y} dicts Chart.js's scatter dataset needs; wrap that in dataset() to get a color and label.
+- Template markup matches every other chart: {% load wise_charts %}, a sized .chart-frame wrapping .chart-canvas with data-chart="{% chart_json price_vs_units %}", role="img" and a real aria-label.
+- Unlike line_chart()/bar_chart(), scatter_chart() takes datasets directly with no separate labels argument - each point already carries its own x/y position.
+- If a third variable (e.g. revenue) should also be encoded as point size, use the Bubble Chart variant (charts.bubble_chart() + charts.bubble_points()) instead of scatter_chart().{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/charts.py">charts.py — scatter_chart(), scatter_points()</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templatetags/wise_charts.py">wise_charts.py — the chart_json template tag</a></li>
+        </ul>
+    </div>
 {% endblock %}

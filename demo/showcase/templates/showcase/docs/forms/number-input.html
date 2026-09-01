@@ -10,6 +10,20 @@
     from the field, so the client and server agree on the bounds without you repeating them.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Any numeric field backed by Django's IntegerField or DecimalField - quantity, price, age.</li>
+        <li>A field where the browser's own stepper (+/- arrows) and numeric keyboard on mobile are wanted.</li>
+        <li>Enforcing min/max/step bounds that the client and server agree on automatically, without repeating them in the template.</li>
+        <li>Not for a value that only looks numeric but isn't used arithmetically (e.g. a phone number or a code) - use a plain Input with an appropriate type/pattern instead.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Number Input documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Basic</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex53" id="ex53-preview" value="preview" checked>
@@ -106,5 +120,24 @@
                 <tr><td><code>inputmode="numeric"</code></td><td>Numeric keypad on mobile without the spinner.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Number Input implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Number Input for real numeric fields. Rules:
+- Base markup: <input type="number" class="input" min="0" step="1">.
+- Django's IntegerField/DecimalField already emit type="number" with min, max and step derived straight from the field's own validators (e.g. MinValueValidator, decimal_places) - let _form_fields.html render the field rather than hardcoding min/max/step by hand in the template, so client and server always agree on the bounds with nothing to keep in sync.
+- Reuse the plain `.input` class - number inputs are not a separate visual component, only a different `type` attribute that changes the browser's keyboard and built-in stepper/validation.
+- For a value that looks numeric but is never used arithmetically (a phone number, a postal code, an OTP digit), use a plain text Input (or the OTP Input component) instead of type="number" - that avoids the stepper arrows and locale-specific parsing quirks on values that aren't really numbers.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L686-L701">tokens.css — .input</a></li>
+        </ul>
     </div>
 {% endblock %}

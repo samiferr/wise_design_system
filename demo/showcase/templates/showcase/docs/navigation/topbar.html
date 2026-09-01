@@ -13,6 +13,20 @@
 {% endblock %}
 
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Automatically present on every authenticated page below the md breakpoint - not something you add per page.</li>
+        <li>Giving mobile users a hamburger toggle for the sidebar, since the full sidebar column is hidden on narrow screens.</li>
+        <li>Showing the signed-in user's name and the design-settings toggle on small screens, mirroring what the sidebar shows on desktop.</li>
+        <li>Not a place to add page-specific actions - those belong in the page's own list_actions/detail actions, not the topbar.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Topbar documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Signed in</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex97" id="ex97-preview" value="preview" checked>
@@ -80,5 +94,25 @@
                 <tr><td><code>top-bar-logo</code></td><td>Brand/logo slot.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Topbar implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}The Wise Design System's Topbar needs no per-page setup - wise_core/base.html already includes it once, and it only renders below the md breakpoint (desktop chrome lives entirely in the Sidebar instead). Rules:
+- Do not add your own mobile header - the topbar is already there for every authenticated page via wise_core/components/topbar.html.
+- It holds: the hamburger toggle that opens the mobile sidebar drawer, the project brand/logo, and (on the right) the signed-in user's name plus the design-settings toggle.
+- If your project needs a custom brand/logo in the topbar, override the `topbar_brand` block rather than editing wise_core's own topbar.html template directly.
+- Never add page-specific actions (like a "New" button) into the topbar - those belong in the page's own list_actions/detail-action blocks, which already render correctly on both mobile and desktop.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templates/wise_core/components/topbar.html">topbar.html — the mobile-only strip</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L961-L964">tokens.css — .top-bar, .top-bar-logo</a></li>
+        </ul>
     </div>
 {% endblock %}

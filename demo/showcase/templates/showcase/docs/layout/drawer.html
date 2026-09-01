@@ -10,6 +10,20 @@
     like an interruption.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>A filter side-panel for a list/datatable page (the built-in filter-panel is a specialized right-hand drawer).</li>
+        <li>A record preview or quick-edit form that should stay alongside the underlying page rather than replace it.</li>
+        <li>A long form that would feel too disruptive as a blocking Dialog.</li>
+        <li>The design-settings panel pattern: any persistent, edge-anchored tool panel a user opens while continuing to see the page behind it.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Drawer documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Try it</h2>
     <div class="doc-preview mt-4 flex flex-wrap gap-3">
         <button class="btn btn-secondary" onclick="wiseOpenDrawer('demo_drawer')">{% lucide "filter" size=15 %}<span>Open drawer</span></button>
@@ -109,5 +123,33 @@
                 <tr><td><code>wiseOpenDrawer(id)</code> / <code>wiseCloseDrawer(id)</code></td><td>Toggle the pair.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Drawer implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Drawer for an edge-anchored panel that slides over the page (not a blocking interruption - use Dialog for that). Rules:
+- Structure: a backdrop element plus the drawer itself, both toggled by wiseOpenDrawer('my-drawer-id') / wiseCloseDrawer('my-drawer-id'):
+  <div id="my-drawer-id_backdrop" class="drawer-backdrop hidden" onclick="wiseCloseDrawer('my-drawer-id')"></div>
+  <div id="my-drawer-id" class="drawer hidden" role="dialog" aria-label="...">
+      <div class="drawer-header"><h3 class="dialog-title">Title</h3><button class="btn-icon btn-secondary" onclick="wiseCloseDrawer('my-drawer-id')">{% lucide "x" size=16 %}</button></div>
+      <div class="drawer-body">Content.</div>
+      <div class="drawer-footer">Actions.</div>
+  </div>
+  <button onclick="wiseOpenDrawer('my-drawer-id')">Open</button>
+- The backdrop element's id MUST be `{drawer-id}_backdrop` - wiseOpenDrawer/wiseCloseDrawer look it up by that exact suffix.
+- Defaults to the right edge; add `.drawer-left` to anchor it to the left instead.
+- Reuse this for filters, a record preview, or a long form done alongside the page. If the interaction must block the page until resolved, use a Dialog instead.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L1463-L1490">tokens.css — .drawer, .drawer-left, header/body/footer, .drawer-backdrop</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/js/common.js">common.js — wiseOpenDrawer() / wiseCloseDrawer()</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templates/wise_core/components/_settings_panel.html">_settings_panel.html — a real drawer in production use (the design-settings panel)</a></li>
+        </ul>
     </div>
 {% endblock %}

@@ -9,6 +9,20 @@
     tells the user far more.
 {% endblock %}
 {% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>A short, indeterminate wait with no known duration or size - a button's own loading state, a modal fetching data, an inline async check.</li>
+        <li>Inside a disabled submit button while a form POST is in flight, so the user gets feedback that their click registered.</li>
+        <li>A small inline loading indicator next to a label (e.g. "Saving...") rather than blocking the whole page.</li>
+        <li>When the remaining work or duration IS known, use a Progress Bar or Progress Ring instead - they tell the user far more.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Spinner documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
     <h2 class="mt-8">Sizes</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex32" id="ex32-preview" value="preview" checked>
@@ -109,5 +123,26 @@
                 <tr><td><code>spinner-lg</code></td><td>32px — for a whole region.</td></tr>
             </tbody>
         </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get a Spinner implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Spinner for indeterminate, short waits. Rules:
+- Base markup: <span class="spinner"></span> (or a <div>) - a small bordered circle animated via CSS, no JS required.
+- Size modifiers: spinner-sm (compact, e.g. inside a small button), spinner-lg (prominent, e.g. a full-panel loading state). Default size otherwise.
+- Common pattern - inline with a label inside a disabled submit button while a request is in flight:
+  <button class="btn btn-primary" disabled><span class="spinner spinner-sm"></span> Saving...</button>
+- Respects prefers-reduced-motion automatically (slows rather than disables the animation) - do not add your own motion-reduction handling on top of it.
+- Never use this when the duration or amount of work IS known - use Progress Bar or Progress Ring instead, since a spinner tells the user nothing about how much longer to wait.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L1673-L1698">tokens.css — .spinner, size modifiers, and the reduced-motion override</a></li>
+        </ul>
     </div>
 {% endblock %}
