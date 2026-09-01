@@ -894,7 +894,7 @@
        column is the active sort; every other header stays a quiet gray so
        the active column reads at a glance. */
     .data-table th a svg {
-        @apply text-gray-400 transition-colors duration-150;
+        @apply text-gray-500 transition-colors duration-150;
     }
 
     .data-table th a.is-sorted svg {
@@ -946,7 +946,7 @@
     }
 
     .calendar-day.is-outside {
-        @apply bg-page text-gray-400;
+        @apply bg-page text-gray-500;
     }
 
     .calendar-day.is-today .calendar-day-number {
@@ -1106,7 +1106,7 @@
     }
 
     .section-title {
-        @apply text-center text-black;
+        @apply text-center text-gray-900;
     }
 
     .section-title-border {
