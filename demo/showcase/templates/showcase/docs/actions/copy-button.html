@@ -1,37 +1,37 @@
 {% extends 'showcase/docs/_base.html' %}
-{% load wise_icons %}
 {% block doc_title_tag %}Copy Button{% endblock %}
 {% block doc_section %}Actions{% endblock %}
 {% block doc_title %}Copy Button{% endblock %}
 {% block doc_intro %}
-    Copies a value to the clipboard and swaps its icon to a check mark to confirm, then reverts.
+    Copies a value to the clipboard and swaps its label to "Copied" to confirm, then reverts.
     The feedback matters more than the copy itself — without it, users click repeatedly because
-    nothing appeared to happen.
+    nothing appeared to happen. A text label, not an icon, so the confirmation reads at a glance
+    instead of asking someone to recognize what a check mark meant.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Try it</h2>
     <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
         <code class="doc-code-inline">WISE-2026-0042</code>
-        <button class="btn btn-icon btn-secondary copy-button" data-copy="WISE-2026-0042" aria-label="Copy reference">
-            <span class="copy-button-idle">{% lucide "link" size=15 %}</span>
-            <span class="copy-button-done">{% lucide "check" size=15 %}</span>
+        <button class="btn btn-secondary copy-button" data-copy="WISE-2026-0042">
+            <span class="copy-button-idle">Copy</span>
+            <span class="copy-button-done">Copied</span>
         </button>
         <button class="btn btn-secondary copy-button" data-copy="pip install wise-design-system">
-            <span class="copy-button-idle">{% lucide "link" size=15 %}<span>Copy command</span></span>
-            <span class="copy-button-done">{% lucide "check" size=15 %}<span>Copied</span></span>
+            <span class="copy-button-idle">Copy command</span>
+            <span class="copy-button-done">Copied</span>
         </button>
     </div>
 
     <h2 class="mt-8">Markup</h2>
     <p class="text-gray-700">
         Both states ship in the markup and CSS shows one at a time — the same approach the theme
-        toggle uses. The script only toggles a class, so there is no innerHTML rewriting and the
-        button's width does not jump.
+        toggle uses. The script only toggles a class, so there is no innerHTML rewriting. Give
+        <code>.copy-button-done</code> the widest label you'll show (usually "Copied") so the
+        button reserves that width up front and doesn't reflow when the state switches.
     </p>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<button class="btn btn-icon btn-secondary copy-button"
-        data-copy="{{ object.reference }}" aria-label="Copy reference">
-    <span class="copy-button-idle">{% lucide "link" size=15 %}</span>
-    <span class="copy-button-done">{% lucide "check" size=15 %}</span>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<button class="btn btn-secondary copy-button" data-copy="{{ object.reference }}">
+    <span class="copy-button-idle">Copy</span>
+    <span class="copy-button-done">Copied</span>
 </button>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Copying another element's text</h2>
@@ -49,17 +49,17 @@
     <div class="doc-example-panel-preview">
         <div class="doc-preview flex items-center gap-3">
         <code class="doc-code-inline" id="copy-sample">python manage.py migrate</code>
-        <button class="btn btn-icon btn-secondary copy-button" data-copy-target="#copy-sample" aria-label="Copy">
-            <span class="copy-button-idle">{% lucide "link" size=15 %}</span>
-            <span class="copy-button-done">{% lucide "check" size=15 %}</span>
+        <button class="btn btn-secondary copy-button" data-copy-target="#copy-sample">
+            <span class="copy-button-idle">Copy</span>
+            <span class="copy-button-done">Copied</span>
         </button>
     </div>
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<code id="install-cmd">python manage.py migrate</code>
-<button class="btn btn-icon btn-secondary copy-button" data-copy-target="#install-cmd" aria-label="Copy">
-    <span class="copy-button-idle">{% lucide "link" size=15 %}</span>
-    <span class="copy-button-done">{% lucide "check" size=15 %}</span>
+<button class="btn btn-secondary copy-button" data-copy-target="#install-cmd">
+    <span class="copy-button-idle">Copy</span>
+    <span class="copy-button-done">Copied</span>
 </button>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>

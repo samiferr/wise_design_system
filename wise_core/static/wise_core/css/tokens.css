@@ -1267,15 +1267,17 @@
        both themes, rendering it invisible. Fixed colors sidestep both
        problems at once, the same fix `.doc-code` already needed. */
     .token-export {
-        @apply max-h-80 overflow-auto whitespace-pre-wrap break-all p-3 pr-10 font-mono text-[11px] leading-relaxed;
+        @apply max-h-80 overflow-auto whitespace-pre-wrap break-all p-3 pr-20 font-mono text-[11px] leading-relaxed;
         background: #18181a;
         color: #f2f2f3;
         border-radius: var(--radius-md);
     }
 
+    /* min-w-16 reserves "Copied" (the wider of the two labels) up front so
+       the button doesn't reflow when the state switches. */
     .token-export-copy {
-        @apply absolute right-2 top-2 inline-flex h-7 w-7 cursor-pointer items-center justify-center border p-0
-        transition-colors;
+        @apply absolute right-2 top-2 inline-flex h-7 min-w-16 cursor-pointer items-center justify-center border
+        px-2.5 text-[11px] font-semibold uppercase tracking-wide transition-colors;
         background: #18181a;
         border-color: rgba(255, 255, 255, 0.16);
         color: #f2f2f3;

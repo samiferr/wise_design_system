@@ -167,17 +167,20 @@
     }
 
     .doc-code-wrap .doc-code {
-        @apply pr-11;
+        @apply pr-20;
     }
 
     /* Fixed colors, not `.btn-secondary`'s theme-aware ones, matching
      * whichever `--doc-code-*` palette above is active: `.btn-secondary`'s
      * colors are tuned for `.btn`'s own bg-panel/bg-page surfaces, not for
      * sitting on top of a code block, so it would wash out (or invert to
-     * near-white) rather than tracking `.doc-code`'s light/dark swap. */
+     * near-white) rather than tracking `.doc-code`'s light/dark swap.
+     * min-w-16 reserves "Copied" (the wider of the two labels) up front so
+     * the button doesn't reflow when the state switches. */
     .doc-code-copy {
-        @apply absolute right-2 top-2 inline-flex h-7 w-7 cursor-pointer items-center justify-center
-        border p-0 transition-colors;
+        @apply absolute right-2 top-2 inline-flex h-7 min-w-16 cursor-pointer items-center
+        justify-center border px-2.5 text-[11px] font-semibold uppercase tracking-wide
+        transition-colors;
         --doc-code-copy-bg: #f5f5f8;
         --doc-code-copy-hover-bg: #e7e7ea;
         --doc-code-copy-border: #d4d4d7;
@@ -270,6 +273,15 @@
 
     .doc-example-tabs {
         @apply flex items-center gap-4 border border-b-0 border-divider bg-panel-alt px-4 pt-2;
+    }
+
+    /* Matches `.doc-code`'s fixed dark palette exactly (not just bg-panel-alt's
+     * own theme-following dark tone, which is a visibly different shade) so
+     * the tab bar and the code panel it sits above read as one card instead
+     * of two mismatched grays glued together. */
+    :root[data-theme="dark"] .doc-example-tabs {
+        background: #18181a;
+        border-color: rgba(255, 255, 255, 0.16);
     }
 
     .doc-example-tab {
