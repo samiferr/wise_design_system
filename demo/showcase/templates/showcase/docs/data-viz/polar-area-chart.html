@@ -1,5 +1,5 @@
 {% extends 'showcase/docs/_base.html' %}
-{% load wise_icons %}
+{% load static wise_icons wise_charts %}
 {% block doc_title_tag %}Polar Area Chart{% endblock %}
 {% block doc_section %}Data Viz{% endblock %}
 {% block doc_title %}Polar Area Chart{% endblock %}
@@ -18,37 +18,31 @@
         <label class="doc-example-tab" for="ex20-code">Code</label>
     </div>
     <div class="doc-example-panel-preview">
-        <div class="doc-preview flex flex-wrap items-center gap-8">
-        <svg class="chart-svg" viewBox="0 0 100 100" style="width:200px;height:200px" role="img" aria-label="Revenue by month">
-            {% for slice in polar_slices %}<path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}" opacity="0.85"/>{% endfor %}
-        </svg>
-        <div class="chart-legend" style="flex-direction:column;align-items:flex-start">
-            {% for slice in polar_slices %}
-                <span class="chart-legend-item"><span class="chart-legend-dot" style="background:{{ slice.color }}"></span>{{ slice.label }} — {{ slice.value }}</span>
-            {% endfor %}
+        <div class="doc-preview">
+        <div class="chart-frame" style="height:260px;max-width:420px">
+            <canvas class="chart-canvas" data-chart="{% chart_json revenue_polar %}"
+                    role="img" aria-label="Revenue by month"></canvas>
         </div>
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}context["polar_slices"] = charts.polar_area(revenue, labels=months){% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}context["revenue_polar"] = charts.polar_area_chart(months, revenue){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<svg class="chart-svg" viewBox="0 0 100 100" style="width:200px;height:200px">
-    {% for slice in polar_slices %}
-        <path class="chart-slice" d="{{ slice.path }}" fill="{{ slice.color }}" opacity="0.85"/>
-    {% endfor %}
-</svg>{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="chart-frame" style="height:260px">
+    <canvas class="chart-canvas" data-chart="{% chart_json revenue_polar %}"></canvas>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
 
-    <h2 class="mt-8">Radius is scaled by area</h2>
+    <h2 class="mt-8">Radius, not area, but scaled honestly</h2>
     <p class="text-gray-700">
-        A slice's radius is proportional to the <em>square root</em> of its value, not the value
-        itself. Scaling radius linearly would make a doubled value cover four times the area, which
-        the eye reads as four times bigger — the classic way to overstate a difference by accident.
+        Chart.js scales a polar-area slice's radius by the <em>square root</em> of its value
+        internally, the same correction the old server-computed bubble and polar-area geometry made
+        by hand - a doubled value gets a radius that reads as twice as big, not four times as big.
     </p>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}radius = math.sqrt(value / max_value) * outer_radius{% endverbatim %}{% endfilter %}</code></pre>
     <p class="mt-2 text-gray-700">
         The <a class="text-action-600 underline" href="{% url 'docs_data_viz_bubble_chart' %}">bubble chart</a>
-        does the same thing for the same reason.
+        needs the same correction applied manually, since Chart.js takes its radius as a literal pixel
+        value rather than scaling it for you.
     </p>
 
     <h2 class="mt-8">Polar area or bar?</h2>
@@ -67,8 +61,13 @@
         <table class="doc-props w-full">
             <thead><tr><th>API</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td><code>charts.polar_area(values, labels, cx, cy, radius)</code></td><td>Equal-angle slices with value-scaled radii.</td></tr>
+                <tr><td><code>charts.polar_area_chart(labels, values, **options)</code></td><td>A Chart.js <code>type: "polarArea"</code> config.</td></tr>
             </tbody>
         </table>
     </div>
+{% endblock %}
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'wise_core/js/chart.umd.min.js' %}"></script>
+    <script src="{% static 'wise_core/js/charts.js' %}"></script>
 {% endblock %}

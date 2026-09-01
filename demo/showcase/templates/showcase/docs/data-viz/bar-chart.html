@@ -1,11 +1,11 @@
 {% extends 'showcase/docs/_base.html' %}
-{% load wise_icons %}
+{% load static wise_icons wise_charts %}
 {% block doc_title_tag %}Bar Chart{% endblock %}
 {% block doc_section %}Data Viz{% endblock %}
 {% block doc_title %}Bar Chart{% endblock %}
 {% block doc_intro %}
-    Comparing a value across categories. The only chart here that needs no SVG at all — it is divs
-    with a height driven by a <code>--value</code> custom property.
+    Comparing a value across categories, rendered by Chart.js onto a <code>&lt;canvas&gt;</code> -
+    grid lines, axis ticks and hover tooltips come from the library, not hand-authored markup.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Basic</h2>
@@ -18,13 +18,9 @@
     </div>
     <div class="doc-example-panel-preview">
         <div class="doc-preview max-w-md">
-        <div class="bar-chart">
-            {% for label, percent in revenue_pairs %}
-                <div class="bar-chart-bar">
-                    <div class="bar-chart-bar-fill" style="--value: {{ percent }}%"></div>
-                    <div class="bar-chart-bar-label">{{ label }}</div>
-                </div>
-            {% endfor %}
+        <div class="chart-frame" style="height:240px">
+            <canvas class="chart-canvas" data-chart="{% chart_json revenue_bar %}"
+                    role="img" aria-label="Monthly revenue"></canvas>
         </div>
     </div>
     </div>
@@ -32,62 +28,63 @@
         <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# views.py
 from wise_core import charts
 
-context["revenue_pairs"] = list(zip(months, charts.percentages(revenue))){% endverbatim %}{% endfilter %}</code></pre>
+context["revenue_bar"] = charts.bar_chart(months, [charts.dataset("Revenue", revenue)]){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="bar-chart">
-    {% for label, percent in revenue_pairs %}
-        <div class="bar-chart-bar">
-            <div class="bar-chart-bar-fill" style="--value: {{ percent }}%"></div>
-            <div class="bar-chart-bar-label">{{ label }}</div>
-        </div>
-    {% endfor %}
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_charts %}
+
+<div class="chart-frame" style="height:240px">
+    <canvas class="chart-canvas" data-chart="{% chart_json revenue_bar %}"></canvas>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
     <p class="mt-2 text-gray-700">
-        <code>charts.percentages()</code> scales each value against the series maximum, so the tallest
-        bar fills the chart. It handles the awkward cases: an all-zero series returns zeros rather
-        than dividing by zero, and a flat series renders as equal full-height bars.
+        <code>charts.dataset()</code> pairs a label with its values and picks a color from the
+        shared series palette; <code>charts.bar_chart()</code> wraps one or more datasets into a
+        complete Chart.js config with the design system's grid and tick colors already applied.
     </p>
 
-    <h2 class="mt-8">From the template</h2>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_charts %}
-{% chart_percentages revenue as percents %}{% endverbatim %}{% endfilter %}</code></pre>
-
     <h2 class="mt-8">Recoloring</h2>
-    <p class="text-gray-700">The fill is a plain utility class — swap it, or use the dedicated decorative chart tone.</p>
+    <p class="text-gray-700">Pass <code>color</code> to <code>dataset()</code> to override the palette.</p>
     <div class="doc-preview mt-4 max-w-md">
-        <div class="bar-chart">
-            <div class="bar-chart-bar"><div class="bar-chart-bar-fill" style="--value:45%;background:var(--color-warning-400)"></div><div class="bar-chart-bar-label">Q1</div></div>
-            <div class="bar-chart-bar"><div class="bar-chart-bar-fill" style="--value:70%;background:var(--color-warning-400)"></div><div class="bar-chart-bar-label">Q2</div></div>
-            <div class="bar-chart-bar"><div class="bar-chart-bar-fill" style="--value:95%;background:var(--color-warning-400)"></div><div class="bar-chart-bar-label">Q3</div></div>
+        <div class="chart-frame" style="height:200px">
+            <canvas class="chart-canvas" data-chart="{% chart_json revenue_bar_warning %}"
+                    role="img" aria-label="Monthly revenue, recolored"></canvas>
         </div>
     </div>
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}charts.dataset("Revenue", revenue, color="var(--color-warning-400)"){% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Grouped series</h2>
+    <p class="text-gray-700">Give <code>bar_chart()</code> more than one dataset and Chart.js groups them automatically.</p>
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}charts.bar_chart(months, [
+    charts.dataset("This year", this_year, index=0),
+    charts.dataset("Last year", last_year, index=1),
+]){% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Reading it accessibly</h2>
-    <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
         <div>
-            A chart made of coloured boxes conveys nothing to a screen reader. Give the container a
-            summary, or — better — put the same numbers in a table nearby. A visually hidden
-            <code>&lt;table&gt;</code> is often the most honest fallback.
+            A <code>&lt;canvas&gt;</code> is opaque to screen readers - Chart.js draws pixels, not a
+            DOM a reader can walk. Give it a <code>role="img"</code> with a summarizing
+            <code>aria-label</code>, and put the same numbers in a table nearby for anyone who can't
+            use the chart.
         </div>
     </div>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="bar-chart" role="img"
-     aria-label="Monthly revenue: Mar 42, Apr 58, May 35, Jun 74, Jul 91, Aug 66">
-    …
-</div>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Reference</h2>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">
         <table class="doc-props w-full">
-            <thead><tr><th>Class / API</th><th>Use</th></tr></thead>
+            <thead><tr><th>API / class</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td><code>bar-chart</code></td><td>Fixed-height flex row.</td></tr>
-                <tr><td><code>bar-chart-bar</code></td><td>One bar + label column.</td></tr>
-                <tr><td><code>bar-chart-bar-fill</code></td><td>The bar; height from <code>--value</code> (a percentage).</td></tr>
-                <tr><td><code>bar-chart-bar-label</code></td><td>Label beneath.</td></tr>
-                <tr><td><code>charts.percentages(values)</code></td><td>Scales a series to 0–100 against its max.</td></tr>
+                <tr><td><code>charts.bar_chart(labels, datasets, **options)</code></td><td>A Chart.js <code>type: "bar"</code> config.</td></tr>
+                <tr><td><code>charts.dataset(label, data, index, color, **overrides)</code></td><td>One dataset, colored from the series palette.</td></tr>
+                <tr><td><code>chart_json</code></td><td>Template tag - the config dict as a safe <code>data-chart</code> value.</td></tr>
+                <tr><td><code>chart-frame</code></td><td>The sizing anchor - give <em>this</em> the explicit <code>height</code>, never the canvas.</td></tr>
             </tbody>
         </table>
     </div>
+{% endblock %}
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'wise_core/js/chart.umd.min.js' %}"></script>
+    <script src="{% static 'wise_core/js/charts.js' %}"></script>
 {% endblock %}

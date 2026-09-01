@@ -158,16 +158,34 @@
     }
 
     /* Wraps every `.doc-code` block (added by showcase/components/
-     * _code_highlight.html, after Prism.highlightAll()) so the copy button
-     * can be pinned to a corner that stays put while the code scrolls
-     * horizontally underneath it, the same trick the "Copy tokens" settings
-     * panel already uses for its own <pre>. */
+     * _code_highlight.html, after Prism.highlightAll()) and hosts the
+     * language tab bar that tops it plus the copy button inside that bar. */
     .doc-code-wrap {
-        @apply relative;
+        @apply relative mt-4;
     }
 
-    .doc-code-wrap .doc-code {
-        @apply pr-20;
+    /* Language tab bar added to every code snippet: a single "tab link"
+     * naming the snippet's language, with the copy button right-aligned.
+     * `.doc-code-tabs` is a sibling of `.doc-code`, not a descendant, so it
+     * can't read that element's --doc-code-* custom properties by
+     * inheritance - these are the same two literal palettes duplicated
+     * directly, matched exactly so the tab bar and the code panel below it
+     * read as one card in both themes instead of a light strip glued onto
+     * a fixed-dark panel. */
+    .doc-code-tabs {
+        @apply flex items-center border border-b-0 px-3;
+        background: #f5f5f8;
+        border-color: #d4d4d7;
+    }
+
+    :root[data-theme="dark"] .doc-code-tabs {
+        background: #18181a;
+        border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .doc-code-tab {
+        @apply inline-flex items-center border-b-2 border-action-600 py-2 text-[11px] font-semibold
+        uppercase tracking-wider text-action-700;
     }
 
     /* Fixed colors, not `.btn-secondary`'s theme-aware ones, matching
@@ -178,9 +196,8 @@
      * min-w-16 reserves "Copied" (the wider of the two labels) up front so
      * the button doesn't reflow when the state switches. */
     .doc-code-copy {
-        @apply absolute right-2 top-2 inline-flex h-7 min-w-16 cursor-pointer items-center
-        justify-center border px-2.5 text-[11px] font-semibold uppercase tracking-wide
-        transition-colors;
+        @apply ml-auto inline-flex h-7 min-w-16 cursor-pointer items-center justify-center
+        border px-2.5 text-[11px] font-semibold uppercase tracking-wide transition-colors;
         --doc-code-copy-bg: #f5f5f8;
         --doc-code-copy-hover-bg: #e7e7ea;
         --doc-code-copy-border: #d4d4d7;
@@ -309,6 +326,12 @@
     }
 
     .doc-example .doc-code {
+        @apply mt-0;
+    }
+
+    /* Inside a Preview/Code example the tab bar already provides the
+     * separation, so the snippet's own top margin is redundant. */
+    .doc-example .doc-code-wrap {
         @apply mt-0;
     }
 
