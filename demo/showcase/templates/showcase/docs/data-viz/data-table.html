@@ -23,42 +23,42 @@
             <thead>
                 <tr>
                     <th class="w-px">ID</th>
-                    <th><a class="is-sorted" href="#">Name {% lucide "chevron-up" size=14 %}</a></th>
+                    <th class="w-px">Actions</th>
+                    <th><a class="is-sorted" href="#"><span>Name</span>{% lucide "chevron-up" size=14 %}</a></th>
                     <th>Color</th>
-                    <th><a href="#">Products {% lucide "chevrons-up-down" size=14 %}</a></th>
-                    <th class="w-px"></th>
+                    <th><a href="#"><span>Products</span>{% lucide "chevrons-up-down" size=14 %}</a></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">1</td>
+                    <td class="w-px whitespace-nowrap">
+                        <details class="dropdown">
+                            <summary class="btn btn-ghost" aria-label="Row actions">{% lucide "ellipsis-vertical" size=16 %}</summary>
+                            <div class="dropdown-panel left-0 right-auto">
+                                <a class="dropdown-item" href="#">{% lucide "pencil" size=14 %}Edit</a>
+                                <a class="dropdown-item dropdown-item-danger" href="#">{% lucide "trash-2" size=14 %}Delete</a>
+                            </div>
+                        </details>
+                    </td>
                     <td><a class="font-semibold text-action-700 no-underline hover:underline" href="#">Electronics</a></td>
                     <td><span class="inline-block h-4 w-4 border border-divider align-middle" style="background:#15803d"></span></td>
                     <td>12</td>
-                    <td class="w-px whitespace-nowrap text-right">
-                        <details class="dropdown">
-                            <summary class="btn btn-icon btn-secondary" aria-label="Row actions">{% lucide "menu" size=15 %}</summary>
-                            <div class="dropdown-panel">
-                                <a class="dropdown-item" href="#">{% lucide "pencil" size=14 %}Edit</a>
-                                <a class="dropdown-item dropdown-item-danger" href="#">{% lucide "trash-2" size=14 %}Delete</a>
-                            </div>
-                        </details>
-                    </td>
                 </tr>
                 <tr>
                     <td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">2</td>
-                    <td><a class="font-semibold text-action-700 no-underline hover:underline" href="#">Stationery</a></td>
-                    <td><span class="inline-block h-4 w-4 border border-divider align-middle" style="background:#16a34a"></span></td>
-                    <td>34</td>
-                    <td class="w-px whitespace-nowrap text-right">
+                    <td class="w-px whitespace-nowrap">
                         <details class="dropdown">
-                            <summary class="btn btn-icon btn-secondary" aria-label="Row actions">{% lucide "menu" size=15 %}</summary>
-                            <div class="dropdown-panel">
+                            <summary class="btn btn-ghost" aria-label="Row actions">{% lucide "ellipsis-vertical" size=16 %}</summary>
+                            <div class="dropdown-panel left-0 right-auto">
                                 <a class="dropdown-item" href="#">{% lucide "pencil" size=14 %}Edit</a>
                                 <a class="dropdown-item dropdown-item-danger" href="#">{% lucide "trash-2" size=14 %}Delete</a>
                             </div>
                         </details>
                     </td>
+                    <td><a class="font-semibold text-action-700 no-underline hover:underline" href="#">Stationery</a></td>
+                    <td><span class="inline-block h-4 w-4 border border-divider align-middle" style="background:#16a34a"></span></td>
+                    <td>34</td>
                 </tr>
             </tbody>
         </table>
@@ -71,23 +71,21 @@
         <thead>
             <tr>
                 <th class="w-px">ID</th>
+                <th class="w-px">Actions</th>
                 {% include 'wise_core/components/_sortable_th.html' with field='name' label='Name' %}
                 <th>Color</th>
-                <th class="w-px"></th>
             </tr>
         </thead>
         <tbody>
             {% for item in object_list %}
                 <tr>
                     <td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">{{ item.pk }}</td>
-                    <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
-                    <td>{{ item.color }}</td>
-                    <td class="w-px whitespace-nowrap text-right">
+                    <td class="w-px whitespace-nowrap">
                         <details class="dropdown">
-                            <summary class="btn btn-icon btn-secondary" aria-label="Row actions">
-                                {% lucide "menu" size=15 %}
+                            <summary class="btn btn-ghost" aria-label="Row actions">
+                                {% lucide "ellipsis-vertical" size=16 %}
                             </summary>
-                            <div class="dropdown-panel">
+                            <div class="dropdown-panel left-0 right-auto">
                                 {% if perms.showcase.change_category %}
                                     <a class="dropdown-item" href="{% url 'category_update_view' pk=item.pk %}">
                                         {% lucide "pencil" size=14 %}Edit
@@ -101,6 +99,8 @@
                             </div>
                         </details>
                     </td>
+                    <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
+                    <td>{{ item.color }}</td>
                 </tr>
             {% empty %}
                 <tr><td colspan="4">{% include 'wise_core/components/_no_data.html' %}</td></tr>
@@ -135,14 +135,17 @@
         One trigger, not a row of icon buttons. Past two or three actions, inline
         <code>btn-ghost</code> icons compete with each other and with the row's own content — a
         <a class="text-action-600 underline" href="{% url 'docs_actions_dropdown' %}">dropdown</a>
-        keeps the row scannable and gives every action a text label instead of a tooltip:
+        keeps the row scannable and gives every action a text label instead of a tooltip. The trigger is
+        a plain vertical-dots <code>btn-ghost</code> — no border, so it doesn't read as its own boxed
+        control competing with the row — and its column sits right after ID, before the record's own
+        data, so actions are always in the same place regardless of how many data columns a table has:
     </p>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<td class="w-px whitespace-nowrap text-right">
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<td class="w-px whitespace-nowrap">
     <details class="dropdown">
-        <summary class="btn btn-icon btn-secondary" aria-label="Row actions">
-            {% lucide "menu" size=15 %}
+        <summary class="btn btn-ghost" aria-label="Row actions">
+            {% lucide "ellipsis-vertical" size=16 %}
         </summary>
-        <div class="dropdown-panel">
+        <div class="dropdown-panel left-0 right-auto">
             <a class="dropdown-item" href="{% url 'category_update_view' pk=item.pk %}">
                 {% lucide "pencil" size=14 %}Edit
             </a>
@@ -153,18 +156,21 @@
     </details>
 </td>{% endverbatim %}{% endfilter %}</code></pre>
     <p class="mt-2 text-gray-700">
-        <code>right-0</code> on <code>.dropdown-panel</code> anchors it to the trigger's right edge,
-        which is exactly right for the rightmost column — the menu opens flush against the table's own
-        edge instead of overflowing it.
+        <code>left-0 right-auto</code> on <code>.dropdown-panel</code> (the default is <code>right-0</code>)
+        anchors it to the trigger's left edge instead, which is exactly right for a column that sits
+        near the table's own left edge — the menu opens toward the rest of the row instead of overflowing
+        off the table.
     </p>
 
     <h2 class="mt-8">Column ordering</h2>
     <p class="text-gray-700">
         Sorting is a query parameter, applied to the queryset — not a client-side re-sort, which would
-        only reorder the current page and silently lie about the rest. Every sortable header carries an
-        icon, including unsorted ones ({% lucide "chevrons-up-down" size=14 cls="inline align-[-2px] text-gray-400" %}), so the capability
-        reads as clickable before a visitor ever hovers it; the active column shows
-        {% lucide "chevron-up" size=14 cls="inline align-[-2px]" %}/{% lucide "chevron-down" size=14 cls="inline align-[-2px]" %} for its direction.
+        only reorder the current page and silently lie about the rest. Every sortable header's chevron
+        sits at the right edge of the column, gray by default. Unsorted columns stay muted
+        ({% lucide "chevrons-up-down" size=14 cls="inline align-[-2px] text-gray-400" %}); the active
+        column's chevron switches to the theme color
+        ({% lucide "chevron-up" size=14 cls="inline align-[-2px] text-action-600" %}/{% lucide "chevron-down" size=14 cls="inline align-[-2px] text-action-600" %})
+        so the current sort reads at a glance.
     </p>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex14" id="ex14-preview" value="preview" checked>
@@ -178,8 +184,8 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th><a class="is-sorted" href="#">Name {% lucide "chevron-up" size=14 %}</a></th>
-                    <th><a href="#">Products {% lucide "chevrons-up-down" size=14 %}</a></th>
+                    <th class="min-w-[10rem]"><a class="is-sorted" href="#"><span>Name</span>{% lucide "chevron-up" size=14 %}</a></th>
+                    <th class="min-w-[10rem]"><a href="#"><span>Products</span>{% lucide "chevrons-up-down" size=14 %}</a></th>
                 </tr>
             </thead>
             <tbody><tr><td>Electronics</td><td>12</td></tr></tbody>
@@ -267,6 +273,7 @@
                 <tr><td><code>sort_url</code></td><td>Tag: the <code>?sort=</code> URL for one field, params-preserving.</td></tr>
                 <tr><td><code>WiseListView.sortable_fields</code></td><td>The allowlist of fields <code>?sort=</code> may name.</td></tr>
                 <tr><td><code>dropdown</code> / <code>dropdown-panel</code> / <code>dropdown-item</code></td><td>Row actions menu — see <a class="text-action-600 underline" href="{% url 'docs_actions_dropdown' %}">Dropdown</a>.</td></tr>
+                <tr><td><code>ellipsis-vertical</code></td><td>The row-actions trigger icon — a borderless <code>btn-ghost</code>, not <code>btn-secondary</code>.</td></tr>
                 <tr><td><code>_no_data.html</code></td><td>Empty state partial.</td></tr>
                 <tr><td><code>_pagination.html</code></td><td>Pager partial.</td></tr>
             </tbody>

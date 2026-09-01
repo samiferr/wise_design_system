@@ -887,23 +887,18 @@
        icon, even unsorted ones, so the capability reads as clickable before
        the visitor ever hovers it. */
     .data-table th a {
-        @apply inline-flex items-center gap-1.5 text-gray-600 no-underline hover:text-action-600;
+        @apply flex w-full items-center justify-between gap-2 text-gray-600 no-underline hover:text-action-600;
     }
 
+    /* Muted by default - the chevron only takes the theme color once its
+       column is the active sort; every other header stays a quiet gray so
+       the active column reads at a glance. */
     .data-table th a svg {
         @apply text-gray-400 transition-colors duration-150;
     }
 
-    .data-table th a:hover svg {
-        @apply text-action-500;
-    }
-
-    .data-table th a.is-sorted {
-        @apply text-gray-900;
-    }
-
     .data-table th a.is-sorted svg {
-        @apply text-gray-900;
+        @apply text-action-600;
     }
 
     .data-table td {
