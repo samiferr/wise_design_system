@@ -257,6 +257,55 @@ document.addEventListener('keydown', function (e) {
     })
 })
 
+// ── Dropdown panel positioning ───────────────────────────────────────────────
+// .dropdown-panel is `position: absolute` against its .dropdown parent (see
+// tokens.css), so a scrollable ancestor - e.g. the overflow-x-auto wrapper a
+// wide data-table sits in - clips it once it would extend past that
+// ancestor's own edge, typically a row-actions menu on one of the table's
+// last rows. Reposition the open panel to `position: fixed`, computed from
+// the trigger's own on-screen rect, so it renders relative to the viewport
+// instead and is no longer confined by any ancestor's overflow.
+//
+// Capture phase, not bubble: the native `toggle` event a <details> fires does
+// not bubble, but capture-phase listening reaches it regardless - capturing
+// is a separate propagation phase that doesn't require bubbling.
+
+function wisePositionDropdownPanel(details) {
+    var panel = details.querySelector(':scope > .dropdown-panel')
+    var trigger = details.querySelector(':scope > summary')
+    if (!panel || !trigger) return
+    var rect = trigger.getBoundingClientRect()
+    var alignLeft = panel.classList.contains('left-0')
+    panel.style.position = 'fixed'
+    panel.style.top = rect.bottom + 'px'
+    if (alignLeft) {
+        panel.style.left = rect.left + 'px'
+        panel.style.right = 'auto'
+    } else {
+        panel.style.left = 'auto'
+        panel.style.right = (window.innerWidth - rect.right) + 'px'
+    }
+}
+
+function wiseResetDropdownPanel(details) {
+    var panel = details.querySelector(':scope > .dropdown-panel')
+    if (!panel) return
+    panel.style.position = ''
+    panel.style.top = ''
+    panel.style.left = ''
+    panel.style.right = ''
+}
+
+document.addEventListener('toggle', function (e) {
+    var details = e.target
+    if (!details.classList || !details.classList.contains('dropdown')) return
+    if (details.open) {
+        wisePositionDropdownPanel(details)
+    } else {
+        wiseResetDropdownPanel(details)
+    }
+}, true)
+
 // ── Dialog / drawer ────────────────────────────────────────────────────────
 // The native <dialog> element supplies focus trapping, Esc-to-close and
 // top-layer stacking; these are just the open/close calls.

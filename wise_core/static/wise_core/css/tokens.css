@@ -1257,8 +1257,12 @@
     }
 
     /* ── Dropdown ────────────────────────────────────────────────────────
-       Positioning only - toggling is one line of JS (wiseToggleDropdown) or
-       a <details> wrapper if you'd rather not use any. */
+       Built on a <details> wrapper, so opening/closing needs no JS of its
+       own; common.js only adds click-away/Escape handling and - because
+       .dropdown-panel is `position: absolute` against .dropdown, which a
+       scrollable ancestor (e.g. a wide data-table's overflow-x-auto
+       wrapper) would otherwise clip - repositions the open panel to
+       `position: fixed` so it always escapes ancestor overflow. */
     .dropdown {
         @apply relative inline-block;
     }
@@ -1268,6 +1272,22 @@
         shadow-[var(--shadow-blueprint-md)];
         z-index: var(--z-dropdown);
         border-radius: var(--radius-md);
+    }
+
+    /* Every <details> gets a native disclosure marker (a triangle in
+       Firefox via ::marker/list-style, a ::-webkit-details-marker in
+       Chrome/Safari) unless it's suppressed - .dropdown never wants it,
+       since .btn/.btn-ghost on the <summary> already supplies its own
+       affordance (an icon, a chevron, or both). Left unsuppressed, an
+       icon-only trigger (the common "row actions" case) ends up rendering
+       only the browser's own marker, off-center in the button box, instead
+       of the intended icon. */
+    .dropdown > summary {
+        list-style: none;
+    }
+
+    .dropdown > summary::-webkit-details-marker {
+        display: none;
     }
 
     .dropdown-item {
