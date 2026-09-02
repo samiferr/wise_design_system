@@ -45,7 +45,17 @@
     <p class="text-gray-700">
         <code>tokens.css</code> is a <em>partial</em>, not an entry point — it has no
         <code>@import "tailwindcss"</code> and no <code>@source</code> of its own, because those
-        depend on where your templates live. Your project supplies an entry file:
+        depend on where your templates live. Your project supplies an entry file that imports
+        Tailwind, tells it where to look for class names, then pulls in the design system's
+        tokens. Concretely, that's four steps:
+    </p>
+
+    <h3 class="mt-6">3a. Create the entry stylesheet</h3>
+    <p class="text-gray-700">
+        Create <code>static_src/input.css</code> (any path works — this is just the file you'll
+        point the Tailwind CLI at in step 3c) with three things in this order: the Tailwind
+        import, an <code>@source</code> line for every template directory that uses utility
+        classes, then the tokens import <em>last</em>.
     </p>
     <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}/* static_src/input.css */
 @import "tailwindcss";
@@ -58,9 +68,6 @@
 @source "../../wise_richtext/templates";
 
 @import "../../wise_core/static/wise_core/css/tokens.css";{% endverbatim %}{% endfilter %}</code></pre>
-    <pre class="doc-code"><code class="language-bash">{% filter force_escape %}{% verbatim %}npm install -D @tailwindcss/cli tailwindcss
-npx tailwindcss -i ./static_src/input.css \
-                -o ./wise_core/static/wise_core/css/tailwind.css --minify{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">
         <div>
             Forgetting an <code>@source</code> line is the single most common setup mistake: the
@@ -68,6 +75,68 @@ npx tailwindcss -i ./static_src/input.css \
             the page renders unstyled.
         </div>
     </div>
+
+    <h3 class="mt-6">3b. Install the Tailwind CLI</h3>
+    <pre class="doc-code"><code class="language-bash">{% filter force_escape %}{% verbatim %}npm install -D @tailwindcss/cli tailwindcss{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h3 class="mt-6">3c. Compile it</h3>
+    <p class="text-gray-700">
+        Run once for a production build, or add <code>--watch</code> while developing so the CSS
+        recompiles as you edit templates.
+    </p>
+    <pre class="doc-code"><code class="language-bash">{% filter force_escape %}{% verbatim %}# one-off build
+npx tailwindcss -i ./static_src/input.css \
+                -o ./wise_core/static/wise_core/css/tailwind.css --minify
+
+# rebuild automatically while you work
+npx tailwindcss -i ./static_src/input.css \
+                -o ./wise_core/static/wise_core/css/tailwind.css --watch{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="text-gray-700">
+        Point <code>{% templatetag openblock %} load static {% templatetag closeblock %}</code> /
+        your base template at that output file — <code>wise_core/base.html</code> already does
+        this for you if you extend it in the next step.
+    </p>
+
+    <h3 class="mt-6">3d. Customize colors, or build a theme of your own</h3>
+    <p class="text-gray-700">
+        Never edit <code>tokens.css</code> itself — that file belongs to the design system and
+        gets overwritten on upgrade. Instead, add your own <code>@theme</code> block to
+        <code>input.css</code>, <em>after</em> the <code>tokens.css</code> import: Tailwind v4
+        merges <code>@theme</code> blocks by variable name, so whichever one is imported last
+        wins.
+    </p>
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}/* static_src/input.css */
+@import "tailwindcss";
+@source "../myapp/templates";
+@source "../../wise_core/templates";
+@import "../../wise_core/static/wise_core/css/tokens.css";
+
+/* Imported AFTER tokens.css, so these override it. */
+@theme {
+    --color-brand-500: #7c3aed;
+    --color-brand-600: #6d28d9;
+    --color-brand-700: #5b21b6;
+    --color-action-500: #7c3aed;
+    --color-action-600: #6d28d9;
+    --color-action-700: #5b21b6;
+}{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="text-gray-700">
+        Adding a brand-new theme (as opposed to retuning the default one) works the same way, but
+        with an attribute selector instead of a bare <code>@theme</code> block — add this and
+        <code>wiseSetTheme('sepia')</code> switches to it with no other wiring needed:
+    </p>
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}:root[data-theme="sepia"] {
+    --color-page: #f4ecd8;
+    --color-panel: #fbf6ea;
+    --color-gray-900: #3b2f1c;
+}{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="text-gray-700">
+        Rebuild (step 3c) after any token change — Tailwind has to re-scan and re-emit
+        <code>tailwind.css</code> before the new values show up. For rounded corners, overriding a
+        component's own CSS rule, and checking contrast when you retune a color ramp, see
+        <a class="text-action-600 underline" href="{% url 'docs_theming_customizing' %}">Customizing
+        &amp; Theming</a>.
+    </p>
 
     <h2 class="mt-8">4. Extend the base template</h2>
     <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% extends 'wise_core/base.html' %}
