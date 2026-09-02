@@ -8,11 +8,23 @@
     serves it as an ordinary static file.
 {% endblock %}
 {% block doc_body %}
-    <h2 class="mt-8">1. Add the apps</h2>
+    <h2 class="mt-8">1. Install the apps</h2>
     <p class="text-gray-700">
-        Copy <code>wise_core/</code> (and optionally <code>wise_autocomplete/</code> and
-        <code>wise_richtext/</code>) next to your own apps, then register them.
-        <code>wise_core</code> is the only required one.
+        The design system is distributed as one <code>pip</code>-installable package
+        (<code>wise-design-system</code>, providing the <code>wise_core</code> /
+        <code>wise_autocomplete</code> / <code>wise_richtext</code> top-level packages) rather than
+        copied in by hand. It isn't published to PyPI, so install it straight from this repository —
+        pin to a commit or tag (<code>...wise_design_system.git@&lt;sha-or-tag&gt;</code>) rather
+        than tracking a branch in a real project's <code>requirements.txt</code>:
+    </p>
+    <pre class="doc-code"><code class="language-bash">{% filter force_escape %}{% verbatim %}pip install "wise-design-system @ git+https://github.com/samiferr/wise_design_system.git"
+
+# wise_autocomplete's AutocompleteInputWidget needs Django REST Framework - pull it
+# in with the `autocomplete` extra instead of installing it separately:
+pip install "wise-design-system[autocomplete] @ git+https://github.com/samiferr/wise_design_system.git"{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="text-gray-700">
+        This pulls in <code>Django</code> and <code>django-filter</code> automatically.
+        <code>wise_core</code> is the only required app — register the ones you actually use:
     </p>
     <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}INSTALLED_APPS = [
     # ...
@@ -24,6 +36,14 @@
     'wise_autocomplete',         # optional
     'wise_richtext',             # optional
 ]{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-info mt-4">
+        <div>
+            Vendoring a copy (or a git submodule) into your project still works, if you'd rather
+            patch the design system in place — nothing here depends on it being pip-installed
+            specifically. Step 3 below covers both cases, since they build the stylesheet
+            differently.
+        </div>
+    </div>
 
     <h2 class="mt-8">2. Register the context processor</h2>
     <p class="text-gray-700">
@@ -43,9 +63,82 @@
 
     <h2 class="mt-8">3. Build the stylesheet</h2>
     <p class="text-gray-700">
-        <code>tokens.css</code> is a <em>partial</em>, not an entry point — it has no
-        <code>@import "tailwindcss"</code> and no <code>@source</code> of its own, because those
-        depend on where your templates live. Your project supplies an entry file:
+        Tailwind v4 needs to scan your templates (<code>@source</code>) to know which utility
+        classes to generate, so <strong>every project builds its own <code>tailwind.css</code></strong>
+        — there is no universal precompiled stylesheet to just link to.
+        <code>wise_core/static/wise_core/css/tokens.css</code> is a <em>partial</em>: the
+        <code>@theme</code> tokens and <code>@layer components</code> rules, with no
+        <code>@import "tailwindcss"</code> and no <code>@source</code> of its own.
+    </p>
+    <p class="text-gray-700">
+        Your project's own entry CSS file supplies both. <code>@source</code>/<code>@import</code>
+        paths are resolved relative to the CSS file that names them — which means the path you
+        write depends on <em>how <code>wise_core</code> got onto disk</em>. Since step 1 installed
+        it with <code>pip</code>, it lives wherever your virtualenv put it
+        (<code>.venv/lib/python3.X/site-packages/wise_core/…</code> or similar) — not at a fixed
+        location relative to your project — so a hardcoded <code>../../wise_core/…</code> path
+        will resolve to nothing, or to the wrong thing, on a teammate's machine or in CI.
+    </p>
+
+    <h3 class="mt-6">3a. Point Tailwind at wise_core — pip-installed (the default)</h3>
+    <p class="text-gray-700">
+        Resolve the install location at build time instead of hardcoding it. A tiny Python script
+        asks <code>importlib</code> where each <code>wise_*</code> package actually lives and
+        writes the <code>@source</code>/<code>@import</code> lines for it into a generated
+        partial, which your checked-in <code>input.css</code> then imports:
+    </p>
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# static_src/generate_wise_sources.py
+# Run before every Tailwind build (see the npm hooks below). Writes absolute
+# @source/@import lines for whichever wise_* packages are actually installed,
+# so input.css itself stays a portable, checked-in file with no
+# environment-specific paths in it.
+import importlib.util
+from pathlib import Path
+
+OUT = Path(__file__).parent / "_wise_sources.css"
+
+lines = []
+for package in ["wise_core", "wise_autocomplete", "wise_richtext"]:
+    spec = importlib.util.find_spec(package)
+    if spec is None or not spec.submodule_search_locations:
+        continue
+    package_dir = Path(spec.submodule_search_locations[0])
+    lines.append(f'@source "{package_dir / "templates"}";')
+
+tokens_spec = importlib.util.find_spec("wise_core")
+if tokens_spec and tokens_spec.submodule_search_locations:
+    tokens_path = Path(tokens_spec.submodule_search_locations[0]) / "static/wise_core/css/tokens.css"
+    lines.append(f'@import "{tokens_path}";')
+
+OUT.write_text("\n".join(lines) + "\n"){% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}/* static_src/input.css - checked in, no absolute paths */
+@import "tailwindcss";
+@import "./_wise_sources.css";   /* generated - gitignore it */
+
+@source "../myapp/templates";{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="text-gray-700">Then wire those two scripts into <code>package.json</code>:</p>
+    <pre class="doc-code"><code class="language-javascript">{% filter force_escape %}{% verbatim %}{
+  "scripts": {
+    "prebuild:css": "python static_src/generate_wise_sources.py",
+    "build:css": "tailwindcss -i ./static_src/input.css -o ./myapp/static/myapp/css/tailwind.css --minify",
+    "prewatch:css": "python static_src/generate_wise_sources.py",
+    "watch:css": "tailwindcss -i ./static_src/input.css -o ./myapp/static/myapp/css/tailwind.css --watch"
+  }
+}{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-warning mt-4">
+        <div>
+            The generated <code>_wise_sources.css</code> is environment-specific — add it to
+            <code>.gitignore</code> and let the <code>prebuild:css</code>/<code>prewatch:css</code>
+            hook regenerate it on every machine and in CI, right before Tailwind runs.
+        </div>
+    </div>
+
+    <h3 class="mt-6">3b. Point Tailwind at wise_core — vendored / git submodule</h3>
+    <p class="text-gray-700">
+        If you vendored a copy instead (see the callout in step 1), <code>wise_core</code> sits at
+        a fixed path relative to your project, so a plain relative <code>@import</code> works with
+        no generation step — this is what <code>demo/static_src/input.css</code> in this repo does,
+        since <code>wise_core</code> is right there in the same checkout:
     </p>
     <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}/* static_src/input.css */
 @import "tailwindcss";
@@ -58,16 +151,73 @@
 @source "../../wise_richtext/templates";
 
 @import "../../wise_core/static/wise_core/css/tokens.css";{% endverbatim %}{% endfilter %}</code></pre>
-    <pre class="doc-code"><code class="language-bash">{% filter force_escape %}{% verbatim %}npm install -D @tailwindcss/cli tailwindcss
-npx tailwindcss -i ./static_src/input.css \
-                -o ./wise_core/static/wise_core/css/tailwind.css --minify{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">
         <div>
-            Forgetting an <code>@source</code> line is the single most common setup mistake: the
-            build succeeds, but any utility class used only in that directory is tree-shaken out and
-            the page renders unstyled.
+            Whichever case applies to you, forgetting an <code>@source</code> line is the single
+            most common setup mistake: the build succeeds, but any utility class used only in that
+            directory is tree-shaken out and the page renders unstyled.
         </div>
     </div>
+
+    <h3 class="mt-6">3c. Install the Tailwind CLI and compile</h3>
+    <pre class="doc-code"><code class="language-bash">{% filter force_escape %}{% verbatim %}npm install -D @tailwindcss/cli tailwindcss{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="text-gray-700">
+        Run the <code>build:css</code>/<code>watch:css</code> scripts from 3a if you added them, or
+        call the CLI directly — run once for a production build, or add <code>--watch</code> while
+        developing so the CSS recompiles as you edit templates:
+    </p>
+    <pre class="doc-code"><code class="language-bash">{% filter force_escape %}{% verbatim %}npm run build:css      # one-off build
+npm run watch:css      # rebuild automatically while you work
+
+# or, without the npm scripts:
+npx tailwindcss -i ./static_src/input.css \
+                -o ./myapp/static/myapp/css/tailwind.css --minify{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="text-gray-700">
+        Point <code>{% templatetag openblock %} load static {% templatetag closeblock %}</code> /
+        your base template at that output file — <code>wise_core/base.html</code> already does
+        this for you if you extend it in the next step.
+    </p>
+
+    <h3 class="mt-6">3d. Customize colors, or build a theme of your own</h3>
+    <p class="text-gray-700">
+        Never edit <code>tokens.css</code> itself — that file belongs to the design system and
+        gets overwritten on upgrade. Instead, add your own <code>@theme</code> block to
+        <code>input.css</code>, <em>after</em> the <code>wise_core</code> import (whichever form
+        from 3a/3b you used): Tailwind v4 merges <code>@theme</code> blocks by variable name, so
+        whichever one is imported last wins.
+    </p>
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}/* static_src/input.css */
+@import "tailwindcss";
+@import "./_wise_sources.css";   /* or the vendored @source/@import lines from 3b */
+
+@source "../myapp/templates";
+
+/* Imported AFTER wise_core's tokens, so these override it. */
+@theme {
+    --color-brand-500: #7c3aed;
+    --color-brand-600: #6d28d9;
+    --color-brand-700: #5b21b6;
+    --color-action-500: #7c3aed;
+    --color-action-600: #6d28d9;
+    --color-action-700: #5b21b6;
+}{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="text-gray-700">
+        Adding a brand-new theme (as opposed to retuning the default one) works the same way, but
+        with an attribute selector instead of a bare <code>@theme</code> block — add this and
+        <code>wiseSetTheme('sepia')</code> switches to it with no other wiring needed:
+    </p>
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}:root[data-theme="sepia"] {
+    --color-page: #f4ecd8;
+    --color-panel: #fbf6ea;
+    --color-gray-900: #3b2f1c;
+}{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="text-gray-700">
+        Rebuild (step 3c) after any token change — Tailwind has to re-scan and re-emit
+        <code>tailwind.css</code> before the new values show up. For rounded corners, overriding a
+        component's own CSS rule, and checking contrast when you retune a color ramp, see
+        <a class="text-action-600 underline" href="{% url 'docs_theming_customizing' %}">Customizing
+        &amp; Theming</a>.
+    </p>
 
     <h2 class="mt-8">4. Extend the base template</h2>
     <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% extends 'wise_core/base.html' %}
