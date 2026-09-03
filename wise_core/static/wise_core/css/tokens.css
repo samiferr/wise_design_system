@@ -875,6 +875,33 @@
         @apply w-full border-collapse text-sm;
     }
 
+    /* Columns fit their content by default. `width: 1%` is the standard
+       table auto-layout trick for "shrink this column to its content" - an
+       explicit width the browser can't actually honor literally (no column
+       really fits in 1% of the table) is treated as a hint to give the
+       column no more than its content needs, paired with `nowrap` so a
+       column's preferred width is its full single-line content, not
+       whatever a mid-content line-break would allow. The last column is left
+       at the default `auto` width instead, so it alone absorbs whatever
+       space every other column doesn't need - the standard pairing for a
+       table where one column (usually the last) should flex and the rest
+       should stay tight. `.data-table th`/`.data-table td` already out-
+       specifies a bare utility class, so a column that genuinely needs to
+       differ takes a project-level override the same way any other
+       component rule does (see docs/theming/customizing.html - "Overriding
+       a component"), not a `w-*`/`whitespace-*` class on the cell itself. */
+    .data-table th,
+    .data-table td {
+        width: 1%;
+        white-space: nowrap;
+    }
+
+    .data-table th:last-child,
+    .data-table td:last-child {
+        width: auto;
+        white-space: normal;
+    }
+
     .data-table th {
         @apply border-b border-divider px-3 text-left text-xs font-semibold uppercase
         tracking-wider text-gray-600;
@@ -1257,8 +1284,12 @@
     }
 
     /* ── Dropdown ────────────────────────────────────────────────────────
-       Positioning only - toggling is one line of JS (wiseToggleDropdown) or
-       a <details> wrapper if you'd rather not use any. */
+       Built on a <details> wrapper, so opening/closing needs no JS of its
+       own; common.js only adds click-away/Escape handling and - because
+       .dropdown-panel is `position: absolute` against .dropdown, which a
+       scrollable ancestor (e.g. a wide data-table's overflow-x-auto
+       wrapper) would otherwise clip - repositions the open panel to
+       `position: fixed` so it always escapes ancestor overflow. */
     .dropdown {
         @apply relative inline-block;
     }
@@ -1268,6 +1299,22 @@
         shadow-[var(--shadow-blueprint-md)];
         z-index: var(--z-dropdown);
         border-radius: var(--radius-md);
+    }
+
+    /* Every <details> gets a native disclosure marker (a triangle in
+       Firefox via ::marker/list-style, a ::-webkit-details-marker in
+       Chrome/Safari) unless it's suppressed - .dropdown never wants it,
+       since .btn/.btn-ghost on the <summary> already supplies its own
+       affordance (an icon, a chevron, or both). Left unsuppressed, an
+       icon-only trigger (the common "row actions" case) ends up rendering
+       only the browser's own marker, off-center in the button box, instead
+       of the intended icon. */
+    .dropdown > summary {
+        list-style: none;
+    }
+
+    .dropdown > summary::-webkit-details-marker {
+        display: none;
     }
 
     .dropdown-item {
