@@ -875,6 +875,33 @@
         @apply w-full border-collapse text-sm;
     }
 
+    /* Columns fit their content by default. `width: 1%` is the standard
+       table auto-layout trick for "shrink this column to its content" - an
+       explicit width the browser can't actually honor literally (no column
+       really fits in 1% of the table) is treated as a hint to give the
+       column no more than its content needs, paired with `nowrap` so a
+       column's preferred width is its full single-line content, not
+       whatever a mid-content line-break would allow. The last column is left
+       at the default `auto` width instead, so it alone absorbs whatever
+       space every other column doesn't need - the standard pairing for a
+       table where one column (usually the last) should flex and the rest
+       should stay tight. `.data-table th`/`.data-table td` already out-
+       specifies a bare utility class, so a column that genuinely needs to
+       differ takes a project-level override the same way any other
+       component rule does (see docs/theming/customizing.html - "Overriding
+       a component"), not a `w-*`/`whitespace-*` class on the cell itself. */
+    .data-table th,
+    .data-table td {
+        width: 1%;
+        white-space: nowrap;
+    }
+
+    .data-table th:last-child,
+    .data-table td:last-child {
+        width: auto;
+        white-space: normal;
+    }
+
     .data-table th {
         @apply border-b border-divider px-3 text-left text-xs font-semibold uppercase
         tracking-wider text-gray-600;
