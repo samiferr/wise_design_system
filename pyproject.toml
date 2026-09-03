@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wise-design-system"
-version = "0.2.0"
+version = "0.3.0"
 description = "A set of plain Django apps providing a design system: tokens, component CSS, generic CRUD views/templates, and a couple of form widgets."
 readme = "README.md"
 license = "MIT"
