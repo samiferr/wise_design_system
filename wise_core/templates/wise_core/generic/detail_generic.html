@@ -2,17 +2,24 @@
 
 {% block body %}
     <div class="page-panel">
-        {% block detail_actions %}{% endblock %}
-        <h2 class="mt-3">{% block detail_title %}{{ object }}{% endblock %}</h2>
+        <div class="top-actions-header">
+            {% block detail_back %}{% endblock %}
+        </div>
         {% block detail_tabs %}{% endblock %}
-        {% block detail_content %}
-            <div class="mt-4">
-                <div class="detail-panel">
+        <div class="mt-4">
+            <div class="detail-panel">
+                <div class="detail-panel-header">
+                    <h2>{% block detail_title %}{{ object }}{% endblock %}</h2>
+                    <div class="detail-panel-actions">
+                        {% block detail_actions %}{% endblock %}
+                    </div>
+                </div>
+                {% block detail_content %}
                     <table>
                         {% block detail_rows %}{% endblock %}
                     </table>
-                </div>
+                {% endblock %}
             </div>
-        {% endblock %}
+        </div>
     </div>
 {% endblock %}

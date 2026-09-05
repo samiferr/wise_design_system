@@ -1,17 +1,18 @@
 {% extends 'wise_core/generic/detail_generic.html' %}
 {% load wise_icons wise_tags %}
 
+{% block detail_back %}
+    <a class="top-nav-item inline-flex" href="{% url 'product_list_view' %}">
+        {% lucide "arrow-left" size=20 %}<div class="text-sm">Back</div>
+    </a>
+{% endblock %}
+
 {% block detail_actions %}
-    <div class="top-actions-header">
-        <a class="top-nav-item inline-flex" href="{% url 'product_list_view' %}">
-            {% lucide "arrow-left" size=20 %}<div class="text-sm">Back</div>
+    {% if perms.showcase.change_product %}
+        <a class="top-nav-item inline-flex" href="{% url 'product_update_view' pk=object.pk %}">
+            {% lucide "pencil" size=20 %}<div class="text-sm">Edit</div>
         </a>
-        {% if perms.showcase.change_product %}
-            <a class="top-nav-item inline-flex" href="{% url 'product_update_view' pk=object.pk %}">
-                {% lucide "pencil" size=20 %}<div class="text-sm">Edit</div>
-            </a>
-        {% endif %}
-    </div>
+    {% endif %}
 {% endblock %}
 
 {% block detail_title %}{{ object.name }}{% endblock %}
