@@ -3,30 +3,37 @@
 
 {% block body %}
     <div class="page-panel">
-        {% block form_back %}
-            <div class="top-actions-header">
+        <div class="top-actions-header">
+            {% block form_back %}
                 <a class="top-nav-item inline-flex" href="{% block form_back_url %}{% endblock %}">
                     {% lucide "arrow-left" size=20 %}
                     <div class="text-sm">{% block form_back_label %}{% trans "Back" %}{% endblock %}</div>
                 </a>
+            {% endblock %}
+        </div>
+        <div class="mt-4">
+            <div class="detail-panel {% block form_width %}max-w-2xl{% endblock %}">
+                <div class="detail-panel-header">
+                    <h2>{% block form_title %}{% endblock %}</h2>
+                    <div class="detail-panel-actions">
+                        {% block form_header_actions %}{% endblock %}
+                    </div>
+                </div>
+                <form method="post"{% block form_enctype %}{% endblock %}>
+                    {% csrf_token %}
+                    <div class="form-stack">
+                        {% block form_fields %}
+                            {% include 'wise_core/components/_form_fields.html' %}
+                        {% endblock %}
+                    </div>
+                    <div class="form-actions">
+                        <a href="{% block form_cancel_url %}javascript:history.back(){% endblock %}"
+                           class="btn btn-secondary">{% trans "Cancel" %}</a>
+                        <input type="submit" class="btn btn-primary large-button"
+                               value="{% block form_submit_label %}{% trans "Save" %}{% endblock %}">
+                    </div>
+                </form>
             </div>
-        {% endblock %}
-        <h2 class="mt-3">{% block form_title %}{% endblock %}</h2>
-        <div class="detail-panel mt-4 {% block form_width %}max-w-2xl{% endblock %}">
-            <form method="post"{% block form_enctype %}{% endblock %}>
-                {% csrf_token %}
-                <div class="form-stack">
-                    {% block form_fields %}
-                        {% include 'wise_core/components/_form_fields.html' %}
-                    {% endblock %}
-                </div>
-                <div class="form-actions">
-                    <a href="{% block form_cancel_url %}javascript:history.back(){% endblock %}"
-                       class="btn btn-secondary">{% trans "Cancel" %}</a>
-                    <input type="submit" class="btn btn-primary large-button"
-                           value="{% block form_submit_label %}{% trans "Save" %}{% endblock %}">
-                </div>
-            </form>
         </div>
     </div>
 {% endblock %}
