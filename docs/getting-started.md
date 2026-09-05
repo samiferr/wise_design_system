@@ -186,7 +186,9 @@ WISE_NAV_SECTIONS = [
 - `url_name` is reversed with no arguments (`{% url item.url_name %}`).
 - `icon` is a vendored Lucide icon name (see `/docs/media/icons/` on the demo site, or
   `wise_core/static/wise_core/icons/lucide/`).
-- `match` marks the item `.selected` when it's a substring of `request.resolver_match.url_name`.
+- `match` marks the item `.selected` when `request.resolver_match.url_name` starts with it. Anchored at
+  the start, so a nested child route (`category_product_list_view`) highlights Categories rather than
+  both Categories and Products.
 
 ## 4. Build a CRUD page (the "datatable" pattern)
 
@@ -226,14 +228,21 @@ Every `Wise*View` derives its `django.contrib.auth` permission automatically
 (`<app_label>.<action>_<model_name>`) via `PermissionRequiredMixin` — grant users/groups the
 standard Django `add`/`change`/`delete`/`view` permissions for the model and these views enforce
 them with no extra config. See [generic-views-and-mixins.md](generic-views-and-mixins.md) for the
-full mixin reference (master-detail views, the confirm-action pattern, `ValidationError` handling,
-own-records scoping).
+full mixin reference (tabbed parent/child pages, the confirm-action pattern, `ValidationError`
+handling, own-records scoping).
+
+A record with children of its own gets a tabbed page instead — the parent's overview, then one tab
+per child model — since a parent usually has more than one (a product has variants *and* reviews).
+Declare the bar once as a list of `ChildTab`s, hand it to `WiseParentDetailView` and to each
+`WiseParentDetailChild*View` under it, and extend the matching `parent_*_generic.html` template.
+See [generic-views-and-mixins.md](generic-views-and-mixins.md#master-detail-a-tabbed-parent-page--wiseparentdetailchildview).
 
 ## 5. Full worked example
 
 `demo/showcase/` is a complete, runnable app built entirely on the pieces above — a `Category`
-model with full datatable+CRUD, and a `Product` model whose form uses both
-`AutocompleteInputWidget` and `RichTextInputWidget`. Run it:
+model with full datatable+CRUD, a `Product` model whose form uses both `AutocompleteInputWidget`
+and `RichTextInputWidget`, and two child models under it (`ProductVariant`, `ProductReview`) that
+turn a product's page into a tabbed one. Run it:
 
 ```bash
 cd demo

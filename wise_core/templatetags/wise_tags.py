@@ -30,6 +30,19 @@ def get_value(item, key):
 
 
 @register.filter
+def startswith(value, prefix):
+    """
+    `{% if request.resolver_match.url_name|startswith:"invoice_" %}`.
+
+    Used by the sidebar to decide which nav item is the selected one. Prefix
+    rather than substring: with children nested under a parent, an
+    `order_line_list_view` URL contains `line_` *and* `order_`, so a
+    substring test lights up two sections at once.
+    """
+    return str(value).startswith(str(prefix))
+
+
+@register.filter
 def get_dict_value(item, key):
     """Look up `key` in a dict - the `dict[key]` templates can't spell directly."""
     return item[key]

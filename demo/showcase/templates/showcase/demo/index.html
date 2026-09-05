@@ -39,15 +39,17 @@
                 <h3 class="card-title mt-1">Categories</h3>
                 <p class="card-content mt-2">
                     A full datatable with the filter drawer, pagination and CRUD — with a toggle to
-                    switch the whole list to a card grid instead.
+                    switch the whole list to a card grid instead. Open one: its products live on a
+                    tab of the category's own page.
                 </p>
             </a>
             <a class="card" href="{% url 'product_list_view' %}">
-                <div class="card-kicker">Card list ⇄ data table</div>
+                <div class="card-kicker">Tabbed parent / child</div>
                 <h3 class="card-title mt-1">Products</h3>
                 <p class="card-content mt-2">
-                    Renders as cards by default and exercises the autocomplete, rich text, rating,
-                    date and file widgets on one form — with a toggle to switch to a table.
+                    Exercises the autocomplete, rich text, rating, date and file widgets on one
+                    form. Open one: a product has two child models, so its page is tabbed —
+                    Overview, Variants and Reviews, each with CRUD scoped to that product.
                 </p>
             </a>
         </div>

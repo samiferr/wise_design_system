@@ -123,7 +123,7 @@
           {'label': 'Departments', 'url_name': 'department_list_view', 'icon': 'building-2', 'match': 'department_'},
       ]},
   ]
-- Each item's `match` is a substring of the current URL name that marks that link `.selected` when it appears in the resolved URL - choose a prefix shared by every view for that model (list/detail/create/update/delete) so the whole group highlights consistently.
+- Each item's `match` is the prefix of the current URL name that marks that link `.selected` - choose the prefix shared by every view for that model (list/detail/create/update/delete) so the whole group highlights consistently. It is anchored at the start of the name, so a child route nested under another model (`category_product_list_view`) highlights its own parent section rather than two at once.
 - `icon` is a Lucide icon name, rendered via the lucide template tag - keep icon choices consistent across sections (e.g. always building-2 for org-type entities).
 - The signed-in user's name is pinned to the bottom of the sidebar automatically from request.user - nothing to configure there.
 - To change which sections/links appear, edit WISE_NAV_SECTIONS in settings.py, never wise_core/templates/wise_core/components/nav_menu.html directly, since that file is shared, vendored package code.{% endverbatim %}{% endfilter %}</code></pre>

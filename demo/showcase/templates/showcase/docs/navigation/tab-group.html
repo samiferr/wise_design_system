@@ -138,6 +138,7 @@ path('categories/<int:pk>/products/', CategoryProductsView.as_view(), name='cate
                 <tr><td><code>tab-bar</code></td><td>Container — horizontally scrolling flex row.</td></tr>
                 <tr><td><code>bar-item</code></td><td>One tab.</td></tr>
                 <tr><td><code>bar-item.selected</code></td><td>The active tab; set server-side.</td></tr>
+                <tr><td><code>tab-count</code></td><td>A count badge inside a tab ("Variants 4"); neutral until its tab is selected.</td></tr>
             </tbody>
         </table>
     </div>
@@ -158,11 +159,13 @@ path('categories/<int:pk>/products/', CategoryProductsView.as_view(), name='cate
 - Backing views: one class-based view per tab, sharing a common base mixin/queryset lookup, each with its own template and its own get_context_data - so a tab that queries extra data (e.g. a related list) only pays for that query when it's the active tab.
 - `.tab-bar` scrolls horizontally rather than wrapping for a long set of tabs - do not add flex-wrap.
 - Never hide multiple tab panels with CSS/JS and one shared URL - that means every tab's data loads on every page view even when nobody opens it, and a bookmark or refresh always lands on the first tab instead of preserving which one the user was on.
-- An icon + count works inline in a tab: {% lucide "clipboard-list" size=15 %}Products <span class="badge badge-grey">{{ object.products.count }}</span>, on a bar-item with inline-flex items-center gap-1.5.{% endverbatim %}{% endfilter %}</code></pre>
+- An icon + count works inline in a tab: {% lucide "clipboard-list" size=15 %}<span>Products</span><span class="tab-count">{{ object.products.count }}</span> - `.bar-item` already lays them out, and `.tab-count` is the count badge.
+- For the common case - one record's child models, one tab each - do not hand-write the bar at all: declare it as `ChildTab`s on the view and include `wise_core/components/_child_tabs.html`, which handles permissions, URLs, counts and the selected state. See the Tabbed Parent / Child pattern.{% endverbatim %}{% endfilter %}</code></pre>
 
         <h2 class="mt-8">GitHub source</h2>
         <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
-            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L995-L1008">tokens.css — .tab-bar, .bar-item, .bar-item.selected</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css">tokens.css — .tab-bar, .bar-item, .bar-item.selected, .tab-count</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templates/wise_core/components/_child_tabs.html">_child_tabs.html — the ready-made bar for a record's child models</a></li>
         </ul>
     </div>
 {% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'wise_core/generic/parent_child_detail_generic.html' %}
+{% load wise_icons wise_tags %}
+
+{% block parent_header %}{% include 'showcase/product/_header.html' %}{% endblock %}
+
+{% block child_back_label %}Reviews{% endblock %}
+
+{% block detail_actions %}
+    {% if perms.showcase.change_productreview %}
+        <a class="top-nav-item inline-flex" href="{% url 'product_review_update_view' parent_pk=parent_object.pk pk=object.pk %}">
+            {% lucide "pencil" size=20 %}<div class="text-sm">Edit</div>
+        </a>
+    {% endif %}
+    {% if perms.showcase.delete_productreview %}
+        <a class="top-nav-item inline-flex" href="{% url 'product_review_delete_view' parent_pk=parent_object.pk pk=object.pk %}">
+            {% lucide "trash-2" size=20 %}<div class="text-sm">Delete</div>
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block detail_rows %}
+    <tr>
+        <th>{% get_field_verbose_name object "author" %}</th>
+        <td>{{ object.author }}</td>
+    </tr>
+    <tr>
+        <th>{% get_field_verbose_name object "rating" %}</th>
+        <td>
+            <span class="rating">
+                {% for i in "12345"|make_list %}
+                    {% if forloop.counter <= object.rating %}
+                        {% lucide "star" size=16 cls="rating-star is-on" %}
+                    {% else %}
+                        {% lucide "star" size=16 cls="rating-star" %}
+                    {% endif %}
+                {% endfor %}
+                <span class="ml-1.5 text-xs text-gray-600">{{ object.rating }} / 5</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <th>{% get_field_verbose_name object "submitted_on" %}</th>
+        <td>{{ object.submitted_on }}</td>
+    </tr>
+    <tr>
+        <th>{% get_field_verbose_name object "comment" %}</th>
+        <td class="text-sm font-normal">{{ object.comment|linebreaks|default:"—" }}</td>
+    </tr>
+{% endblock %}

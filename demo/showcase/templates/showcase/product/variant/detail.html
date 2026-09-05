@@ -1,0 +1,48 @@
+{% extends 'wise_core/generic/parent_child_detail_generic.html' %}
+{% load wise_icons wise_tags %}
+
+{% block parent_header %}{% include 'showcase/product/_header.html' %}{% endblock %}
+
+{% block child_back_label %}Variants{% endblock %}
+
+{% block detail_actions %}
+    {% if perms.showcase.change_productvariant %}
+        <a class="top-nav-item inline-flex" href="{% url 'product_variant_update_view' parent_pk=parent_object.pk pk=object.pk %}">
+            {% lucide "pencil" size=20 %}<div class="text-sm">Edit</div>
+        </a>
+    {% endif %}
+    {% if perms.showcase.delete_productvariant %}
+        <a class="top-nav-item inline-flex" href="{% url 'product_variant_delete_view' parent_pk=parent_object.pk pk=object.pk %}">
+            {% lucide "trash-2" size=20 %}<div class="text-sm">Delete</div>
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block detail_rows %}
+    <tr>
+        <th>{% get_field_verbose_name object "label" %}</th>
+        <td>{{ object.label }}</td>
+    </tr>
+    <tr>
+        <th>{% get_field_verbose_name object "sku" %}</th>
+        <td class="font-mono text-sm">{{ object.sku }}</td>
+    </tr>
+    <tr>
+        <th>{% get_field_verbose_name object "price" %}</th>
+        <td class="tabular-nums">{{ object.price }}</td>
+    </tr>
+    <tr>
+        <th>{% get_field_verbose_name object "stock" %}</th>
+        <td class="tabular-nums">{{ object.stock }}</td>
+    </tr>
+    <tr>
+        <th>{% get_field_verbose_name object "is_active" %}</th>
+        <td>
+            {% if object.is_active %}
+                <span class="badge badge-brand">Yes</span>
+            {% else %}
+                <span class="badge badge-grey">No</span>
+            {% endif %}
+        </td>
+    </tr>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'wise_core/generic/parent_child_confirm_generic.html' %}
+{% load wise_tags %}
+
+{% block parent_header %}{% include 'showcase/product/_header.html' %}{% endblock %}
+
+{% block child_back_label %}Reviews{% endblock %}
+{% block confirm_title %}Delete this review?{% endblock %}
+{% block confirm_message %}
+    <div class="callout-title">This cannot be undone</div>
+    {{ parent_object.name }} keeps its other reviews.
+{% endblock %}
+
+{% block confirm_rows %}
+    <tr><th>{% get_field_verbose_name object "author" %}</th><td>{{ object.author }}</td></tr>
+    <tr><th>{% get_field_verbose_name object "rating" %}</th><td>{{ object.rating }} / 5</td></tr>
+    <tr><th>{% get_field_verbose_name object "submitted_on" %}</th><td>{{ object.submitted_on }}</td></tr>
+{% endblock %}

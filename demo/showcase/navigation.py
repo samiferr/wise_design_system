@@ -153,7 +153,7 @@ DOCS_NAV = [
         'items': [
             {'title': 'Simple Data Page', 'slug': 'simple-data-page'},
             {'title': 'Card List vs. Data Table', 'slug': 'list-view-toggle'},
-            {'title': 'Parent / Child CRUD', 'slug': 'parent-child-crud'},
+            {'title': 'Tabbed Parent / Child', 'slug': 'parent-child-crud'},
             {'title': 'Calendar', 'slug': 'calendar'},
         ],
     },

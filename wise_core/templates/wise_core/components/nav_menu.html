@@ -1,9 +1,10 @@
-{% load i18n wise_icons %}
+{% load i18n wise_icons wise_tags %}
 {% comment %}
 Renders wise_nav_sections (see wise_core/context_processors.py + WISE_NAV_SECTIONS
 in docs/getting-started.md). Each section: {"title": ..., "items": [...]}.
 Each item: {"label", "url_name", "url_kwargs" (optional), "icon" (lucide name),
-"match" (substring of request.resolver_match.url_name that marks it selected)}.
+"match" (the prefix of request.resolver_match.url_name that marks it
+selected - e.g. "invoice_" for every invoice_* route)}.
 {% endcomment %}
 {% if request.user.is_authenticated %}
     <a class="menu-link {% if request.resolver_match.url_name == 'home' %}selected{% endif %}" href="{% url 'home' %}">
@@ -16,7 +17,7 @@ Each item: {"label", "url_name", "url_kwargs" (optional), "icon" (lucide name),
         <h3>{{ section.title }}</h3>
         <div class="menu-node-container">
             {% for item in section.items %}
-                <a class="menu-link {% if item.match and item.match in request.resolver_match.url_name %}selected{% endif %}"
+                <a class="menu-link {% if item.match and request.resolver_match.url_name|startswith:item.match %}selected{% endif %}"
                    href="{% url item.url_name %}{{ item.url_kwargs }}">
                     {% lucide item.icon size=20 %}{{ item.label }}
                 </a>

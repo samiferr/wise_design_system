@@ -11,7 +11,7 @@ from wise_core.widgets import (
 )
 from wise_richtext.widgets import RichTextInputWidget
 
-from .models import Category, Product
+from .models import Category, Product, ProductReview, ProductVariant
 
 
 class CategoryForm(forms.ModelForm):
@@ -39,6 +39,50 @@ class ProductForm(forms.ModelForm):
             'rating': RatingInput(),
             'available_from': forms.DateInput(attrs={'type': 'date'}),
             'notes': RichTextInputWidget(),
+        }
+
+
+class CategoryProductForm(forms.ModelForm):
+    """
+    The same product form, minus the category field - this one is only ever
+    reached from inside a category (/demo/categories/2/products/create/), so
+    the parent comes from the URL rather than from a select the visitor
+    could point somewhere else.
+    """
+
+    class Meta:
+        model = Product
+        fields = ['name', 'rating', 'available_from', 'datasheet', 'notes']
+        widgets = {
+            'rating': RatingInput(),
+            'available_from': forms.DateInput(attrs={'type': 'date'}),
+            'notes': RichTextInputWidget(),
+        }
+
+
+class ProductVariantForm(forms.ModelForm):
+    """
+    A child form has no field for its parent: WiseParentDetailChildCreateView
+    sets `product_id` from the URL, so the product a variant belongs to
+    cannot be reassigned by posting a different value.
+    """
+
+    class Meta:
+        model = ProductVariant
+        fields = ['label', 'sku', 'price', 'stock', 'is_active']
+        widgets = {
+            'is_active': SwitchInput(),
+        }
+
+
+class ProductReviewForm(forms.ModelForm):
+    class Meta:
+        model = ProductReview
+        fields = ['author', 'rating', 'submitted_on', 'comment']
+        widgets = {
+            'rating': RatingInput(),
+            'submitted_on': forms.DateInput(attrs={'type': 'date'}),
+            'comment': forms.Textarea(attrs={'rows': 4}),
         }
 
 
