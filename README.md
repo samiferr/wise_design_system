@@ -1,4 +1,4 @@
-# wise_design_system
+# Wise Design System
 
 A Tailwind CSS v4 design system for Django projects, extracted from the
 [DCMS7](https://github.com/samiferr/DCMS7) application. Complex components — datatables,
