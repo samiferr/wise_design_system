@@ -27,8 +27,10 @@
                             {% block confirm_rows %}{% endblock %}
                         </table>
                     {% endblock %}
-                    <div class="mt-4 text-right">
-                        <input type="submit" class="{% block confirm_submit_class %}btn btn-danger{% endblock %}"
+                    <div class="form-actions">
+                        <a href="{% block confirm_cancel_url %}javascript:history.back(){% endblock %}"
+                           class="btn btn-secondary">{% trans "Cancel" %}</a>
+                        <input type="submit" class="{% block confirm_submit_class %}btn btn-danger large-button{% endblock %}"
                                value="{% block confirm_submit_label %}{% trans "Delete" %}{% endblock %}">
                     </div>
                 </form>
