@@ -843,8 +843,23 @@
        plain <table> for a record's detail page. */
     .detail-panel {
         @apply w-full border border-divider bg-panel p-6 text-left font-body;
+        max-width: 700px;
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-card);
+    }
+
+    /* Title (left) + actions (right) row rendered inside the panel, above
+       the table - see wise_core/generic/detail_generic.html. */
+    .detail-panel-header {
+        @apply flex flex-wrap items-center justify-between gap-3 mb-4;
+    }
+
+    .detail-panel-header h2 {
+        @apply m-0;
+    }
+
+    .detail-panel-actions {
+        @apply flex items-center gap-2;
     }
 
     .detail-panel table {
@@ -865,7 +880,7 @@
     }
 
     .detail-panel td {
-        @apply py-3.5 px-3 text-base font-semibold text-gray-900;
+        @apply py-3.5 px-3 text-base font-normal text-gray-900;
     }
 
     /* Data table (the "datatable" component - list views rendered as a
@@ -1002,7 +1017,8 @@
     }
 
     .top-actions-header {
-        @apply flex flex-wrap items-center justify-between gap-2 p-2 bg-gray-200 text-gray-900 mb-6 border-b border-gray-300;
+        @apply flex flex-wrap items-center justify-between gap-2 p-2 bg-gray-200 text-gray-900 mb-6;
+        border-radius: var(--radius-lg);
     }
 
     .top-actions-header .top-nav-item {
