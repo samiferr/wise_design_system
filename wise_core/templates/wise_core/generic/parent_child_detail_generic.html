@@ -1,0 +1,29 @@
+{% extends 'wise_core/generic/parent_base_generic.html' %}
+{% load wise_icons i18n %}
+{% comment %}
+One child record's fields, inside the parent's chrome. Pair with
+`wise_core.mixins.WiseParentDetailChildDetailView`. Same block names as
+`detail_generic.html`, with a back link to the child's own tab.
+{% endcomment %}
+
+{% block parent_body %}
+    {% block child_back %}
+        <a class="back-link" href="{% block child_back_url %}{{ child_list_url }}{% endblock %}">
+            {% lucide "arrow-left" size=16 %}
+            <span>{% block child_back_label %}{% trans "Back" %}{% endblock %}</span>
+        </a>
+    {% endblock %}
+    <div class="detail-panel">
+        <div class="detail-panel-header">
+            <h3>{% block detail_title %}{{ object }}{% endblock %}</h3>
+            <div class="detail-panel-actions">
+                {% block detail_actions %}{% endblock %}
+            </div>
+        </div>
+        {% block detail_content %}
+            <table>
+                {% block detail_rows %}{% endblock %}
+            </table>
+        {% endblock %}
+    </div>
+{% endblock %}

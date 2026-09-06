@@ -35,6 +35,13 @@ column list, a detail-panel row list) rather than hardcoding field access per te
 {{ invoice|get_value:"customer__company_name" }}
 ```
 
+### `{{ url_name|startswith:"invoice_" }}` (filter)
+
+`str.startswith()` for templates. Used by `nav_menu.html` to decide which sidebar item is selected
+(`request.resolver_match.url_name|startswith:item.match`) — a prefix rather than a substring,
+because with children nested under a parent an `order_line_list_view` URL contains both `line_` and
+`order_` and a substring test would light up two sections at once.
+
 ### `{{ some_dict|get_dict_value:"key" }}` (filter)
 
 `dict[key]` — for when your context value is a plain dict, not a model instance (templates can't

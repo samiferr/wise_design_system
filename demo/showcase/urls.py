@@ -36,11 +36,44 @@ urlpatterns = [
     path('demo/categories/<int:pk>/update/', views.CategoryUpdateView.as_view(), name='category_update_view'),
     path('demo/categories/<int:pk>/delete/', views.CategoryDeleteView.as_view(), name='category_delete_view'),
 
+    # A category's children, nested under it. The parent's pk in the URL is
+    # what scopes the queryset and lets the pages share one tab bar - see
+    # views.CATEGORY_TABS.
+    path('demo/categories/<int:parent_pk>/products/',
+         views.CategoryProductListView.as_view(), name='category_product_list_view'),
+    path('demo/categories/<int:parent_pk>/products/create/',
+         views.CategoryProductCreateView.as_view(), name='category_product_create_view'),
+
     path('demo/products/', views.ProductListView.as_view(), name='product_list_view'),
     path('demo/products/create/', views.ProductCreateView.as_view(), name='product_create_view'),
     path('demo/products/<int:pk>/', views.ProductDetailView.as_view(), name='product_detail_view'),
     path('demo/products/<int:pk>/update/', views.ProductUpdateView.as_view(), name='product_update_view'),
     path('demo/products/<int:pk>/delete/', views.ProductDeleteView.as_view(), name='product_delete_view'),
+
+    # A product has two child models, which is why its page is tabbed
+    # (views.PRODUCT_TABS). Each child gets the full five routes under the
+    # product it belongs to.
+    path('demo/products/<int:parent_pk>/variants/',
+         views.ProductVariantListView.as_view(), name='product_variant_list_view'),
+    path('demo/products/<int:parent_pk>/variants/create/',
+         views.ProductVariantCreateView.as_view(), name='product_variant_create_view'),
+    path('demo/products/<int:parent_pk>/variants/<int:pk>/',
+         views.ProductVariantDetailView.as_view(), name='product_variant_detail_view'),
+    path('demo/products/<int:parent_pk>/variants/<int:pk>/update/',
+         views.ProductVariantUpdateView.as_view(), name='product_variant_update_view'),
+    path('demo/products/<int:parent_pk>/variants/<int:pk>/delete/',
+         views.ProductVariantDeleteView.as_view(), name='product_variant_delete_view'),
+
+    path('demo/products/<int:parent_pk>/reviews/',
+         views.ProductReviewListView.as_view(), name='product_review_list_view'),
+    path('demo/products/<int:parent_pk>/reviews/create/',
+         views.ProductReviewCreateView.as_view(), name='product_review_create_view'),
+    path('demo/products/<int:parent_pk>/reviews/<int:pk>/',
+         views.ProductReviewDetailView.as_view(), name='product_review_detail_view'),
+    path('demo/products/<int:parent_pk>/reviews/<int:pk>/update/',
+         views.ProductReviewUpdateView.as_view(), name='product_review_update_view'),
+    path('demo/products/<int:parent_pk>/reviews/<int:pk>/delete/',
+         views.ProductReviewDeleteView.as_view(), name='product_review_delete_view'),
 
     path('api/', include(api.router.urls)),
 ]

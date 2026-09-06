@@ -1,0 +1,43 @@
+{% extends 'wise_core/generic/parent_base_generic.html' %}
+{% load wise_icons i18n %}
+{% comment %}
+Add or edit one child, inside the parent's chrome. Pair with
+`wise_core.mixins.WiseParentDetailChildCreateView`/`...ChildUpdateView`.
+Same block names as `form_generic.html`.
+
+The back link and Cancel both default to `child_list_url` - the tab the
+visitor came from - which the view builds from its `child_list_url_name`,
+the same URL it redirects to after saving. Returning to the tab beats
+`history.back()` here: after a failed submit, history is the form itself.
+{% endcomment %}
+
+{% block parent_body %}
+    {% block child_back %}
+        <a class="back-link" href="{% block child_back_url %}{{ child_list_url }}{% endblock %}">
+            {% lucide "arrow-left" size=16 %}
+            <span>{% block child_back_label %}{% trans "Back" %}{% endblock %}</span>
+        </a>
+    {% endblock %}
+    <div class="detail-panel {% block form_width %}max-w-2xl{% endblock %}">
+        <div class="detail-panel-header">
+            <h3>{% block form_title %}{% endblock %}</h3>
+            <div class="detail-panel-actions">
+                {% block form_header_actions %}{% endblock %}
+            </div>
+        </div>
+        <form method="post"{% block form_enctype %}{% endblock %}>
+            {% csrf_token %}
+            <div class="form-stack">
+                {% block form_fields %}
+                    {% include 'wise_core/components/_form_fields.html' %}
+                {% endblock %}
+            </div>
+            <div class="form-actions">
+                <a href="{% block form_cancel_url %}{{ child_list_url }}{% endblock %}"
+                   class="btn btn-secondary">{% trans "Cancel" %}</a>
+                <input type="submit" class="btn btn-primary large-button"
+                       value="{% block form_submit_label %}{% trans "Save" %}{% endblock %}">
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 
 class Category(models.Model):
@@ -48,6 +49,49 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('product_detail_view', args=[self.pk])
+
+
+class ProductVariant(models.Model):
+    """
+    One of a product's sellable variations - the first of two child models
+    hanging off Product, which is what makes a product's page a *tabbed*
+    one (see showcase/views.py's PRODUCT_TABS).
+    """
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variants')
+    label = models.CharField(max_length=100, help_text='e.g. "Blue, medium tip" or "120x60cm".')
+    sku = models.CharField('SKU', max_length=40, unique=True)
+    price = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+    stock = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField('Sellable', default=True)
+
+    class Meta:
+        ordering = ['label']
+        verbose_name = 'variant'
+
+    def __str__(self):
+        return self.label
+
+    def get_absolute_url(self):
+        return reverse('product_variant_detail_view', args=[self.product_id, self.pk])
+
+
+class ProductReview(models.Model):
+    """Product's second child model - the second tab on its page."""
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    author = models.CharField(max_length=80)
+    rating = models.PositiveSmallIntegerField(default=5, help_text='0-5.')
+    submitted_on = models.DateField(default=timezone.localdate)
+    comment = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-submitted_on', '-pk']
+        verbose_name = 'review'
+
+    def __str__(self):
+        return '{} - {}/5'.format(self.author, self.rating)
+
+    def get_absolute_url(self):
+        return reverse('product_review_detail_view', args=[self.product_id, self.pk])
 
 
 class Department(models.Model):

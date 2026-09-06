@@ -1,0 +1,52 @@
+{% load wise_icons %}
+{% comment %}
+The product's own chrome: where "back" goes, what can be done to the
+product itself, and its name. Overriding parent_base_generic.html's
+`parent_header` block with this one include is what keeps every page in the
+group - the overview, and each variant/review page - showing the identical
+header, without repeating the markup in nine templates.
+
+Reads `parent_object`, which wise_core puts in the context on the parent's
+own page and on every child page under it.
+{% endcomment %}
+<div class="top-actions-header">
+    <div class="flex flex-wrap items-center gap-1">
+        <a class="top-nav-item inline-flex" href="{% url 'product_list_view' %}">
+            {% lucide "arrow-left" size=20 %}<div class="text-sm">Products</div>
+        </a>
+    </div>
+    <div class="flex flex-wrap items-center gap-1">
+        {% if perms.showcase.change_product %}
+            <a class="top-nav-item inline-flex" href="{% url 'product_update_view' pk=parent_object.pk %}">
+                {% lucide "pencil" size=20 %}<div class="text-sm">Edit</div>
+            </a>
+        {% endif %}
+        {% if perms.showcase.delete_product %}
+            <a class="top-nav-item inline-flex" href="{% url 'product_delete_view' pk=parent_object.pk %}">
+                {% lucide "trash-2" size=20 %}<div class="text-sm">Delete</div>
+            </a>
+        {% endif %}
+    </div>
+</div>
+<div class="record-header">
+    {% lucide "pill" size=28 cls="shrink-0 text-brand-600" %}
+    <div class="min-w-0">
+        <h2 class="truncate">{{ parent_object.name }}</h2>
+        <div class="record-meta">
+            <a class="badge badge-grey no-underline" href="{{ parent_object.category.get_absolute_url }}">
+                {% lucide "tag" size=12 %}<span class="ml-1">{{ parent_object.category }}</span>
+            </a>
+            {% if parent_object.rating %}
+                <span class="rating" aria-label="Rated {{ parent_object.rating }} out of 5">
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= parent_object.rating %}
+                            {% lucide "star" size=13 cls="rating-star is-on" %}
+                        {% else %}
+                            {% lucide "star" size=13 cls="rating-star" %}
+                        {% endif %}
+                    {% endfor %}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+</div>

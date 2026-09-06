@@ -1,0 +1,6 @@
+{% extends 'wise_core/generic/parent_child_form_generic.html' %}
+
+{% block parent_header %}{% include 'showcase/product/_header.html' %}{% endblock %}
+
+{% block child_back_label %}Reviews{% endblock %}
+{% block form_title %}{% if object.pk %}Edit review{% else %}New review{% endif %}{% endblock %}

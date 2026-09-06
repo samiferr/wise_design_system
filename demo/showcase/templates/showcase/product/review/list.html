@@ -1,0 +1,36 @@
+{% extends 'wise_core/generic/parent_child_list_generic.html' %}
+{% load wise_icons %}
+{% comment %}
+The Reviews tab - the same generic template as the Variants tab next door,
+rendering cards instead of a table. Two child models, one bar, one chrome.
+{% endcomment %}
+
+{% block parent_header %}{% include 'showcase/product/_header.html' %}{% endblock %}
+
+{% block list_actions %}
+    {% include 'wise_core/components/filter_button.html' %}
+    {% if perms.showcase.add_productreview %}
+        <a class="btn btn-primary" href="{% url 'product_review_create_view' parent_pk=parent_object.pk %}">
+            {% lucide "plus" size=16 %}<span>New review</span>
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block card_item %}
+    <a class="card" href="{{ item.get_absolute_url }}">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <h4 class="card-title">{{ item.author }}</h4>
+            <span class="rating" aria-label="Rated {{ item.rating }} out of 5">
+                {% for i in "12345"|make_list %}
+                    {% if forloop.counter <= item.rating %}
+                        {% lucide "star" size=14 cls="rating-star is-on" %}
+                    {% else %}
+                        {% lucide "star" size=14 cls="rating-star" %}
+                    {% endif %}
+                {% endfor %}
+            </span>
+        </div>
+        <p class="card-meta mt-1">{{ item.submitted_on }}</p>
+        <p class="card-content mt-3">{{ item.comment|default:"No comment."|truncatechars:160 }}</p>
+    </a>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'wise_core/generic/parent_base_generic.html' %}
+{% comment %}
+The parent's own tab: the record's fields, under the same header and tab
+bar its children render. Pair with `wise_core.mixins.WiseParentDetailView`.
+Same block names as `detail_generic.html`, so a flat detail template becomes
+a tabbed one by swapping which template it extends.
+{% endcomment %}
+
+{% block parent_body %}
+    <div class="detail-panel">
+        <div class="detail-panel-header">
+            <h3>{% block detail_title %}{{ selected_tab.label|default:object }}{% endblock %}</h3>
+            <div class="detail-panel-actions">
+                {% block detail_actions %}{% endblock %}
+            </div>
+        </div>
+        {% block detail_content %}
+            <table>
+                {% block detail_rows %}{% endblock %}
+            </table>
+        {% endblock %}
+    </div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% load wise_icons %}
+{% comment %}
+The tab bar on a parent record's page: one tab per child model, plus the
+parent's own overview. Rendered off `child_tabs` in the context, which
+`wise_core.mixins.ChildTabsMixin` resolves from the view's declared
+`ChildTab` list - permissions checked, URLs reversed against the parent,
+counts read off its related managers. Included by every
+`parent_*_generic.html`, so a project never writes this markup itself.
+{% endcomment %}
+{% if child_tabs %}
+    <div class="tab-bar border-b border-divider" role="tablist">
+        {% for tab in child_tabs %}
+            <a class="bar-item{% if tab.selected %} selected{% endif %}" href="{{ tab.url }}"
+               role="tab" aria-selected="{% if tab.selected %}true{% else %}false{% endif %}"
+               {% if tab.selected %}aria-current="page"{% endif %}>
+                {% if tab.icon %}{% lucide tab.icon size=15 %}{% endif %}
+                <span>{{ tab.label }}</span>
+                {% if tab.count is not None %}<span class="tab-count">{{ tab.count }}</span>{% endif %}
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}

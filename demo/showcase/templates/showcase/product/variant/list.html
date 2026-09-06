@@ -1,0 +1,70 @@
+{% extends 'wise_core/generic/parent_child_list_generic.html' %}
+{% load wise_icons %}
+{% comment %}
+The Variants tab. The heading, the record count, the empty state and the
+pagination all come from the generic template; the list only fills in its
+own table and the "New" button.
+{% endcomment %}
+
+{% block parent_header %}{% include 'showcase/product/_header.html' %}{% endblock %}
+
+{% block list_actions %}
+    {% include 'wise_core/components/filter_button.html' %}
+    {% if perms.showcase.add_productvariant %}
+        <a class="btn btn-primary" href="{% url 'product_variant_create_view' parent_pk=parent_object.pk %}">
+            {% lucide "plus" size=16 %}<span>New variant</span>
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block list_body %}
+    <div class="mt-5 overflow-x-auto border border-divider bg-panel">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th class="w-px">Actions</th>
+                    {% include 'wise_core/components/_sortable_th.html' with field='label' label='Label' %}
+                    {% include 'wise_core/components/_sortable_th.html' with field='sku' label='SKU' %}
+                    {% include 'wise_core/components/_sortable_th.html' with field='price' label='Price' %}
+                    {% include 'wise_core/components/_sortable_th.html' with field='stock' label='Stock' %}
+                    <th>Sellable</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in object_list %}
+                    <tr>
+                        <td class="w-px whitespace-nowrap">
+                            <details class="dropdown">
+                                <summary class="btn btn-ghost" aria-label="Row actions">{% lucide "ellipsis-vertical" size=16 %}</summary>
+                                <div class="dropdown-panel left-0 right-auto">
+                                    {% if perms.showcase.change_productvariant %}
+                                        <a class="dropdown-item" href="{% url 'product_variant_update_view' parent_pk=parent_object.pk pk=item.pk %}">{% lucide "pencil" size=14 %}Edit</a>
+                                    {% endif %}
+                                    {% if perms.showcase.delete_productvariant %}
+                                        <a class="dropdown-item dropdown-item-danger" href="{% url 'product_variant_delete_view' parent_pk=parent_object.pk pk=item.pk %}">{% lucide "trash-2" size=14 %}Delete</a>
+                                    {% endif %}
+                                </div>
+                            </details>
+                        </td>
+                        <td><a class="font-semibold text-action-700 no-underline hover:underline" href="{{ item.get_absolute_url }}">{{ item.label }}</a></td>
+                        <td class="font-mono text-xs text-gray-600">{{ item.sku }}</td>
+                        <td class="whitespace-nowrap tabular-nums">{{ item.price }}</td>
+                        <td class="tabular-nums">{{ item.stock }}</td>
+                        <td>
+                            {% if item.is_active %}
+                                <span class="badge badge-brand">Yes</span>
+                            {% else %}
+                                <span class="badge badge-grey">No</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6">{% include 'wise_core/components/_no_data.html' %}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pt-4">
+        {% include 'wise_core/components/_pagination.html' %}
+    </div>
+{% endblock %}

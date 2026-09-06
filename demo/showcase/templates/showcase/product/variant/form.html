@@ -1,0 +1,11 @@
+{% extends 'wise_core/generic/parent_child_form_generic.html' %}
+{% comment %}
+Add or edit a variant. Back and Cancel both go to `child_list_url` - the
+Variants tab - which the view builds from its `child_list_url_name`; there
+is nothing to wire up here.
+{% endcomment %}
+
+{% block parent_header %}{% include 'showcase/product/_header.html' %}{% endblock %}
+
+{% block child_back_label %}Variants{% endblock %}
+{% block form_title %}{% if object.pk %}Edit variant{% else %}New variant{% endif %}{% endblock %}

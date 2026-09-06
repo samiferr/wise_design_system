@@ -4,17 +4,36 @@ from django.views.generic import TemplateView
 
 from wise_core import charts
 from wise_core.mixins import (
+    ChildTab,
     WiseCreateView,
     WiseDeleteView,
     WiseDetailView,
     WiseListView,
+    WiseParentDetailChildCreateView,
+    WiseParentDetailChildDeleteView,
+    WiseParentDetailChildDetailView,
+    WiseParentDetailChildListView,
+    WiseParentDetailChildUpdateView,
+    WiseParentDetailView,
     WiseUpdateView,
 )
 
 from . import navigation
-from .filters import CategoryFilter, ProductFilter
-from .forms import CategoryForm, KitchenSinkForm, ProductForm
-from .models import Category, Department, Product
+from .filters import (
+    CategoryFilter,
+    ProductFilter,
+    ProductReviewFilter,
+    ProductVariantFilter,
+)
+from .forms import (
+    CategoryForm,
+    CategoryProductForm,
+    KitchenSinkForm,
+    ProductForm,
+    ProductReviewForm,
+    ProductVariantForm,
+)
+from .models import Category, Department, Product, ProductReview, ProductVariant
 
 
 class HomeView(TemplateView):
@@ -93,6 +112,32 @@ def _chart_context():
     }
 
 
+def _parent_child_context():
+    """
+    The Patterns -> Tabbed Parent / Child page previews the *real* tab bar
+    component against real data, rather than a hand-written copy of its
+    markup that could drift from it. PRODUCT_TABS is the demo app's own tab
+    list, defined further down this module; this function runs per request,
+    so the forward reference resolves fine.
+    """
+    product = Product.objects.prefetch_related('variants', 'reviews').first()
+    if product is None:  # an unseeded database - the page skips the preview
+        return {}
+    return {
+        'demo_product': product,
+        'child_tabs': [
+            {
+                'label': tab.label,
+                'url': tab.get_url(product),
+                'icon': tab.icon,
+                'count': tab.get_count(product),
+                'selected': index == 1,
+            }
+            for index, tab in enumerate(PRODUCT_TABS)
+        ],
+    }
+
+
 # Pages that need more than the static template. Keyed by (section, page).
 _FORM_PAGES = [
     'input', 'textarea', 'number-input', 'select', 'checkbox', 'radio', 'switch',
@@ -110,6 +155,7 @@ EXTRA_CONTEXT = {
     ('navigation', 'tree'): _tree_context,
     ('feedback', 'progress-ring'): _chart_context,
     ('patterns', 'simple-data-page'): _chart_context,
+    ('patterns', 'parent-child-crud'): _parent_child_context,
 }
 EXTRA_CONTEXT.update({('forms', page): _kitchen_sink_context for page in _FORM_PAGES})
 EXTRA_CONTEXT.update({('data-viz', page): _chart_context for page in _CHART_PAGES})
@@ -160,8 +206,33 @@ class CategoryListView(WiseListView):
     sortable_fields = {'name'}
 
 
-class CategoryDetailView(WiseDetailView):
+# ── Tabbed parent pages ───────────────────────────────────────────────────
+#
+# A record with children of its own is a tabbed page, not one long scroll:
+# the parent's overview is the first tab and each child model gets its own,
+# because a parent usually has more than one (a product has variants *and*
+# reviews, the way a patient has payments, prescriptions and appointments).
+#
+# The bar is declared once, in Python, and handed to the parent's detail
+# view and to every child view underneath it, so all of them render the
+# identical tabs - permissions checked, URLs reversed against the parent,
+# counts read off its related managers. See wise_core.mixins.ChildTab.
+
+CATEGORY_TABS = [
+    ChildTab.overview('Overview', 'category_detail_view', icon='info'),
+    ChildTab('Products', 'category_product_list_view', model=Product, icon='pill', count='products'),
+]
+
+PRODUCT_TABS = [
+    ChildTab.overview('Overview', 'product_detail_view', icon='info'),
+    ChildTab('Variants', 'product_variant_list_view', model=ProductVariant, icon='tag', count='variants'),
+    ChildTab('Reviews', 'product_review_list_view', model=ProductReview, icon='star', count='reviews'),
+]
+
+
+class CategoryDetailView(WiseParentDetailView):
     model = Category
+    child_tabs = CATEGORY_TABS
     template_name = 'showcase/category/detail.html'
 
 
@@ -198,8 +269,9 @@ class ProductListView(WiseListView):
     sortable_fields = {'name', 'category__name', 'rating'}
 
 
-class ProductDetailView(WiseDetailView):
+class ProductDetailView(WiseParentDetailView):
     model = Product
+    child_tabs = PRODUCT_TABS
     template_name = 'showcase/product/detail.html'
 
 
@@ -226,3 +298,147 @@ class ProductDeleteView(WiseDeleteView):
     template_name = 'showcase/product/confirm_delete.html'
     success_url = reverse_lazy('product_list_view')
     success_message = 'Product deleted.'
+
+
+# ── The children ──────────────────────────────────────────────────────────
+#
+# Every one of these is scoped to its parent by the URL: /demo/products/3/
+# variants/ can only ever read or write variants of product 3, so guessing
+# another product's variant id gets a 404 rather than someone else's record.
+#
+# `child_list_url_name` is the tab the view lives in: the create/update/
+# delete views redirect there after saving, and the generic templates point
+# their back link and Cancel button at it.
+
+class CategoryProductListView(WiseParentDetailChildListView):
+    """A category's products. Each row links on to that product's own tabbed
+    page - a child can be a parent in its own right."""
+    model = Product
+    parent_model = Category
+    parent_field = 'category_id'
+    child_tabs = CATEGORY_TABS
+    filterset_class = ProductFilter
+    template_name = 'showcase/category/product_list.html'
+    paginate_by = 10
+    sortable_fields = {'name', 'rating'}
+    ordering = ['name']
+
+
+class CategoryProductCreateView(WiseParentDetailChildCreateView):
+    model = Product
+    parent_model = Category
+    parent_field = 'category_id'
+    child_tabs = CATEGORY_TABS
+    child_list_url_name = 'category_product_list_view'
+    # CategoryProductForm is ProductForm without the category field: the
+    # parent comes from the URL, so it cannot be reassigned by posting a
+    # different value.
+    form_class = CategoryProductForm
+    template_name = 'showcase/category/product_form.html'
+    success_message = 'Product "%(name)s" created.'
+
+
+class ProductVariantListView(WiseParentDetailChildListView):
+    model = ProductVariant
+    parent_model = Product
+    parent_field = 'product_id'
+    child_tabs = PRODUCT_TABS
+    filterset_class = ProductVariantFilter
+    template_name = 'showcase/product/variant/list.html'
+    paginate_by = 10
+    sortable_fields = {'label', 'sku', 'price', 'stock'}
+    ordering = ['label']
+
+
+class ProductVariantDetailView(WiseParentDetailChildDetailView):
+    model = ProductVariant
+    parent_model = Product
+    parent_field = 'product_id'
+    child_tabs = PRODUCT_TABS
+    child_list_url_name = 'product_variant_list_view'
+    template_name = 'showcase/product/variant/detail.html'
+
+
+class ProductVariantCreateView(WiseParentDetailChildCreateView):
+    model = ProductVariant
+    parent_model = Product
+    parent_field = 'product_id'
+    child_tabs = PRODUCT_TABS
+    child_list_url_name = 'product_variant_list_view'
+    form_class = ProductVariantForm
+    template_name = 'showcase/product/variant/form.html'
+    success_message = 'Variant "%(label)s" added.'
+
+
+class ProductVariantUpdateView(WiseParentDetailChildUpdateView):
+    model = ProductVariant
+    parent_model = Product
+    parent_field = 'product_id'
+    child_tabs = PRODUCT_TABS
+    child_list_url_name = 'product_variant_list_view'
+    form_class = ProductVariantForm
+    template_name = 'showcase/product/variant/form.html'
+    success_message = 'Variant "%(label)s" updated.'
+
+
+class ProductVariantDeleteView(WiseParentDetailChildDeleteView):
+    model = ProductVariant
+    parent_model = Product
+    parent_field = 'product_id'
+    child_tabs = PRODUCT_TABS
+    child_list_url_name = 'product_variant_list_view'
+    template_name = 'showcase/product/variant/confirm_delete.html'
+    success_message = 'Variant deleted.'
+
+
+class ProductReviewListView(WiseParentDetailChildListView):
+    model = ProductReview
+    parent_model = Product
+    parent_field = 'product_id'
+    child_tabs = PRODUCT_TABS
+    filterset_class = ProductReviewFilter
+    template_name = 'showcase/product/review/list.html'
+    paginate_by = 10
+    sortable_fields = {'author', 'rating', 'submitted_on'}
+    ordering = ['-submitted_on', '-pk']
+
+
+class ProductReviewDetailView(WiseParentDetailChildDetailView):
+    model = ProductReview
+    parent_model = Product
+    parent_field = 'product_id'
+    child_tabs = PRODUCT_TABS
+    child_list_url_name = 'product_review_list_view'
+    template_name = 'showcase/product/review/detail.html'
+
+
+class ProductReviewCreateView(WiseParentDetailChildCreateView):
+    model = ProductReview
+    parent_model = Product
+    parent_field = 'product_id'
+    child_tabs = PRODUCT_TABS
+    child_list_url_name = 'product_review_list_view'
+    form_class = ProductReviewForm
+    template_name = 'showcase/product/review/form.html'
+    success_message = 'Review by %(author)s added.'
+
+
+class ProductReviewUpdateView(WiseParentDetailChildUpdateView):
+    model = ProductReview
+    parent_model = Product
+    parent_field = 'product_id'
+    child_tabs = PRODUCT_TABS
+    child_list_url_name = 'product_review_list_view'
+    form_class = ProductReviewForm
+    template_name = 'showcase/product/review/form.html'
+    success_message = 'Review by %(author)s updated.'
+
+
+class ProductReviewDeleteView(WiseParentDetailChildDeleteView):
+    model = ProductReview
+    parent_model = Product
+    parent_field = 'product_id'
+    child_tabs = PRODUCT_TABS
+    child_list_url_name = 'product_review_list_view'
+    template_name = 'showcase/product/review/confirm_delete.html'
+    success_message = 'Review deleted.'

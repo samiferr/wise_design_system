@@ -49,26 +49,136 @@ Off by default. Set `own_records_only = True` on a `WiseListView`/`WiseDetailVie
 the user's role) to restrict the queryset to `created_by=request.user`. Requires the model to have a
 `created_by` field.
 
-## Master-detail: `ParentObjectMixin` + `WiseParentDetailChild*View`
+## Master-detail: a tabbed parent page + `WiseParentDetailChild*View`
 
-For a child resource nested under a parent in the URL, e.g. `/orders/<parent_pk>/lines/`:
+A record with children of its own is rendered as a **tabbed page**, not one long scroll: the
+parent's overview is the first tab and each child model gets its own. That is the shape because a
+parent usually has more than one child model — a product has variants *and* reviews, the way a
+patient has payments, prescriptions and appointments — and the tab bar is what keeps them all one
+record instead of five unrelated pages.
+
+Nest the child routes under the parent. The parent's pk in the URL is what scopes every child
+queryset, and what lets every page in the group render the same bar:
 
 ```python
 urlpatterns = [
-    path("orders/<int:parent_pk>/lines/", OrderLineListView.as_view(), name="orderline_list_view"),
-]
+    path("products/<int:pk>/", ProductDetailView.as_view(), name="product_detail_view"),
 
-class OrderLineListView(WiseParentDetailChildListView):
-    model = OrderLine
-    parent_model = Order
-    parent_field = "order_id"   # FK on OrderLine pointing back to Order
-    filterset_fields = ["description"]
+    path("products/<int:parent_pk>/variants/",
+         ProductVariantListView.as_view(), name="product_variant_list_view"),
+    path("products/<int:parent_pk>/variants/create/",
+         ProductVariantCreateView.as_view(), name="product_variant_create_view"),
+    path("products/<int:parent_pk>/variants/<int:pk>/",
+         ProductVariantDetailView.as_view(), name="product_variant_detail_view"),
+    path("products/<int:parent_pk>/variants/<int:pk>/update/",
+         ProductVariantUpdateView.as_view(), name="product_variant_update_view"),
+    path("products/<int:parent_pk>/variants/<int:pk>/delete/",
+         ProductVariantDeleteView.as_view(), name="product_variant_delete_view"),
+
+    # ... the same five for reviews
+]
 ```
 
-`WiseParentDetailChildListView`/`CreateView`/`UpdateView`/`DeleteView`/`DetailView` all resolve
-`self.get_parent_object()` from `parent_pk_url_kwarg` (default `"parent_pk"`) and merge
-`{"parent_object": ...}` into the template context; `Create`/`Update` also set `parent_field` on the
-instance before saving.
+### The tab bar: `ChildTab`
+
+Declare the bar once and hand it to every view in the group, so none of them can drift:
+
+```python
+PRODUCT_TABS = [
+    ChildTab.overview(_("Overview"), "product_detail_view", icon="info"),
+    ChildTab(_("Variants"), "product_variant_list_view",
+             model=ProductVariant, icon="tag", count="variants"),
+    ChildTab(_("Reviews"), "product_review_list_view",
+             model=ProductReview, icon="star", count="reviews"),
+]
+```
+
+| Argument | What it does |
+|---|---|
+| `label` | The tab's text. |
+| `url_name` | The child's list view, reversed with the parent's pk. |
+| `model` | The child model — the tab is hidden from a user without `<app_label>.view_<model>`. |
+| `permission` | An explicit codename (or several) instead of the one derived from `model`. Neither set ⇒ always visible. |
+| `icon` | A Lucide icon rendered before the label. |
+| `count` | A badge: the name of a related manager on the parent (`"variants"` → `parent.variants.count()`), of a plain attribute/annotation, or a callable taking the parent. |
+| `match` | The URL-name prefix that lights the tab up. Defaults to `url_name` minus a trailing `_list`/`_list_view`, so the child's create/update/delete/detail pages keep their own tab selected. Longest match wins. |
+| `url_kwarg` | The URL kwarg carrying the parent's pk — `"parent_pk"` by default, `"pk"` for `ChildTab.overview()`. |
+
+`ChildTabsMixin` resolves that list per request into `child_tabs` (and `selected_tab`) in the
+context; `wise_core/components/_child_tabs.html` renders it, and the generic templates below
+already include it.
+
+### The views
+
+```python
+class ProductDetailView(WiseParentDetailView):        # the Overview tab
+    model = Product
+    child_tabs = PRODUCT_TABS
+    template_name = "shop/product/detail.html"
+
+
+class ProductVariantListView(WiseParentDetailChildListView):
+    model = ProductVariant
+    parent_model = Product
+    parent_field = "product_id"                       # the FK back to the parent
+    child_tabs = PRODUCT_TABS
+    template_name = "shop/product/variant/list.html"
+
+
+class ProductVariantCreateView(WiseParentDetailChildCreateView):
+    model = ProductVariant
+    parent_model = Product
+    parent_field = "product_id"
+    child_tabs = PRODUCT_TABS
+    child_list_url_name = "product_variant_list_view"
+    form_class = ProductVariantForm                   # no `product` field on it
+    template_name = "shop/product/variant/form.html"
+```
+
+- `WiseParentDetailView` is `WiseDetailView` plus the tab bar. It also puts the record in the
+  context as `parent_object` (the same object as `object`), so one chrome renders the header on the
+  overview and on every child page alike.
+- `WiseParentDetailChildListView`/`CreateView`/`UpdateView`/`DeleteView`/`DetailView` resolve
+  `get_parent_object()` from `parent_pk_url_kwarg` (default `"parent_pk"`, fetched once per request
+  and cached), scope `get_queryset()` to it, and merge `parent_object` and `child_list_url` into the
+  context. `Create` sets `parent_field` on the instance before saving, so the parent is never a form
+  field a visitor could point somewhere else.
+- `child_list_url_name` names the tab the view lives in: `Create`/`Update`/`Delete` redirect there
+  after saving, and the generic templates point their back link and Cancel button at it.
+
+### The templates
+
+| Template | For |
+|---|---|
+| `wise_core/generic/parent_base_generic.html` | The shared chrome: parent action bar, parent title, tab bar, `parent_body`. Everything below extends it. |
+| `wise_core/generic/parent_detail_generic.html` | The parent's own overview tab (`WiseParentDetailView`). |
+| `wise_core/generic/parent_child_list_generic.html` | One child model's rows (`...ChildListView`). |
+| `wise_core/generic/parent_child_form_generic.html` | Add/edit a child (`...ChildCreateView`/`...ChildUpdateView`). |
+| `wise_core/generic/parent_child_confirm_generic.html` | Delete a child (`...ChildDeleteView`). |
+| `wise_core/generic/parent_child_detail_generic.html` | One child record (`...ChildDetailView`). |
+
+They use the same block names as their flat counterparts (`detail_rows`, `list_body`/`card_item`,
+`form_fields`, `confirm_rows`), so moving a page into a tabbed group is a matter of changing which
+template it extends.
+
+The parent's own header — where "back" goes, what can be done to the parent, its name — is one
+`parent_header` block. Put it in a partial and override the block with a one-line include, rather
+than repeating the markup in every page of the group:
+
+```django
+{% extends 'wise_core/generic/parent_child_list_generic.html' %}
+
+{% block parent_header %}{% include 'shop/product/_header.html' %}{% endblock %}
+
+{% block list_actions %}
+    <a class="btn btn-primary" href="{% url 'product_variant_create_view' parent_pk=parent_object.pk %}">
+        {% lucide "plus" size=16 %}<span>New variant</span>
+    </a>
+{% endblock %}
+```
+
+The list heading, the record count, the empty state and the pagination all come from the generic
+template; `list_title` defaults to the selected tab's own label.
 
 ## Confirm-and-act: `ConfirmActionMixin` / `WiseConfirmActionView`
 

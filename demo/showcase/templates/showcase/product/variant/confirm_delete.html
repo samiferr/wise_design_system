@@ -1,0 +1,17 @@
+{% extends 'wise_core/generic/parent_child_confirm_generic.html' %}
+{% load wise_tags %}
+
+{% block parent_header %}{% include 'showcase/product/_header.html' %}{% endblock %}
+
+{% block child_back_label %}Variants{% endblock %}
+{% block confirm_title %}Delete variant "{{ object.label }}"?{% endblock %}
+{% block confirm_message %}
+    <div class="callout-title">This cannot be undone</div>
+    The variant is removed from {{ parent_object.name }}; the product itself is untouched.
+{% endblock %}
+
+{% block confirm_rows %}
+    <tr><th>{% get_field_verbose_name object "label" %}</th><td>{{ object.label }}</td></tr>
+    <tr><th>{% get_field_verbose_name object "sku" %}</th><td class="font-mono text-sm">{{ object.sku }}</td></tr>
+    <tr><th>{% get_field_verbose_name object "stock" %}</th><td class="tabular-nums">{{ object.stock }}</td></tr>
+{% endblock %}

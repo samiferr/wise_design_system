@@ -1,0 +1,47 @@
+{% extends 'wise_core/base.html' %}
+{% load wise_icons i18n %}
+{% comment %}
+The chrome every page of a parent/child group shares: the parent's action
+bar, the parent's name, and the tab bar of its child models. The parent's
+own overview and each child's list/create/update/delete/detail page all
+extend this, so a visitor never loses the record they are working inside -
+switching from a product's Variants to its Reviews is one click, and the
+title above the tabs never changes.
+
+Fill `parent_body` in a subtemplate, or extend one of the four ready-made
+ones next to this file (parent_detail / parent_child_list /
+parent_child_form / parent_child_confirm / parent_child_detail).
+{% endcomment %}
+
+{% block body %}
+    <div class="page-panel">
+        {% block parent_header %}
+            <div class="top-actions-header">
+                <div class="flex flex-wrap items-center gap-1">
+                    {% block parent_back %}
+                        <a class="top-nav-item inline-flex" href="{% block parent_back_url %}{% endblock %}">
+                            {% lucide "arrow-left" size=20 %}
+                            <div class="text-sm">{% block parent_back_label %}{% trans "Back" %}{% endblock %}</div>
+                        </a>
+                    {% endblock %}
+                </div>
+                <div class="flex flex-wrap items-center gap-1">
+                    {% block parent_actions %}{% endblock %}
+                </div>
+            </div>
+            <div class="record-header">
+                {% block parent_icon %}{% endblock %}
+                <div class="min-w-0">
+                    <h2 class="truncate">{% block parent_title %}{{ parent_object }}{% endblock %}</h2>
+                    {% block parent_subtitle %}{% endblock %}
+                </div>
+            </div>
+        {% endblock %}
+        {% block parent_tabs %}
+            {% include 'wise_core/components/_child_tabs.html' %}
+        {% endblock %}
+        <div class="mt-5">
+            {% block parent_body %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

@@ -800,7 +800,10 @@
         @apply inline-flex cursor-pointer items-center gap-2 text-sm text-gray-800;
     }
 
-    .form-checkbox-label input[type="checkbox"] {
+    /* :not(.switch) - a SwitchInput is a checkbox too, and this rule would
+       otherwise beat .switch on specificity and shrink the track to 16px,
+       leaving the knob to slide out over the label text. */
+    .form-checkbox-label input[type="checkbox"]:not(.switch) {
         @apply h-4 w-4 border-divider accent-action-600;
     }
 
@@ -854,7 +857,8 @@
         @apply flex flex-wrap items-center justify-between gap-3 mb-4;
     }
 
-    .detail-panel-header h2 {
+    .detail-panel-header h2,
+    .detail-panel-header h3 {
         @apply m-0;
     }
 
@@ -1034,19 +1038,56 @@
         @apply border border-action-500 bg-action-50;
     }
 
+    /* A subordinate "back" link, for a page that already carries a
+       .top-actions-header above it - a child form inside its parent's
+       chrome, say, where a second full-width bar would only add weight. */
+    .back-link {
+        @apply inline-flex items-center gap-1.5 mb-3 text-sm text-gray-700 no-underline
+        transition-colors duration-150 hover:text-action-700;
+    }
+
     /* Tab bar (underline tabs, not filled boxes) */
     .tab-bar {
         @apply flex items-center gap-0 overflow-x-auto whitespace-nowrap;
     }
 
     .tab-bar .bar-item {
-        @apply inline-flex h-auto w-auto shrink-0 cursor-pointer items-center px-1 py-3 mr-6
+        @apply inline-flex h-auto w-auto shrink-0 cursor-pointer items-center gap-2 px-1 py-3 mr-6
         text-center font-heading text-sm font-semibold uppercase tracking-wide text-gray-600
         no-underline border-b-2 border-transparent bg-transparent;
     }
 
     .tab-bar .bar-item.selected {
         @apply border-action-700 text-action-700;
+    }
+
+    /* How many children are behind a tab - "Variants 4". Reads as part of
+       the tab, not as a status badge, so it stays neutral until its tab is
+       the selected one. */
+    .tab-bar .bar-item .tab-count {
+        @apply inline-flex min-w-5 items-center justify-center px-1.5 py-0.5
+        text-[11px] font-semibold leading-none tabular-nums text-gray-600 bg-gray-900/[0.07];
+        border-radius: var(--radius-sm);
+    }
+
+    .tab-bar .bar-item.selected .tab-count {
+        @apply text-action-700 bg-action-500/15;
+    }
+
+    /* The record a parent/child page is working inside: its name (and any
+       subtitle) between the action bar and the tab bar. Repeated on the
+       parent's own tab and on every child page, so a visitor two clicks
+       deep into a child form still knows whose child it is. */
+    .record-header {
+        @apply flex items-center gap-3 mb-3;
+    }
+
+    .record-header h2 {
+        @apply m-0;
+    }
+
+    .record-meta {
+        @apply mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-600;
     }
 
     /* Sidebar / navigation menu */

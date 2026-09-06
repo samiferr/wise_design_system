@@ -1,0 +1,32 @@
+{% load wise_icons %}
+{% comment %}
+The category's chrome, included by parent_base_generic.html's
+`parent_header` block on the category's own page and on its Products tab -
+see product/_header.html for the same pattern on the other parent.
+{% endcomment %}
+<div class="top-actions-header">
+    <div class="flex flex-wrap items-center gap-1">
+        <a class="top-nav-item inline-flex" href="{% url 'category_list_view' %}">
+            {% lucide "arrow-left" size=20 %}<div class="text-sm">Categories</div>
+        </a>
+    </div>
+    <div class="flex flex-wrap items-center gap-1">
+        {% if perms.showcase.change_category %}
+            <a class="top-nav-item inline-flex" href="{% url 'category_update_view' pk=parent_object.pk %}">
+                {% lucide "pencil" size=20 %}<div class="text-sm">Edit</div>
+            </a>
+        {% endif %}
+        {% if perms.showcase.delete_category %}
+            <a class="top-nav-item inline-flex" href="{% url 'category_delete_view' pk=parent_object.pk %}">
+                {% lucide "trash-2" size=20 %}<div class="text-sm">Delete</div>
+            </a>
+        {% endif %}
+    </div>
+</div>
+<div class="record-header">
+    <span class="inline-block h-7 w-7 shrink-0 border border-divider" style="background:{{ parent_object.color }}"></span>
+    <div class="min-w-0">
+        <h2 class="truncate">{{ parent_object.name }}</h2>
+        <div class="record-meta">{{ parent_object.description|default:"No description." }}</div>
+    </div>
+</div>

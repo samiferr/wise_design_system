@@ -35,7 +35,7 @@ python manage.py runserver
 |---|---|---|
 | `/` | The marketing landing page — hero, feature grid, a live "try the design tokens" panel, code samples. | No |
 | `/docs/` | The documentation site — every component, pattern and theming page, each with a live, running example next to its source. | No |
-| `/demo/` | The demo app — a real `WiseListView`+`django-filter` datatable with full CRUD (`/demo/categories/`) and a form exercising the autocomplete/rich-text/rating/date/file widgets (`/demo/products/`), both with a card-list ⇄ data-table toggle. | `demo` / `wise-demo-2026` |
+| `/demo/` | The demo app — a real `WiseListView`+`django-filter` datatable with full CRUD (`/demo/categories/`) and a form exercising the autocomplete/rich-text/rating/date/file widgets (`/demo/products/`), both with a card-list ⇄ data-table toggle, and tabbed parent/child pages (a product's Variants and Reviews, a category's Products). | `demo` / `wise-demo-2026` |
 
 Every page — marketing, docs and demo alike — carries a settings icon (sidebar on desktop, topbar on
 mobile) that opens a live panel for trying the six switchable design tokens: theme, palette,

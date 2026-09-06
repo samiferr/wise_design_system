@@ -1,0 +1,8 @@
+{% extends 'wise_core/generic/parent_child_form_generic.html' %}
+
+{% block parent_header %}{% include 'showcase/category/_header.html' %}{% endblock %}
+
+{% block child_back_label %}Products{% endblock %}
+{% block form_title %}New product in {{ parent_object.name }}{% endblock %}
+{% comment %}The product form carries a FileField (datasheet).{% endcomment %}
+{% block form_enctype %} enctype="multipart/form-data"{% endblock %}
