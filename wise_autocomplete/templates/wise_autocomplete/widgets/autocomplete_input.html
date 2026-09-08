@@ -499,7 +499,12 @@
             handle_keyboard_navigation() {
                 let self = this
                 self.fake_input.addEventListener('keydown', function (e) {
-                    if (e.code === 'Enter' && self.current_elm !== undefined && !self.is_loading) {
+                    // `.key`, not `.code`: the numpad Enter key reports
+                    // `code: 'NumpadEnter'` (a different physical key) but
+                    // `key: 'Enter'` (the same logical key) - matching on
+                    // `.code` silently let it fall through to the browser's
+                    // native submit-the-form behavior instead of selecting.
+                    if (e.key === 'Enter' && self.current_elm !== undefined && !self.is_loading) {
                         self.current_elm.dispatchEvent(new Event('mousedown'))
                         e.preventDefault()
                         e.stopPropagation()

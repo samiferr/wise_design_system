@@ -22,12 +22,16 @@ two files mechanically:
 2. Templates' `{% load %}` / `{% include %}` paths — repointed at the new `wise_autocomplete/...`
    namespace instead of `core/...`.
 
-On top of that byte-identical extraction, later explicitly-requested passes fixed seven inherited bugs
-in both widget templates (namespaced `progress-bar` id, live `parent_id` scoping, the `list` attr, the
-detail-lookup URL join, a mobile-card handler bug in `AutoSuggestInputWidget`, `AutocompleteInputWidget`
-racing its own `OPTIONS`/`GET` startup requests, and two hardcoded-French UI strings) — see "Things
-already fixed" below. Everything else — Python widget classes, the rest of the JS state machines, CSS
-rules, id-naming scheme, the still-untranslated `"Page N"` label — is still byte-identical to DCMS7.
+On top of that byte-identical extraction, later explicitly-requested passes fixed eight inherited bugs
+in the widget templates themselves (namespaced `progress-bar` id, live `parent_id` scoping, the `list`
+attr, the detail-lookup URL join, a mobile-card handler bug in `AutoSuggestInputWidget`,
+`AutocompleteInputWidget` racing its own `OPTIONS`/`GET` startup requests, two hardcoded-French UI
+strings, and Enter-to-select not matching the numpad Enter key) — see "Things already fixed" below.
+One more fix landed outside the templates entirely: `wise_core/static/wise_core/css/tokens.css`'s
+`.autocomplete-table tr.selected` rule, whose `color` never reached the visible `<td>` text (also
+"Things already fixed"). Everything else — Python widget classes, the rest of the JS state machines,
+the rest of the CSS, id-naming scheme, the still-untranslated `"Page N"` label — is still byte-identical
+to DCMS7.
 
 ## File map
 
@@ -124,6 +128,21 @@ were fixed in both, not just in `AutoSuggestInputWidget` — the two exceptions 
   `"No match found"`) — add a matching `msgid` to your own project's `.po` catalog to get them in
   another language, the same way any other wise_core string is translated downstream. `"Page N"` is
   untouched and still a hardcoded literal — don't assume it got the same treatment.
+- `handle_keyboard_navigation()` in both templates matched `e.code === 'Enter'`, which the numpad
+  Enter key never satisfies (`code: 'NumpadEnter'`, though `key: 'Enter'` is the same as the main key)
+  — numpad Enter fell through to the browser's native submit-the-form behavior instead of selecting.
+  Both now match `e.key === 'Enter'`. If you touch this handler, keep using `.key` for Enter — `.code`
+  is still correct for the arrow-key branches (no numpad-vs-main distinction reported there).
+- Not in the widget templates: `wise_core/static/wise_core/css/tokens.css`'s `.autocomplete-table
+  tr.selected` rule set `color: var(--color-on-action)` on the `<tr>`, which never reached the visible
+  text — Tailwind v4 Preflight sets `color` directly on every `<td>` (`@layer base`), and a rule that
+  actually matches an element wins over whatever an ancestor would otherwise pass down through
+  inheritance. The highlighted row's text stayed in the ordinary body color against a background that
+  wasn't, regardless of theme. Fixed by repeating the rule against `.autocomplete-table tr.selected td`
+  directly, both here and in `wise_autocomplete/static/wise_autocomplete/css/autocomplete.css` (which
+  had the same `<td>`-inheritance bug stacked on its own separate, still-not-token-aware
+  `text-white`). If you add another `tr.<state>`-style row rule to either file, target the `td`s
+  explicitly too — don't rely on inheriting into them.
 
 ## Things that still look like bugs — do not silently "fix" these
 

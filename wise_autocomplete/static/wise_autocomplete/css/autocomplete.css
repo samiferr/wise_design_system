@@ -66,7 +66,22 @@
         @apply cursor-pointer bg-gray-900/5;
     }
 
-    .autocomplete-table tr.selected {
+    /* The `td` selector isn't redundant with `tr.selected` above: Tailwind
+       v4's Preflight sets `color` directly on every `td` (`base` layer),
+       which - since it's a rule that actually matches the `td` itself -
+       wins over whatever color a `tr.selected` ancestor would otherwise
+       pass down through inheritance. Without repeating the rule against
+       `td`, `text-white` here never reaches the visible text at all; the
+       row just keeps Preflight's ordinary body text color regardless of
+       what this rule says. If your project supports a dark theme or a
+       palette where action-600 isn't reliably dark, swap `text-white` for
+       whatever your own light/dark-aware "readable on an action-colored
+       background" token resolves to instead - see wise_core's
+       `--color-on-action` (`wise_core/static/wise_core/css/tokens.css`)
+       for the pattern; hardcoding white here breaks contrast the same way
+       hardcoding it *did* break it in that file before this file's own fix. */
+    .autocomplete-table tr.selected,
+    .autocomplete-table tr.selected td {
         @apply bg-action-600 text-white;
     }
 }

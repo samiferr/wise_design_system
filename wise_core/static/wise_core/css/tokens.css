@@ -1170,7 +1170,24 @@
         @apply cursor-pointer bg-gray-900/5;
     }
 
-    .autocomplete-table tr.selected {
+    .autocomplete-table tr.selected,
+    .autocomplete-table tr.selected td {
+        /* The `td` selector isn't redundant with `tr.selected` above:
+           Preflight sets `color: var(--color-gray-900)` directly on every
+           `td` (`base` layer). Because that rule actually matches the `td`
+           itself, it wins over whatever color a `tr.selected` ancestor
+           would otherwise pass down through inheritance - inheritance only
+           applies when nothing else matches the element, and layer order
+           (`base` < `components`) is irrelevant here since it's not a
+           cascade contest on the same element. Net effect: the highlighted
+           row's text stayed in the ordinary body text color regardless of
+           theme, against a background that isn't - gray-900 is dark in
+           light mode (3.2:1 on action-600, fails WCAG AA's 4.5:1) and
+           inverts to near-white in dark mode, where action-600 is itself a
+           *light* teal (1.3:1, barely legible at all). Repeating the rule
+           against `td` gives it its own components-layer declaration to
+           win with, rather than relying on inheritance that never had a
+           chance to apply. */
         @apply bg-action-600;
         color: var(--color-on-action);
     }
