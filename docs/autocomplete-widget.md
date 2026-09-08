@@ -245,6 +245,29 @@ share the same JS patterns):
   to the equivalent English text, `"New"` / `"No match found"`), so a project that ships its own
   French `.po` entry for either `msgid` gets it translated instead of stuck in French no matter what
   it sets `LANGUAGE_CODE` to.
+- **Selecting the highlighted row with Enter only worked for the main Enter key.** Both templates'
+  `handle_keyboard_navigation()` matched `e.code === 'Enter'` — but the numpad Enter key reports
+  `code: 'NumpadEnter'` (a different physical key) while still reporting `key: 'Enter'` (the same
+  logical key), so numpad Enter fell through the check entirely: no selection, no `preventDefault()`,
+  and the browser's native "Enter in a text field submits the form" behavior fired instead. Both
+  templates now match on `e.key` instead of `e.code`.
+- **The keyboard-highlighted row's text had poor, theme-dependent contrast against its own
+  background.** This one isn't in the widget templates - it's `wise_core/static/wise_core/css/tokens.css`'s
+  `.autocomplete-table tr.selected` rule, which already correctly set `color: var(--color-on-action)`
+  on the `<tr>` rather than a hardcoded value. The bug is that Tailwind v4's Preflight sets `color`
+  directly on every `<td>` (`@layer base`) - a rule that actually matches the `<td>` element wins over
+  whatever a `tr.selected` ancestor would otherwise pass down through inheritance, so the highlighted
+  row's *visible* text stayed in the ordinary body text color regardless of theme. Measured against
+  this repo's own default green palette: 3.2:1 in light mode (gray-900 on action-600, fails WCAG AA's
+  4.5:1) and 1.3:1 in dark mode (gray-900 inverts to near-white, landing on dark mode's own *light*
+  action-600 - barely legible at all). The rule now repeats itself against `.autocomplete-table
+  tr.selected td` directly, giving that text its own components-layer declaration to win with instead
+  of relying on inheritance that never had a chance to apply; confirmed at 5.0:1 (light) and a
+  comfortable margin in dark mode afterward. `wise_autocomplete/static/wise_autocomplete/css/autocomplete.css`
+  - the standalone reference file for a project that doesn't use `tokens.css` - had the same
+  `<td>`-inheritance bug on top of its own separate, pre-existing hardcoded `text-white` (not
+  contrast-aware at all); both are fixed there too, with a comment pointing at `--color-on-action` as
+  the pattern to reach for in a project that supports more than one theme or palette.
 
 ## Known limitations (still preserved as-is)
 
