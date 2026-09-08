@@ -7,7 +7,11 @@
                class="h-10 w-full border border-divider bg-surface px-3 pr-10 py-1.5 text-sm text-gray-900 outline-none focus:border-action-500"
                oninput="document.getElementById('id_{{ widget.name }}').value=this.value"
         >
-        <span type="button" class="btn-icon absolute right-1 top-1/2 -translate-y-1/2"
+        {# `.btn-icon` only sets the box's size - pairing it with `.btn` (as every #}
+        {# other icon button in the design system does) is what actually centers #}
+        {# the icon inside that box and gives it a visible, hoverable affordance; #}
+        {# alone, the icon rendered pinned to the box's top-left corner instead. #}
+        <span type="button" class="btn btn-icon btn-secondary absolute right-1 top-1/2 -translate-y-1/2"
               onclick="document.getElementById('id_{{ widget.name }}_fake').click();document.getElementById('id_{{ widget.name }}_fake').focus();"
         >
             {% lucide "chevron-down" size=16 %}
@@ -26,13 +30,13 @@
         <div class="autocomplete-panel hidden"
              id='{{ widget.name }}_autocomplete_container'>
             <header class="flex items-center gap-2 border-b border-divider bg-gray-50 p-2">
-                <div class="btn-icon" id="id_{{ widget.name }}_previous">
+                <div class="btn btn-icon btn-secondary" id="id_{{ widget.name }}_previous">
                     {% lucide "chevron-left" size=14 %}
                 </div>
                 <span class="text-xs font-medium text-gray-600" id="id_{{ widget.name }}_pageNumber">
                     Page 1
                 </span>
-                <div class="btn-icon" id="id_{{ widget.name }}_next">
+                <div class="btn btn-icon btn-secondary" id="id_{{ widget.name }}_next">
                     {% lucide "chevron-right" size=14 %}
                 </div>
                 <div class="ml-auto">

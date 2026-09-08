@@ -22,16 +22,16 @@ two files mechanically:
 2. Templates' `{% load %}` / `{% include %}` paths — repointed at the new `wise_autocomplete/...`
    namespace instead of `core/...`.
 
-On top of that byte-identical extraction, later explicitly-requested passes fixed eight inherited bugs
+On top of that byte-identical extraction, later explicitly-requested passes fixed nine inherited bugs
 in the widget templates themselves (namespaced `progress-bar` id, live `parent_id` scoping, the `list`
 attr, the detail-lookup URL join, a mobile-card handler bug in `AutoSuggestInputWidget`,
 `AutocompleteInputWidget` racing its own `OPTIONS`/`GET` startup requests, two hardcoded-French UI
-strings, and Enter-to-select not matching the numpad Enter key) — see "Things already fixed" below.
-One more fix landed outside the templates entirely: `wise_core/static/wise_core/css/tokens.css`'s
-`.autocomplete-table tr.selected` rule, whose `color` never reached the visible `<td>` text (also
-"Things already fixed"). Everything else — Python widget classes, the rest of the JS state machines,
-the rest of the CSS, id-naming scheme, the still-untranslated `"Page N"` label — is still byte-identical
-to DCMS7.
+strings, Enter-to-select not matching the numpad Enter key, and the three chevron icons never being
+centered in their own boxes) — see "Things already fixed" below. One more fix landed outside the
+templates entirely: `wise_core/static/wise_core/css/tokens.css`'s `.autocomplete-table tr.selected`
+rule, whose `color` never reached the visible `<td>` text (also "Things already fixed"). Everything
+else — Python widget classes, the rest of the JS state machines, the rest of the CSS, id-naming
+scheme, the still-untranslated `"Page N"` label — is still byte-identical to DCMS7.
 
 ## File map
 
@@ -143,6 +143,16 @@ were fixed in both, not just in `AutoSuggestInputWidget` — the two exceptions 
   had the same `<td>`-inheritance bug stacked on its own separate, still-not-token-aware
   `text-white`). If you add another `tr.<state>`-style row rule to either file, target the `td`s
   explicitly too — don't rely on inheriting into them.
+- All three chevron icons (dropdown toggle `chevron-down`, pager `chevron-left`/`chevron-right`) used
+  `class="btn-icon"` alone. `.btn-icon` only sets a box's size (`w-9 h-9 p-0`); the design system's own
+  convention is to always pair it with `.btn` (see the comment on `.btn` in tokens.css), which supplies
+  `inline-flex items-center justify-center`. Without `.btn`, the icon just sat at its default
+  inline-flow position instead of centered (measured: pinned to the box's top-left corner, offset by
+  half the icon's own size in both axes), and the button had no border or hover feedback — which is
+  what read as low-contrast, even though the icon's own foreground/background color ratio was already
+  fine (14-17:1 measured). All three now carry `btn btn-icon btn-secondary`. If you add another bare
+  icon-only button anywhere in these templates, pair it with `.btn` too — `.btn-icon` was never meant
+  to stand alone.
 
 ## Things that still look like bugs — do not silently "fix" these
 
