@@ -1,4 +1,4 @@
-{% load static wise_autocomplete_icons %}
+{% load static wise_autocomplete_icons i18n %}
 
 <div>
     <div class="relative">
@@ -40,7 +40,7 @@
                        tabindex="-2" onmousedown="this.click()"
                        class="btn btn-secondary py-1 text-xs"
                     >{% lucide "plus" size=16 %}
-                        <span class="hidden sm:inline">Nouveau</span></a></div>
+                        <span class="hidden sm:inline">{% trans "New" %}</span></a></div>
 
             </header>
             <div class="max-h-72 overflow-auto">
@@ -81,7 +81,8 @@
                     this.hidden_fields = []
                 }
                 this.header = []
-                this.empty_msg = 'Aucun objet trouvé !'
+                {% trans "No match found" as empty_msg %}
+                this.empty_msg = '{{ empty_msg|escapejs }}'
                 this.text_field = this.original_input.dataset.text_field
                 this.is_loading = false
                 this.current_index = 1
@@ -149,9 +150,11 @@
             }
 
             get_headers() {
+                // Returns the request's promise - see the fix note by the
+                // `a.get_headers()` call below for why that matters.
                 let self = this
                 this.startLoading()
-                axios.options(self.url).then(function (response) {
+                return axios.options(self.url).then(function (response) {
                     self.headers = response.data.actions.POST
                     self.stopLoading()
                 }).catch(function (e) {
@@ -556,8 +559,16 @@
         a.set_fake_input_value()
         a.handlePageNavigation()
         a.handle_fake_input_click()
-        a.get_headers()
-        a.get_data()
+        // get_headers() (OPTIONS, the column list) and get_data() (GET,
+        // the first page of rows) used to fire together and render
+        // whichever landed first. get_data()'s populate_lines() reads
+        // self.headers - so when the rows won the race, which is what
+        // actually happens under real network conditions, it threw inside
+        // a swallowed .catch and the dropdown rendered nothing until the
+        // visitor typed a search. Waiting for the columns first fixes it.
+        a.get_headers().then(function () {
+            a.get_data()
+        })
         a.handle_input()
         a.handle_keyboard_navigation()
     });

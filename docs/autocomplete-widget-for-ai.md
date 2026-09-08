@@ -22,11 +22,12 @@ two files mechanically:
 2. Templates' `{% load %}` / `{% include %}` paths — repointed at the new `wise_autocomplete/...`
    namespace instead of `core/...`.
 
-On top of that byte-identical extraction, a later, explicitly-requested pass fixed five inherited bugs
+On top of that byte-identical extraction, later explicitly-requested passes fixed seven inherited bugs
 in both widget templates (namespaced `progress-bar` id, live `parent_id` scoping, the `list` attr, the
-detail-lookup URL join, and a mobile-card handler bug in `AutoSuggestInputWidget`) — see "Things
+detail-lookup URL join, a mobile-card handler bug in `AutoSuggestInputWidget`, `AutocompleteInputWidget`
+racing its own `OPTIONS`/`GET` startup requests, and two hardcoded-French UI strings) — see "Things
 already fixed" below. Everything else — Python widget classes, the rest of the JS state machines, CSS
-rules, id-naming scheme, French UI strings — is still byte-identical to DCMS7.
+rules, id-naming scheme, the still-untranslated `"Page N"` label — is still byte-identical to DCMS7.
 
 ## File map
 
@@ -86,8 +87,9 @@ type".
 ## Things already fixed — do not reintroduce these
 
 These were genuine bugs in the DCMS7 original, fixed on an explicit request. Both widget templates
-(`autocomplete_input.html` and `autosuggest_input.html`) share the same JS patterns, so all five were
-fixed in both, not just in `AutoSuggestInputWidget`:
+(`autocomplete_input.html` and `autosuggest_input.html`) share the same JS patterns, so most of these
+were fixed in both, not just in `AutoSuggestInputWidget` — the two exceptions (the headers race,
+`AutoSuggestInputWidget`'s mobile-card handler) are called out below as applying to one widget only:
 
 - `id="progress-bar"` used to be unnamespaced — two widget instances on the same page collided on it.
   It's now `id="{{ widget.name }}_progress_bar"`; keep it namespaced if you touch this markup.
@@ -108,6 +110,20 @@ fixed in both, not just in `AutoSuggestInputWidget`:
   `self.selected_item.id` / `self.selected_item[self.text_field]`, treating results as objects — but
   `.arr` entries are plain strings (unlike `AutocompleteInputWidget`'s DRF-serialized-object results).
   It now assigns the string directly, matching the desktop table handler (`populate_lines()`).
+- `AutocompleteInputWidget` only: `get_headers()` (`OPTIONS`, the dropdown's column list) and
+  `get_data()` (`GET`, the first page of rows) used to fire together on init and render whichever
+  landed first. `populate_lines()` reads `self.headers`, set by `get_headers()`'s response — when the
+  rows won the race (the normal case, not an edge case), it threw inside a swallowed `.catch` and the
+  dropdown showed nothing at all until the visitor typed. `get_headers()` now returns its promise and
+  the init sequence chains `get_data()` onto it: `a.get_headers().then(function () { a.get_data() })`.
+  Don't go back to firing them independently — `AutoSuggestInputWidget` has no `get_headers()`, so this
+  one doesn't apply there.
+- `"Nouveau"` (create-new link) and `"Aucun objet trouvé !"` (empty-results message) were hardcoded
+  French with no way for a consuming project to override them, regardless of its own `LANGUAGE_CODE`.
+  Both templates now `{% load i18n %}` and wrap them in `{% trans %}` (English default text: `"New"` /
+  `"No match found"`) — add a matching `msgid` to your own project's `.po` catalog to get them in
+  another language, the same way any other wise_core string is translated downstream. `"Page N"` is
+  untouched and still a hardcoded literal — don't assume it got the same treatment.
 
 ## Things that still look like bugs — do not silently "fix" these
 

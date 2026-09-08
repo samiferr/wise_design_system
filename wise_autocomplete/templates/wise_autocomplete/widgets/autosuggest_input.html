@@ -1,4 +1,4 @@
-{% load static wise_autocomplete_icons %}
+{% load static wise_autocomplete_icons i18n %}
 
 <div>
     <div class="relative">
@@ -58,7 +58,8 @@
                 this.data_container = dataContainer
                 this.data_container_is_visible = false
                 this.url = this.original_input.dataset.url
-                this.empty_msg = 'Aucun objet trouvé !'
+                {% trans "No match found" as empty_msg %}
+                this.empty_msg = '{{ empty_msg|escapejs }}'
                 this.text_field = this.original_input.dataset.text_field
                 this.is_loading = false
                 this.current_index = 1
