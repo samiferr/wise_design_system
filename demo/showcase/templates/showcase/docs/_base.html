@@ -1,5 +1,8 @@
 {% extends 'wise_core/base.html' %}
 {% load static wise_icons %}
+{% block extra_head %}
+    {% if sink_form %}{{ sink_form.media }}{% endif %}
+{% endblock %}
 {% comment %}
 Shell for every documentation page: the tree sidebar, the page header
 (breadcrumb + title + intro), and the prev/next pager.
