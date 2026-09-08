@@ -229,6 +229,22 @@ share the same JS patterns):
   objects — but `AutoSuggestInputWidget`'s results are plain strings (unlike
   `AutocompleteInputWidget`, whose results are DRF-serialized objects). It now assigns the string
   directly, matching the desktop table handler (`populate_lines()`).
+- **`AutocompleteInputWidget` no longer races its own two startup requests.** `get_headers()`
+  (`OPTIONS`, the dropdown's column list) and `get_data()` (`GET`, the first page of rows) used to
+  fire together on init and render whichever landed first. `get_data()`'s `populate_lines()` needs
+  `self.headers`, set by `get_headers()`'s response — so when the rows won the race, which is what
+  actually happens under real network conditions rather than a special case, it threw inside a
+  swallowed `.catch` and the dropdown rendered nothing at all until the visitor typed a search.
+  `get_headers()` now returns its promise, and the init sequence chains `get_data()` onto it instead
+  of firing both at once. Confirmed against a field with real rows: previously 0 shown on first open
+  (should be > 0), now populated correctly.
+- **Two UI strings were hardcoded in French with no way to override them.** `"Nouveau"` (the "create
+  new" link) and `"Aucun objet trouvé !"` (the empty-results message) rendered in French regardless
+  of the consuming project's own language — reproduced against this repo's own `demo/` site, whose
+  `LANGUAGE_CODE` is `en-us`. Both templates now load `i18n` and wrap them in `{% trans %}` (defaulting
+  to the equivalent English text, `"New"` / `"No match found"`), so a project that ships its own
+  French `.po` entry for either `msgid` gets it translated instead of stuck in French no matter what
+  it sets `LANGUAGE_CODE` to.
 
 ## Known limitations (still preserved as-is)
 
@@ -264,7 +280,9 @@ project's `BASE_DIR`" to "a standalone, reusable app":
   during extraction, and it was necessary for the widget to work outside of DCMS7 at all.
 
 Nothing else — not the widget classes' behavior, not the JS state machine, not the CSS rules, not the
-French copy (`"Aucun objet trouvé !"`, `"Nouveau"`, `"Page N"`) — was touched.
+French copy (`"Aucun objet trouvé !"`, `"Nouveau"`, `"Page N"`) — was touched during the extraction
+itself. Two of those three strings were made translatable in a later fix pass, not the extraction —
+see "Fixes applied on top of the extraction" above; `"Page N"` is untouched and still a literal string.
 
 ## See also
 
