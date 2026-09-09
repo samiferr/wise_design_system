@@ -11,7 +11,10 @@
         {# other icon button in the design system does) is what actually centers #}
         {# the icon inside that box and gives it a visible, hoverable affordance; #}
         {# alone, the icon rendered pinned to the box's top-left corner instead. #}
-        <span type="button" class="btn btn-icon btn-secondary absolute right-1 top-1/2 -translate-y-1/2"
+        {# `border-transparent` drops the button's own border, redundant next to #}
+        {# the field's border it already sits inside - `btn-secondary`'s hover #}
+        {# fill still marks it as clickable. #}
+        <span type="button" class="btn btn-icon btn-secondary border-transparent absolute right-1 top-1/2 -translate-y-1/2"
               onclick="document.getElementById('id_{{ widget.name }}_fake').click();document.getElementById('id_{{ widget.name }}_fake').focus();"
         >
             {% lucide "chevron-down" size=16 %}
@@ -30,13 +33,15 @@
         <div class="autocomplete-panel hidden"
              id='{{ widget.name }}_autocomplete_container'>
             <header class="flex items-center gap-2 border-b border-divider bg-gray-50 p-2">
-                <div class="btn btn-icon btn-secondary" id="id_{{ widget.name }}_previous">
+                {# `w-7 h-7` shrinks `.btn-icon`'s default 36px box to 28px - less #}
+                {# padding around a 14px icon in this already-compact header. #}
+                <div class="btn btn-icon btn-secondary w-7 h-7" id="id_{{ widget.name }}_previous">
                     {% lucide "chevron-left" size=14 %}
                 </div>
                 <span class="text-xs font-medium text-gray-600" id="id_{{ widget.name }}_pageNumber">
                     Page 1
                 </span>
-                <div class="btn btn-icon btn-secondary" id="id_{{ widget.name }}_next">
+                <div class="btn btn-icon btn-secondary w-7 h-7" id="id_{{ widget.name }}_next">
                     {% lucide "chevron-right" size=14 %}
                 </div>
                 <div class="ml-auto">

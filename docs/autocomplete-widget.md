@@ -279,7 +279,15 @@ share the same JS patterns):
   contrast": the icon's own color-contrast ratio was already fine (14-17:1 measured in both themes),
   it just had nothing around it making it look like a button rather than a stray mark. All three now
   carry `btn btn-icon btn-secondary`, matching the pairing used everywhere else. Confirmed centered
-  (0px offset from the box's center, in both themes) against this repo's own demo site.
+  (0px offset from the box's center, in both themes) against this repo's own demo site. Two further
+  visual adjustments went on top of that pairing, both purely cosmetic (no bug behind them): the
+  dropdown toggle drops its border (`border-transparent`) since it already sits inside the field's own
+  bordered box and a second border there read as redundant, keeping `btn-secondary`'s hover fill so it
+  still reads as clickable; and the pager's previous/next shrink from `.btn-icon`'s default 36px box to
+  28px (`w-7 h-7`), since a 14px icon centered in a 36px box - the same size as the 16px toggle icon's
+  box - looked oversized in this already-compact header. Confirmed the pager still centers exactly (0px
+  offset) at the smaller size, and that the toggle's border is genuinely transparent rather than just
+  visually absent (`getComputedStyle` returned `rgba(0, 0, 0, 0)`, not merely a light color).
 
 ## Known limitations (still preserved as-is)
 

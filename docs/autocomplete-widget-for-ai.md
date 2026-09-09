@@ -152,7 +152,12 @@ were fixed in both, not just in `AutoSuggestInputWidget` — the two exceptions 
   what read as low-contrast, even though the icon's own foreground/background color ratio was already
   fine (14-17:1 measured). All three now carry `btn btn-icon btn-secondary`. If you add another bare
   icon-only button anywhere in these templates, pair it with `.btn` too — `.btn-icon` was never meant
-  to stand alone.
+  to stand alone. Two cosmetic-only tweaks sit on top of that pairing (no bug behind either, don't read
+  them as more fix pattern to copy elsewhere): the dropdown toggle also has `border-transparent` (it
+  already sits inside the field's own bordered box, so its own border was redundant — `btn-secondary`'s
+  hover fill still marks it clickable), and the pager's previous/next also have `w-7 h-7` (28px, down
+  from `.btn-icon`'s default 36px — a 14px icon in a 36px box looked oversized next to the compact
+  header it sits in).
 
 ## Things that still look like bugs — do not silently "fix" these
 
