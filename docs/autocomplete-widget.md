@@ -268,6 +268,18 @@ share the same JS patterns):
   `<td>`-inheritance bug on top of its own separate, pre-existing hardcoded `text-white` (not
   contrast-aware at all); both are fixed there too, with a comment pointing at `--color-on-action` as
   the pattern to reach for in a project that supports more than one theme or palette.
+- **The three chevron icons (dropdown toggle, previous/next page) weren't centered in their own
+  boxes, and read as much lower-contrast/less prominent than every other button on the page.** All
+  three used `class="btn-icon"` alone, but `.btn-icon` only sets a box's size (`w-9 h-9 p-0`) - every
+  other icon button in the design system pairs it with `.btn` (see the "always pair `.btn` with one
+  modifier" comment at the top of tokens.css's button rules), which is what actually supplies
+  `inline-flex items-center justify-center`. Without it, the icon (an inline `<svg>` inside a `<span>`
+  or `<div>`) just sat at its default inline-flow position - pinned to the box's top-left corner
+  instead of centered - and the button had no border or hover feedback, which is what read as "low
+  contrast": the icon's own color-contrast ratio was already fine (14-17:1 measured in both themes),
+  it just had nothing around it making it look like a button rather than a stray mark. All three now
+  carry `btn btn-icon btn-secondary`, matching the pairing used everywhere else. Confirmed centered
+  (0px offset from the box's center, in both themes) against this repo's own demo site.
 
 ## Known limitations (still preserved as-is)
 
