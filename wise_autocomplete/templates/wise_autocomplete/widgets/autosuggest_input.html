@@ -11,7 +11,10 @@
         {# other icon button in the design system does) is what actually centers #}
         {# the icon inside that box and gives it a visible, hoverable affordance; #}
         {# alone, the icon rendered pinned to the box's top-left corner instead. #}
-        <span type="button" class="btn btn-icon btn-secondary absolute right-1 top-1/2 -translate-y-1/2"
+        {# `border-transparent` drops the button's own border, redundant next to #}
+        {# the field's border it already sits inside - `btn-secondary`'s hover #}
+        {# fill still marks it as clickable. #}
+        <span type="button" class="btn btn-icon btn-secondary border-transparent absolute right-1 top-1/2 -translate-y-1/2"
               onclick="document.getElementById('id_{{ widget.name }}_fake').click();
                       document.getElementById('id_{{ widget.name }}_fake').focus();"
         >
