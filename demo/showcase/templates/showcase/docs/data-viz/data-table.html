@@ -11,10 +11,10 @@
 {% block doc_body %}
     <h2 class="mt-8">Use cases</h2>
     <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
-        <li>Any list of records that needs pagination, filtering, or sorting - the default choice for a model's list page.</li>
+        <li>Any list of records that needs pagination, filtering, or sorting - offered as the <code>?view=table</code> alternative on a model's list page, which renders a card list by default.</li>
         <li>A page where the row count could grow past what fits comfortably on screen, and the queryset should stay the source of truth (only one page of rows ever reaches the browser).</li>
         <li>Adding sortable columns or row-level actions (edit/delete/dropdown menu) to an existing list view.</li>
-        <li>Not the right fit for a small, fixed set of dashboard tiles or a card-style picker - use the Card component for that instead, or offer both via the Card list vs Data table view toggle.</li>
+        <li>Not the right fit for a small, fixed set of dashboard tiles or a card-style picker - use the Card component for that instead. A list page ships both anyway, via the Card list vs Data table view toggle.</li>
     </ul>
 
     <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Data Table documentation views">
@@ -304,6 +304,7 @@
         <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Data Table (WiseListView + django-filter) for a model's list page - never hand-write pagination/filtering/sorting. Rules:
 - views.py: subclass WiseListView, set model, filterset_class (a django-filter FilterSet), template_name, and paginate_by. To allow column sorting, set sortable_fields to an explicit allowlist of field names or '__'-joined relation lookups - never read the raw ?sort= query parameter straight into order_by() yourself, since that lets a visitor sort by any field or traverse relations (a slow-query and information-disclosure risk). A deterministic pk tiebreak is appended automatically so pagination can't repeat or skip rows.
 - Template: extend wise_core/generic/list_generic.html, fill list_title/list_icon/list_actions, and render the table in list_body with a real <table class="data-table">. For each sortable column's header, use {% include 'wise_core/components/_sortable_th.html' with field='name' label='Name' %} instead of a plain <th> - it reads current_sort back out of context and renders the sort link plus the correct chevron icon.
+- The card list is the default rendering of every list page: wrap list_actions and list_body in {% with view_mode=request.GET.view|default:"cards" %}, include wise_core/components/_view_toggle.html in list_actions, and branch list_body with {% if view_mode == 'table' %}<the table>{% else %}<a card per record>{% endif %}. Never make a list page table-only, and never default it to "table".
 - Include {% include 'wise_core/components/filter_button.html' %} in list_actions to add the filter drawer, and {% include 'wise_core/components/_pagination.html' %} below the table.
 - Row actions: a plain edit/delete pair uses .btn-ghost icon links; more than two actions should use the Dropdown component instead of crowding the row.
 - Do not build pagination, filtering, or sort-link query-string handling by hand anywhere in this stack - WiseListView, the filterset, _sortable_th.html, and _pagination.html already cover all of it consistently across the whole app.{% endverbatim %}{% endfilter %}</code></pre>

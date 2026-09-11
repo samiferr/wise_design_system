@@ -1,11 +1,11 @@
 {% extends 'wise_core/generic/list_generic.html' %}
 {% load wise_icons wise_tags %}
 {% comment %}
-Renders as a card list by default (?view=cards, the historical behaviour)
-with a data-table alternative (?view=table) - same queryset, same actions,
-two read patterns. See wise_core/components/_view_toggle.html and the
-Categories list (table by default, card-grid alternative) for the
-mirror-image case.
+Renders as a card list by default (?view=cards) with a data-table
+alternative (?view=table) - same queryset, same actions, two read
+patterns. Cards are the default rendering on every list page in the
+system; see wise_core/components/_view_toggle.html and the Categories
+list for the same wiring.
 {% endcomment %}
 
 {% block list_icon %}{% lucide "pill" size=28 cls="text-brand-600" %}{% endblock %}

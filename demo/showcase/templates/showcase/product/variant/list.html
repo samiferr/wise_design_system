@@ -3,12 +3,17 @@
 {% comment %}
 The Variants tab. The heading, the record count, the empty state and the
 pagination all come from the generic template; the list only fills in its
-own table and the "New" button.
+own body and the "New" button. Renders as a card list by default
+(?view=cards) with a data-table alternative (?view=table), like every
+other list page in the system - see wise_core/components/_view_toggle.html.
 {% endcomment %}
 
 {% block parent_header %}{% include 'showcase/product/_header.html' %}{% endblock %}
 
 {% block list_actions %}
+    {% with view_mode=request.GET.view|default:"cards" %}
+        {% include 'wise_core/components/_view_toggle.html' %}
+    {% endwith %}
     {% include 'wise_core/components/filter_button.html' %}
     {% if perms.showcase.add_productvariant %}
         <a class="btn btn-primary" href="{% url 'product_variant_create_view' parent_pk=parent_object.pk %}">
@@ -18,52 +23,76 @@ own table and the "New" button.
 {% endblock %}
 
 {% block list_body %}
-    <div class="mt-5 overflow-x-auto border border-divider bg-panel">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th class="w-px">Actions</th>
-                    {% include 'wise_core/components/_sortable_th.html' with field='label' label='Label' %}
-                    {% include 'wise_core/components/_sortable_th.html' with field='sku' label='SKU' %}
-                    {% include 'wise_core/components/_sortable_th.html' with field='price' label='Price' %}
-                    {% include 'wise_core/components/_sortable_th.html' with field='stock' label='Stock' %}
-                    <th>Sellable</th>
-                </tr>
-            </thead>
-            <tbody>
+    {% with view_mode=request.GET.view|default:"cards" %}
+        {% if view_mode == 'table' %}
+            <div class="mt-5 overflow-x-auto border border-divider bg-panel">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th class="w-px">Actions</th>
+                            {% include 'wise_core/components/_sortable_th.html' with field='label' label='Label' %}
+                            {% include 'wise_core/components/_sortable_th.html' with field='sku' label='SKU' %}
+                            {% include 'wise_core/components/_sortable_th.html' with field='price' label='Price' %}
+                            {% include 'wise_core/components/_sortable_th.html' with field='stock' label='Stock' %}
+                            <th>Sellable</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in object_list %}
+                            <tr>
+                                <td class="w-px whitespace-nowrap">
+                                    <details class="dropdown">
+                                        <summary class="btn btn-ghost" aria-label="Row actions">{% lucide "ellipsis-vertical" size=16 %}</summary>
+                                        <div class="dropdown-panel left-0 right-auto">
+                                            {% if perms.showcase.change_productvariant %}
+                                                <a class="dropdown-item" href="{% url 'product_variant_update_view' parent_pk=parent_object.pk pk=item.pk %}">{% lucide "pencil" size=14 %}Edit</a>
+                                            {% endif %}
+                                            {% if perms.showcase.delete_productvariant %}
+                                                <a class="dropdown-item dropdown-item-danger" href="{% url 'product_variant_delete_view' parent_pk=parent_object.pk pk=item.pk %}">{% lucide "trash-2" size=14 %}Delete</a>
+                                            {% endif %}
+                                        </div>
+                                    </details>
+                                </td>
+                                <td><a class="font-semibold text-action-700 no-underline hover:underline" href="{{ item.get_absolute_url }}">{{ item.label }}</a></td>
+                                <td class="font-mono text-xs text-gray-600">{{ item.sku }}</td>
+                                <td class="whitespace-nowrap tabular-nums">{{ item.price }}</td>
+                                <td class="tabular-nums">{{ item.stock }}</td>
+                                <td>
+                                    {% if item.is_active %}
+                                        <span class="badge badge-brand">Yes</span>
+                                    {% else %}
+                                        <span class="badge badge-grey">No</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="6">{% include 'wise_core/components/_no_data.html' %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="mt-5 space-y-2">
                 {% for item in object_list %}
-                    <tr>
-                        <td class="w-px whitespace-nowrap">
-                            <details class="dropdown">
-                                <summary class="btn btn-ghost" aria-label="Row actions">{% lucide "ellipsis-vertical" size=16 %}</summary>
-                                <div class="dropdown-panel left-0 right-auto">
-                                    {% if perms.showcase.change_productvariant %}
-                                        <a class="dropdown-item" href="{% url 'product_variant_update_view' parent_pk=parent_object.pk pk=item.pk %}">{% lucide "pencil" size=14 %}Edit</a>
-                                    {% endif %}
-                                    {% if perms.showcase.delete_productvariant %}
-                                        <a class="dropdown-item dropdown-item-danger" href="{% url 'product_variant_delete_view' parent_pk=parent_object.pk pk=item.pk %}">{% lucide "trash-2" size=14 %}Delete</a>
-                                    {% endif %}
-                                </div>
-                            </details>
-                        </td>
-                        <td><a class="font-semibold text-action-700 no-underline hover:underline" href="{{ item.get_absolute_url }}">{{ item.label }}</a></td>
-                        <td class="font-mono text-xs text-gray-600">{{ item.sku }}</td>
-                        <td class="whitespace-nowrap tabular-nums">{{ item.price }}</td>
-                        <td class="tabular-nums">{{ item.stock }}</td>
-                        <td>
-                            {% if item.is_active %}
-                                <span class="badge badge-brand">Yes</span>
-                            {% else %}
-                                <span class="badge badge-grey">No</span>
-                            {% endif %}
-                        </td>
-                    </tr>
+                    <a class="card flex items-center gap-3" href="{{ item.get_absolute_url }}">
+                        <div class="min-w-0 flex-1">
+                            <h4 class="card-title truncate">{{ item.label }}</h4>
+                            <p class="card-meta mt-1 font-mono text-xs">{{ item.sku }}</p>
+                        </div>
+                        <span class="whitespace-nowrap tabular-nums font-semibold">{{ item.price }}</span>
+                        <span class="whitespace-nowrap text-sm text-gray-600 tabular-nums">{{ item.stock }} in stock</span>
+                        {% if item.is_active %}
+                            <span class="badge badge-brand">Sellable</span>
+                        {% else %}
+                            <span class="badge badge-grey">Not sellable</span>
+                        {% endif %}
+                    </a>
                 {% empty %}
-                    <tr><td colspan="6">{% include 'wise_core/components/_no_data.html' %}</td></tr>
+                    {% include 'wise_core/components/_no_data.html' %}
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            </div>
+        {% endif %}
+    {% endwith %}
     <div class="pt-4">
         {% include 'wise_core/components/_pagination.html' %}
     </div>

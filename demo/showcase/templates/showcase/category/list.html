@@ -1,18 +1,18 @@
 {% extends 'wise_core/generic/list_generic.html' %}
 {% load wise_icons wise_tags %}
 {% comment %}
-Renders as a data table by default (?view=table, the historical behaviour)
-with a card-grid alternative (?view=cards) - same queryset, same actions,
-two read patterns. See wise_core/components/_view_toggle.html and the
-Products list (card_item block by default, table alternative) for the
-mirror-image case.
+Renders as a card list by default (?view=cards) with a data-table
+alternative (?view=table) - same queryset, same actions, two read
+patterns. Cards are the default rendering on every list page in the
+system; see wise_core/components/_view_toggle.html and the Products
+list for the same wiring.
 {% endcomment %}
 
 {% block list_icon %}{% lucide "tag" size=28 cls="text-brand-600" %}{% endblock %}
 {% block list_title %}Categories{% endblock %}
 
 {% block list_actions %}
-    {% with view_mode=request.GET.view|default:"table" %}
+    {% with view_mode=request.GET.view|default:"cards" %}
         {% include 'wise_core/components/_view_toggle.html' %}
     {% endwith %}
     {% include 'wise_core/components/filter_button.html' %}
@@ -25,7 +25,7 @@ mirror-image case.
 {% endblock %}
 
 {% block list_body %}
-    {% with view_mode=request.GET.view|default:"table" %}
+    {% with view_mode=request.GET.view|default:"cards" %}
         {% if view_mode == 'cards' %}
             <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {% for item in object_list %}

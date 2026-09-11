@@ -57,7 +57,8 @@
     </div>
     <p class="mt-2 text-gray-700">
         The live version is
-        <a class="text-action-600 underline" href="{% url 'category_list_view' %}">Categories</a>.
+        <a class="text-action-600 underline" href="{% url 'category_list_view' %}">Categories</a>, which
+        opens on its card list — the table above is what <code>?view=table</code> gives you.
     </p>
 
     <h2 class="mt-8">The view</h2>
@@ -136,9 +137,11 @@ class CategoryListView(WiseListView):
     <div class="callout mt-6">
         {% lucide "layout-dashboard" size=16 cls="callout-icon" %}
         <div>
-            <div class="callout-title">Not every list wants a table</div>
-            The live Categories page above also ships a card-grid alternative behind one toggle -
-            see <a class="text-action-600 underline" href="{% url 'docs_patterns_list_view_toggle' %}">Card List vs. Data Table</a>.
+            <div class="callout-title">The card list is the default, the table is the toggle</div>
+            Every list page in this system renders a card list by default and keeps the table one
+            click away on <code>?view=table</code> - see
+            <a class="text-action-600 underline" href="{% url 'docs_patterns_list_view_toggle' %}">Card List vs. Data Table</a>
+            for the wiring the snippet above leaves out.
         </div>
     </div>
 {% endblock %}
