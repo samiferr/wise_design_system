@@ -1,0 +1,191 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Empty State{% endblock %}
+{% block doc_section %}Feedback{% endblock %}
+{% block doc_title %}Empty State{% endblock %}
+{% block doc_intro %}
+    What a list renders instead of rows. An empty table is the one screen a visitor can reach with
+    nothing to read and nothing to click, so it carries the way out: a line saying why it is empty
+    and the button that fixes it — <em>New record</em> when there is nothing yet,
+    <em>Clear filters</em> when the records exist but the filters hid them.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>The <code>{% templatetag openblock %} empty {% templatetag closeblock %}</code> branch of any list — inside a <code>&lt;td colspan="N"&gt;</code> for a data table, on its own in a card list.</li>
+        <li>A child tab with no records under this parent yet (a category with no products), where the create button has to carry the parent along.</li>
+        <li>A filtered list that matched nothing — a different message, and a way back to the unfiltered list rather than a create button.</li>
+        <li>Not a loading state: a list still fetching shows a <a class="text-action-600 underline" href="{% url 'docs_feedback_spinner' %}">spinner</a>, because "nothing here" and "nothing <em>yet</em>" mean opposite things to whoever is waiting.</li>
+        <li>Not an error state: a failed request is a <a class="text-action-600 underline" href="{% url 'docs_feedback_callout' %}">callout</a> or a <a class="text-action-600 underline" href="{% url 'docs_feedback_toast' %}">toast</a> — telling someone their data doesn't exist when the query merely failed is worse than saying nothing.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Empty State documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
+    <h2 class="mt-8">Nothing created yet</h2>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex107" id="ex107-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex107" id="ex107-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex107-preview">Preview</label>
+        <label class="doc-example-tab" for="ex107-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
+            {% include 'wise_core/components/_no_data.html' with create_url="#" model_verbose_name="product" model_verbose_name_plural="products" %}
+        </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% for item in object_list %}
+    …
+{% empty %}
+    {% include 'wise_core/components/_no_data.html' %}
+{% endfor %}{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+    <p class="mt-2 text-gray-700">
+        No arguments: the partial reads the list view's own context. The model's name comes from
+        <code>model_verbose_name</code>, the button from <code>create_url</code> — both put there by
+        <code>WiseListView</code>, which resolves <code>create_url</code> only for a user who holds
+        the model's <code>add</code> permission.
+    </p>
+
+    <h2 class="mt-8">Nothing matched the filters</h2>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex108" id="ex108-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex108" id="ex108-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex108-preview">Preview</label>
+        <label class="doc-example-tab" for="ex108-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
+            {% include 'wise_core/components/_no_data.html' with filter_kwargs_count=2 model_verbose_name="product" model_verbose_name_plural="products" create_url="#" %}
+        </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# Nothing to write in the template: WiseListView already counts the
+# applied filters into `filter_kwargs_count`, and the partial switches
+# on it.
+class ProductListView(WiseListView):
+    model = Product
+    filterset_class = ProductFilter
+    create_url_name = 'product_create_view'{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+    <div class="callout callout-info mt-4">
+        {% lucide "info" size=16 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Why the two states differ</div>
+            "Create the first product" under an active filter invites a duplicate: the record the
+            visitor is about to add may already exist three rows up, hidden by a filter they forgot
+            they set. So a filtered-empty list offers <em>Clear filters</em> instead, pointing at
+            <code>request.path</code> — the same list with the query string dropped.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Without permission to create</h2>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex109" id="ex109-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex109" id="ex109-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex109-preview">Preview</label>
+        <label class="doc-example-tab" for="ex109-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
+            {% include 'wise_core/components/_no_data.html' with model_verbose_name="product" model_verbose_name_plural="products" %}
+        </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# create_url is None for a user without showcase.add_product, so the
+# button disappears - and the sentence changes with it, because
+# "create the first one" is a dead end for someone who can't.
+context['create_url'] = self.get_create_url() if self.can_add() else None{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+
+    <h2 class="mt-8">Saying something more specific</h2>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex110" id="ex110-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex110" id="ex110-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex110-preview">Preview</label>
+        <label class="doc-example-tab" for="ex110-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
+            {% include 'wise_core/components/_no_data.html' with icon="receipt" title="No invoices for March" text="Invoices appear here the moment the first one is issued for this period." create_url="#" create_label="Issue an invoice" %}
+        </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% trans "No invoices for March" as empty_title %}
+{% trans "Invoices appear here the moment the first one is issued." as empty_text %}
+{% trans "Issue an invoice" as empty_action %}
+{% include 'wise_core/components/_no_data.html' with icon="receipt" title=empty_title text=empty_text create_label=empty_action %}{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+    <p class="mt-2 text-gray-700">
+        Assign the strings with <code>{% templatetag openblock %} trans "…" as name {% templatetag closeblock %}</code> rather than passing bare literals:
+        an override that skips the translation catalog is an English sentence in the middle of a
+        translated page. See <a class="text-action-600 underline" href="{% url 'docs_getting_started_localization' %}">Localization</a>.
+    </p>
+
+    <h2 class="mt-8">Writing the copy</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+        <li>Name the thing that's missing ("No products yet"), not the container ("This table is empty"). The visitor knows they're looking at a table.</li>
+        <li>One sentence under the title, at most. It says what would put something here — not how the feature works.</li>
+        <li>One primary action. A second button turns a dead end into a decision, and the whole point of this block is that there is nothing to decide.</li>
+        <li>No apology, no exclamation mark. An empty list is the normal first state of every list ever created.</li>
+    </ul>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+        <table class="doc-props w-full">
+            <thead><tr><th>Name</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>_no_data.html</code></td><td>The partial. Include it in the <code>{% templatetag openblock %} empty {% templatetag closeblock %}</code> branch of any list.</td></tr>
+                <tr><td><code>empty-state</code></td><td>The centered, dashed-edge container.</td></tr>
+                <tr><td><code>empty-state-icon</code></td><td>The 48px icon chip.</td></tr>
+                <tr><td><code>empty-state-title</code></td><td>The heading line.</td></tr>
+                <tr><td><code>empty-state-text</code></td><td>The one-sentence explanation, capped at a readable measure.</td></tr>
+                <tr><td><code>empty-state-actions</code></td><td>The button row.</td></tr>
+                <tr><td><code>create_url</code> / <code>create_label</code></td><td>The button's target and label. <code>create_url</code> comes from <code>WiseListView.create_url_name</code>, permission-checked.</td></tr>
+                <tr><td><code>title</code> / <code>text</code> / <code>icon</code></td><td>Per-list overrides, all optional.</td></tr>
+                <tr><td><code>filter_kwargs_count</code></td><td>Read from the list view's context; switches the block to its filtered wording.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="mt-6 text-gray-700">
+        See it live: <a class="text-action-600 underline" href="{% url 'product_list_view' %}?name=zzzz">Products filtered to nothing</a>,
+        and any category with no products of its own on
+        <a class="text-action-600 underline" href="{% url 'category_list_view' %}">Categories</a>.
+    </p>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-gray-700">
+            Paste this into an AI coding assistant to get an Empty State implementation that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Empty State for any list with no rows to show. Rules:
+- Never write "No records." inline. Put {% include 'wise_core/components/_no_data.html' %} in the {% empty %} branch of the card list, and in a <tr><td colspan="N"> as the last row of a data table.
+- Pass nothing by default: the partial reads create_url, model_verbose_name, model_verbose_name_plural and filter_kwargs_count out of WiseListView's context and picks its own wording.
+- To get the "New <model>" button, set create_url_name on the list view (the URL name of its create page) - do NOT hand-write a {% url %} plus a {% if perms.app.add_model %} in the template. WiseListView resolves create_url only for a user holding the model's add permission, and WiseParentDetailChildListView reverses it with the parent's pk.
+- The filtered-empty state is automatic and must stay different from the nothing-yet state: when filter_kwargs_count is non-zero the block says nothing matched and offers "Clear filters" (request.path), never a create button, because creating a record that is merely filtered out of view is how duplicates get made.
+- Override copy per list with title/text/icon/create_label, and always via {% trans "..." as name %} so the override stays translatable. Every string the partial ships is already wrapped in {% trans %}/{% blocktrans %}.
+- Markup: .empty-state > .empty-state-icon + .empty-state-title + .empty-state-text + .empty-state-actions. Do not restyle it per page, and do not add a second primary button.
+- Do not pair it with a pager: _pagination.html renders nothing when the list is empty.{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templates/wise_core/components/_no_data.html">_no_data.html — the partial and its two states</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/mixins.py">mixins.py — WiseListView.create_url_name, get_create_url(), can_add()</a></li>
+        </ul>
+    </div>
+{% endblock %}

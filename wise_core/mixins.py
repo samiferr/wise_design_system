@@ -86,11 +86,19 @@ class WiseListView(OwnRecordsMixin, LoginRequiredMixin, PermissionRequiredMixin,
     can't repeat or skip rows across pages. Render header links with
     `wise_core/components/_sortable_th.html`, which reads `current_sort` back
     out of this view's context.
+
+    Set `create_url_name` to the URL name of this model's create page and the
+    empty state (`wise_core/components/_no_data.html`) grows a "New <model>"
+    button, and the list header can render its own from the same
+    `create_url` - resolved once, here, and only for a user who actually
+    holds the model's `add` permission, instead of every template pairing a
+    hand-written `{% url %}` with a `{% if perms.app.add_model %}` of its own.
     """
     login_url = reverse_lazy('login')
     paginate_by = 20
     ordering = ['-pk']
     sortable_fields = ()
+    create_url_name = None
 
     def get_permission_required(self):
         return (permission_codename(self.model, 'view'),)
@@ -105,6 +113,20 @@ class WiseListView(OwnRecordsMixin, LoginRequiredMixin, PermissionRequiredMixin,
             return super().get_ordering()
         return [current_sort, 'pk']
 
+    def can_add(self):
+        """Whether the current user may create a record of this model."""
+        return self.request.user.has_perm(permission_codename(self.model, 'add'))
+
+    def get_create_url(self):
+        """
+        This list's "new record" page, or None when the view doesn't declare
+        one. Overridden by `WiseParentDetailChildListView` to pass the parent
+        along, since a child is always created under its parent.
+        """
+        if not self.create_url_name:
+            return None
+        return reverse(self.create_url_name)
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['current_sort'] = self.get_current_sort()
@@ -112,6 +134,9 @@ class WiseListView(OwnRecordsMixin, LoginRequiredMixin, PermissionRequiredMixin,
             [key for key, value in self.request.GET.items() if value != '' and key in self.filterset.filters]
         )
         context['filter_kwarg'] = self.get_label_value_filter_kwargs()
+        context['create_url'] = self.get_create_url() if self.can_add() else None
+        context['model_verbose_name'] = self.model._meta.verbose_name
+        context['model_verbose_name_plural'] = self.model._meta.verbose_name_plural
         return context
 
     def get_label_value_filter_kwargs(self):
@@ -469,6 +494,16 @@ class WiseParentDetailChildListView(ParentObjectMixin, ChildTabsMixin, WiseListV
 
     def get_queryset(self):
         return super().get_queryset().filter(**{self.parent_field: self.get_parent_object()})
+
+    def get_create_url(self):
+        """`create_url_name` reversed under this parent - a child record is
+        only ever created inside the parent whose tab you are looking at."""
+        if not self.create_url_name:
+            return None
+        return reverse(
+            self.create_url_name,
+            kwargs={self.parent_pk_url_kwarg: self.get_parent_object().pk},
+        )
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

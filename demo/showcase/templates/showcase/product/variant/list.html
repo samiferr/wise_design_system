@@ -15,8 +15,8 @@ other list page in the system - see wise_core/components/_view_toggle.html.
         {% include 'wise_core/components/_view_toggle.html' %}
     {% endwith %}
     {% include 'wise_core/components/filter_button.html' %}
-    {% if perms.showcase.add_productvariant %}
-        <a class="btn btn-primary" href="{% url 'product_variant_create_view' parent_pk=parent_object.pk %}">
+    {% if create_url %}
+        <a class="btn btn-primary" href="{{ create_url }}">
             {% lucide "plus" size=16 %}<span>New variant</span>
         </a>
     {% endif %}

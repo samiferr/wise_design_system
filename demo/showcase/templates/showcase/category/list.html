@@ -16,8 +16,8 @@ list for the same wiring.
         {% include 'wise_core/components/_view_toggle.html' %}
     {% endwith %}
     {% include 'wise_core/components/filter_button.html' %}
-    {% if perms.showcase.add_category %}
-        <a class="btn btn-primary" href="{% url 'category_create_view' %}">
+    {% if create_url %}
+        <a class="btn btn-primary" href="{{ create_url }}">
             {% lucide "plus" size=16 %}
             <span>New</span>
         </a>

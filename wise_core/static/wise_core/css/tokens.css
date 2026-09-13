@@ -611,6 +611,39 @@
         @apply flex items-center gap-1.5 text-[11px] text-gray-600;
     }
 
+    /* Empty state - what a list renders instead of rows, from
+       wise_core/components/_no_data.html. Deliberately roomy and centered:
+       an empty list is a dead end unless the way out of it (create the first
+       record, drop the filters) is the most visible thing in the frame. The
+       dashed edge reads as "a space waiting to be filled" in a card list and
+       as an inset placeholder in a data table's last row, without
+       impersonating a .card the visitor could click. */
+    .empty-state {
+        @apply flex flex-col items-center gap-2 border border-dashed border-divider
+        bg-page px-6 py-10 text-center;
+        border-radius: var(--radius-lg);
+    }
+
+    .empty-state-icon {
+        @apply mb-1 flex h-12 w-12 items-center justify-center bg-gray-100 text-gray-500;
+        border-radius: var(--radius-lg);
+    }
+
+    .empty-state-title {
+        @apply font-heading text-base font-semibold text-gray-900;
+    }
+
+    /* Capped at a readable measure rather than the full table width - an
+       explanation that runs the width of a 12-column table is a line nobody
+       finishes reading. */
+    .empty-state-text {
+        @apply max-w-[46ch] text-sm text-gray-600;
+    }
+
+    .empty-state-actions {
+        @apply mt-3 flex flex-wrap items-center justify-center gap-2;
+    }
+
     /* Badge / tag */
     .badge {
         @apply inline-flex items-center px-2.5 py-0.5 text-[11px] tracking-wide bg-gray-100 text-gray-800;
