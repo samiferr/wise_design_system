@@ -14,7 +14,7 @@ write `get_permission_required()` yourself for a plain model.
 
 | View | Django base | Permission | Notes |
 |---|---|---|---|
-| `WiseListView` | `django_filters.views.FilterView` | `view` | Paginated (`paginate_by`), filtered (`filterset_class`/`filterset_fields`), sortable (`sortable_fields`). This *is* the "datatable": pair it with `wise_core/generic/list_generic.html` and the `.data-table`/`.card` CSS. Context also gets `filter_kwargs_count` and `filter_kwarg` (the active filters as `{label: value}`, for the filter-panel badge) and `current_sort` (the active `?sort=` value, or `None`). |
+| `WiseListView` | `django_filters.views.FilterView` | `view` | Paginated (`paginate_by`), filtered (`filterset_class`/`filterset_fields`), sortable (`sortable_fields`). This *is* the "datatable": pair it with `wise_core/generic/list_generic.html` and the `.data-table`/`.card` CSS. Context also gets `filter_kwargs_count` and `filter_kwarg` (the active filters as `{label: value}`, for the filter-panel badge), `current_sort` (the active `?sort=` value, or `None`), `create_url` (see below) and the model's `model_verbose_name`/`model_verbose_name_plural`. |
 | `WiseDetailView` | `DetailView` | `view` | Pair with `wise_core/generic/detail_generic.html`. |
 | `WiseCreateView` | `CreateView` | `add` | Auto-populates `instance.created_by` from `request.user` if the model has that field (`AutoCreatedByMixin`). Catches a `ValidationError` raised from `form_valid()`/model `clean()`/`save()` and turns it into a form error instead of a 500 (`ValidationErrorFormMixin`) — on the field named in `error.params["field"]` if the model raised one with that param, else as a non-field error. |
 | `WiseUpdateView` | `UpdateView` | `change` | Same `ValidationError` handling as `WiseCreateView`. |
@@ -41,6 +41,35 @@ tiebreak is always appended, so pagination can't repeat or skip rows across page
 with `wise_core/components/_sortable_th.html` (`{% include ... with field="name" label="Name" %}`),
 which reads `current_sort` back out of the context and renders the right icon — see
 `docs/data-viz/data-table.html`'s "Column ordering" section.
+
+## The empty list: `WiseListView.create_url_name`
+
+Every list eventually renders with no rows — on day one, and every time a filter matches nothing.
+`wise_core/components/_no_data.html` is the block that goes in the `{% empty %}` branch (and in a
+`<tr><td colspan="N">` at the end of a data table's `tbody`), and it writes itself from this view's
+context:
+
+```python
+class ProductListView(WiseListView):
+    model = Product
+    filterset_class = ProductFilter
+    create_url_name = "product_create_view"   # -> context["create_url"]
+```
+
+* `create_url` is `reverse(create_url_name)`, or `None` — both when the view declares no
+  `create_url_name` and when the user lacks the model's `add` permission (`can_add()`). A template
+  never needs to pair a hand-written `{% url %}` with an `{% if perms.app.add_model %}`: render the
+  header's "New" button from `{% if create_url %}` too, so the permission rule lives in one place.
+* `WiseParentDetailChildListView` reverses the same `create_url_name` with the parent's pk, since a
+  child is only ever created under the parent whose tab you're on.
+* With filters applied (`filter_kwargs_count`), the block switches to "nothing matched" wording and
+  offers *Clear filters* (`request.path`) instead of the create button — inviting someone to create
+  a record that already exists but is filtered out of view is how duplicates get made.
+* Override any of the copy per list with `title`/`text`/`icon`/`create_label`, assigned through
+  `{% trans "…" as name %}` so the override stays translatable.
+
+`_pagination.html` renders nothing when the list is empty, so the message never sits above a dead
+"Page 1 / 1" pager.
 
 ## `OwnRecordsMixin` — opt-in "my records only" scoping
 

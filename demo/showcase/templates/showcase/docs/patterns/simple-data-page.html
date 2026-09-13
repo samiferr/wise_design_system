@@ -57,7 +57,8 @@
     </div>
     <p class="mt-2 text-gray-700">
         The live version is
-        <a class="text-action-600 underline" href="{% url 'category_list_view' %}">Categories</a>.
+        <a class="text-action-600 underline" href="{% url 'category_list_view' %}">Categories</a>, which
+        opens on its card list — the table above is what <code>?view=table</code> gives you.
     </p>
 
     <h2 class="mt-8">The view</h2>
@@ -128,7 +129,7 @@ class CategoryListView(WiseListView):
                 <tr><td>Applied-filter count</td><td><code>filter_kwargs_count</code> in the context.</td></tr>
                 <tr><td>Pagination</td><td><code>paginate_by</code> + the <code>_pagination.html</code> partial.</td></tr>
                 <tr><td>Flash messages</td><td><code>success_message</code> on the CRUD views.</td></tr>
-                <tr><td>Empty state</td><td><code>_no_data.html</code>.</td></tr>
+                <tr><td>Empty state</td><td><code>_no_data.html</code> — the message, and the create button from <code>create_url_name</code>. See <a class="text-action-600 underline" href="{% url 'docs_feedback_empty_state' %}">Empty State</a>.</td></tr>
             </tbody>
         </table>
     </div>
@@ -136,9 +137,11 @@ class CategoryListView(WiseListView):
     <div class="callout mt-6">
         {% lucide "layout-dashboard" size=16 cls="callout-icon" %}
         <div>
-            <div class="callout-title">Not every list wants a table</div>
-            The live Categories page above also ships a card-grid alternative behind one toggle -
-            see <a class="text-action-600 underline" href="{% url 'docs_patterns_list_view_toggle' %}">Card List vs. Data Table</a>.
+            <div class="callout-title">The card list is the default, the table is the toggle</div>
+            Every list page in this system renders a card list by default and keeps the table one
+            click away on <code>?view=table</code> - see
+            <a class="text-action-600 underline" href="{% url 'docs_patterns_list_view_toggle' %}">Card List vs. Data Table</a>
+            for the wiring the snippet above leaves out.
         </div>
     </div>
 {% endblock %}

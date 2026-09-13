@@ -9,8 +9,8 @@ rendering cards instead of a table. Two child models, one bar, one chrome.
 
 {% block list_actions %}
     {% include 'wise_core/components/filter_button.html' %}
-    {% if perms.showcase.add_productreview %}
-        <a class="btn btn-primary" href="{% url 'product_review_create_view' parent_pk=parent_object.pk %}">
+    {% if create_url %}
+        <a class="btn btn-primary" href="{{ create_url }}">
             {% lucide "plus" size=16 %}<span>New review</span>
         </a>
     {% endif %}

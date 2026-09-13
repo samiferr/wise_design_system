@@ -204,6 +204,10 @@ class CategoryListView(WiseListView):
     template_name = 'showcase/category/list.html'
     paginate_by = 10
     sortable_fields = {'name'}
+    # Resolves to `create_url` in the context - the "New" button in the
+    # header and the one in the empty state both read it, and it is None
+    # for a user without `showcase.add_category`.
+    create_url_name = 'category_create_view'
 
 
 # ── Tabbed parent pages ───────────────────────────────────────────────────
@@ -267,6 +271,7 @@ class ProductListView(WiseListView):
     template_name = 'showcase/product/list.html'
     paginate_by = 10
     sortable_fields = {'name', 'category__name', 'rating'}
+    create_url_name = 'product_create_view'
 
 
 class ProductDetailView(WiseParentDetailView):
@@ -322,6 +327,9 @@ class CategoryProductListView(WiseParentDetailChildListView):
     paginate_by = 10
     sortable_fields = {'name', 'rating'}
     ordering = ['name']
+    # Reversed with the parent's pk by WiseParentDetailChildListView: a
+    # product is created inside the category whose tab you are on.
+    create_url_name = 'category_product_create_view'
 
 
 class CategoryProductCreateView(WiseParentDetailChildCreateView):
@@ -345,6 +353,7 @@ class ProductVariantListView(WiseParentDetailChildListView):
     child_tabs = PRODUCT_TABS
     filterset_class = ProductVariantFilter
     template_name = 'showcase/product/variant/list.html'
+    create_url_name = 'product_variant_create_view'
     paginate_by = 10
     sortable_fields = {'label', 'sku', 'price', 'stock'}
     ordering = ['label']
@@ -398,6 +407,7 @@ class ProductReviewListView(WiseParentDetailChildListView):
     child_tabs = PRODUCT_TABS
     filterset_class = ProductReviewFilter
     template_name = 'showcase/product/review/list.html'
+    create_url_name = 'product_review_create_view'
     paginate_by = 10
     sortable_fields = {'author', 'rating', 'submitted_on'}
     ordering = ['-submitted_on', '-pk']

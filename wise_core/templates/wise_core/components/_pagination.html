@@ -1,25 +1,34 @@
 {% load i18n wise_icons %}
-<div class="flex justify-center">
-    <div class="flex flex-wrap items-center justify-center gap-1">
-        {% if page_obj.has_previous %}
-            <a href="?page=1&q={{ request.GET.q }}" class="pagination-link">{% lucide "chevrons-left" size=16 %}</a>
-            <a href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}" class="pagination-link">{% lucide "chevron-left" size=16 %}{% trans "Prev." %}</a>
-        {% else %}
-            <a href="#" class="pagination-link disabled">{% lucide "chevrons-left" size=16 %}</a>
-            <a href="#" class="pagination-link disabled">{% lucide "chevron-left" size=16 %}{% trans "Prev." %}</a>
-        {% endif %}
+{% comment %}
+The pager under a list. Renders nothing at all when there is nothing to
+page through: an empty list already says so in its own empty state (see
+_no_data.html), and a "Page 1 / 1" pinned under that message is chrome
+with no job - both of its arrows are dead, and it pushes the one control
+that matters (the New button) further from the eye.
+{% endcomment %}
+{% if page_obj.paginator.count %}
+    <div class="flex justify-center">
+        <div class="flex flex-wrap items-center justify-center gap-1">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&q={{ request.GET.q }}" class="pagination-link">{% lucide "chevrons-left" size=16 %}</a>
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}" class="pagination-link">{% lucide "chevron-left" size=16 %}{% trans "Prev." %}</a>
+            {% else %}
+                <a href="#" class="pagination-link disabled">{% lucide "chevrons-left" size=16 %}</a>
+                <a href="#" class="pagination-link disabled">{% lucide "chevron-left" size=16 %}{% trans "Prev." %}</a>
+            {% endif %}
 
-        <div class="px-2 text-sm text-gray-600">
-            {% trans "Page" %} {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            <div class="px-2 text-sm text-gray-600">
+                {% trans "Page" %} {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </div>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}" class="pagination-link">
+                    {% trans "Next" %}{% lucide "chevron-right" size=16 %}</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&q={{ request.GET.q }}" class="pagination-link">{% lucide "chevrons-right" size=16 %}</a>
+            {% else %}
+                <a href="#" class="pagination-link disabled">{% trans "Next" %} {% lucide "chevron-right" size=16 %}</a>
+                <a href="#" class="pagination-link disabled">{% lucide "chevrons-right" size=16 %}</a>
+            {% endif %}
         </div>
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}" class="pagination-link">
-                {% trans "Next" %}{% lucide "chevron-right" size=16 %}</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}&q={{ request.GET.q }}" class="pagination-link">{% lucide "chevrons-right" size=16 %}</a>
-        {% else %}
-            <a href="#" class="pagination-link disabled">{% trans "Next" %} {% lucide "chevron-right" size=16 %}</a>
-            <a href="#" class="pagination-link disabled">{% lucide "chevrons-right" size=16 %}</a>
-        {% endif %}
     </div>
-</div>
+{% endif %}

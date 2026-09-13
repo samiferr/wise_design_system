@@ -11,10 +11,10 @@
 {% block doc_body %}
     <h2 class="mt-8">Use cases</h2>
     <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
-        <li>Any list of records that needs pagination, filtering, or sorting - the default choice for a model's list page.</li>
+        <li>Any list of records that needs pagination, filtering, or sorting - offered as the <code>?view=table</code> alternative on a model's list page, which renders a card list by default.</li>
         <li>A page where the row count could grow past what fits comfortably on screen, and the queryset should stay the source of truth (only one page of rows ever reaches the browser).</li>
         <li>Adding sortable columns or row-level actions (edit/delete/dropdown menu) to an existing list view.</li>
-        <li>Not the right fit for a small, fixed set of dashboard tiles or a card-style picker - use the Card component for that instead, or offer both via the Card list vs Data table view toggle.</li>
+        <li>Not the right fit for a small, fixed set of dashboard tiles or a card-style picker - use the Card component for that instead. A list page ships both anyway, via the Card list vs Data table view toggle.</li>
     </ul>
 
     <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Data Table documentation views">
@@ -243,12 +243,23 @@
         <label class="doc-example-tab" for="ex15-code">Code</label>
     </div>
     <div class="doc-example-panel-preview">
-        <div class="doc-preview p-0">{% include 'wise_core/components/_no_data.html' %}</div>
+        <div class="doc-preview">
+            {% include 'wise_core/components/_no_data.html' with create_url="#" model_verbose_name="category" model_verbose_name_plural="categories" %}
+        </div>
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<tr><td colspan="4">{% include 'wise_core/components/_no_data.html' %}</td></tr>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
+    <p class="mt-2 text-gray-700">
+        One row, one cell spanning every column. The partial reads the view's context and writes
+        itself: the model's name, the "New" button (from <code>create_url_name</code>, only for a
+        user who may add), and a different message with a <em>Clear filters</em> button when the
+        list is empty because of the filter drawer rather than because there is nothing to show —
+        see <a class="text-action-600 underline" href="{% url 'docs_feedback_empty_state' %}">Empty State</a>.
+        The pager below it renders nothing while the list is empty, so the message doesn't sit above
+        a dead "Page 1 / 1".
+    </p>
 
     <h2 class="mt-8">Density</h2>
     <p class="text-gray-700">
@@ -288,7 +299,7 @@
                 <tr><td><code>WiseListView.sortable_fields</code></td><td>The allowlist of fields <code>?sort=</code> may name.</td></tr>
                 <tr><td><code>dropdown</code> / <code>dropdown-panel</code> / <code>dropdown-item</code></td><td>Row actions menu — see <a class="text-action-600 underline" href="{% url 'docs_actions_dropdown' %}">Dropdown</a>.</td></tr>
                 <tr><td><code>ellipsis-vertical</code></td><td>The row-actions trigger icon — a borderless <code>btn-ghost</code>, not <code>btn-secondary</code>.</td></tr>
-                <tr><td><code>_no_data.html</code></td><td>Empty state partial.</td></tr>
+                <tr><td><code>_no_data.html</code></td><td>Empty state partial — message + create button, see <a class="text-action-600 underline" href="{% url 'docs_feedback_empty_state' %}">Empty State</a>.</td></tr>
                 <tr><td><code>_pagination.html</code></td><td>Pager partial.</td></tr>
             </tbody>
         </table>
@@ -304,7 +315,9 @@
         <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Data Table (WiseListView + django-filter) for a model's list page - never hand-write pagination/filtering/sorting. Rules:
 - views.py: subclass WiseListView, set model, filterset_class (a django-filter FilterSet), template_name, and paginate_by. To allow column sorting, set sortable_fields to an explicit allowlist of field names or '__'-joined relation lookups - never read the raw ?sort= query parameter straight into order_by() yourself, since that lets a visitor sort by any field or traverse relations (a slow-query and information-disclosure risk). A deterministic pk tiebreak is appended automatically so pagination can't repeat or skip rows.
 - Template: extend wise_core/generic/list_generic.html, fill list_title/list_icon/list_actions, and render the table in list_body with a real <table class="data-table">. For each sortable column's header, use {% include 'wise_core/components/_sortable_th.html' with field='name' label='Name' %} instead of a plain <th> - it reads current_sort back out of context and renders the sort link plus the correct chevron icon.
+- The card list is the default rendering of every list page: wrap list_actions and list_body in {% with view_mode=request.GET.view|default:"cards" %}, include wise_core/components/_view_toggle.html in list_actions, and branch list_body with {% if view_mode == 'table' %}<the table>{% else %}<a card per record>{% endif %}. Never make a list page table-only, and never default it to "table".
 - Include {% include 'wise_core/components/filter_button.html' %} in list_actions to add the filter drawer, and {% include 'wise_core/components/_pagination.html' %} below the table.
+- Empty rows: end the tbody with {% empty %}<tr><td colspan="N">{% include 'wise_core/components/_no_data.html' %}</td></tr> - never an inline "No records" string. Set create_url_name on the view so that block can offer the "New <model>" button; it switches itself to a "nothing matched your filters" message with a Clear filters button when filter_kwargs_count is non-zero.
 - Row actions: a plain edit/delete pair uses .btn-ghost icon links; more than two actions should use the Dropdown component instead of crowding the row.
 - Do not build pagination, filtering, or sort-link query-string handling by hand anywhere in this stack - WiseListView, the filterset, _sortable_th.html, and _pagination.html already cover all of it consistently across the whole app.{% endverbatim %}{% endfilter %}</code></pre>
 

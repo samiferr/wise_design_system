@@ -109,6 +109,7 @@ DOCS_NAV = [
             {'title': 'Badge', 'slug': 'badge'},
             {'title': 'Tag', 'slug': 'tag'},
             {'title': 'Callout', 'slug': 'callout'},
+            {'title': 'Empty State', 'slug': 'empty-state'},
             {'title': 'Toast', 'slug': 'toast'},
             {'title': 'Tooltip', 'slug': 'tooltip'},
             {'title': 'Progress Bar', 'slug': 'progress-bar'},

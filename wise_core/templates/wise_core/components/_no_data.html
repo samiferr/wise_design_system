@@ -1,2 +1,74 @@
-{% load i18n %}
-<div class="mt-4 border border-divider bg-page p-4 text-sm text-gray-600">{% trans "No records." %}</div>
+{% load wise_icons i18n %}
+{% comment %}
+The empty state a list falls back to when it has no rows to show - in a
+`<td colspan="N">` for a data table, or on its own in a card list. It reads
+the list view's context (`wise_core.mixins.WiseListView`) and tells the two
+empty lists apart, because they need opposite things from the visitor:
+
+  * Nothing matched the filters (`filter_kwargs_count`) -> say so and offer
+    a way back to the unfiltered list. Inviting someone to create a record
+    they can't see because of a filter is how duplicates get made.
+  * Nothing exists yet -> name what's missing and hand over the "New" button,
+    which is `create_url` (set `create_url_name` on the view) and is already
+    None for a user without the model's `add` permission.
+
+Every string can be overridden per list, through `{% trans %}` so the
+override stays translatable like the defaults:
+
+    {% trans "No invoices yet" as empty_title %}
+    {% include 'wise_core/components/_no_data.html' with title=empty_title icon="receipt" %}
+
+See the docs site's Feedback -> Empty State page for the four states.
+{% endcomment %}
+<div class="empty-state">
+    {% if filter_kwargs_count %}
+        <span class="empty-state-icon">{% lucide "search" size=22 %}</span>
+        <h4 class="empty-state-title">{% if title %}{{ title }}{% else %}{% trans "Nothing matches those filters" %}{% endif %}</h4>
+        <p class="empty-state-text">
+            {% if text %}
+                {{ text }}
+            {% elif model_verbose_name_plural %}
+                {% blocktrans with name=model_verbose_name_plural count counter=filter_kwargs_count %}No {{ name }} match the filter you applied. Clear it to see the full list.{% plural %}No {{ name }} match the {{ counter }} filters you applied. Clear them to see the full list.{% endblocktrans %}
+            {% else %}
+                {% blocktrans count counter=filter_kwargs_count %}No record matches the filter you applied. Clear it to see the full list.{% plural %}No record matches the {{ counter }} filters you applied. Clear them to see the full list.{% endblocktrans %}
+            {% endif %}
+        </p>
+        <div class="empty-state-actions">
+            <a class="btn btn-primary" href="{{ request.path }}">
+                {% lucide "x" size=16 %}<span>{% trans "Clear filters" %}</span>
+            </a>
+        </div>
+    {% else %}
+        <span class="empty-state-icon">{% lucide icon|default:"clipboard-list" size=22 %}</span>
+        <h4 class="empty-state-title">
+            {% if title %}
+                {{ title }}
+            {% elif model_verbose_name_plural %}
+                {% blocktrans with name=model_verbose_name_plural %}No {{ name }} yet{% endblocktrans %}
+            {% else %}
+                {% trans "No records yet" %}
+            {% endif %}
+        </h4>
+        <p class="empty-state-text">
+            {% if text %}
+                {{ text }}
+            {% elif create_url %}
+                {% if model_verbose_name %}
+                    {% blocktrans with name=model_verbose_name %}Create the first {{ name }} and it shows up here.{% endblocktrans %}
+                {% else %}
+                    {% trans "Create the first record and it shows up here." %}
+                {% endif %}
+            {% else %}
+                {% trans "Records added here will show up in this list." %}
+            {% endif %}
+        </p>
+        {% if create_url %}
+            <div class="empty-state-actions">
+                <a class="btn btn-primary" href="{{ create_url }}">
+                    {% lucide "plus" size=16 %}
+                    <span>{% if create_label %}{{ create_label }}{% elif model_verbose_name %}{% blocktrans with name=model_verbose_name %}New {{ name }}{% endblocktrans %}{% else %}{% trans "New record" %}{% endif %}</span>
+                </a>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
