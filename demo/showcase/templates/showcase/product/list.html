@@ -65,7 +65,7 @@ list for the same wiring.
             <div class="mt-5 space-y-2">
                 {% for item in object_list %}
                     <a class="card flex items-center gap-3" href="{{ item.get_absolute_url }}">
-                        <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center border border-divider text-xs font-semibold"
+                        <span class="avatar avatar-square"
                               style="background-color: {{ item.category.color }}; color: white;">{{ item.category.name|slice:":1" }}</span>
                         <div class="min-w-0 flex-1">
                             <h4 class="card-title truncate">{{ item.name }}</h4>

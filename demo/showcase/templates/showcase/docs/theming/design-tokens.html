@@ -4,16 +4,22 @@
 {% block doc_section %}Theming &amp; Utilities{% endblock %}
 {% block doc_title %}Design Tokens{% endblock %}
 {% block doc_intro %}
-    Every token is declared once in <code>tokens.css</code>'s <code>@theme</code> block. Colors live
-    on <a class="text-action-600 underline" href="{% url 'docs_theming_color_palettes' %}">Color
-    Palettes</a>; this page covers the rest — type, radius, elevation, motion, focus and sizing.
+    The system follows <a class="text-primary underline" href="https://m3.material.io/" rel="noopener">Material
+    Design 3</a>, and its tokens use M3's own three tiers: reference palettes
+    (<code>--md-ref-palette-*</code>), system tokens (<code>--md-sys-color-*</code>,
+    <code>--md-sys-shape-*</code>, <code>--md-sys-elevation-*</code>, ...) and the Tailwind utilities
+    built on them. Colors live on <a class="text-primary underline" href="{% url 'docs_theming_color_palettes' %}">Color
+    Palettes</a>; this page covers the rest: type, shape, elevation, state layers, motion and density.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Typography</h2>
-    <p class="text-gray-700">
-        Headings use <code>--font-heading</code> (Barlow Condensed, semibold, tight leading); body
-        copy uses <code>--font-body</code> (Barlow). Both apply automatically to their elements — the
-        utility classes are only for forcing one onto something else. The scale is fixed, not fluid.
+    <p class="text-on-surface-variant">
+        Roboto, vendored as a variable font, on the M3 type scale: five roles (display, headline,
+        title, body, label) in three sizes each. Every role is one Tailwind utility that sets size, line
+        height, tracking and weight together (<code>text-title-medium</code>,
+        <code>text-body-small</code>, ...). <code>h1</code>–<code>h6</code> map onto headline and title
+        roles automatically, and body text is <code>body-large</code>. Sentence case throughout: M3
+        never uppercases headings or labels.
     </p>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex104" id="ex104-preview" value="preview" checked>
@@ -23,32 +29,39 @@
         <label class="doc-example-tab" for="ex104-code">Code</label>
     </div>
     <div class="doc-example-panel-preview">
-        <div class="doc-preview space-y-1">
-        <h1>Heading 1 / 42px</h1>
-        <h2>Heading 2 / 32px</h2>
-        <h3>Heading 3 / 25px</h3>
-        <h4>Heading 4 / 20px</h4>
-        <h5>Heading 5 / 16px</h5>
-        <h6>Heading 6 / 13px uppercase</h6>
-        <p class="pt-2 text-base">Body text (Barlow, 16px default) — the quick brown fox jumps over the lazy dog.</p>
-    </div>
+        <div class="doc-preview space-y-2">
+            <div class="text-display-large">Display large</div>
+            <div class="text-display-small">Display small</div>
+            <div class="text-headline-large">Headline large / h1</div>
+            <div class="text-headline-medium">Headline medium / h2</div>
+            <div class="text-headline-small">Headline small / h3</div>
+            <div class="text-title-large">Title large / h4</div>
+            <div class="text-title-medium">Title medium / h5</div>
+            <div class="text-title-small">Title small / h6</div>
+            <div class="text-body-large">Body large - the default reading style.</div>
+            <div class="text-body-medium">Body medium - table cells, card text.</div>
+            <div class="text-body-small">Body small - help text, captions.</div>
+            <div class="text-label-large">Label large - buttons, tabs, nav items</div>
+            <div class="text-label-medium">Label medium - badges, kickers</div>
+            <div class="text-label-small">Label small - counts</div>
+        </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<h2>Section title</h2>   <!-- font-heading applied automatically -->
-<p>Body copy needs no class.</p>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<h2>Section title</h2>   <!-- headline-medium applied automatically -->
+<p>Body copy needs no class - body-large is the default.</p>
 
-<!-- forcing the heading font onto a non-heading element -->
-<div class="font-heading font-semibold uppercase tracking-wide">Eyebrow label</div>{% endverbatim %}{% endfilter %}</code></pre>
+<div class="text-display-small">Big number</div>
+<div class="text-label-medium text-on-surface-variant">Eyebrow label</div>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
 
-    <h2 class="mt-8">Radius</h2>
-    <p class="text-gray-700">
-        The default (no <code>data-radius</code> attribute) zeroes the whole radius scale, so every
-        <code>rounded-*</code> utility resolves to a square corner with no template changes — this
-        system's baseline look. <code>data-radius="soft"</code> and <code>data-radius="round"</code>
-        retune the same scale to non-zero values instead; nothing in the component layer hardcodes a
-        radius, every rule below reads this scale, so the whole UI moves together. Try it:
+    <h2 class="mt-8">Shape</h2>
+    <p class="text-on-surface-variant">
+        The M3 corner scale: extra-small 4px (text fields, menus, snackbars), small 8px (chips,
+        badges), medium 12px (cards), large 16px (side sheets, FAB), extra-large 28px (dialogs) and
+        full (buttons, navigation items). Tailwind's <code>rounded-*</code> scale is mapped onto it,
+        and <code>data-radius</code> moves the whole scale at once: <code>soft</code> halves it,
+        <code>sharp</code> squares everything off. Try it:
     </p>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex105" id="ex105-preview" value="preview" checked>
@@ -59,110 +72,135 @@
     </div>
     <div class="doc-example-panel-preview">
         <div class="doc-preview">
-        <div class="flex flex-wrap items-center gap-3">
-            <button class="btn btn-secondary" onclick="wiseSetRadius('')">Sharp (default)</button>
-            <button class="btn btn-secondary" onclick="wiseSetRadius('soft')">Soft</button>
-            <button class="btn btn-secondary" onclick="wiseSetRadius('round')">Round</button>
+        <div class="btn-group" role="group" aria-label="Corner radius">
+            <button class="btn" onclick="wiseSetRadius('')">Material (default)</button>
+            <button class="btn" onclick="wiseSetRadius('soft')">Soft</button>
+            <button class="btn" onclick="wiseSetRadius('sharp')">Sharp</button>
         </div>
         <div class="mt-4 flex flex-wrap items-center gap-3">
             <button class="btn btn-primary">Button</button>
-            <div class="card !p-3 w-40 text-xs">Card</div>
+            <div class="card w-40 text-body-small">Card</div>
             <span class="badge badge-action">Badge</span>
-            <div class="border border-divider bg-panel px-3 py-2 text-xs" style="border-radius:9999px">explicit circle</div>
+            <span class="tag">Chip</span>
+            <input class="input max-w-[10rem]" placeholder="Text field">
         </div>
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}.btn { border-radius: var(--radius-md); }
-.card, .detail-panel { border-radius: var(--radius-lg); }
+        <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}.btn    { border-radius: var(--md-sys-shape-corner-full); }
+.card   { border-radius: var(--md-sys-shape-corner-medium); }
+.dialog { border-radius: var(--md-sys-shape-corner-extra-large); }
 
-<!-- for a true circle (status dot, avatar), bypass the token -->
-<div class="h-2 w-2 bg-action-600" style="border-radius: 9999px;"></div>{% endverbatim %}{% endfilter %}</code></pre>
+/* or as utilities: rounded-xs (4) rounded-sm (8) rounded-md (12)
+   rounded-lg (16) rounded-xl (20) rounded-2xl (28) rounded-full */{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
 
     <h2 class="mt-8">Elevation</h2>
-    <p class="text-gray-700">
-        Three fixed shadow levels for chrome that's always elevated (dropdowns, dialogs, toasts),
-        plus a named z-index scale so two components never have to guess whether 20 beats 10.
+    <p class="text-on-surface-variant">
+        In M3, elevation is mostly <em>tonal</em>: a higher surface is a higher
+        <code>surface-container-*</code> role, not a heavier shadow. Shadows are kept for things that
+        float - menus (level 2), dialogs and snackbars (level 3), the FAB (level 3). The five levels
+        are <code>--md-sys-elevation-level1..5</code>, and the <code>shadow-elevation-1..5</code>
+        utilities.
     </p>
     <div class="doc-preview mt-4 flex flex-wrap gap-6">
-        <div class="bg-panel p-4 text-xs" style="box-shadow:var(--shadow-blueprint-sm)">blueprint-sm</div>
-        <div class="bg-panel p-4 text-xs" style="box-shadow:var(--shadow-blueprint-md)">blueprint-md</div>
-        <div class="bg-panel p-4 text-xs" style="box-shadow:var(--shadow-blueprint-lg)">blueprint-lg</div>
+        <div class="rounded-md bg-surface-container-low p-4 text-body-small shadow-elevation-1">level 1</div>
+        <div class="rounded-md bg-surface-container p-4 text-body-small shadow-elevation-2">level 2</div>
+        <div class="rounded-md bg-surface-container-high p-4 text-body-small shadow-elevation-3">level 3</div>
+        <div class="rounded-md bg-surface-container-high p-4 text-body-small shadow-elevation-4">level 4</div>
+        <div class="rounded-md bg-surface-container-highest p-4 text-body-small shadow-elevation-5">level 5</div>
     </div>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">
         <table class="doc-props w-full">
             <thead><tr><th>Token</th><th>Value</th><th>Used by</th></tr></thead>
             <tbody>
-                <tr><td><code>--z-dropdown</code></td><td>30</td><td>Dropdown panels, autocomplete results.</td></tr>
+                <tr><td><code>--z-dropdown</code></td><td>30</td><td>Menus, autocomplete results.</td></tr>
                 <tr><td><code>--z-sticky</code></td><td>40</td><td>Sticky headers.</td></tr>
-                <tr><td><code>--z-drawer</code></td><td>50</td><td>Drawers, the filter panel.</td></tr>
+                <tr><td><code>--z-drawer</code></td><td>50</td><td>Side sheets, the filter panel.</td></tr>
                 <tr><td><code>--z-dialog</code></td><td>60</td><td>Modal dialogs.</td></tr>
-                <tr><td><code>--z-toast</code></td><td>70</td><td>Toasts and flash messages.</td></tr>
-                <tr><td><code>--z-tooltip</code></td><td>80</td><td>Tooltips — always on top.</td></tr>
+                <tr><td><code>--z-toast</code></td><td>70</td><td>Snackbars and flash messages.</td></tr>
+                <tr><td><code>--z-tooltip</code></td><td>80</td><td>Tooltips - always on top.</td></tr>
             </tbody>
         </table>
     </div>
 
-    <h2 class="mt-8">Card shadow</h2>
-    <p class="text-gray-700">
-        <code>.card</code> and <code>.detail-panel</code> are flat by default — they separate from
-        the page with a border, not a shadow — because a page full of shadowed panels reads as
-        noisy. <code>--shadow-card</code> (declared as <code>none</code> in the <code>@theme</code>
-        block) is the one token that controls both, retuned by <code>data-shadow</code> against the
-        same blueprint scale above so "elevated" panels still look consistent with the
-        dropdown/dialog/toast shadows.
+    <h2 class="mt-8">Card elevation</h2>
+    <p class="text-on-surface-variant">
+        <code>.card</code>, <code>.detail-panel</code> and the other panel components follow
+        <code>data-shadow</code>: flat (the default) renders them as M3 <em>outlined</em> cards; soft
+        and elevated render them as M3 <em>elevated</em> cards, with no outline and a level 1 or
+        level 2 shadow. <code>.card-outlined</code>, <code>.card-elevated</code> and
+        <code>.card-filled</code> pin one M3 card type regardless of the axis.
     </p>
     <div class="doc-preview mt-4">
-        <div class="flex flex-wrap items-center gap-3">
-            <button class="btn btn-secondary" onclick="wiseSetShadow('')">Flat (default)</button>
-            <button class="btn btn-secondary" onclick="wiseSetShadow('soft')">Soft</button>
-            <button class="btn btn-secondary" onclick="wiseSetShadow('elevated')">Elevated</button>
+        <div class="btn-group" role="group" aria-label="Card elevation">
+            <button class="btn" onclick="wiseSetShadow('')">Outlined (default)</button>
+            <button class="btn" onclick="wiseSetShadow('soft')">Soft</button>
+            <button class="btn" onclick="wiseSetShadow('elevated')">Elevated</button>
         </div>
-        <div class="mt-4 flex flex-wrap gap-4">
-            <div class="card max-w-xs">
-                <div class="card-kicker">Card</div>
-                <h3 class="card-title mt-1">--shadow-card</h3>
-                <p class="card-content mt-2">Toggle the buttons above to see this card's elevation change.</p>
+        <div class="mt-4 grid gap-4 sm:grid-cols-3">
+            <div class="card">
+                <div class="card-kicker">.card</div>
+                <h3 class="card-title mt-1">Follows the axis</h3>
+                <p class="card-content mt-1">Toggle the buttons above.</p>
             </div>
-            <div class="detail-panel max-w-xs !p-4">
-                <table>
-                    <tr><th>Panel</th><td>detail-panel</td></tr>
-                    <tr><th>Shadow</th><td>same token</td></tr>
-                </table>
+            <div class="card card-elevated">
+                <div class="card-kicker">.card-elevated</div>
+                <h3 class="card-title mt-1">Always elevated</h3>
+                <p class="card-content mt-1">surface-container-low + level 1.</p>
+            </div>
+            <div class="card card-filled">
+                <div class="card-kicker">.card-filled</div>
+                <h3 class="card-title mt-1">Always filled</h3>
+                <p class="card-content mt-1">surface-container-highest.</p>
             </div>
         </div>
     </div>
 
+    <h2 class="mt-8">State layers</h2>
+    <p class="text-on-surface-variant">
+        Every interactive component - buttons, cards that are links, navigation and menu items, tabs,
+        chips - paints an M3 state layer: an overlay of its own content color at 8% on hover, 10% on
+        keyboard focus and 10% while pressed. It's one rule in <code>tokens.css</code>, driven by a
+        <code>currentColor</code> gradient, so it tints correctly on filled, tonal and transparent
+        components alike. Disabled controls use 38% on-surface content on a 12% container.
+    </p>
+    <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
+        <button class="btn btn-primary">Hover me</button>
+        <button class="btn btn-brand">Tonal</button>
+        <button class="btn btn-secondary">Outlined</button>
+        <button class="btn btn-ghost">Text</button>
+        <button class="btn btn-primary" disabled>Disabled</button>
+    </div>
+
     <h2 class="mt-8">Background</h2>
-    <p class="text-gray-700">
-        <code>data-bg</code> retunes the neutral page/surface trio (<code>--color-page</code>,
-        <code>--color-panel-alt</code>, <code>--color-surface</code>) toward a warm or cool cast,
-        independently of <code>data-palette</code> — palette moves the brand/action ramps, this
-        moves the ground they sit on. <code>--color-panel</code> never moves, so raised content still
-        reads as raised in every combination.
+    <p class="text-on-surface-variant">
+        M3 neutrals are tinted by the seed color by default ("tonal"), so surfaces feel part of the
+        palette. <code>data-bg</code> re-generates just the neutral palettes from a warm or cool hue
+        instead - every <code>surface-container-*</code> role and the gray ramp move together, while
+        <code>data-palette</code> keeps its primary/secondary/tertiary colors.
     </p>
     <div class="doc-preview mt-4">
-        <div class="flex flex-wrap items-center gap-3">
-            <button class="btn btn-secondary" onclick="wiseSetBg('')">Neutral (default)</button>
-            <button class="btn btn-secondary" onclick="wiseSetBg('warm')">Warm</button>
-            <button class="btn btn-secondary" onclick="wiseSetBg('cool')">Cool</button>
+        <div class="btn-group" role="group" aria-label="Background">
+            <button class="btn" onclick="wiseSetBg('')">Tonal (default)</button>
+            <button class="btn" onclick="wiseSetBg('warm')">Warm</button>
+            <button class="btn" onclick="wiseSetBg('cool')">Cool</button>
         </div>
         <div class="mt-4 grid gap-3 sm:grid-cols-3">
-            <div class="border border-divider p-4 text-xs" style="background:var(--color-page)">--color-page</div>
-            <div class="border border-divider p-4 text-xs" style="background:var(--color-panel-alt)">--color-panel-alt</div>
-            <div class="border border-divider p-4 text-xs" style="background:var(--color-surface)">--color-surface</div>
+            <div class="rounded-sm border border-divider bg-surface p-4 text-body-small">surface</div>
+            <div class="rounded-sm border border-divider bg-surface-container p-4 text-body-small">surface-container</div>
+            <div class="rounded-sm border border-divider bg-surface-container-highest p-4 text-body-small">surface-container-highest</div>
         </div>
     </div>
     <div class="callout callout-info mt-4">
         {% lucide "info" size=16 cls="callout-icon" %}
         <div>
             <div class="callout-title">Six axes, one panel</div>
-            Theme, palette, density, radius, shadow and background all switch this way — one
+            Theme, palette, density, shape, card elevation and background all switch this way - one
             attribute on <code>&lt;html&gt;</code>, persisted to <code>localStorage</code>. The demo
             app's sidebar (and this site's own header) opens the same settings panel these buttons
-            drive individually — see <code>wise_core/components/_settings_panel.html</code>.
+            drive individually - see <code>wise_core/components/_settings_panel.html</code>.
         </div>
     </div>
 
@@ -175,36 +213,43 @@
         <table class="doc-props w-full">
             <thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td><code>--transition-fast</code></td><td>100ms</td><td>Hover and focus tints.</td></tr>
-                <tr><td><code>--transition-normal</code></td><td>150ms</td><td>Anything that moves or resizes.</td></tr>
-                <tr><td><code>--transition-slow</code></td><td>250ms</td><td>A panel sliding in, a progress fill.</td></tr>
-                <tr><td><code>--focus-ring-width</code></td><td>2px</td><td>The shared <code>:focus-visible</code> ring.</td></tr>
-                <tr><td><code>--focus-ring-offset</code></td><td>1px</td><td>Gap between element and ring.</td></tr>
+                <tr><td><code>--md-sys-motion-easing-standard</code></td><td>cubic-bezier(0.2, 0, 0, 1)</td><td>Default for every transition (also Tailwind's default easing).</td></tr>
+                <tr><td><code>--md-sys-motion-easing-emphasized-decelerate</code></td><td>cubic-bezier(0.05, 0.7, 0.1, 1)</td><td>Things entering the screen: dialogs, sheets.</td></tr>
+                <tr><td><code>--md-sys-motion-easing-emphasized-accelerate</code></td><td>cubic-bezier(0.3, 0, 0.8, 0.15)</td><td>Things leaving the screen.</td></tr>
+                <tr><td><code>--md-sys-motion-duration-short2..4</code></td><td>100–200ms</td><td>Hover, focus, color changes.</td></tr>
+                <tr><td><code>--md-sys-motion-duration-medium1..4</code></td><td>250–400ms</td><td>Expanding, sliding, progress fills.</td></tr>
+                <tr><td><code>--focus-ring-width</code> / <code>-offset</code> / <code>-color</code></td><td>3px / 2px / secondary</td><td>The M3 focus indicator, shared by every <code>:focus-visible</code>. Text fields use their own 2px primary outline instead.</td></tr>
             </tbody>
         </table>
     </div>
 
-    <h2 class="mt-8">Control sizing</h2>
-    <p class="text-gray-700">
-        Controls read these rather than hardcoding a height, which is exactly what lets
-        <code>data-density</code> retune the whole UI in one place.
+    <h2 class="mt-8">Density</h2>
+    <p class="text-on-surface-variant">
+        Components read these rather than hardcoding a height, which is what lets
+        <code>data-density</code> retune the whole UI in one place. Comfortable is M3 density 0;
+        compact is roughly M3 density -4 for fields and -2 for buttons and list items.
     </p>
     <div class="doc-preview mt-4 flex flex-wrap items-end gap-3">
         <input class="input input-sm max-w-[8rem]" placeholder="sm">
         <input class="input max-w-[8rem]" placeholder="md">
         <input class="input input-lg max-w-[8rem]" placeholder="lg">
-        <button class="btn btn-secondary" onclick="wiseSetDensity('compact')">Compact</button>
-        <button class="btn btn-secondary" onclick="wiseSetDensity('')">Comfortable</button>
+        <div class="btn-group" role="group" aria-label="Density">
+            <button class="btn" onclick="wiseSetDensity('')">Comfortable</button>
+            <button class="btn" onclick="wiseSetDensity('compact')">Compact</button>
+        </div>
     </div>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">
         <table class="doc-props w-full">
             <thead><tr><th>Token</th><th>Comfortable</th><th>Compact</th></tr></thead>
             <tbody>
-                <tr><td><code>--control-height-sm</code></td><td>2rem</td><td>1.75rem</td></tr>
-                <tr><td><code>--control-height-md</code></td><td>2.5rem</td><td>2.125rem</td></tr>
-                <tr><td><code>--control-height-lg</code></td><td>3rem</td><td>2.5rem</td></tr>
-                <tr><td><code>--control-padding-y</code></td><td>0.5rem</td><td>0.3rem</td></tr>
-                <tr><td><code>--table-padding-y</code></td><td>0.5rem</td><td>0.3rem</td></tr>
+                <tr><td><code>--control-height-sm</code></td><td>2.5rem (40px)</td><td>2rem</td></tr>
+                <tr><td><code>--control-height-md</code></td><td>3.5rem (56px, M3 text field)</td><td>2.5rem</td></tr>
+                <tr><td><code>--control-height-lg</code></td><td>4rem</td><td>3rem</td></tr>
+                <tr><td><code>--control-height-button</code></td><td>2.5rem (40px, M3 button)</td><td>2rem</td></tr>
+                <tr><td><code>--control-padding-x-button</code></td><td>1.5rem</td><td>1rem</td></tr>
+                <tr><td><code>--list-item-height</code></td><td>3.5rem (M3 nav item)</td><td>2.5rem</td></tr>
+                <tr><td><code>--menu-item-height</code></td><td>3rem (M3 menu item)</td><td>2.25rem</td></tr>
+                <tr><td><code>--table-padding-y</code></td><td>0.875rem</td><td>0.375rem</td></tr>
             </tbody>
         </table>
     </div>

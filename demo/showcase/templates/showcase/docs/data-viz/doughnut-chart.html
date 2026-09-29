@@ -37,7 +37,7 @@
                     role="img" aria-label="Revenue by month"></canvas>
             <div class="pointer-events-none absolute text-center">
                 <div class="font-heading text-2xl font-semibold">{{ revenue_total }}</div>
-                <div class="text-[10px] uppercase tracking-wider text-gray-600">total</div>
+                <div class="text-label-small text-on-surface-variant">total</div>
             </div>
         </div>
     </div>
@@ -51,7 +51,7 @@ context["revenue_total"] = sum(revenue){% endverbatim %}{% endfilter %}</code></
     <canvas class="chart-canvas" data-chart="{% chart_json revenue_doughnut %}"></canvas>
     <div class="pointer-events-none absolute text-center">
         <div class="font-heading text-2xl font-semibold">{{ revenue_total }}</div>
-        <div class="text-[10px] uppercase tracking-wider text-gray-600">total</div>
+        <div class="text-label-small text-on-surface-variant">total</div>
     </div>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
     <p class="mt-2 text-gray-700">

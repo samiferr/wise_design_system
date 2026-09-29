@@ -69,9 +69,9 @@ one) to opt out.
             <div>
                 <div class="form-label mb-2">{% trans "Palette" %}</div>
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('')">{% trans "Green" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('')">{% trans "Baseline" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('green')">{% trans "Green" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('blue')">{% trans "Blue" %}</button>
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('violet')">{% trans "Violet" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('amber')">{% trans "Amber" %}</button>
                 </div>
             </div>
@@ -87,16 +87,16 @@ one) to opt out.
             <div>
                 <div class="form-label mb-2">{% trans "Corner radius" %}</div>
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('')">{% trans "Sharp" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('')">{% trans "Material" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('soft')">{% trans "Soft" %}</button>
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('round')">{% trans "Round" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('sharp')">{% trans "Sharp" %}</button>
                 </div>
             </div>
 
             <div>
                 <div class="form-label mb-2">{% trans "Card shadow" %}</div>
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetShadow('')">{% trans "Flat" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetShadow('')">{% trans "Outlined" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetShadow('soft')">{% trans "Soft" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetShadow('elevated')">{% trans "Elevated" %}</button>
                 </div>
@@ -105,7 +105,7 @@ one) to opt out.
             <div>
                 <div class="form-label mb-2">{% trans "Background" %}</div>
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetBg('')">{% trans "Neutral" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetBg('')">{% trans "Tonal" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetBg('warm')">{% trans "Warm" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetBg('cool')">{% trans "Cool" %}</button>
                 </div>
@@ -114,7 +114,7 @@ one) to opt out.
             <div class="card">
                 <div class="card-kicker">{% trans "Live preview" %}</div>
                 <h3 class="card-title mt-1">{% trans "This card follows your settings" %}</h3>
-                <p class="card-content mt-2">{% trans "Radius, shadow and background update instantly - no reload." %}</p>
+                <p class="card-content mt-1">{% trans "Radius, shadow and background update instantly - no reload." %}</p>
                 <div class="mt-3 flex flex-wrap items-center gap-2">
                     <button class="btn btn-primary" type="button">{% trans "Primary" %}</button>
                     <span class="badge badge-action">{% trans "Badge" %}</span>

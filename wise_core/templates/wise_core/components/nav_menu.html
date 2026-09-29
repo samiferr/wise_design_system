@@ -27,13 +27,12 @@ selected - e.g. "invoice_" for every invoice_* route)}.
 {% endfor %}
 {% if request.user.is_authenticated %}
     <a href="{% url 'home' %}"
-       class="mt-5 flex items-center gap-2.5 border-t border-divider px-3.5 pt-4 no-underline text-gray-900 hover:bg-gray-900/5">
-        <div class="flex h-8 w-8 flex-shrink-0 items-center justify-center border border-divider
-            font-heading text-xs font-semibold text-action-700">
+       class="menu-link mt-4 text-on-surface">
+        <div class="avatar avatar-sm h-8 w-8 text-label-medium">
             {{ request.user.first_name|default:request.user.username|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}
         </div>
         <div class="min-w-0">
-            <div class="truncate text-[13px] font-semibold leading-tight">{{ request.user.get_full_name|default:request.user.username }}</div>
+            <div class="truncate text-label-large">{{ request.user.get_full_name|default:request.user.username }}</div>
         </div>
     </a>
 {% endif %}
