@@ -38,7 +38,7 @@
             <aside class="hidden md:sticky md:top-0 md:flex md:h-screen md:w-[232px] md:flex-shrink-0
                 md:flex-col md:border-r md:border-divider">
                 <div class="flex items-center justify-between gap-2 px-6 py-6">
-                    <a href="{% url 'home' %}" class="min-w-0 truncate no-underline text-gray-900 font-heading font-semibold uppercase tracking-wide">
+                    <a href="{% url 'home' %}" class="min-w-0 truncate no-underline text-gray-900 text-title-medium">
                         {% block brand %}{{ project_name|default:"Wise" }}{% endblock %}
                     </a>
                     {% block sidebar_extra %}

@@ -20,15 +20,17 @@ round-trip.
 import math
 
 # Series colors, in the order a multi-series/multi-slice chart should
-# consume them. Every entry is a CSS custom property reference, so a
-# palette or theme switch recolors live charts with no re-render.
+# consume them: the Material 3 key color roles, so every series is a tone
+# the palette generated and reads correctly in light and dark. Every entry
+# is a CSS custom property reference, so a palette or theme switch
+# recolors live charts with no re-render.
 SERIES_COLORS = [
-    'var(--color-action-600)',
-    'var(--color-brand-400)',
-    'var(--color-warning-400)',
-    'var(--color-accent-400)',
-    'var(--color-brand-800)',
-    'var(--color-gray-500)',
+    'var(--md-sys-color-primary)',
+    'var(--md-sys-color-tertiary)',
+    'var(--md-sys-color-secondary)',
+    'var(--md-sys-color-warning)',
+    'var(--md-sys-color-error)',
+    'var(--md-sys-color-outline)',
 ]
 
 

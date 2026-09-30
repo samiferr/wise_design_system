@@ -1,171 +1,210 @@
 # Design tokens
 
-Source: [`wise_core/static/wise_core/css/tokens.css`](../wise_core/static/wise_core/css/tokens.css) —
-a Tailwind CSS v4 partial (an `@theme` block plus `@layer base`/`components`/`utilities`), extracted
-from DCMS7's `core/static/core/css/input.css`. See [getting-started.md](getting-started.md) for how
-a project builds this into a real stylesheet.
+Source: [`wise_core/static/wise_core/css/tokens.css`](../wise_core/static/wise_core/css/tokens.css)
+plus the generated [`md3-palettes.css`](../wise_core/static/wise_core/css/md3-palettes.css) it
+imports. Together they are a Tailwind CSS v4 partial (an `@theme` block plus `@layer
+base`/`components`/`utilities`) styled after **[Material Design 3](https://m3.material.io/)**. See
+[getting-started.md](getting-started.md) for how a project builds this into a real stylesheet.
 
-Live, rendered version: run the demo site and visit `/docs/theming/design-tokens/` (and the rest of
-the Theming & Utilities section) — every example on that page is a real, running control, not a
-screenshot. `/demo/` is a separate section of the same site: a small CRUD app built from these
-tokens, with a settings panel (see [Switchable axes](#switchable-axes) below) for trying them
-against real data.
+Live, rendered version: run the demo site and visit `/docs/theming/design-tokens/` and
+`/docs/theming/color-palettes/`. Every example there is a real, running control. AI agents: the
+[Material Design 3 skill](../.claude/skills/material-design-3/SKILL.md) is the condensed version
+of this page, plus the M3-component → Wise-class mapping.
+
+## Token tiers
+
+The same three tiers Material 3 itself uses:
+
+| Tier | Names | Where | Use it for |
+|---|---|---|---|
+| Reference | `--md-ref-palette-<palette><tone>` (e.g. `--md-ref-palette-primary40`) | `md3-palettes.css`, generated | Nothing directly. System tokens point at these. |
+| System | `--md-sys-color-*`, `--md-sys-shape-corner-*`, `--md-sys-elevation-level*`, `--md-sys-motion-*`, `--md-sys-state-*` | `tokens.css` | Hand-written CSS (`var(--md-sys-color-primary)`) |
+| Tailwind | `--color-primary`, `--text-title-medium`, `--radius-md`, `--shadow-elevation-2`, `--ease-standard`, ... | `tokens.css` `@theme static` | Templates (`bg-primary`, `text-title-medium`, `rounded-md`, `shadow-elevation-2`) |
 
 ## Color
 
-One brand/accent color (`brand`/`action` — both draw from the same green ramp, matching the source
-system's mono-accent rule), plus functional-only reds/ambers and an overridden neutral gray scale:
+M3 dynamic color. A **seed color** is expanded by Google's
+[`@material/material-color-utilities`](https://github.com/material-foundation/material-color-utilities)
+into tonal palettes: primary, secondary, tertiary, neutral, neutral-variant and error, plus
+harmonized **success** and **warning** (M3 "custom colors"). Each palette has tones 0–100.
+**Color roles** then pick tones: `primary` = primary40 in light and primary80 in dark,
+`on-primary` = primary100 / primary20, and so on. Components only ever use roles, so contrast holds
+in every palette and both themes.
 
-| Token | Use |
+| Role (Tailwind utility suffix) | Use |
 |---|---|
-| `--color-brand-50..950` | Chrome, links, tags, kickers |
-| `--color-action-50..700` | Buttons, focus rings, primary interactive state |
-| `--color-accent-50..600` | **Destructive only** — delete buttons, error states |
-| `--color-warning-50..600` | **Status/caution only** — pending states, warning banners |
-| `--color-gray-50..950` | Overrides Tailwind's built-in gray scale — every `text-gray-*`/`bg-gray-*`/`border-gray-*` utility already picks up these tones |
-| `--color-page` / `--color-surface` / `--color-divider` | Page background, input/filter background, hairline borders |
-
-To rebrand: define your own `--color-brand-*`/`--color-action-*` ramps in an `@theme` block that
-`@import`s *after* `tokens.css` in your project's entry CSS — Tailwind v4 merges `@theme` blocks by
-variable name, so your values win without touching this file.
-
-```css
-/* your-project/static_src/input.css */
-@import "tailwindcss";
-@import "path/to/wise_core/static/wise_core/css/tokens.css";
-
-@theme {
-    --color-brand-500: #7c3aed;
-    --color-brand-600: #6d28d9;
-    --color-action-500: #7c3aed;
-    --color-action-600: #6d28d9;
-}
-```
-
-`--color-action-600` (not `-500`) is what buttons use for white-on-color text: `-500` only clears
-3.3:1 contrast (fails WCAG AA's 4.5:1 normal-text minimum for a button label); `-600` clears 5:1.
-Keep that in mind if you re-tune the ramp.
-
-**Usage** — colors are consumed as ordinary Tailwind utility classes (`bg-*`/`text-*`/`border-*`),
-never as raw CSS custom properties, except where noted below:
+| `primary` / `on-primary` | Filled buttons, the most important action, active indicators, links |
+| `primary-container` / `on-primary-container` | FAB, info callouts, highlighted accents |
+| `secondary` / `secondary-container` / `on-secondary-container` | Tonal buttons, selected nav item, selected chip or segment |
+| `tertiary` / `tertiary-container` / `on-tertiary-container` | Contrasting accents |
+| `error` / `error-container` / `on-error(-container)` | **Destructive and error only** |
+| `success-*`, `warning-*` | Status: done / needs attention (same four-role shape as error) |
+| `surface`, `surface-dim`, `surface-bright` | The page |
+| `surface-container-lowest/low/(none)/high/highest` | Tonal elevation: cards & sheets (low), menus (container), dialogs (high), filled fields & chips (highest) |
+| `on-surface` / `on-surface-variant` | Body text / secondary text and icons |
+| `outline` / `outline-variant` | Field and outlined-button borders / dividers and card outlines |
+| `inverse-surface` / `inverse-on-surface` / `inverse-primary` | Snackbars, tooltips |
+| `scrim`, `shadow` | Modal backdrops, shadows |
 
 ```html
-<button class="bg-action-600 text-white hover:bg-action-700">Action button</button>
-<span class="bg-brand-100 text-brand-800 font-semibold">Brand tag</span>
-<button class="bg-accent-500 text-white hover:bg-accent-600">Delete</button>
-<div class="border border-warning-500 bg-warning-50 text-warning-600 px-3 py-2 text-sm">
-    Something needs your attention.
-</div>
-
-<!-- gray-* is the same Tailwind utility you already know, repointed at this system's tones -->
-<p class="text-gray-900">Primary text</p>
-<p class="text-gray-600">Secondary / muted text</p>
-
-<!-- page/surface/divider aren't part of the numbered gray ramp - they get their own utilities -->
-<body class="bg-page">
-    <div class="border border-divider bg-white p-6">...</div>
-    <input class="bg-surface border border-divider">
-</body>
+<button class="bg-primary text-on-primary">Filled</button>
+<div class="bg-surface-container-high text-on-surface rounded-2xl p-6">Dialog-like surface</div>
+<p class="text-on-surface-variant">Secondary text</p>
+<span class="bg-tertiary-container text-on-tertiary-container rounded-sm px-2">Accent</span>
+<hr class="border-outline-variant">
 ```
+
+Always pair a container with its own `on-` role, and never hardcode `text-white`: in dark mode the
+filled roles become light tones and need a dark label.
+
+### Legacy color names
+
+The pre-M3 names still exist as aliases, so older templates render correctly, but new markup should
+use the roles above:
+
+| Legacy | Now points at |
+|---|---|
+| `brand-*`, `action-*` | primary palette tones (`action-600` = `primary`, `action-100` = `primary-container`, `action-700` = `on-primary-container`) |
+| `accent-*` | error roles (`accent-500` = `error`, `accent-50` = `error-container`) |
+| `warning-50/500/600` | `warning-container` / `warning` / `on-warning-container` |
+| `page`, `panel`, `panel-alt`, `divider` | `surface`, `surface-container-low`, `surface-container`, `outline-variant` |
+| `surface` | **now the M3 `surface` role** (the page). It used to be the input fill; M3 outlined fields are transparent. |
+| `on-action`, `on-brand`, `on-accent` | `on-primary`, `on-primary`, `on-error` |
+| `gray-50..950` | M3 neutral tones: `gray-900` = on-surface, `gray-600` = on-surface-variant, `gray-500` = outline, `gray-300` = outline-variant. Inverts in dark mode. |
+| `--shadow-blueprint-sm/md/lg` | `--md-sys-elevation-level1/2/3` |
+
+### Rebranding
+
+Add a seed to `PALETTES` in [`scripts/generate_m3_palettes.mjs`](../scripts/generate_m3_palettes.mjs)
+(or change the `null` entry, which is the default palette) and run:
+
+```bash
+npm run build:palettes && npm run build:css
+```
+
+In a consuming project that doesn't want to run the generator, export a scheme from
+[Material Theme Builder](https://material-foundation.github.io/material-theme-builder/) and paste its
+`--md-sys-color-*` values into `:root { ... }` and `:root[data-theme="dark"] { ... }` blocks in your
+own entry CSS, imported *after* `tokens.css`. Every component follows, since they only read those
+system tokens.
 
 ## Typography
 
-- `--font-heading`: "Barlow Condensed" — all `h1`–`h6`, semibold, tight (1.12) line-height, `h6` set
-  in uppercase small-caps-style tracking.
-- `--font-body` / `--font-sans`: "Barlow" — body copy.
-- Both fonts are vendored as self-hosted `woff2` files (`wise_core/static/wise_core/font/`) with
-  `font-display: swap`.
-- Fixed heading scale (not `clamp()`/responsive): h1 42px, h2 32px, h3 25px, h4 20px, h5 16px, h6 13px.
+Roboto, vendored as a variable woff2 (weights 100–900, latin + latin-ext, OFL - see
+`wise_core/static/wise_core/font/`). `--font-brand`/`--font-plain` are the M3 names;
+`--font-heading`/`--font-body`/`--font-sans` alias them.
 
-**Usage** — both fonts apply automatically to their elements (every `<h1>`–`<h6>` and body text need
-no class at all); reach for the utility classes only to force one onto something else:
+The M3 type scale, each role one Tailwind utility setting size, line height, tracking and weight:
 
-```html
-<h2>Section title</h2>  <!-- font-heading applied automatically -->
-<p>Body copy needs no class — font-body is the default.</p>
+| Utility | Size / line height | Weight | Default use |
+|---|---|---|---|
+| `text-display-large/medium/small` | 57/64, 45/52, 36/44 | 400 | Hero numbers and headlines |
+| `text-headline-large/medium/small` | 32/40, 28/36, 24/32 | 400 | `h1`, `h2`, `h3`; dialog titles |
+| `text-title-large/medium/small` | 22/28 (400), 16/24, 14/20 (500) | | `h4`, `h5`, `h6`; card titles, tabs, table headers |
+| `text-body-large/medium/small` | 16/24, 14/20, 12/16 | 400 | Body (large is the page default), cells, help text |
+| `text-label-large/medium/small` | 14/20, 12/16, 11/16 | 500 | Buttons, nav items, chips / badges / counts |
 
-<!-- forcing the heading font onto a non-heading element -->
-<div class="font-heading font-semibold uppercase tracking-wide">Eyebrow label</div>
-```
+Headings get their role automatically. Sentence case everywhere: M3 never uppercases headings,
+labels or buttons.
 
-## Radius
+## Shape
 
-The entire Tailwind radius scale (`--radius-xs` through `--radius-4xl`) is zeroed **by default**, so
-every `rounded-*` utility across your templates resolves to a square corner with **no template
-changes needed** — this system's baseline look. The component layer (`.btn`, `.card`,
-`.detail-panel`, `.input`, `.select`, `.textarea`, `.badge`, `.tag`, `.dialog`, `.dropdown-panel`,
-`.toast`, `.callout`, `.avatar`, ...) reads this same scale rather than hardcoding a radius, so
-redefining it moves the whole UI together — either permanently in your own `@theme` block, or live
-via the `data-radius` attribute (see [Switchable axes](#switchable-axes)).
+The M3 corner scale, `--md-sys-shape-corner-*`, and Tailwind's radius scale mapped onto it:
 
-```html
-<div class="rounded-lg border">Square corner — rounded-lg resolves to 0 by default</div>
+| M3 token | Value | Tailwind | Used by |
+|---|---|---|---|
+| `extra-small` | 4px | `rounded-xs` | Text fields, menus, snackbars, tooltips |
+| `small` | 8px | `rounded-sm` | Chips (`.tag`), badges |
+| `medium` | 12px | `rounded-md` | Cards, detail panel, callouts, accordion |
+| `large` | 16px | `rounded-lg` | Side sheets (`.drawer`), FAB, toolbar |
+| `large-increased` | 20px | `rounded-xl` | |
+| `extra-large` | 28px | `rounded-2xl` | Dialogs, carousel items |
+| `full` | 9999px | `rounded-full` | Buttons, icon buttons, nav items, switches, avatars |
 
-<!-- to force an actual circle (status dot, avatar), bypass the token -->
-<div class="h-2 w-2 bg-action-600" style="border-radius: 9999px;"></div>
-```
+`data-radius="soft"` halves the scale; `data-radius="sharp"` zeroes all of it, pills included.
+Things that are round by definition (spinner, donut, `.avatar-circle`) use a literal `9999px`.
 
-## Shadows
+## Elevation
 
-Three fixed elevation levels for chrome that's always elevated, named for what they're used for
-rather than a generic sm/md/lg scale: `--shadow-blueprint-sm/md/lg`, used by the flash-message
-stack, the filter side-panel, the autocomplete dropdown, `.dialog`, `.dropdown-panel` and `.toast`.
+M3 elevation is mostly **tonal** (a higher `surface-container-*` role). Shadows are for things that
+float: `--md-sys-elevation-level1..5` / `shadow-elevation-1..5`. Menus use level 2, dialogs and
+snackbars level 3, the FAB level 3 (4 on hover). `.elevation-1/2/3` utility classes apply the
+matching surface *and* shadow together.
 
-**Usage** — there's no `shadow-blueprint-*` Tailwind utility; reach these with the raw CSS custom
-property in an inline `style` or your own CSS:
+`.card`, `.detail-panel` and the other panels follow `data-shadow`: flat (default) = M3 **outlined**
+card, soft/elevated = M3 **elevated** card (level 1/2). `.card-outlined`, `.card-elevated` and
+`.card-filled` pin one type.
 
-```html
-<div class="filter-panel" style="box-shadow: var(--shadow-blueprint-lg)">...</div>
-```
+## State layers
 
-`.card` and `.detail-panel` are the exception: both read the same `--shadow-card` token (`none` by
-default — a border, not a shadow, separates a raised panel from the page) rather than the
-blueprint scale directly, so a project can retune *just* panel elevation without touching
-dropdowns/dialogs/toasts. See `data-shadow` below.
+Every interactive component paints the M3 state layer: an overlay of its own content color
+(`currentColor`) at 8% on hover, 10% on focus-visible and 10% while pressed
+(`--md-sys-state-*-state-layer-opacity`). It's one `:where(...)` rule in `tokens.css`; add your own
+component's selector to it rather than writing hover colors by hand. Disabled: 38% `on-surface`
+content on a 12% `on-surface` container.
+
+Focus: the M3 focus indicator, a 3px `secondary` ring 2px out (`--focus-ring-width/-offset/-color`)
+on every `:focus-visible`. Text fields use their own 2px `primary` outline instead.
+
+## Motion
+
+`--md-sys-motion-easing-standard` (`cubic-bezier(0.2, 0, 0, 1)`) is also Tailwind's default
+transition easing, with a 200ms default duration. Emphasized decelerate/accelerate are for
+entering/leaving elements. Durations `short1`–`long4` run 50–600ms. Utilities: `ease-standard`,
+`ease-emphasized-decelerate`, ...
+
+## Density
+
+| Token | Comfortable (M3 density 0) | Compact |
+|---|---|---|
+| `--control-height-md` | 3.5rem (56px text field) | 2.5rem |
+| `--control-height-sm` / `-lg` | 2.5rem / 4rem | 2rem / 3rem |
+| `--control-height-button` | 2.5rem (40px button) | 2rem |
+| `--control-padding-x-button` | 1.5rem | 1rem |
+| `--list-item-height` | 3.5rem (nav item) | 2.5rem |
+| `--menu-item-height` | 3rem | 2.25rem |
+| `--table-padding-y` / `--table-header-padding-y` | 0.875rem / 1rem | 0.375rem / 0.625rem |
 
 ## Switchable axes
 
-Six independent attributes on `<html>`, each redefining a handful of the tokens above at runtime
-(no rebuild, no second stylesheet) — they compose freely, so e.g. a compact dark violet UI with
-round corners and a warm background is a valid combination. `base.html` applies whatever's in
-`localStorage` before first paint; `wise_core/static/wise_core/js/common.js` exposes one setter per
-axis (`wiseSetTheme`/`wiseSetPalette`/`wiseSetDensity`/`wiseSetRadius`/`wiseSetShadow`/`wiseSetBg`),
-and `wise_core/components/_settings_panel.html` is a ready-made drawer UI for all six — open it with
-`wiseOpenDrawer('wise-settings-drawer')`, normally via `_settings_toggle.html`. It ships wired into
-`wise_core/base.html`'s default authenticated chrome (sidebar + mobile topbar), so any project
-pulling in `wise_core` gets it for free.
-
-The panel has two tabs: **Settings** (the controls above) and **Copy tokens**, which renders the
-exact combination currently selected — the `<html data-*>` attribute line to reproduce it at
-runtime, and the resolved `:root { --token: value; }` block behind it (a curated subset — brand/
-action colors, page/panel/surface, radius, `--shadow-card`, control heights — not the full
-`@theme`) — behind one `.copy-button`. See `wiseBuildTokenExport()` in `common.js` if you need to
-change which tokens it exports.
+Six independent attributes on `<html>`, each redefining a handful of tokens at runtime (no rebuild,
+no second stylesheet). They compose freely, because each touches a different tier: palette and
+background swap reference tones, theme swaps which tone each system role reads. `base.html` applies
+whatever's in `localStorage` before first paint; `wise_core/static/wise_core/js/common.js` exposes
+one setter per axis, and `wise_core/components/_settings_panel.html` is a ready-made side sheet for
+all six (open it with `wiseOpenDrawer('wise-settings-drawer')`, normally via
+`_settings_toggle.html`). Its **Copy tokens** tab exports the current `data-*` line and the resolved
+`--md-sys-*` values (see `WISE_EXPORT_TOKENS` in `common.js`).
 
 | Attribute | Values | Retunes |
 |---|---|---|
-| `data-theme` | `light` (default), `dark` | Neutral ramp, surfaces, shadows, on-colors |
-| `data-palette` | `green` (default), `blue`, `violet`, `amber` | Brand/action ramps only |
-| `data-density` | `comfortable` (default), `compact` | Control heights, form/table rhythm |
-| `data-radius` | `sharp` (default), `soft`, `round` | The whole radius scale |
-| `data-shadow` | `flat` (default), `soft`, `elevated` | `--shadow-card` only |
-| `data-bg` | `neutral` (default), `warm`, `cool` | `--color-page`/`-panel-alt`/`-surface` (never `-panel`) |
+| `data-theme` | `light` (default), `dark` | Which palette tone every M3 color role reads |
+| `data-palette` | baseline (default, seed `#6750A4`), `green`, `blue`, `amber` | The seed - every generated palette |
+| `data-density` | `comfortable` (default), `compact` | Field, button, list-item and table heights |
+| `data-radius` | M3 scale (default), `soft`, `sharp` | The whole corner scale |
+| `data-shadow` | `flat` (default), `soft`, `elevated` | Outlined vs. elevated cards and panels |
+| `data-bg` | tonal (default, seed-tinted), `warm`, `cool` | The neutral palettes behind every surface role |
 
 ```js
 wiseSetTheme('dark')       // '' or 'light' resets to light
-wiseSetPalette('violet')   // '' resets to green
+wiseSetPalette('blue')     // '' resets to the M3 baseline
 wiseSetDensity('compact')  // '' resets to comfortable
-wiseSetRadius('round')     // '' resets to sharp
-wiseSetShadow('elevated')  // '' resets to flat
-wiseSetBg('warm')          // '' resets to neutral
+wiseSetRadius('sharp')     // '' resets to the M3 shape scale
+wiseSetShadow('elevated')  // '' resets to flat (outlined cards)
+wiseSetBg('warm')          // '' resets to tonal
 ```
 
 ## Component class names
 
 The component layer (`.btn`, `.card`, `.badge`, `.form-stack`, `.detail-panel`, `.data-table`,
-`.menu-link`, `.tab-bar`, `.pagination-link`, ...) is the design system's real public API — stable
-across token changes, matched 1:1 to DCMS7's own class names so templates ported from DCMS7 don't
-need renaming. See [template-tags-and-filters.md](template-tags-and-filters.md) and
+`.menu-link`, `.tab-bar`, `.pagination-link`, ...) is the design system's real public API. The class
+names stayed the same through the move to Material 3; only their look changed. Each maps onto an M3
+component: `.btn-primary` is a filled button, `.btn-brand` tonal, `.btn-secondary` outlined,
+`.btn-ghost` text, `.btn-group` a segmented button, `.tag` a chip, `.toast` a snackbar, `.drawer` a
+side sheet, `.dropdown-panel` a menu, `.menu-link` a navigation-drawer item. M3-named aliases
+(`.btn-filled`, `.btn-tonal`, `.btn-outlined`, `.btn-text`) and a few new M3 pieces (`.btn-elevated`,
+`.fab`, `.card-elevated/-filled/-outlined`, `.badge-count`) sit alongside. The full mapping is in the
+[Material Design 3 skill](../.claude/skills/material-design-3/references/components.md). See
+[template-tags-and-filters.md](template-tags-and-filters.md) and
 [generic-views-and-mixins.md](generic-views-and-mixins.md) for how the generic templates use them,
-or the Components sections (Actions, Forms, Layout, Navigation, Feedback, Media, Data Viz) of
-`/docs/` for a rendered catalog.
+or the Components sections of `/docs/` for a rendered catalog.

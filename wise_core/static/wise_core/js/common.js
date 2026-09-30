@@ -134,20 +134,27 @@ function wiseToggleTheme() {
 
 // ── Settings panel: "Copy tokens" tab ───────────────────────────────────────
 // Reads back the *resolved* value of a curated set of custom properties
-// (not the full @theme block - that's 150+ vars, most of them irrelevant to
+// (the Material 3 system roles, not the full token set - that's 400+ vars, most of them irrelevant to
 // a quick copy/paste) plus whichever data-* axis attributes are actually set
 // on <html>, so a developer can lift the exact combination chosen on the
 // Settings tab out of the live page instead of re-deriving it from
 // tokens.css by hand.
 
 var WISE_EXPORT_TOKENS = [
-    '--color-brand-500', '--color-brand-600', '--color-brand-700',
-    '--color-action-500', '--color-action-600', '--color-on-action', '--color-on-brand',
-    '--color-page', '--color-panel', '--color-panel-alt', '--color-surface', '--color-divider',
-    '--color-gray-500', '--color-gray-900',
-    '--radius-sm', '--radius-md', '--radius-lg', '--radius-xl',
+    '--md-source-color',
+    '--md-sys-color-primary', '--md-sys-color-on-primary',
+    '--md-sys-color-primary-container', '--md-sys-color-on-primary-container',
+    '--md-sys-color-secondary', '--md-sys-color-secondary-container', '--md-sys-color-on-secondary-container',
+    '--md-sys-color-tertiary', '--md-sys-color-tertiary-container',
+    '--md-sys-color-error', '--md-sys-color-error-container',
+    '--md-sys-color-surface', '--md-sys-color-surface-container-low', '--md-sys-color-surface-container',
+    '--md-sys-color-surface-container-high', '--md-sys-color-surface-container-highest',
+    '--md-sys-color-on-surface', '--md-sys-color-on-surface-variant',
+    '--md-sys-color-outline', '--md-sys-color-outline-variant',
+    '--md-sys-shape-corner-extra-small', '--md-sys-shape-corner-small', '--md-sys-shape-corner-medium',
+    '--md-sys-shape-corner-large', '--md-sys-shape-corner-extra-large', '--md-sys-shape-corner-full',
     '--shadow-card',
-    '--control-height-sm', '--control-height-md', '--control-height-lg', '--control-padding-y',
+    '--control-height-sm', '--control-height-md', '--control-height-button', '--list-item-height',
 ]
 
 function wiseBuildTokenExport() {

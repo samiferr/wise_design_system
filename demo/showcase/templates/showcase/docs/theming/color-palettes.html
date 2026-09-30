@@ -4,106 +4,145 @@
 {% block doc_section %}Theming &amp; Utilities{% endblock %}
 {% block doc_title %}Color Palettes{% endblock %}
 {% block doc_intro %}
-    The system is deliberately mono-accent: one brand color carries chrome, links and tags, and one
-    action color carries interactive fills. Red and amber are reserved for meaning — destructive and
-    caution — so they never compete with the accent for attention.
+    Material 3 color, generated from one seed. Google's own color library turns the seed into six
+    tonal palettes (primary, secondary, tertiary, neutral, neutral-variant, error - plus harmonized
+    success and warning), and the <em>color roles</em> below pick tones out of them. Components only
+    ever use roles, which is why a palette or theme switch is always legible.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Switch palette</h2>
-    <p class="text-gray-700">Only the brand and action ramps move; neutrals and every component rule are shared.</p>
+    <p class="text-on-surface-variant">
+        Each palette is a different seed; every role below regenerates from it. Baseline is the M3
+        default, <code>#6750A4</code>.
+    </p>
     <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
-        <div class="btn-group">
-            <button class="btn btn-secondary" onclick="wiseSetPalette('')">Green</button>
-            <button class="btn btn-secondary" onclick="wiseSetPalette('blue')">Blue</button>
-            <button class="btn btn-secondary" onclick="wiseSetPalette('violet')">Violet</button>
-            <button class="btn btn-secondary" onclick="wiseSetPalette('amber')">Amber</button>
+        <div class="btn-group" role="group" aria-label="Palette">
+            <button class="btn" onclick="wiseSetPalette('')">Baseline</button>
+            <button class="btn" onclick="wiseSetPalette('green')">Green</button>
+            <button class="btn" onclick="wiseSetPalette('blue')">Blue</button>
+            <button class="btn" onclick="wiseSetPalette('amber')">Amber</button>
+        </div>
+        <div class="btn-group" role="group" aria-label="Theme">
+            <button class="btn" onclick="wiseSetTheme('light')">Light</button>
+            <button class="btn" onclick="wiseSetTheme('dark')">Dark</button>
         </div>
     </div>
 
-    <h2 class="mt-8">brand</h2>
-    <p class="text-gray-700">Chrome, links, tags and kickers.</p>
-    <div class="doc-preview mt-4 grid grid-cols-4 gap-1 sm:grid-cols-8">
-        <div class="swatch" style="background:var(--color-brand-50)">50</div>
-        <div class="swatch" style="background:var(--color-brand-100)">100</div>
-        <div class="swatch" style="background:var(--color-brand-300)">300</div>
-        <div class="swatch text-white" style="background:var(--color-brand-500)">500</div>
-        <div class="swatch text-white" style="background:var(--color-brand-600)">600</div>
-        <div class="swatch text-white" style="background:var(--color-brand-700)">700</div>
-        <div class="swatch text-white" style="background:var(--color-brand-800)">800</div>
-        <div class="swatch text-white" style="background:var(--color-brand-900)">900</div>
+    <h2 class="mt-8">Accent roles</h2>
+    <p class="text-on-surface-variant">
+        Always pair a role with its <code>on-</code> role. <strong>Primary</strong> is for the most
+        prominent actions, <strong>secondary</strong> for less prominent ones (tonal buttons, selected
+        navigation, filter chips), <strong>tertiary</strong> for contrasting accents, and
+        <strong>error</strong> for destructive and error states only.
+    </p>
+    <div class="doc-preview mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="swatch !h-20 bg-primary text-on-primary">primary</div>
+        <div class="swatch !h-20 bg-secondary text-on-secondary">secondary</div>
+        <div class="swatch !h-20 bg-tertiary text-on-tertiary">tertiary</div>
+        <div class="swatch !h-20 bg-error text-on-error">error</div>
+        <div class="swatch !h-20 bg-primary-container text-on-primary-container">primary-container</div>
+        <div class="swatch !h-20 bg-secondary-container text-on-secondary-container">secondary-container</div>
+        <div class="swatch !h-20 bg-tertiary-container text-on-tertiary-container">tertiary-container</div>
+        <div class="swatch !h-20 bg-error-container text-on-error-container">error-container</div>
     </div>
 
-    <h2 class="mt-8">action</h2>
-    <p class="text-gray-700">Buttons, focus rings, selected rows.</p>
-    <div class="doc-preview mt-4 grid grid-cols-3 gap-1 sm:grid-cols-6">
-        <div class="swatch" style="background:var(--color-action-50)">50</div>
-        <div class="swatch" style="background:var(--color-action-100)">100</div>
-        <div class="swatch" style="background:var(--color-action-400)">400</div>
-        <div class="swatch" style="background:var(--color-action-500);color:var(--color-on-action)">500</div>
-        <div class="swatch" style="background:var(--color-action-600);color:var(--color-on-action)">600</div>
-        <div class="swatch" style="background:var(--color-action-700);color:var(--color-on-action)">700</div>
+    <h2 class="mt-8">Status roles</h2>
+    <p class="text-on-surface-variant">
+        M3 "custom colors": a fixed green and amber, harmonized toward the seed so they sit in the same
+        family, with the same four-role shape as error.
+    </p>
+    <div class="doc-preview mt-4 grid gap-2 sm:grid-cols-4">
+        <div class="swatch !h-16 bg-success text-on-success">success</div>
+        <div class="swatch !h-16 bg-success-container text-on-success-container">success-container</div>
+        <div class="swatch !h-16 bg-warning text-on-warning">warning</div>
+        <div class="swatch !h-16 bg-warning-container text-on-warning-container">warning-container</div>
     </div>
-    <div class="callout callout-info mt-4">
+
+    <h2 class="mt-8">Surface roles</h2>
+    <div class="doc-preview mt-4 grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
+        <div class="swatch !h-16 bg-surface-dim text-on-surface">surface-dim</div>
+        <div class="swatch !h-16 bg-surface text-on-surface">surface</div>
+        <div class="swatch !h-16 bg-surface-bright text-on-surface">surface-bright</div>
+        <div class="swatch !h-16 bg-surface-container-lowest text-on-surface">container-lowest</div>
+        <div class="swatch !h-16 bg-surface-container-low text-on-surface">container-low</div>
+        <div class="swatch !h-16 bg-surface-container text-on-surface">container</div>
+        <div class="swatch !h-16 bg-surface-container-high text-on-surface">container-high</div>
+        <div class="swatch !h-16 bg-surface-container-highest text-on-surface">container-highest</div>
+        <div class="swatch !h-16 bg-inverse-surface text-inverse-on-surface">inverse-surface</div>
+        <div class="swatch !h-16 bg-on-surface text-surface">on-surface</div>
+        <div class="swatch !h-16 bg-on-surface-variant text-surface">on-surface-variant</div>
+        <div class="swatch !h-16 bg-inverse-primary text-on-primary-container">inverse-primary</div>
+        <div class="swatch !h-16 bg-outline text-surface">outline</div>
+        <div class="swatch !h-16 bg-outline-variant text-on-surface">outline-variant</div>
+    </div>
+
+    <h2 class="mt-8">Tonal palettes</h2>
+    <p class="text-on-surface-variant">
+        The reference tier underneath: <code>--md-ref-palette-&lt;palette&gt;&lt;tone&gt;</code>,
+        generated into <code>md3-palettes.css</code> by <code>npm run build:palettes</code>. Roles
+        point at these - templates shouldn't.
+    </p>
+    <div class="doc-preview mt-4 space-y-2">
+        <div class="grid grid-cols-7 gap-1 sm:grid-cols-13">
+            <div class="swatch" style="background:var(--md-ref-palette-primary0);color:#fff">0</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary10);color:#fff">10</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary20);color:#fff">20</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary30);color:#fff">30</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary40);color:#fff">40</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary50);color:#fff">50</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary60)">60</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary70)">70</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary80)">80</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary90)">90</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary95)">95</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary99)">99</div>
+            <div class="swatch" style="background:var(--md-ref-palette-primary100)">100</div>
+        </div>
+        <p class="text-body-small text-on-surface-variant">primary - light roles use 40/90/100/30, dark roles 80/30/20/90.</p>
+        <div class="grid grid-cols-7 gap-1 sm:grid-cols-13">
+            <div class="swatch" style="background:var(--md-ref-palette-neutral0);color:#fff">0</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral10);color:#fff">10</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral20);color:#fff">20</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral30);color:#fff">30</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral40);color:#fff">40</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral50);color:#fff">50</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral60)">60</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral70)">70</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral80)">80</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral90)">90</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral95)">95</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral99)">99</div>
+            <div class="swatch" style="background:var(--md-ref-palette-neutral100)">100</div>
+        </div>
+        <p class="text-body-small text-on-surface-variant">neutral - every surface role, tinted by the seed hue (see <code>data-bg</code>).</p>
+    </div>
+
+    <div class="callout callout-info mt-6">
         {% lucide "info" size=16 cls="callout-icon" %}
         <div>
-            Buttons fill with <code>action-600</code>, not <code>-500</code>. In the default palette
-            white on <code>-500</code> reaches only 3.3:1, which fails the 4.5:1 minimum for normal
-            text; <code>-600</code> clears it at 5:1. Keep that in mind if you retune the ramp.
+            <div class="callout-title">Rebranding</div>
+            Add your seed to <code>PALETTES</code> in <code>scripts/generate_m3_palettes.mjs</code> and run
+            <code>npm run build:palettes &amp;&amp; npm run build:css</code>. Contrast between every role
+            and its <code>on-</code> role is guaranteed by the tone mapping, whatever seed you pick.
         </div>
     </div>
-
-    <h2 class="mt-8">accent — destructive only</h2>
-    <div class="doc-preview mt-4 grid grid-cols-4 gap-1">
-        <div class="swatch" style="background:var(--color-accent-50)">50</div>
-        <div class="swatch" style="background:var(--color-accent-400)">400</div>
-        <div class="swatch" style="background:var(--color-accent-500);color:var(--color-on-accent)">500</div>
-        <div class="swatch" style="background:var(--color-accent-600);color:var(--color-on-accent)">600</div>
-    </div>
-
-    <h2 class="mt-8">warning — status and caution only</h2>
-    <div class="doc-preview mt-4 grid grid-cols-4 gap-1">
-        <div class="swatch" style="background:var(--color-warning-50)">50</div>
-        <div class="swatch" style="background:var(--color-warning-400)">400</div>
-        <div class="swatch text-white" style="background:var(--color-warning-500)">500</div>
-        <div class="swatch text-white" style="background:var(--color-warning-600)">600</div>
-    </div>
-    <p class="mt-2 text-gray-700">
-        <code>warning-400</code> is decorative-only — it is tuned for chart fills, not for text.
-        <code>500</code> and <code>600</code> are the ones that clear contrast for warning copy.
-    </p>
-
-    <h2 class="mt-8">Neutrals &amp; surfaces</h2>
-    <div class="doc-preview mt-4 grid grid-cols-6 gap-1 sm:grid-cols-11">
-        <div class="swatch" style="background:var(--color-gray-50)">50</div>
-        <div class="swatch" style="background:var(--color-gray-100)">100</div>
-        <div class="swatch" style="background:var(--color-gray-200)">200</div>
-        <div class="swatch" style="background:var(--color-gray-300)">300</div>
-        <div class="swatch" style="background:var(--color-gray-400)">400</div>
-        <div class="swatch" style="background:var(--color-gray-500)">500</div>
-        <div class="swatch" style="background:var(--color-gray-600)">600</div>
-        <div class="swatch" style="background:var(--color-gray-700)">700</div>
-        <div class="swatch" style="background:var(--color-gray-800)">800</div>
-        <div class="swatch" style="background:var(--color-gray-900)">900</div>
-        <div class="swatch" style="background:var(--color-gray-950)">950</div>
-    </div>
-    <p class="mt-2 text-gray-700">
-        This ramp <em>overrides</em> Tailwind's built-in gray, so <code>text-gray-*</code>,
-        <code>bg-gray-*</code> and <code>border-gray-*</code> already pick up the system's tones —
-        there is nothing new to learn and nothing to rename.
-    </p>
 
     <h2 class="mt-8">Reference</h2>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">
         <table class="doc-props w-full">
-            <thead><tr><th>Ramp</th><th>Use</th></tr></thead>
+            <thead><tr><th>Utility</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td><code>brand-50..950</code></td><td>Chrome, links, tags, kickers.</td></tr>
-                <tr><td><code>action-50..700</code></td><td>Buttons, focus, primary interactive state.</td></tr>
-                <tr><td><code>accent-50..600</code></td><td><strong>Destructive only</strong> — delete, revoke, errors.</td></tr>
-                <tr><td><code>warning-50..600</code></td><td><strong>Status/caution only</strong> — pending, warnings.</td></tr>
-                <tr><td><code>gray-50..950</code></td><td>Overrides Tailwind's gray; inverts in dark mode.</td></tr>
-                <tr><td><code>page</code>, <code>panel</code>, <code>panel-alt</code>, <code>surface</code>, <code>divider</code></td><td>Canvas, raised surface, second level, input fill, hairlines.</td></tr>
-                <tr><td><code>on-action</code>, <code>on-brand</code>, <code>on-accent</code></td><td>Readable foreground on a filled surface.</td></tr>
+                <tr><td><code>bg-primary text-on-primary</code></td><td>Filled buttons, the most important action, active indicators.</td></tr>
+                <tr><td><code>bg-primary-container text-on-primary-container</code></td><td>FAB, highlighted info, selected accents.</td></tr>
+                <tr><td><code>bg-secondary-container text-on-secondary-container</code></td><td>Tonal buttons, selected nav item, selected chip or segment.</td></tr>
+                <tr><td><code>bg-tertiary-container text-on-tertiary-container</code></td><td>Contrasting accents that balance primary.</td></tr>
+                <tr><td><code>bg-error</code> / <code>bg-error-container</code></td><td><strong>Destructive and error only.</strong></td></tr>
+                <tr><td><code>bg-success-container</code> / <code>bg-warning-container</code></td><td>Status: done / needs attention.</td></tr>
+                <tr><td><code>bg-surface</code>, <code>bg-surface-container-*</code></td><td>Page, then cards/sheets (low), menus (container), dialogs (high), fields (highest).</td></tr>
+                <tr><td><code>text-on-surface</code> / <code>text-on-surface-variant</code></td><td>Body text / secondary text and icons.</td></tr>
+                <tr><td><code>border-outline</code> / <code>border-outline-variant</code></td><td>Field and outlined-button borders / dividers and card outlines.</td></tr>
+                <tr><td><code>bg-inverse-surface text-inverse-on-surface</code></td><td>Snackbars, tooltips.</td></tr>
+                <tr><td>Legacy: <code>brand-*</code>, <code>action-*</code>, <code>accent-*</code>, <code>warning-*</code>, <code>page</code>, <code>panel</code>, <code>divider</code>, <code>gray-*</code></td><td>Still defined, as aliases onto the roles above - prefer the role names in new markup.</td></tr>
             </tbody>
         </table>
     </div>

@@ -153,9 +153,13 @@ this for you if you `{% extends "wise_core/base.html" %}`:
 <link rel="stylesheet" href="{% static 'wise_core/css/tailwind.css' %}">
 ```
 
-Swap the design system's own brand for yours by overriding `--color-brand-*`/`--color-action-*` in
-your own `@theme` block, imported *after* `tokens.css` — Tailwind's cascading `@theme` merges by
-variable name, last one wins.
+The design system is styled after Material Design 3, with every color generated from one seed. To
+swap in your own brand, export a scheme from
+[Material Theme Builder](https://material-foundation.github.io/material-theme-builder/) and paste its
+`--md-sys-color-*` values into `:root { ... }` and `:root[data-theme="dark"] { ... }` blocks imported
+*after* `tokens.css` — see [design-tokens.md § Rebranding](design-tokens.md#rebranding). `tokens.css`
+`@import`s its sibling `md3-palettes.css` and loads Roboto from `../font/`, so keep the
+`wise_core/static/wise_core/` folder layout intact.
 
 ## 3. Extend the base template
 

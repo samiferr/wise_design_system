@@ -4,9 +4,10 @@
 {% block doc_section %}Theming &amp; Utilities{% endblock %}
 {% block doc_title %}Built-in Themes{% endblock %}
 {% block doc_intro %}
-    Light and dark, shipped. Dark mode is not a tint pass over the light theme — the neutral ramp
-    inverts, surfaces get their own values, and filled controls swap their foreground so labels stay
-    legible.
+    Light and dark, shipped - the two Material 3 schemes generated from the same seed color. Dark
+    mode is not a tint pass over the light theme: every M3 color role reads a different tone of the
+    same palette (primary40 becomes primary80, surface is neutral6 instead of neutral98, ...), so
+    contrast is designed in, not patched.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Switch</h2>
@@ -18,10 +19,12 @@
 
     <h2 class="mt-8">What actually changes</h2>
     <p class="text-gray-700">
-        The trick that makes dark mode cheap is <strong>inverting the neutral ramp</strong>:
-        <code>gray-50</code> becomes the darkest tone and <code>gray-950</code> the lightest. Every
-        existing <code>text-gray-600</code> or <code>bg-gray-100</code> in the component layer
-        <em>and in your own templates</em> then lands the right way up with no markup changes.
+        <code>data-theme="dark"</code> only changes <strong>which tone each M3 role reads</strong>,
+        so every <code>bg-surface-container</code>, <code>text-on-surface-variant</code> or
+        <code>bg-primary</code> in the component layer <em>and in your own templates</em> is right
+        in both themes with no <code>dark:</code> variants. The Tailwind gray ramp is repointed at
+        the M3 neutral palette and inverts the same way, so older <code>text-gray-600</code> markup
+        still lands the right way up.
     </p>
     <div class="doc-preview mt-4">
         <div class="grid grid-cols-6 gap-1 text-[10px] sm:grid-cols-11">
@@ -42,10 +45,12 @@
 
     <h2 class="mt-8">The on-colors</h2>
     <p class="text-gray-700">
-        A primary button in light mode is white text on dark green. Dark mode lightens the fill for
-        contrast against a near-black page — at which point white text would fail. So components
-        paint their label with <code>--color-on-action</code> rather than a hardcoded
-        <code>text-white</code>, and the theme flips it to a near-black.
+        A filled button in light mode is primary40 with a primary100 (white) label. Dark mode
+        lightens the fill to primary80 - at which point white text would fail - and the label
+        becomes primary20. That's what the M3 <code>on-*</code> roles are for: always paint a
+        container's content with its own <code>on-</code> role (<code>on-primary</code>,
+        <code>on-secondary-container</code>, <code>on-error</code>, ...), never a hardcoded
+        <code>text-white</code>.
     </p>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex103" id="ex103-preview" value="preview" checked>
@@ -57,15 +62,15 @@
     <div class="doc-example-panel-preview">
         <div class="doc-preview flex flex-wrap items-center gap-3">
         <button class="btn btn-primary">Primary</button>
-        <button class="btn btn-brand">Brand</button>
+        <button class="btn btn-brand">Tonal</button>
         <button class="btn btn-danger">Danger</button>
         <span class="badge badge-action">Badge</span>
     </div>
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}.btn-primary {
-    @apply bg-action-600 border-action-600 hover:bg-action-700;
-    color: var(--color-on-action);   /* not text-white */
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);   /* not text-white */
 }{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
@@ -73,21 +78,26 @@
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>
             <div class="callout-title">Writing your own filled component?</div>
-            Use <code>var(--color-on-action)</code> for its label. Hardcoding
+            Pair the container role with its <code>on-</code> role - <code>bg-primary text-on-primary</code>,
+            <code>bg-tertiary-container text-on-tertiary-container</code>. Hardcoding
             <code>text-white</code> works in light mode and becomes unreadable in dark.
         </div>
     </div>
 
     <h2 class="mt-8">Surfaces</h2>
     <p class="text-gray-700">
-        Raised surfaces use <code>--color-panel</code>, not <code>white</code>. Keeping those
-        separate is what lets the surface darken while <code>white</code> stays available as a real
-        white for the few things that need one.
+        M3 expresses depth with tone: <code>surface</code> is the page, and five
+        <code>surface-container-*</code> roles step up from it - lowest, low (cards, sheets),
+        container (menus), high (dialogs), highest (filled fields, chips). In dark mode each step is
+        slightly <em>lighter</em>, which is how a raised surface still reads as raised on near-black.
     </p>
     <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-3">
-        <div class="border border-divider p-4 text-xs" style="background:var(--color-page)">--color-page</div>
-        <div class="border border-divider p-4 text-xs" style="background:var(--color-panel)">--color-panel</div>
-        <div class="border border-divider p-4 text-xs" style="background:var(--color-panel-alt)">--color-panel-alt</div>
+        <div class="swatch !h-16 bg-surface">surface</div>
+        <div class="swatch !h-16 bg-surface-container-lowest">container-lowest</div>
+        <div class="swatch !h-16 bg-surface-container-low">container-low</div>
+        <div class="swatch !h-16 bg-surface-container">container</div>
+        <div class="swatch !h-16 bg-surface-container-high">container-high</div>
+        <div class="swatch !h-16 bg-surface-container-highest">container-highest</div>
     </div>
 
     <h2 class="mt-8">Components in both themes</h2>

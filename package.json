@@ -2,12 +2,14 @@
   "name": "wise-design-system",
   "version": "0.1.0",
   "private": true,
-  "description": "Build tooling for the Wise Design System's demo/docs site.",
+  "description": "Build tooling for the Wise Design System: Material 3 palette generation and the demo/docs site's Tailwind build.",
   "scripts": {
+    "build:palettes": "node scripts/generate_m3_palettes.mjs",
     "build:css": "tailwindcss -i ./demo/static_src/input.css -o ./wise_core/static/wise_core/css/tailwind.css --minify",
     "watch:css": "tailwindcss -i ./demo/static_src/input.css -o ./wise_core/static/wise_core/css/tailwind.css --watch"
   },
   "devDependencies": {
+    "@material/material-color-utilities": "^0.3.0",
     "@tailwindcss/cli": "^4.3.3",
     "tailwindcss": "^4.3.3"
   }

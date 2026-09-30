@@ -7,7 +7,7 @@
             <div>
                 <div class="flex items-center gap-2">
                     {% block list_icon %}{% endblock %}
-                    <h2 class="uppercase">{% block list_title %}{% endblock %}</h2>
+                    <h2>{% block list_title %}{% endblock %}</h2>
                 </div>
                 <p class="mt-1 text-sm text-gray-600">{% block list_count %}{{ paginator.count }} {% trans "record(s)" %}{% endblock %}</p>
             </div>
