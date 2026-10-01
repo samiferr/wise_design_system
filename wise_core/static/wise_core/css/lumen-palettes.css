@@ -8,7 +8,7 @@
    read them directly - they exist for charts and illustration.
 
    --lumen-accent-<step> is the accent scale: blue by default, re-pointed by
-   data-palette. data-bg blocks come last so they override the neutrals.
+   data-palette.
 
    Palette, spacing, radius, type-size and component-height values are
    adapted from Adobe's open-source Spectrum design tokens (Apache
@@ -519,70 +519,4 @@
     --lumen-accent-1400: var(--lumen-yellow-1400);
     --lumen-accent-1500: var(--lumen-yellow-1500);
     --lumen-accent-1600: var(--lumen-yellow-1600);
-}
-
-/* data-bg="warm" - neutral scale tinted at OKLab hue 75, chroma 0.012 */
-:root[data-bg="warm"] {
-    --lumen-gray-25: #fcfaf6;
-    --lumen-gray-50: #faf8f4;
-    --lumen-gray-75: #f5f3ef;
-    --lumen-gray-100: #ece9e4;
-    --lumen-gray-200: #e5e0db;
-    --lumen-gray-300: #ded9d3;
-    --lumen-gray-400: #cbc5be;
-    --lumen-gray-500: #948e87;
-    --lumen-gray-600: #75706a;
-    --lumen-gray-700: #544f49;
-    --lumen-gray-800: #2d2823;
-    --lumen-gray-900: #16120d;
-    --lumen-gray-1000: #000000;
-}
-
-:root[data-bg="warm"][data-theme="dark"] {
-    --lumen-gray-25: #14100b;
-    --lumen-gray-50: #1e1a15;
-    --lumen-gray-75: #26211c;
-    --lumen-gray-100: #302b26;
-    --lumen-gray-200: #36312b;
-    --lumen-gray-300: #3d3832;
-    --lumen-gray-400: #48433d;
-    --lumen-gray-500: #716c66;
-    --lumen-gray-600: #8f8982;
-    --lumen-gray-700: #b4aea7;
-    --lumen-gray-800: #dfdad4;
-    --lumen-gray-900: #f5f2ee;
-    --lumen-gray-1000: #fcfaf6;
-}
-
-/* data-bg="cool" - neutral scale tinted at OKLab hue 255, chroma 0.012 */
-:root[data-bg="cool"] {
-    --lumen-gray-25: #f8fafd;
-    --lumen-gray-50: #f6f8fc;
-    --lumen-gray-75: #f0f3f7;
-    --lumen-gray-100: #e6e9ee;
-    --lumen-gray-200: #dde2e7;
-    --lumen-gray-300: #d6dbe1;
-    --lumen-gray-400: #c1c7ce;
-    --lumen-gray-500: #8a9097;
-    --lumen-gray-600: #6d7278;
-    --lumen-gray-700: #4c5157;
-    --lumen-gray-800: #25292f;
-    --lumen-gray-900: #101318;
-    --lumen-gray-1000: #000000;
-}
-
-:root[data-bg="cool"][data-theme="dark"] {
-    --lumen-gray-25: #0e1116;
-    --lumen-gray-50: #171b21;
-    --lumen-gray-75: #1e2228;
-    --lumen-gray-100: #282c32;
-    --lumen-gray-200: #2e3338;
-    --lumen-gray-300: #353a3f;
-    --lumen-gray-400: #40454b;
-    --lumen-gray-500: #696e74;
-    --lumen-gray-600: #858b92;
-    --lumen-gray-700: #aab0b7;
-    --lumen-gray-800: #d7dce1;
-    --lumen-gray-900: #eff2f6;
-    --lumen-gray-1000: #f8fafd;
 }

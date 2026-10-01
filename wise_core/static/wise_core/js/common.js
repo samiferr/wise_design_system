@@ -123,10 +123,6 @@ function wiseSetShadow(shadow) {
     wiseSetPreference('wise-shadow', shadow)
 }
 
-function wiseSetBg(bg) {
-    wiseSetPreference('wise-bg', bg)
-}
-
 function wiseToggleTheme() {
     var current = document.documentElement.getAttribute('data-theme')
     wiseSetTheme(current === 'dark' ? 'light' : 'dark')
@@ -157,7 +153,7 @@ var WISE_EXPORT_TOKENS = [
 
 function wiseBuildTokenExport() {
     var root = document.documentElement
-    var attrs = ['theme', 'palette', 'density', 'radius', 'shadow', 'bg']
+    var attrs = ['theme', 'palette', 'density', 'radius', 'shadow']
         .map(function (key) {
             var value = root.getAttribute('data-' + key)
             return value ? 'data-' + key + '="' + value + '"' : null

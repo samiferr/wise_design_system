@@ -35,6 +35,19 @@ column list, a detail-panel row list) rather than hardcoding field access per te
 {{ invoice|get_value:"customer__company_name" }}
 ```
 
+### `{{ record.color|on_color }}` (filter)
+
+`#000000` or `#ffffff`, whichever has the higher WCAG contrast on the CSS hex color (`#rgb` /
+`#rrggbb`; anything else falls back to white, which is always at least 4.58:1). For text on a color
+the *user* chose - a category swatch, a tag color - where a fixed token like `on-accent` can't be
+right because the background isn't a token:
+
+```django
+<span class="avatar" style="background-color: {{ category.color }}; color: {{ category.color|on_color }}">
+    {{ category.name|slice:":1" }}
+</span>
+```
+
 ### `{{ url_name|startswith:"invoice_" }}` (filter)
 
 `str.startswith()` for templates. Used by `nav_menu.html` to decide which sidebar item is selected

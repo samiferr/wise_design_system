@@ -38,8 +38,8 @@ python manage.py runserver
 | `/demo/` | The demo app — a real `WiseListView`+`django-filter` list with full CRUD (`/demo/categories/`) and a form exercising the autocomplete/rich-text/rating/date/file widgets (`/demo/products/`), and tabbed parent/child pages (a product's Variants and Reviews, a category's Products). Every list renders as a card list by default, with the data table one click away on `?view=table`. | `demo` / `wise-demo-2026` |
 
 Every page — marketing, docs and demo alike — carries a settings icon (sidebar on desktop, topbar on
-mobile) that opens a live panel for trying the six switchable design tokens: theme, palette,
-density, corner radius, card shadow and background. See
+mobile) that opens a live panel for trying the five switchable design tokens: theme, palette,
+density, corner radius and card shadow. See
 [Switchable axes](docs/design-tokens.md#switchable-axes).
 
 ## Repo layout

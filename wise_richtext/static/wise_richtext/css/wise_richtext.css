@@ -5,7 +5,7 @@
  * on its own it ignores the theme - white borders and dim toolbar icons in dark mode, a font
  * that matches nothing. This file is loaded right after it (see widgets.py) and re-points those
  * colors at the Lumen tokens from wise_core's tokens.css, so the editor follows data-theme,
- * data-palette, data-radius and data-bg like every other field. The fallbacks after each comma
+ * data-palette and data-radius like every other field. The fallbacks after each comma
  * are Quill's own values, so the file degrades to stock Quill in a project without the tokens.
  */
 

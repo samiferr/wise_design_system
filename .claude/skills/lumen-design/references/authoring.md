@@ -66,7 +66,9 @@ are public API: add, don't rename.
   `npm run build:palettes` so its checks mirror the change (its `checks()` function lists the pairs).
 - New semantic color family (like negative / positive): add `-background` and `-content` tokens in
   `@theme static` (and the dark step in the dark block), then a pair of checks in the generator.
-- Warm / cool neutrals: `BACKGROUNDS` in the generator.
+- The page background is fixed on purpose (no `data-bg` axis): to change the gray, change
+  `--color-background-base` (and the matching `page` ground in the generator's `checks()`), then re-run
+  `npm run build:palettes` so every pair is re-verified against it.
 
 ## Charts
 

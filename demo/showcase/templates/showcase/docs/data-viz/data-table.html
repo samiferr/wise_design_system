@@ -181,7 +181,7 @@
         Sorting is a query parameter, applied to the queryset — not a client-side re-sort, which would
         only reorder the current page and silently lie about the rest. Every sortable header's chevron
         sits at the right edge of the column, gray by default. Unsorted columns stay muted
-        ({% lucide "chevrons-up-down" size=14 cls="inline align-[-2px] text-gray-400" %}); the active
+        ({% lucide "chevrons-up-down" size=14 cls="inline align-[-2px] text-content-subdued" %}); the active
         column's chevron switches to the theme color
         ({% lucide "chevron-up" size=14 cls="inline align-[-2px] text-action-600" %}/{% lucide "chevron-down" size=14 cls="inline align-[-2px] text-action-600" %})
         so the current sort reads at a glance.

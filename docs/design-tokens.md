@@ -6,7 +6,8 @@ imports. Together they are a Tailwind CSS v4 partial (an `@theme` block plus `@l
 base`/`components`/`utilities`) styled after **Lumen**, a calm, neutral-first design system in the
 Spectrum tradition: one neutral scale and a single accent hue, semantic tokens that reference a small
 palette, a type scale in Source Sans 3, fully round buttons with 8px fields and cards, and layers and
-borders instead of shadows. See [getting-started.md](getting-started.md) for how a project builds this
+borders instead of shadows. The page is one fixed gray canvas with white surfaces on it (cards, panels,
+fields, popovers); the background is not a setting. See [getting-started.md](getting-started.md) for how a project builds this
 into a real stylesheet.
 
 Lumen's palette, spacing, radius, type-size and component-height values are adapted from Adobe's
@@ -35,17 +36,18 @@ only ever use semantic tokens, so contrast holds in every palette and both theme
 
 | Token (Tailwind utility suffix) | Use |
 |---|---|
-| `background-base` | The page |
-| `background-layer-1` | Raised panels: the sidebar, the action bar, an empty state |
-| `background-layer-2` | Cards, tables and field fills |
-| `background-elevated` | Popovers, menus, dialogs, tooltips that float above the page |
+| `background-base` | The page: one fixed gray (gray-100 in light, near-black in dark). Not configurable |
+| `background-layer-1` | Raised panels: the sidebar, the action bar, an empty state (white in light) |
+| `background-layer-2` | Cards, tables and field fills (white in light) |
+| `background-elevated` | Popovers, menus, dialogs, tooltips that float above the page (white in light) |
 | `fill-neutral-hover` / `fill-neutral-down` | Hover and pressed fill for quiet buttons, list rows, tabs; the neutral button |
+| `fill-neutral-subtle` | *Wise extension.* The faintest fill, for a quiet region inside a surface: a hovered table row, a table header, a calendar's outside days |
 | `content-heading` / `content-default` / `content-subdued` | Headings / body text and labels / help text, captions, icons |
 | `content-disabled` | Disabled text. Never for live content |
-| `border-default` / `border-hover` | A control's own border (3:1 on the page) / its hover |
+| `border-default` / `border-hover` | A control's own border (3:1 on the page and every surface) / its hover |
 | `border-subtle` | Decorative dividers and card edges only |
 | `accent-background` (+ `-hover`, `-down`) / `on-accent` | The single main action, selected checkbox / radio / switch; text on it |
-| `accent-content` | Links and selected text |
+| `accent-content` | Links and selected text. Step 1000 of the accent, so it holds 4.5:1 on the gray page, on white, and inside a hovered row |
 | `accent-subtle` / `on-accent-subtle` | *Wise extension.* A quiet accent tint for a highlighted region (calendar event, autocomplete row) |
 | `neutral-background` / `on-neutral` | The solid neutral: neutral badges, pressed action buttons, tooltips, toasts |
 | `informative-` / `positive-` / `notice-` / `negative-` `background` and `-content` | Status. Fills take `on-accent` text (`on-notice` on the orange fill). Always with a word and an icon |
@@ -65,6 +67,15 @@ accent steps one shade lighter, and the notice (orange) fill's label turns black
 The accent is one hue: blue by default, switchable to indigo, purple, green or amber with
 `data-palette`. Every Lumen hue is built to the same contrast ladder, so white text on the accent fill
 and the accent as link text hold 4.5:1 whichever one you pick.
+
+### Contrast on the gray canvas
+
+Stock Lumen puts text on white. Here it also sits on a gray page, so a few tokens read one step darker
+than Lumen's own: the accent and status `-content` colors use step 1000 (both themes), `border-default`
+is gray-600 and `border-hover` gray-700 in light, and the neutral fills start at gray-200. Every pair is
+asserted by `npm run build:palettes` on the page, every surface and every fill, in both themes and for
+every palette, and the build refuses to write if one drops below 4.5:1 (text) or 3:1 (control borders,
+focus ring).
 
 ### Material 3 and legacy color names
 
@@ -105,7 +116,7 @@ npm run build:palettes && npm run build:css
 ```
 
 The script checks the contrast of every token pair across both themes, every palette and every
-background, and refuses to write anything that fails. In a consuming project that doesn't want to run
+ground (the page, each surface, each fill), and refuses to write anything that fails. In a consuming project that doesn't want to run
 the generator, redefine `--color-accent-background`, `--color-accent-background-hover`,
 `--color-accent-background-down`, `--color-accent-content` and `--color-focus-ring` in an `@theme`
 block imported *after* `tokens.css` (keep 4.5:1 for white text on the fill and for the content color
@@ -151,15 +162,17 @@ that are round by definition (spinner, donut, radio, `.avatar-circle`) use a lit
 
 ## Layers and shadow
 
-Lumen raises a surface by layer and border, not shadow: `background-base` → `background-layer-1`
-(panels) → `background-layer-2` (cards, fields) → `background-elevated` (popovers, dialogs). Shadows
+Lumen raises a surface by layer and border, not shadow: `background-base` (the fixed gray page) →
+`background-layer-1` (panels) → `background-layer-2` (cards, fields) → `background-elevated` (popovers,
+dialogs). In light the three surfaces are white, so they read as white sheets on the gray page; in dark
+they step up from near-black. Shadows
 are for things that float, and there are three: `--shadow-emphasized` (`shadow-emphasized`, the resting
 state of a raised control), `--shadow-elevated` (menus, popovers, tooltips, toasts) and
 `--shadow-dragged` (dialogs, dragged items), deeper in dark mode. `.elevation-1/2/3` utility classes
 apply a layer *and* a shadow together.
 
-`.card`, `.detail-panel` and the other panels follow `data-shadow`: flat (default) = a layer-2 surface
-with a `border-subtle` edge and no shadow, soft/elevated = the same card with no border and an
+`.card`, `.detail-panel` and the other panels follow `data-shadow`: flat (default) = a white (layer-2)
+surface with a `border-subtle` edge and no shadow, soft/elevated = the same card with no border and an
 `emphasized` / `elevated` shadow. `.card-outlined`, `.card-elevated` and `.card-filled` pin one type.
 
 ## Hover, press, focus
@@ -199,12 +212,12 @@ following Lumen's "add about 20% on touch". Compact stays compact.
 
 ## Switchable axes
 
-Six independent attributes on `<html>`, each redefining a handful of tokens at runtime (no rebuild,
-no second stylesheet). They compose freely, because each touches a different tier: palette and
-background re-point reference steps, theme re-points which step each semantic token reads.
+Five independent attributes on `<html>`, each redefining a handful of tokens at runtime (no rebuild,
+no second stylesheet). They compose freely, because each touches a different tier: palette re-points
+reference steps, theme re-points which step each semantic token reads. The background is not an axis.
 `base.html` applies whatever's in `localStorage` before first paint;
 `wise_core/static/wise_core/js/common.js` exposes one setter per axis, and
-`wise_core/components/_settings_panel.html` is a ready-made side sheet for all six (open it with
+`wise_core/components/_settings_panel.html` is a ready-made side sheet for all five (open it with
 `wiseOpenDrawer('wise-settings-drawer')`, normally via `_settings_toggle.html`). Its **Copy tokens** tab
 exports the current `data-*` line and the resolved `--color-*` / `--corner-radius-*` values (see
 `WISE_EXPORT_TOKENS` in `common.js`).
@@ -216,7 +229,6 @@ exports the current `data-*` line and the resolved `--color-*` / `--corner-radiu
 | `data-density` | `comfortable` (default), `compact` | Field, button, list-item and table heights |
 | `data-radius` | Lumen radii (default), `soft`, `sharp` | The whole corner scale |
 | `data-shadow` | `flat` (default), `soft`, `elevated` | Outlined vs. raised cards and panels |
-| `data-bg` | neutral (default), `warm`, `cool` | The neutral scale behind every layer, fill and border |
 
 ```js
 wiseSetTheme('dark')       // '' or 'light' resets to light
@@ -224,7 +236,6 @@ wiseSetPalette('green')    // '' resets to blue, the Lumen default
 wiseSetDensity('compact')  // '' resets to comfortable
 wiseSetRadius('sharp')     // '' resets to the Lumen corner radii
 wiseSetShadow('elevated')  // '' resets to flat (outlined cards)
-wiseSetBg('warm')          // '' resets to neutral
 ```
 
 ## Component class names

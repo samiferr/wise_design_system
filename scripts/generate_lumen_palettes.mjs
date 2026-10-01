@@ -10,21 +10,27 @@
  * scales, each as 16 numbered steps with a light and a dark value, so a
  * step already flips with the theme. The steps live in lumen-scales.json
  * (next to this file); this script turns them into CSS and then checks the
- * contrast promises the semantic tokens in tokens.css make:
+ * contrast promises the semantic tokens in tokens.css make. The page is one
+ * fixed gray (gray-100 in light) with white surfaces on it, so every pair is
+ * checked on every ground that text or a control can actually sit on:
  *
- *   - body / subdued text holds 4.5:1 on every layer, fill and palette
- *   - a control border holds 3:1 on the page
- *   - white text holds 4.5:1 on every accent fill, and the accent as text
- *     holds 4.5:1 on every layer
+ *   - heading / default / subdued text holds 4.5:1 on the page, every
+ *     surface and every neutral fill, in both themes
+ *   - a control's border and the focus ring hold 3:1 on the page and surfaces
+ *   - white text holds 4.5:1 on every accent / negative / status fill, in
+ *     its rest, hover and pressed steps
+ *   - the accent and status colors as text hold 4.5:1 on the page, every
+ *     surface and the hover / subtle fills, for every palette
  *
- * It writes three things:
+ * It writes two things:
  *
  *   1. the scales, light under :root and dark under [data-theme="dark"]
  *   2. data-palette: one block per accent hue that re-points the
  *      --lumen-accent-<step> scale (blue is the default). Every Lumen hue is
  *      built to the same contrast ladder, so any hue can be the accent
- *   3. data-bg: warm and cool variants of the neutral scale, tinted in
- *      OKLab (lightness is kept, so the contrast checks hold)
+ *
+ * The page background is deliberately not configurable (there is no
+ * data-bg axis): one canvas means one set of contrast checks.
  *
  * To rebrand: add a hue to ACCENTS (it must exist in lumen-scales.json) and
  * re-run. If a check fails the script exits non-zero and writes nothing.
@@ -57,16 +63,9 @@ const ACCENTS = [
     {name: 'amber', hue: 'yellow'},
 ]
 
-// Neutral-only overrides for the data-bg axis (OKLab hue in degrees, chroma).
-const BACKGROUNDS = [
-    {name: 'warm', hue: 75, chroma: 0.012},
-    {name: 'cool', hue: 255, chroma: 0.012},
-]
-
 // ── color math ───────────────────────────────────────────────────────────
 const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
 const toLinear = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
-const toGamma = (c) => (c <= 0.0031308 ? c * 12.92 : 1.055 * c ** (1 / 2.4) - 0.055)
 
 function luminance(hex) {
     const [r, g, b] = hexToRgb(hex).map(toLinear)
@@ -78,56 +77,9 @@ function contrast(a, b) {
     return (hi + 0.05) / (lo + 0.05)
 }
 
-function rgbToOklab(hex) {
-    const [r, g, b] = hexToRgb(hex).map(toLinear)
-    const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b)
-    const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b)
-    const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b)
-    return [
-        0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
-        1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
-        0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
-    ]
-}
-
-function oklabToRgb([L, a, b]) {
-    const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3
-    const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3
-    const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3
-    return [
-        4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
-        -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
-        -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
-    ]
-}
-
-const inGamut = (rgb) => rgb.every((c) => c >= -0.0005 && c <= 1.0005)
-
-function rgbToHex(rgb) {
-    return '#' + rgb.map((c) => Math.round(Math.min(1, Math.max(0, toGamma(Math.min(1, Math.max(0, c))))) * 255)
-        .toString(16).padStart(2, '0')).join('')
-}
-
-// Re-hue a neutral: keep its lightness, give it `chroma` at `hue`, and pull
-// the chroma back until the result is a real sRGB color. Pure white and
-// black are left alone except that white is dipped to L 0.985 so the tint
-// has somewhere to live; steps near either end get a fraction of the chroma.
-function tint(hex, hue, chroma) {
-    const [L0] = rgbToOklab(hex)
-    if (L0 < 0.02) return hex
-    const L = Math.min(L0, 0.985)
-    const edge = Math.min(1, (L < 0.5 ? L : 1 - L) / 0.25 + 0.35)
-    const rad = (hue * Math.PI) / 180
-    for (let c = chroma * Math.min(1, edge); c >= 0; c -= 0.0005) {
-        const rgb = oklabToRgb([L, c * Math.cos(rad), c * Math.sin(rad)])
-        if (inGamut(rgb)) return rgbToHex(rgb)
-    }
-    return hex
-}
-
 // ── css ──────────────────────────────────────────────────────────────────
-const lines = (hues, themeIndex, mapper = (v) => v) => hues.flatMap((hue) =>
-    Object.keys(SCALES[hue]).map((step) => `    --lumen-${hue}-${step}: ${mapper(SCALES[hue][step][themeIndex])};`))
+const lines = (hues, themeIndex) => hues.flatMap((hue) =>
+    Object.keys(SCALES[hue]).map((step) => `    --lumen-${hue}-${step}: ${SCALES[hue][step][themeIndex]};`))
 
 const scaleBlock = (selector, themeIndex) =>
     `${selector} {\n${lines(Object.keys(SCALES), themeIndex).join('\n')}\n}`
@@ -138,60 +90,93 @@ function accentBlock({name, hue}) {
     return `/* ${name ? `data-palette="${name}"` : 'default'} - ${hue} */\n${selector} {\n${body.join('\n')}\n}`
 }
 
-function backgroundBlocks({name, hue, chroma}) {
-    const tinted = (themeIndex) => lines(['gray'], themeIndex, (v) => tint(v, hue, chroma)).join('\n')
-    return `/* data-bg="${name}" - neutral scale tinted at OKLab hue ${hue}, chroma ${chroma} */\n` +
-        `:root[data-bg="${name}"] {\n${tinted(0)}\n}\n\n` +
-        `:root[data-bg="${name}"][data-theme="dark"] {\n${tinted(1)}\n}`
-}
-
 // ── contrast checks ──────────────────────────────────────────────────────
-// Mirrors the semantic tokens in tokens.css. A `step` reads the same step of
-// a hue in both themes unless a [light, dark] pair says otherwise.
+// Mirrors the semantic tokens in tokens.css, step for step. Where a token
+// reads a different step per theme the table below says so ([light, dark]).
 function checks() {
     const failures = []
-    const note = (label, theme, ratio, min) => {
-        if (ratio + 1e-9 < min) failures.push(`${label} (${theme}): ${ratio.toFixed(2)} < ${min}`)
+    const note = (label, where, ratio, min) => {
+        if (ratio + 1e-9 < min) failures.push(`${label} (${where}): ${ratio.toFixed(2)} < ${min}`)
     }
-    const variants = [{label: 'default', gray: (hex) => hex}]
-    BACKGROUNDS.forEach((bg) => variants.push({label: `bg=${bg.name}`, gray: (hex) => tint(hex, bg.hue, bg.chroma)}))
 
     THEMES.forEach((theme, t) => {
-        variants.forEach((variant) => {
-            const g = (step) => variant.gray(SCALES.gray[step][t])
-            const hue = (name, step) => SCALES[name][step][t]
-            const where = `${theme}, ${variant.label}`
-            const layers = {base: g('25'), 'layer-1': g('50'), 'layer-2': t === 0 ? g('25') : g('75'),
-                'fill-hover': g('100'), 'fill-down': g('200')}
+        const g = (step) => SCALES.gray[step][t]
+        const hue = (name, step) => SCALES[name][step][t]
+        const pick = (light, dark) => (t === 0 ? light : dark)
 
-            Object.entries(layers).forEach(([name, bg]) => {
-                note(`content-default on ${name}`, where, contrast(g('800'), bg), 4.5)
-                note(`content-subdued on ${name}`, where, contrast(g('700'), bg), 4.5)
-                note(`content-heading on ${name}`, where, contrast(g('900'), bg), 4.5)
-            })
-            note('border-default on base', where, contrast(g('500'), layers.base), 3)
-            note('neutral-background / on-neutral', where, contrast(g('800'), g('25')), 4.5)
+        // The grounds text and controls sit on. `ground` pairs are the ones a
+        // component paints; the fills only host text that is already inside
+        // a hovered or pressed control.
+        const surfaces = {
+            page: g(pick('100', '25')),
+            'layer-1': g(pick('25', '50')),
+            'layer-2': g(pick('25', '75')),
+            elevated: g(pick('25', '75')),
+        }
+        const fills = {
+            'fill-hover': g(pick('200', '100')),
+            'fill-down': g(pick('300', '200')),
+            'fill-subtle': g(pick('75', '100')),
+        }
+        const grounds = {...surfaces, ...fills}
+        const borderDefault = g(pick('600', '500'))
+        const borderHover = g(pick('700', '600'))
 
-            ACCENTS.forEach(({name, hue: h}) => {
-                const label = `accent ${name || 'default'}`
-                const fill = hue(h, t === 0 ? '900' : '800')
-                note(`on-accent on ${label} fill`, where, contrast('#ffffff', fill), 4.5)
-                const text = hue(h, '900')
-                ;['base', 'layer-1', 'layer-2'].forEach((layer) =>
-                    note(`${label} text on ${layer}`, where, contrast(text, layers[layer]), 4.5))
-                note(`focus ring ${label} on base`, where, contrast(hue(h, '800'), layers.base), 3)
-            })
-
-            ;[['red', 'negative'], ['green', 'positive'], ['blue', 'informative']].forEach(([h, name]) => {
-                const fill = hue(h, t === 0 ? '900' : '800')
-                note(`on-accent on ${name} fill`, where, contrast('#ffffff', fill), 4.5)
-                ;['base', 'layer-2'].forEach((layer) =>
-                    note(`${name} content on ${layer}`, where, contrast(hue(h, '900'), layers[layer]), 4.5))
-            })
-            const noticeFill = hue('orange', t === 0 ? '600' : '900')
-            note('on-notice on notice fill', where, contrast(t === 0 ? g('900') : '#000000', noticeFill), 4.5)
-            note('notice content on base', where, contrast(hue('orange', '900'), layers.base), 4.5)
+        // Text: heading, default, subdued on every ground.
+        Object.entries(grounds).forEach(([name, bg]) => {
+            note(`content-heading on ${name}`, theme, contrast(g('900'), bg), 4.5)
+            note(`content-default on ${name}`, theme, contrast(g('800'), bg), 4.5)
+            note(`content-subdued on ${name}`, theme, contrast(g('700'), bg), 4.5)
         })
+
+        // Control borders and the focus ring sit on the page and surfaces.
+        Object.entries(surfaces).forEach(([name, bg]) => {
+            note(`border-default on ${name}`, theme, contrast(borderDefault, bg), 3)
+            note(`border-hover on ${name}`, theme, contrast(borderHover, bg), 3)
+        })
+        // Neutral solid (badges, tooltips, toasts, pressed action buttons).
+        note('on-neutral on neutral-background', theme, contrast(g('25'), g('800')), 4.5)
+        note('neutral-background on page', theme, contrast(g('800'), surfaces.page), 3)
+
+        // Accent: fill (+ hover and press), text, ring, subtle tint.
+        const textStep = '1000' // accent and status text: step 1000 in both themes
+        ACCENTS.forEach(({name, hue: h}) => {
+            const label = `accent ${name || 'default'}`
+            ;[pick('900', '800'), pick('1000', '700'), pick('1100', '600')].forEach((step, i) =>
+                note(`on-accent on ${label} fill ${['rest', 'hover', 'down'][i]}`, theme, contrast('#ffffff', hue(h, step)), 4.5))
+            Object.entries(grounds).forEach(([gname, bg]) => {
+                if (gname === 'fill-down') return
+                note(`${label} text on ${gname}`, theme, contrast(hue(h, textStep), bg), 4.5)
+            })
+            Object.entries(surfaces).forEach(([gname, bg]) =>
+                note(`focus ring ${label} on ${gname}`, theme, contrast(hue(h, '800'), bg), 3))
+            note(`on-accent-subtle on ${label} subtle`, theme, contrast(hue(h, '1300'), hue(h, '200')), 4.5)
+        })
+
+        // Status: negative / positive / informative fills and text.
+        ;[['red', 'negative'], ['green', 'positive'], ['blue', 'informative']].forEach(([h, name]) => {
+            ;[pick('900', '800'), pick('1000', '700'), pick('1100', '600')].forEach((step, i) => {
+                if (name !== 'negative' && i > 0) return
+                note(`on-accent on ${name} fill ${['rest', 'hover', 'down'][i]}`, theme, contrast('#ffffff', hue(h, step)), 4.5)
+            })
+            Object.entries(grounds).forEach(([gname, bg]) => {
+                if (gname === 'fill-down') return
+                note(`${name}-content on ${gname}`, theme, contrast(hue(h, textStep), bg), 4.5)
+            })
+        })
+        const noticeFill = hue('orange', pick('600', '900'))
+        note('on-notice on notice fill', theme, contrast(pick(g('900'), '#000000'), noticeFill), 4.5)
+        Object.entries(grounds).forEach(([gname, bg]) => {
+            if (gname === 'fill-down') return
+            note(`notice-content on ${gname}`, theme, contrast(hue('orange', textStep), bg), 4.5)
+        })
+
+        // Tertiary (purple) badge fill.
+        note('on-tertiary on tertiary fill', theme, contrast('#ffffff', hue('purple', pick('900', '800'))), 4.5)
+
+        // Status solids next to the page: a badge or toast fill must read as a shape.
+        ;[['red', 'negative'], ['green', 'positive'], ['blue', 'informative']].forEach(([h, name]) =>
+            note(`${name} fill on page`, theme, contrast(hue(h, pick('900', '800')), surfaces.page), 3))
     })
     return failures
 }
@@ -212,7 +197,7 @@ const header = `/* ════════════════════�
    read them directly - they exist for charts and illustration.
 
    --lumen-accent-<step> is the accent scale: blue by default, re-pointed by
-   data-palette. data-bg blocks come last so they override the neutrals.
+   data-palette.
 
    Palette, spacing, radius, type-size and component-height values are
    adapted from Adobe's open-source Spectrum design tokens (Apache
@@ -224,7 +209,6 @@ const blocks = [
     `/* Light */\n${scaleBlock(':root', 0)}`,
     `/* Dark */\n${scaleBlock(':root[data-theme="dark"]', 1)}`,
     ...ACCENTS.map(accentBlock),
-    ...BACKGROUNDS.map(backgroundBlocks),
 ]
 
 writeFileSync(OUT, blocks.join('\n\n') + '\n')

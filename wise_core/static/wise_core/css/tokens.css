@@ -6,8 +6,9 @@
    hue, semantic tokens that reference a small palette, a type scale set in
    Source Sans 3, and pill-and-rounded-rectangle controls - fully round
    buttons, badges and switches, 8px fields, cards and alerts, 16px
-   dialogs. Surfaces are told apart by layer and border, not by shadow;
-   hover and press step a fill one and two shades. Component *class names*
+   dialogs. The page is a fixed gray canvas (it is not a setting) with white
+   surfaces on it; surfaces are told apart by layer and border, not by
+   shadow; hover and press step a fill one and two shades. Component *class names*
    (.card, .detail-panel, .badge, .top-nav-item, .menu-link, .data-table,
    ...) are the system's public API - they have stayed stable across the
    moves to Material 3 and now Lumen; only what they look like changed.
@@ -243,16 +244,27 @@
        (`bg-accent-background text-on-accent`). Use palette steps like
        --lumen-blue-900 only for charts and illustration.
 
-       Layers: the page is background-base, raised panels are
-       background-layer-1, cards and fields are background-layer-2,
-       floating surfaces are background-elevated. */
-    --color-background-base: var(--lumen-gray-25);
-    --color-background-layer-1: var(--lumen-gray-50);
+       Layers: the page is background-base - a fixed mid-light gray (gray-100
+       in light), the canvas every white surface sits on - raised panels are
+       background-layer-1, cards and fields are background-layer-2, floating
+       surfaces are background-elevated. In light all three surfaces are
+       white; in dark they step up from the page (gray-50, gray-75, gray-75).
+       Because the canvas is gray, tokens read one step darker than stock
+       Lumen so text and control borders keep their contrast on it: the
+       `-content` colors use step 1000 (in both themes, so a link stays
+       readable inside a hovered row too), and in light border-default is
+       gray-600 and the neutral fills gray-200 / 300. */
+    --color-background-base: var(--lumen-gray-100);
+    --color-background-layer-1: var(--lumen-gray-25);
     --color-background-layer-2: var(--lumen-gray-25);
     --color-background-elevated: var(--lumen-gray-25);
 
-    --color-fill-neutral-hover: var(--lumen-gray-100);
-    --color-fill-neutral-down: var(--lumen-gray-200);
+    --color-fill-neutral-hover: var(--lumen-gray-200);
+    --color-fill-neutral-down: var(--lumen-gray-300);
+    /* Wise extension: the faintest neutral fill, for a quiet region *inside*
+       a white surface - a hovered table row, a calendar's outside days, a
+       table header. */
+    --color-fill-neutral-subtle: var(--lumen-gray-75);
 
     --color-content-heading: var(--lumen-gray-900);
     --color-content-default: var(--lumen-gray-800);
@@ -261,8 +273,8 @@
 
     /* A control's own border is `border-default` (3:1 on the page), never
        `border-subtle`, which is for decorative dividers and card edges. */
-    --color-border-default: var(--lumen-gray-500);
-    --color-border-hover: var(--lumen-gray-600);
+    --color-border-default: var(--lumen-gray-600);
+    --color-border-hover: var(--lumen-gray-700);
     --color-border-subtle: var(--lumen-gray-300);
 
     /* The one accent hue (blue unless data-palette says otherwise) fills the
@@ -271,7 +283,7 @@
     --color-accent-background: var(--lumen-accent-900);
     --color-accent-background-hover: var(--lumen-accent-1000);
     --color-accent-background-down: var(--lumen-accent-1100);
-    --color-accent-content: var(--lumen-accent-900);
+    --color-accent-content: var(--lumen-accent-1000);
     --color-on-accent: #ffffff;
 
     /* Wise extension: a quiet tint of the accent for a selected or
@@ -286,16 +298,16 @@
     /* Status: four semantic families, each paired with an icon and a word.
        Fills carry `on-accent` text (`on-notice` on the orange fill). */
     --color-informative-background: var(--lumen-blue-900);
-    --color-informative-content: var(--lumen-blue-900);
+    --color-informative-content: var(--lumen-blue-1000);
     --color-positive-background: var(--lumen-green-900);
-    --color-positive-content: var(--lumen-green-900);
+    --color-positive-content: var(--lumen-green-1000);
     --color-notice-background: var(--lumen-orange-600);
     --color-on-notice: var(--lumen-gray-900);
-    --color-notice-content: var(--lumen-orange-900);
+    --color-notice-content: var(--lumen-orange-1000);
     --color-negative-background: var(--lumen-red-900);
     --color-negative-background-hover: var(--lumen-red-1000);
     --color-negative-background-down: var(--lumen-red-1100);
-    --color-negative-content: var(--lumen-red-900);
+    --color-negative-content: var(--lumen-red-1000);
 
     --color-focus-ring: var(--lumen-accent-800);
 
@@ -412,17 +424,20 @@
 
     /* Tailwind's gray scale, repointed at Lumen's neutral scale - the step
        names line up (Lumen gray-700 is content-subdued, gray-800
-       content-default, gray-900 content-heading, gray-500 border-default,
-       gray-300 border-subtle), so every existing `text-gray-600` /
-       `bg-gray-100` / `border-gray-300` lands on a Lumen step and flips
-       under dark mode with it. */
+       content-default, gray-900 content-heading, gray-300 border-subtle),
+       so every existing `text-gray-700` / `bg-gray-100` / `border-gray-300`
+       lands on a Lumen step and flips under dark mode with it. The one
+       exception is gray-600: the old secondary-text step, which Lumen's own
+       gray-600 would leave at 4.0:1 on the gray page, so it is
+       content-subdued. (gray-500 and gray-400 are border and disabled
+       colors, not text colors.) */
     --color-gray-50: var(--lumen-gray-50);
     --color-gray-100: var(--lumen-gray-100);
     --color-gray-200: var(--lumen-gray-200);
     --color-gray-300: var(--lumen-gray-300);
     --color-gray-400: var(--lumen-gray-400);
     --color-gray-500: var(--lumen-gray-500);
-    --color-gray-600: var(--lumen-gray-600);
+    --color-gray-600: var(--color-content-subdued);
     --color-gray-700: var(--lumen-gray-700);
     --color-gray-800: var(--lumen-gray-800);
     --color-gray-900: var(--lumen-gray-900);
@@ -578,34 +593,46 @@
    re-themes the whole system *at runtime*, with no rebuild and no second
    stylesheet.
 
-   Six independent axes, each one attribute on <html>:
+   Five independent axes, each one attribute on <html>:
 
      data-theme    light (default) | dark
      data-palette  blue (default, Lumen's accent) | indigo | purple | green | amber
      data-density  comfortable (default, 32px controls) | compact (24px)
      data-radius   Lumen corner radii (default) | soft | sharp
      data-shadow   flat (default, outlined cards) | soft | elevated
-     data-bg       neutral (default) | warm | cool
+
+   The page background is deliberately not an axis: it is one fixed gray, so
+   every surface and every text color is checked against exactly one canvas.
 
    They compose freely, because each touches a different tier: palettes
-   and backgrounds only re-point reference steps (lumen-palettes.css), the
-   theme only re-points which step each semantic token reads. No
+   only re-point reference steps (lumen-palettes.css), the theme only
+   re-points which step each semantic token reads. No
    `[data-theme][data-palette]` combination blocks are needed.
 
    base.html applies the stored values before first paint; common.js's
    wiseSetTheme()/wiseSetPalette()/wiseSetDensity()/wiseSetRadius()/
-   wiseSetShadow()/wiseSetBg() switch them at runtime. The design settings
+   wiseSetShadow() switch them at runtime. The design settings
    panel (wise_core/components/_settings_panel.html) is a ready-made UI for
-   all six - see docs/theming/design-tokens.html for what each one touches.
+   all five - see docs/theming/design-tokens.html for what each one touches.
    ────────────────────────────────────────────────────────────────────── */
 
 :root[data-theme="dark"] {
     /* Lumen's palette steps flip on their own; only the tokens that pick a
-       different *step* in dark need restating. Filled accent controls step
-       one shade lighter, cards and popovers sit a layer above the page,
-       and the notice label turns black. */
+       different *step* in dark need restating: the page and layers step up
+       from near-black, the neutral fills and borders drop back to stock
+       Lumen, filled accent controls step one shade lighter, and the notice
+       label turns black. */
+    --color-background-base: var(--lumen-gray-25);
+    --color-background-layer-1: var(--lumen-gray-50);
     --color-background-layer-2: var(--lumen-gray-75);
     --color-background-elevated: var(--lumen-gray-75);
+
+    --color-fill-neutral-hover: var(--lumen-gray-100);
+    --color-fill-neutral-down: var(--lumen-gray-200);
+    --color-fill-neutral-subtle: var(--lumen-gray-100);
+
+    --color-border-default: var(--lumen-gray-500);
+    --color-border-hover: var(--lumen-gray-600);
 
     --color-accent-background: var(--lumen-accent-800);
     --color-accent-background-hover: var(--lumen-accent-700);
@@ -628,10 +655,9 @@
     color-scheme: dark;
 }
 
-/* ── Palette & background ───────────────────────────────────────────────
-   Both live in the generated lumen-palettes.css (imported at the top of
-   this file): data-palette re-points the accent scale at another Lumen
-   hue, data-bg re-tints just the neutral scale warm or cool. */
+/* ── Palette ────────────────────────────────────────────────────────────
+   Lives in the generated lumen-palettes.css (imported at the top of this
+   file): data-palette re-points the accent scale at another Lumen hue. */
 
 /* ── Density ────────────────────────────────────────────────────────────
    Lumen asks for about 20% more on touch, so a coarse pointer steps every
@@ -1131,11 +1157,12 @@
     }
 
     /* ── Cards ───────────────────────────────────────────────────────────
-       A layer-2 surface with a subtle border, 8px corners and 16px padding.
-       The default follows the data-shadow axis - outlined when flat, raised
-       with a shadow and no border when soft or elevated. The three
-       variants are also available explicitly: .card-outlined (on the page
-       color), .card-elevated, .card-filled (a layer-1 panel). A card that
+       A white (layer-2) surface on the gray page with a subtle border, 8px
+       corners and 16px padding. The default follows the data-shadow axis -
+       outlined when flat, raised with a shadow and no border when soft or
+       elevated. The three variants are also available explicitly:
+       .card-outlined (white, bordered), .card-elevated (white, shadow),
+       .card-filled (a light-gray fill, no border). A card that
        is a link or button (or carries .card-interactive) darkens its
        border on hover. */
     .card {
@@ -1150,7 +1177,7 @@
     }
 
     .card-outlined {
-        background-color: var(--color-background-base);
+        background-color: var(--color-background-layer-2);
         border-color: var(--color-border-subtle);
         box-shadow: none;
     }
@@ -1162,7 +1189,7 @@
     }
 
     .card-filled {
-        background-color: var(--color-background-layer-1);
+        background-color: var(--color-fill-neutral-subtle);
         border-color: transparent;
         box-shadow: none;
     }
@@ -1734,7 +1761,7 @@
        List views rendered as a table, normally driven by WiseListView +
        django-filter; see docs/generic-views-and-mixins.md. Lumen styling:
        bold title-s headers (sentence case, never uppercased), body-s cells,
-       subtle row dividers and a `fill-neutral-hover` fill on the hovered
+       subtle row dividers and a `fill-neutral-subtle` fill on the hovered
        row. */
     .data-table {
         @apply w-full border-collapse text-body-s;
@@ -1797,7 +1824,7 @@
     }
 
     .data-table tr:hover td {
-        background-color: var(--color-fill-neutral-hover);
+        background-color: var(--color-fill-neutral-subtle);
     }
 
     /* ── Calendar ────────────────────────────────────────────────────────
@@ -1851,7 +1878,7 @@
 
     .calendar-day.is-outside {
         color: var(--color-content-subdued);
-        background-color: var(--color-background-layer-1);
+        background-color: var(--color-fill-neutral-subtle);
     }
 
     .calendar-day.is-today .calendar-day-number {
@@ -2156,13 +2183,13 @@
 
     .autocomplete-table th {
         @apply text-left text-title-xs;
-        background-color: var(--color-background-layer-1);
+        background-color: var(--color-fill-neutral-subtle);
         color: var(--color-content-default);
     }
 
     .autocomplete-table tr:hover td {
         cursor: pointer;
-        background-color: var(--color-fill-neutral-hover);
+        background-color: var(--color-fill-neutral-subtle);
     }
 
     /* The `td` selector isn't redundant with `tr.selected`: Preflight sets
@@ -2463,7 +2490,7 @@
     }
 
     .switch:checked:disabled::after {
-        background-color: var(--color-background-base);
+        background-color: var(--color-background-layer-2);
     }
 
     /* ── Rating ──────────────────────────────────────────────────────────
@@ -3130,7 +3157,7 @@
 
     .avatar-group > .avatar + .avatar {
         @apply -ml-2;
-        box-shadow: 0 0 0 2px var(--color-background-base);
+        box-shadow: 0 0 0 2px var(--color-background-layer-2);
     }
 
     /* ── Image & video ───────────────────────────────────────────────────*/

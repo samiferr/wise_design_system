@@ -34,9 +34,10 @@
 
     <h2 class="mt-8">Layers &amp; content</h2>
     <p class="text-content-subdued">
-        The page is <code>background-base</code>; raised panels are <code>background-layer-1</code>; cards
-        and fields are <code>background-layer-2</code>; floating surfaces are
-        <code>background-elevated</code>. Set text in <code>content-default</code>, headings in
+        The page is <code>background-base</code>, one fixed gray (gray-100 in light, and no setting
+        changes it); raised panels are <code>background-layer-1</code>; cards and fields are
+        <code>background-layer-2</code>; floating surfaces are <code>background-elevated</code>. In light
+        all three surfaces are white, so cards read as white sheets on the gray page. Set text in <code>content-default</code>, headings in
         <code>content-heading</code> and secondary text in <code>content-subdued</code>.
         <code>content-disabled</code> is never used for live content. A control's own border is
         <code>border-default</code> (3:1 on the page) - <code>border-subtle</code> is for decorative
@@ -49,6 +50,7 @@
         <div class="swatch !h-16 bg-background-elevated text-content-default">background-elevated</div>
         <div class="swatch !h-16 bg-fill-neutral-hover text-content-default">fill-neutral-hover</div>
         <div class="swatch !h-16 bg-fill-neutral-down text-content-default">fill-neutral-down</div>
+        <div class="swatch !h-16 bg-fill-neutral-subtle text-content-default">fill-neutral-subtle</div>
         <div class="swatch !h-16 bg-background-base text-content-heading">content-heading</div>
         <div class="swatch !h-16 bg-background-base text-content-subdued">content-subdued</div>
         <div class="swatch !h-16 border-2 border-border-default bg-background-base text-content-default">border-default</div>
@@ -62,8 +64,9 @@
         Always pair a fill with its own <code>on-</code> token. <strong>accent-background</strong> fills the
         single main action and selected checkboxes, radios and switches; hover steps it one shade
         (<code>accent-background-hover</code>), press two (<code>accent-background-down</code>).
-        <strong>accent-content</strong> colors links and selected text on a layer. In dark mode the filled
-        accent steps one shade lighter. <strong>neutral-background</strong> is the solid neutral: pressed
+        <strong>accent-content</strong> colors links and selected text on the page and every surface (step
+        1000, so it holds 4.5:1 on the gray page and inside a hovered row). In dark mode the filled accent
+        steps one shade lighter. <strong>neutral-background</strong> is the solid neutral: pressed
         action buttons, tooltips, toasts.
     </p>
     <div class="doc-preview mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">

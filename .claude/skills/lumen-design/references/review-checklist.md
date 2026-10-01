@@ -11,6 +11,9 @@ Run through this before finishing any UI change. Grep helpers are at the bottom.
 - [ ] Status carries a word and an icon, never color alone.
 - [ ] Text is `content-heading` / `content-default` / `content-subdued` (never `content-disabled`
       for live content); a control's border is `border-default`, not `border-subtle`.
+- [ ] Cards, panels, fields and popovers are white surfaces (`background-layer-1/2`, `-elevated`) on the
+      fixed gray page; nothing overrides `background-base`, and nothing assumes the page is white.
+- [ ] Accent and status text uses the `-content` tokens (never an `*-background` token as text color).
 - [ ] Looks right in `data-theme="dark"` and at least one other `data-palette`.
 
 ## Type

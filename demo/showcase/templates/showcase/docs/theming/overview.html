@@ -30,10 +30,11 @@
         never seen.
     </p>
 
-    <h2 class="mt-8">Six independent axes</h2>
+    <h2 class="mt-8">Five independent axes</h2>
     <p class="text-gray-700">
         Each is one attribute on <code>&lt;html&gt;</code>, and they compose freely — a compact dark
-        blue UI with sharp corners and a warm background is a valid combination.
+        green UI with sharp corners is a valid combination. The page background is not one of them:
+        it is a fixed gray, so every surface and text color is checked against a single canvas.
     </p>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">
         <table class="doc-props w-full">
@@ -44,13 +45,12 @@
                 <tr><td><code>data-density</code></td><td><code>comfortable</code> (default), <code>compact</code></td><td>Field, button, list-item and table heights (32px by default, 24px compact).</td></tr>
                 <tr><td><code>data-radius</code></td><td>Lumen corner radii (default), <code>soft</code>, <code>sharp</code></td><td>The whole corner scale — buttons, cards, fields, dialogs…</td></tr>
                 <tr><td><code>data-shadow</code></td><td><code>flat</code> (default), <code>soft</code>, <code>elevated</code></td><td>Outlined vs. raised cards and panels.</td></tr>
-                <tr><td><code>data-bg</code></td><td><code>neutral</code> (default), <code>warm</code>, <code>cool</code></td><td>The neutral scale behind every layer, fill and border.</td></tr>
             </tbody>
         </table>
     </div>
     <p class="mt-3 text-gray-700">
         See <a class="text-action-600 underline" href="{% url 'docs_theming_design_tokens' %}">Design
-        Tokens</a> for shape, elevation and background in depth. All six are one settings panel — see
+        Tokens</a> for shape, layers and shadow in depth. All five are one settings panel — see
         <code>wise_core/components/_settings_panel.html</code>, opened from the icon next to the
         brand in this site's own sidebar and the demo app's. Its <strong>Copy tokens</strong> tab
         turns whatever combination you land on into a paste-ready <code>&lt;html data-*&gt;</code>
@@ -109,14 +109,6 @@
                 <button class="btn btn-secondary" onclick="wiseSetShadow('elevated')">Elevated</button>
             </div>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
-            <span class="w-20 text-detail-s text-content-subdued">Background</span>
-            <div class="btn-group">
-                <button class="btn btn-secondary" onclick="wiseSetBg('')">Neutral</button>
-                <button class="btn btn-secondary" onclick="wiseSetBg('warm')">Warm</button>
-                <button class="btn btn-secondary" onclick="wiseSetBg('cool')">Cool</button>
-            </div>
-        </div>
         <hr class="divider">
         <div class="flex flex-wrap items-end gap-3">
             <button class="btn btn-primary">Primary</button>
@@ -132,7 +124,6 @@ wiseSetPalette('green')    // '' resets to blue, the Lumen default
 wiseSetDensity('compact')  // '' resets to comfortable
 wiseSetRadius('sharp')     // '' resets to the Lumen corner radii
 wiseSetShadow('elevated')  // '' resets to flat (outlined cards)
-wiseSetBg('warm')          // '' resets to neutral
 wiseToggleTheme(){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
@@ -147,7 +138,7 @@ wiseToggleTheme(){% endverbatim %}{% endfilter %}</code></pre>
     <script>
         (function () {
             try {
-                ['theme', 'palette', 'density', 'radius', 'shadow', 'bg'].forEach(function (key) {
+                ['theme', 'palette', 'density', 'radius', 'shadow'].forEach(function (key) {
                     var v = localStorage.getItem('wise-' + key)
                     if (v) document.documentElement.setAttribute('data-' + key, v)
                 })

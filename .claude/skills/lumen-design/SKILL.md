@@ -31,11 +31,14 @@ sizes.**
    fully round; fields, pickers, cards, alerts and nav items are 8px (`rounded-md`); checkboxes and
    tags 4px (`rounded-xs`); menus and popovers 10px (`rounded-lg`); dialogs 16px (`rounded-xl`).
    Use the component, or those utilities.
-5. **Layers and borders, not shadows.** Page `background-base` → raised panel `background-layer-1`
-   → card/field `background-layer-2` → popover/dialog `background-elevated`. Cards use a
-   `border-subtle` edge or a layer step. Shadows (`shadow-emphasized`, `shadow-elevated`,
+5. **A gray canvas with white surfaces; layers and borders, not shadows.** The page
+   (`background-base`) is one fixed gray - it is not a setting, never override it - and everything on
+   it is a surface: raised panel `background-layer-1`, card/field `background-layer-2`,
+   popover/dialog `background-elevated`. In light all three are white (so **cards are white**); in dark
+   they step up from near-black. Cards use a `border-subtle` edge. Put quiet regions inside a surface
+   (table header, hovered row) on `fill-neutral-subtle`. Shadows (`shadow-emphasized`, `shadow-elevated`,
    `shadow-dragged`) only for things that float: menus, toasts, dialogs. A control's own border is
-   `border-default` (3:1); `border-subtle` is for decorative dividers only.
+   `border-default` (3:1 on the page and every surface); `border-subtle` is for decorative dividers only.
 6. **Interaction = stepped fills.** Hover moves a fill one shade, press two; the component classes
    already do this. Don't hand-write hover colors - add the selector to the quiet-hover `:where(...)`
    rule in `tokens.css`. Every interactive element shows a 2px `focus-ring` outline (offset 2px) on
@@ -78,6 +81,7 @@ Details and values: [references/tokens.md](references/tokens.md).
 
 - **Tailwind color tokens** (`bg-`/`text-`/`border-` + name): `background-base`, `background-layer-1`,
   `background-layer-2`, `background-elevated`, `fill-neutral-hover`, `fill-neutral-down`,
+  `fill-neutral-subtle` (Wise extension),
   `content-heading`, `content-default`, `content-subdued`, `content-disabled`, `border-default`,
   `border-hover`, `border-subtle`, `accent-background` (+ `-hover`, `-down`), `accent-content`,
   `on-accent`, `accent-subtle` / `on-accent-subtle` (Wise extension), `neutral-background`,
@@ -86,8 +90,10 @@ Details and values: [references/tokens.md](references/tokens.md).
   `border-subtle`, Tailwind's prefix is `border-`.)
 - **In CSS:** `var(--color-content-default)`, `var(--corner-radius-500)`, `var(--shadow-elevated)`,
   `var(--border-width-200)`, `var(--component-height-100)`, `var(--control-height-md)`.
-- **Which layer?** page `background-base`, panels/sidebar `background-layer-1`, cards and fields
-  `background-layer-2`, menus/popovers/dialogs `background-elevated`.
+- **Which layer?** page `background-base` (the fixed gray), panels/sidebar `background-layer-1`,
+  cards and fields `background-layer-2` (white), menus/popovers/dialogs `background-elevated`.
+  Text and controls that sit directly on the page use the same tokens as everywhere else: they are
+  all verified against the gray.
 - **Which text color?** headings `content-heading`; body, labels, field values `content-default`;
   help text, captions, icons `content-subdued`; links and selected text `accent-content`; errors
   `negative-content`. `content-disabled` is never used for live content.
@@ -108,8 +114,8 @@ Details and values: [references/tokens.md](references/tokens.md).
 ## Theming axes (runtime, on `<html>`)
 
 `data-theme` light|dark · `data-palette` (blue)|indigo|purple|green|amber · `data-density`
-comfortable|compact · `data-radius` (Lumen)|soft|sharp · `data-shadow` flat|soft|elevated · `data-bg`
-(neutral)|warm|cool. JS setters: `wiseSetTheme()` etc. in `wise_core/static/wise_core/js/common.js`.
+comfortable|compact · `data-radius` (Lumen)|soft|sharp · `data-shadow` flat|soft|elevated. There is
+deliberately no background axis. JS setters: `wiseSetTheme()` etc. in `wise_core/static/wise_core/js/common.js`.
 Anything you build must look right under **every** combination, which it will as long as it only reads
 tokens.
 

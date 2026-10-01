@@ -88,7 +88,7 @@
     </div>
     <div class="doc-example-panel-preview">
         <div class="doc-preview max-w-[12rem]">
-        <div class="flex h-24 w-full items-center justify-center border border-divider bg-panel-alt text-gray-400">
+        <div class="flex h-24 w-full items-center justify-center border border-divider bg-panel-alt text-content-subdued">
             {% lucide "image" size=24 %}
         </div>
     </div>
@@ -97,7 +97,7 @@
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% if product.photo %}
     <img class="image" src="{{ product.photo.url }}" alt="{{ product.name }}">
 {% else %}
-    <div class="flex h-24 items-center justify-center border border-divider bg-panel-alt text-gray-400">
+    <div class="flex h-24 items-center justify-center border border-divider bg-panel-alt text-content-subdued">
         {% lucide "image" size=24 %}
     </div>
 {% endif %}{% endverbatim %}{% endfilter %}</code></pre>

@@ -102,9 +102,12 @@
 
     <h2 class="mt-8">Layers &amp; shadow</h2>
     <p class="text-content-subdued">
-        Lumen raises a surface by <em>layer</em> and <em>border</em>, not by shadow: the page is
-        <code>background-base</code>, raised panels are <code>background-layer-1</code>, cards and fields
-        are <code>background-layer-2</code>, and floating surfaces are <code>background-elevated</code>.
+        Lumen raises a surface by <em>layer</em> and <em>border</em>, not by shadow. The page is one fixed
+        gray canvas, <code>background-base</code> (gray-100 in light; it is not a setting), and every
+        surface sits on it: raised panels are <code>background-layer-1</code>, cards and fields are
+        <code>background-layer-2</code>, and floating surfaces are <code>background-elevated</code>. In
+        light all three are white, so a card reads as a white sheet on the gray page; in dark they step up
+        from near-black.
         Shadows are kept for things that float and come in three: <code>shadow-emphasized</code> (the
         resting state of a raised control), <code>shadow-elevated</code> (menus, popovers, tooltips) and
         <code>shadow-dragged</code> (dialogs, dragged items). They are
@@ -112,7 +115,7 @@
         the older <code>shadow-elevation-1..5</code> names are kept as aliases onto them.
     </p>
     <div class="doc-preview mt-4 flex flex-wrap gap-6">
-        <div class="rounded-md border border-border-subtle bg-background-layer-2 p-4 text-body-xs">layer-2 (cards)</div>
+        <div class="rounded-md border border-border-subtle bg-background-layer-2 p-4 text-body-xs">layer-2 (cards, white)</div>
         <div class="rounded-md bg-background-layer-2 p-4 text-body-xs shadow-emphasized">shadow-emphasized</div>
         <div class="rounded-md border border-border-subtle bg-background-elevated p-4 text-body-xs shadow-elevated">shadow-elevated</div>
         <div class="rounded-xl bg-background-elevated p-4 text-body-xs shadow-dragged">shadow-dragged</div>
@@ -159,7 +162,7 @@
             <div class="card card-filled">
                 <div class="card-kicker">.card-filled</div>
                 <h3 class="card-title mt-1">Always filled</h3>
-                <p class="card-content mt-1">background-layer-1, no border.</p>
+                <p class="card-content mt-1">fill-neutral-subtle, no border.</p>
             </div>
         </div>
     </div>
@@ -184,27 +187,26 @@
 
     <h2 class="mt-8">Background</h2>
     <p class="text-content-subdued">
-        The neutral scale is true gray by default. <code>data-bg</code> re-tints just that scale warm or
-        cool - every layer, fill, border and the gray ramp move together (lightness is kept, so the
-        contrast promises hold) - while <code>data-palette</code> keeps its accent.
+        The background is fixed: one gray canvas (<code>background-base</code>, gray-100 in light) with
+        white surfaces on it, and no setting changes it. That is a design decision, not a gap: every text
+        and control color is verified against exactly this canvas, in both themes and every palette, by
+        <code>npm run build:palettes</code>. Because the canvas is gray, text and borders sit one step
+        darker than stock Lumen: the accent and status <code>-content</code> colors use step 1000,
+        <code>border-default</code> is gray-600 in light, and the neutral fills start at gray-200.
     </p>
     <div class="doc-preview mt-4">
-        <div class="btn-group" role="group" aria-label="Background">
-            <button class="btn" onclick="wiseSetBg('')">Neutral (default)</button>
-            <button class="btn" onclick="wiseSetBg('warm')">Warm</button>
-            <button class="btn" onclick="wiseSetBg('cool')">Cool</button>
-        </div>
-        <div class="mt-4 grid gap-3 sm:grid-cols-3">
-            <div class="rounded-sm border border-divider bg-background-base p-4 text-body-xs">background-base</div>
+        <div class="grid gap-3 sm:grid-cols-4">
+            <div class="rounded-sm border border-divider bg-background-base p-4 text-body-xs">background-base (page)</div>
             <div class="rounded-sm border border-divider bg-background-layer-1 p-4 text-body-xs">background-layer-1</div>
-            <div class="rounded-sm border border-divider bg-fill-neutral-hover p-4 text-body-xs">fill-neutral-hover</div>
+            <div class="rounded-sm border border-divider bg-background-layer-2 p-4 text-body-xs">background-layer-2 (cards)</div>
+            <div class="rounded-sm border border-divider bg-fill-neutral-subtle p-4 text-body-xs">fill-neutral-subtle</div>
         </div>
     </div>
     <div class="callout callout-info mt-4">
         {% lucide "info" size=16 cls="callout-icon" %}
         <div>
-            <div class="callout-title">Six axes, one panel</div>
-            Theme, palette, density, shape, card shadow and background all switch this way - one
+            <div class="callout-title">Five axes, one panel</div>
+            Theme, palette, density, shape and card shadow all switch this way - one
             attribute on <code>&lt;html&gt;</code>, persisted to <code>localStorage</code>. The demo
             app's sidebar (and this site's own header) opens the same settings panel these buttons
             drive individually - see <code>wise_core/components/_settings_panel.html</code>.

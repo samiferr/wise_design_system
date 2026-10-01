@@ -7,7 +7,7 @@
     {% block theme_bootstrap %}
         {% comment %}
         Applies every stored design-token axis (theme/palette/density/radius/
-        shadow/bg - see tokens.css) before the stylesheet paints, so a page
+        shadow - see tokens.css) before the stylesheet paints, so a page
         never flashes back to defaults on load. Inline and blocking on
         purpose - a deferred script would run after first paint. Override
         this block with an empty one to opt a project out of the switching
@@ -16,7 +16,7 @@
         <script>
             (function () {
                 try {
-                    ['theme', 'palette', 'density', 'radius', 'shadow', 'bg'].forEach(function (key) {
+                    ['theme', 'palette', 'density', 'radius', 'shadow'].forEach(function (key) {
                         var v = localStorage.getItem('wise-' + key)
                         if (v) document.documentElement.setAttribute('data-' + key, v)
                     })
@@ -35,7 +35,7 @@
 {% block content %}
     <div class="flex">
         {% if request.user.is_authenticated %}
-            <aside class="hidden md:sticky md:top-0 md:flex md:h-screen md:w-[232px] md:flex-shrink-0
+            <aside class="hidden bg-background-layer-1 md:sticky md:top-0 md:flex md:h-screen md:w-[232px] md:flex-shrink-0
                 md:flex-col md:border-r md:border-divider">
                 <div class="flex items-center justify-between gap-2 px-6 py-6">
                     <a href="{% url 'home' %}" class="min-w-0 truncate no-underline text-content-heading text-title-m">

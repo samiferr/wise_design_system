@@ -54,7 +54,7 @@ one) to opt out.
 
     <div class="drawer-body">
         <div id="wise-settings-tab-controls" class="space-y-6">
-            <p class="text-xs text-gray-600">
+            <p class="text-xs text-content-subdued">
                 {% trans "Every control here flips one design token at runtime - no reload, no server round-trip. Your choices are remembered on this device." %}
             </p>
 
@@ -103,19 +103,10 @@ one) to opt out.
                 </div>
             </div>
 
-            <div>
-                <div class="form-label mb-2">{% trans "Background" %}</div>
-                <div class="flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetBg('')">{% trans "Neutral" %}</button>
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetBg('warm')">{% trans "Warm" %}</button>
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetBg('cool')">{% trans "Cool" %}</button>
-                </div>
-            </div>
-
             <div class="card">
                 <div class="card-kicker">{% trans "Live preview" %}</div>
                 <h3 class="card-title mt-1">{% trans "This card follows your settings" %}</h3>
-                <p class="card-content mt-1">{% trans "Radius, shadow and background update instantly - no reload." %}</p>
+                <p class="card-content mt-1">{% trans "Radius and shadow update instantly - no reload." %}</p>
                 <div class="mt-3 flex flex-wrap items-center gap-2">
                     <button class="btn btn-primary" type="button">{% trans "Primary" %}</button>
                     <span class="badge badge-action">{% trans "Badge" %}</span>
@@ -124,13 +115,13 @@ one) to opt out.
             </div>
 
             <button type="button" class="btn btn-secondary w-full justify-center" onclick="
-                wiseSetTheme('');wiseSetPalette('');wiseSetDensity('');wiseSetRadius('');wiseSetShadow('');wiseSetBg('')">
+                wiseSetTheme('');wiseSetPalette('');wiseSetDensity('');wiseSetRadius('');wiseSetShadow('')">
                 {% lucide "power" size=15 %}<span>{% trans "Reset to defaults" %}</span>
             </button>
         </div>
 
         <div id="wise-settings-tab-tokens" class="hidden space-y-4">
-            <p class="text-xs text-gray-600">
+            <p class="text-xs text-content-subdued">
                 {% trans "The exact combination chosen on the Settings tab: the attribute line to switch to it at runtime, and the resolved values below to bake it in permanently." %}
             </p>
             <div class="relative">

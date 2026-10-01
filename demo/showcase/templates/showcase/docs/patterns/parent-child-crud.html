@@ -42,7 +42,7 @@
                 {% include 'wise_core/components/_child_tabs.html' %}
             </div>
         </div>
-        <p class="mt-2 text-sm text-gray-600">
+        <p class="mt-2 text-sm text-content-subdued">
             Live component, live data — that is <code>{{ demo_product }}</code>'s real tab bar, counts and all.
         </p>
     {% endif %}
@@ -207,7 +207,7 @@ class ProductVariantCreateView(WiseParentDetailChildCreateView):
             <div class="mt-5 flex items-end justify-between gap-4">
                 <div>
                     <h3>Variants</h3>
-                    <p class="mt-1 text-sm text-gray-600">2 record(s)</p>
+                    <p class="mt-1 text-sm text-content-subdued">2 record(s)</p>
                 </div>
                 <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>New variant</span></a>
             </div>
