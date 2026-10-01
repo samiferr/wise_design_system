@@ -42,7 +42,7 @@
                 {% include 'wise_core/components/_child_tabs.html' %}
             </div>
         </div>
-        <p class="mt-2 text-sm text-gray-600">
+        <p class="mt-2 text-sm text-content-subdued">
             Live component, live data — that is <code>{{ demo_product }}</code>'s real tab bar, counts and all.
         </p>
     {% endif %}
@@ -85,7 +85,7 @@ PRODUCT_TABS = [
     ChildTab('Reviews', 'product_review_list_view',
              model=ProductReview, icon='star', count='reviews'),
 ]{% endverbatim %}{% endfilter %}</code></pre>
-    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+    <div class="card card-table mt-4 overflow-x-auto">
         <table class="doc-props w-full">
             <thead><tr><th>Argument</th><th>What it does</th></tr></thead>
             <tbody>
@@ -148,7 +148,7 @@ class ProductVariantCreateView(WiseParentDetailChildCreateView):
         <code>parent_base_generic.html</code> — the chrome holding the parent's action bar, name and
         tab bar — and each fills in one page's body.
     </p>
-    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+    <div class="card card-table mt-4 overflow-x-auto">
         <table class="doc-props w-full">
             <thead><tr><th>Template</th><th>Page</th></tr></thead>
             <tbody>
@@ -207,7 +207,7 @@ class ProductVariantCreateView(WiseParentDetailChildCreateView):
             <div class="mt-5 flex items-end justify-between gap-4">
                 <div>
                     <h3>Variants</h3>
-                    <p class="mt-1 text-sm text-gray-600">2 record(s)</p>
+                    <p class="mt-1 text-sm text-content-subdued">2 record(s)</p>
                 </div>
                 <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>New variant</span></a>
             </div>
@@ -281,7 +281,7 @@ class ProductUpdateView(WiseUpdateView):
         return response{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Reference</h2>
-    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+    <div class="card card-table mt-4 overflow-x-auto">
         <table class="doc-props w-full">
             <thead><tr><th>Concern</th><th>Where it belongs</th></tr></thead>
             <tbody>

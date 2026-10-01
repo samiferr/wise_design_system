@@ -6,8 +6,9 @@
    hue, semantic tokens that reference a small palette, a type scale set in
    Source Sans 3, and pill-and-rounded-rectangle controls - fully round
    buttons, badges and switches, 8px fields, cards and alerts, 16px
-   dialogs. Surfaces are told apart by layer and border, not by shadow;
-   hover and press step a fill one and two shades. Component *class names*
+   dialogs. The page is a fixed gray canvas (it is not a setting) with white
+   surfaces on it; surfaces are told apart by layer and border, not by
+   shadow; hover and press step a fill one and two shades. Component *class names*
    (.card, .detail-panel, .badge, .top-nav-item, .menu-link, .data-table,
    ...) are the system's public API - they have stayed stable across the
    moves to Material 3 and now Lumen; only what they look like changed.
@@ -243,16 +244,40 @@
        (`bg-accent-background text-on-accent`). Use palette steps like
        --lumen-blue-900 only for charts and illustration.
 
-       Layers: the page is background-base, raised panels are
-       background-layer-1, cards and fields are background-layer-2,
-       floating surfaces are background-elevated. */
-    --color-background-base: var(--lumen-gray-25);
-    --color-background-layer-1: var(--lumen-gray-50);
+       Layers: the page is background-base - a fixed mid-light gray (gray-100
+       in light), the canvas every white surface sits on - raised panels are
+       background-layer-1, cards and fields are background-layer-2, floating
+       surfaces are background-elevated. In light all three surfaces are
+       white; in dark they step up from the page (gray-50, gray-75, gray-75).
+       Because the canvas is gray, tokens read one step darker than stock
+       Lumen so text and control borders keep their contrast on it: the
+       `-content` colors use step 1000 (in both themes, so a link stays
+       readable inside a hovered row too), and in light border-default is
+       gray-600 (hover gray-700) and the neutral fills gray-200 / 300. In
+       dark every border and fill is stock Lumen. */
+    --color-background-base: var(--lumen-gray-100);
+    --color-background-layer-1: var(--lumen-gray-25);
     --color-background-layer-2: var(--lumen-gray-25);
     --color-background-elevated: var(--lumen-gray-25);
 
-    --color-fill-neutral-hover: var(--lumen-gray-100);
-    --color-fill-neutral-down: var(--lumen-gray-200);
+    --color-fill-neutral-hover: var(--lumen-gray-200);
+    --color-fill-neutral-down: var(--lumen-gray-300);
+    /* Wise extension: the faintest neutral fill, for a quiet region *inside*
+       a white surface - a calendar's outside days, an autocomplete header,
+       a filled card. */
+    --color-fill-neutral-subtle: var(--lumen-gray-75);
+
+    /* Row tints (Lumen): a hovered row is 7% content-heading, a selected
+       row 10% accent (15% when hovered). Translucent, so they paint over
+       whatever surface the row sits on. Selection is never the tint alone:
+       selected rows are also bold, checked or filled. */
+    --color-row-hover: color-mix(in srgb, var(--lumen-gray-900) 7%, transparent);
+    --color-selected-subtle: color-mix(in srgb, var(--lumen-accent-900) 10%, transparent);
+    --color-selected-subtle-hover: color-mix(in srgb, var(--lumen-accent-900) 15%, transparent);
+
+    /* Disabled fields: a quiet fill and outline, and content-disabled text. */
+    --color-fill-disabled: var(--lumen-gray-100);
+    --color-border-disabled: var(--lumen-gray-300);
 
     --color-content-heading: var(--lumen-gray-900);
     --color-content-default: var(--lumen-gray-800);
@@ -261,17 +286,36 @@
 
     /* A control's own border is `border-default` (3:1 on the page), never
        `border-subtle`, which is for decorative dividers and card edges. */
-    --color-border-default: var(--lumen-gray-500);
-    --color-border-hover: var(--lumen-gray-600);
+    --color-border-default: var(--lumen-gray-600);
+    --color-border-hover: var(--lumen-gray-700);
     --color-border-subtle: var(--lumen-gray-300);
 
-    /* The one accent hue (blue unless data-palette says otherwise) fills the
+    /* A focused text field, text area or search field: its 2px border turns
+       this dark gray instead of drawing the ring. One step darker than
+       Lumen's gray-800 so the change from the resting border stays at 3:1
+       on the gray canvas. */
+    --color-border-focus: var(--lumen-gray-900);
+
+    /* The Dropdown / select button has no border at all: a light gray fill
+       (Lumen: gray-100; here gray-200, so it still shows on the gray page)
+       that deepens to fill-neutral-down on hover. */
+    --color-fill-picker: var(--lumen-gray-200);
+
+    /* An invalid field keeps its 1px border and changes its color, with an
+       alert icon and a message as the non-color cue. A popover has no
+       border in light (its shadow separates it) and a 1px one in dark,
+       where shadows vanish. */
+    --color-negative-border: var(--lumen-red-900);
+    --color-negative-border-hover: var(--lumen-red-1000);
+    --color-border-popover: transparent;
+
+    /* The one accent color (blue unless data-palette says otherwise) fills the
        single main action and colors links. Hover steps one shade, pressed
        two. */
     --color-accent-background: var(--lumen-accent-900);
     --color-accent-background-hover: var(--lumen-accent-1000);
     --color-accent-background-down: var(--lumen-accent-1100);
-    --color-accent-content: var(--lumen-accent-900);
+    --color-accent-content: var(--lumen-accent-1000);
     --color-on-accent: #ffffff;
 
     /* Wise extension: a quiet tint of the accent for a selected or
@@ -282,20 +326,28 @@
 
     --color-neutral-background: var(--lumen-gray-800);
     --color-on-neutral: var(--lumen-gray-25);
+    --color-neutral-subtle: var(--lumen-gray-75);
 
     /* Status: four semantic families, each paired with an icon and a word.
        Fills carry `on-accent` text (`on-notice` on the orange fill). */
     --color-informative-background: var(--lumen-blue-900);
-    --color-informative-content: var(--lumen-blue-900);
+    --color-informative-content: var(--lumen-blue-1000);
     --color-positive-background: var(--lumen-green-900);
-    --color-positive-content: var(--lumen-green-900);
+    --color-positive-content: var(--lumen-green-1000);
     --color-notice-background: var(--lumen-orange-600);
     --color-on-notice: var(--lumen-gray-900);
-    --color-notice-content: var(--lumen-orange-900);
+    --color-notice-content: var(--lumen-orange-1000);
     --color-negative-background: var(--lumen-red-900);
     --color-negative-background-hover: var(--lumen-red-1000);
     --color-negative-background-down: var(--lumen-red-1100);
-    --color-negative-content: var(--lumen-red-900);
+    --color-negative-content: var(--lumen-red-1000);
+
+    /* Tinted backgrounds for inline alerts; the status color is the icon and
+       the 2px border, the text stays content-heading / content-default. */
+    --color-informative-subtle: var(--lumen-blue-200);
+    --color-positive-subtle: var(--lumen-green-200);
+    --color-notice-subtle: var(--lumen-orange-200);
+    --color-negative-subtle: var(--lumen-red-200);
 
     --color-focus-ring: var(--lumen-accent-800);
 
@@ -408,21 +460,24 @@
     --color-panel: var(--color-background-layer-1);
     --color-panel-alt: var(--lumen-gray-75);
     --color-divider: var(--color-border-subtle);
-    --color-overlay: color-mix(in srgb, #000000 40%, transparent);
+    --color-overlay: rgba(0, 0, 0, 0.4);
 
     /* Tailwind's gray scale, repointed at Lumen's neutral scale - the step
        names line up (Lumen gray-700 is content-subdued, gray-800
-       content-default, gray-900 content-heading, gray-500 border-default,
-       gray-300 border-subtle), so every existing `text-gray-600` /
-       `bg-gray-100` / `border-gray-300` lands on a Lumen step and flips
-       under dark mode with it. */
+       content-default, gray-900 content-heading, gray-300 border-subtle),
+       so every existing `text-gray-700` / `bg-gray-100` / `border-gray-300`
+       lands on a Lumen step and flips under dark mode with it. The one
+       exception is gray-600: the old secondary-text step, which Lumen's own
+       gray-600 would leave at 4.0:1 on the gray page, so it is
+       content-subdued. (gray-500 and gray-400 are border and disabled
+       colors, not text colors.) */
     --color-gray-50: var(--lumen-gray-50);
     --color-gray-100: var(--lumen-gray-100);
     --color-gray-200: var(--lumen-gray-200);
     --color-gray-300: var(--lumen-gray-300);
     --color-gray-400: var(--lumen-gray-400);
     --color-gray-500: var(--lumen-gray-500);
-    --color-gray-600: var(--lumen-gray-600);
+    --color-gray-600: var(--color-content-subdued);
     --color-gray-700: var(--lumen-gray-700);
     --color-gray-800: var(--lumen-gray-800);
     --color-gray-900: var(--lumen-gray-900);
@@ -501,11 +556,12 @@
     --focus-ring-offset: 2px;
     --focus-ring-color: var(--color-focus-ring);
 
-    /* ── Density ─────────────────────────────────────────────────────────
+    /* ── Control heights ─────────────────────────────────────────────────
        Lumen's five component heights are 20, 24, 32 (the default), 40 and
-       48px; the data-density axis rewrites these, which is why components
-       read them rather than hardcode a height. Default: 32px buttons and
-       fields, 40px on a coarse pointer (touch). Compact: 24px. */
+       48px. Components read these rather than hardcode a height, so the
+       one thing that changes them - a coarse pointer, which steps every
+       control up one size (below) - reaches all of them. Default: 32px
+       buttons and fields, 40px on touch. */
     --control-height-sm: 1.5rem;
     --control-height-md: 2rem;
     --control-height-lg: 2.5rem;
@@ -515,7 +571,6 @@
     --list-item-height: 2rem;
     --menu-item-height: 2rem;
     --table-padding-y: 0.5rem;
-    --table-header-padding-y: 0.5rem;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -578,34 +633,52 @@
    re-themes the whole system *at runtime*, with no rebuild and no second
    stylesheet.
 
-   Six independent axes, each one attribute on <html>:
+   Four independent axes, each one attribute on <html>:
 
      data-theme    light (default) | dark
-     data-palette  blue (default, Lumen's accent) | indigo | purple | green | amber
-     data-density  comfortable (default, 32px controls) | compact (24px)
-     data-radius   Lumen corner radii (default) | soft | sharp
-     data-shadow   flat (default, outlined cards) | soft | elevated
-     data-bg       neutral (default) | warm | cool
+     data-palette  the accent color: blue (default, Lumen's accent) | red |
+                   graphite | green
+     data-radius   rounding: Lumen corner radii (default) | soft | sharp
+     data-shadow   card shadow: flat (default, outlined cards) | soft | elevated
+
+   Nothing else is a setting. The page background is one fixed gray, so
+   every surface and every text color is checked against exactly one canvas;
+   control heights and type follow Lumen's scale (a coarse pointer steps the
+   heights up one size).
 
    They compose freely, because each touches a different tier: palettes
-   and backgrounds only re-point reference steps (lumen-palettes.css), the
-   theme only re-points which step each semantic token reads. No
+   only re-point reference steps (lumen-palettes.css), the theme only
+   re-points which step each semantic token reads. No
    `[data-theme][data-palette]` combination blocks are needed.
 
    base.html applies the stored values before first paint; common.js's
-   wiseSetTheme()/wiseSetPalette()/wiseSetDensity()/wiseSetRadius()/
-   wiseSetShadow()/wiseSetBg() switch them at runtime. The design settings
-   panel (wise_core/components/_settings_panel.html) is a ready-made UI for
-   all six - see docs/theming/design-tokens.html for what each one touches.
+   wiseSetTheme()/wiseSetPalette()/wiseSetRadius()/wiseSetShadow() switch
+   them at runtime. The design settings panel
+   (wise_core/components/_settings_panel.html) is a ready-made UI for all
+   four - see docs/theming/design-tokens.html for what each one touches.
    ────────────────────────────────────────────────────────────────────── */
 
 :root[data-theme="dark"] {
     /* Lumen's palette steps flip on their own; only the tokens that pick a
-       different *step* in dark need restating. Filled accent controls step
-       one shade lighter, cards and popovers sit a layer above the page,
-       and the notice label turns black. */
+       different *step* in dark need restating: the page and layers step up
+       from near-black, the neutral fills and borders drop back to stock
+       Lumen, filled accent controls step one shade lighter, and the notice
+       label turns black. */
+    --color-background-base: var(--lumen-gray-25);
+    --color-background-layer-1: var(--lumen-gray-50);
     --color-background-layer-2: var(--lumen-gray-75);
     --color-background-elevated: var(--lumen-gray-75);
+
+    --color-fill-neutral-hover: var(--lumen-gray-100);
+    --color-fill-neutral-down: var(--lumen-gray-200);
+    --color-fill-neutral-subtle: var(--lumen-gray-100);
+
+    --color-border-default: var(--lumen-gray-600);
+    --color-border-hover: var(--lumen-gray-700);
+    --color-border-popover: var(--lumen-gray-400);
+    --color-fill-picker: var(--lumen-gray-100);
+
+    --color-overlay: rgba(0, 0, 0, 0.6);
 
     --color-accent-background: var(--lumen-accent-800);
     --color-accent-background-hover: var(--lumen-accent-700);
@@ -628,16 +701,15 @@
     color-scheme: dark;
 }
 
-/* ── Palette & background ───────────────────────────────────────────────
-   Both live in the generated lumen-palettes.css (imported at the top of
-   this file): data-palette re-points the accent scale at another Lumen
-   hue, data-bg re-tints just the neutral scale warm or cool. */
+/* ── Palette ────────────────────────────────────────────────────────────
+   Lives in the generated lumen-palettes.css (imported at the top of this
+   file): data-palette replaces the accent scale with another option's (red,
+   graphite or green), each grown from one OKLCH color. */
 
-/* ── Density ────────────────────────────────────────────────────────────
+/* ── Touch ──────────────────────────────────────────────────────────────
    Lumen asks for about 20% more on touch, so a coarse pointer steps every
-   control up one size (32 -> 40px). Compact steps down to 24px for
-   data-dense admin screens and wins over the touch bump. Type size and the
-   spacing scale stay put. */
+   control up one size (32 -> 40px). Type size and the spacing scale stay
+   put. */
 
 @media (pointer: coarse) {
     :root {
@@ -648,19 +720,6 @@
         --list-item-height: 2.5rem;
         --menu-item-height: 2.5rem;
     }
-}
-
-:root[data-density="compact"] {
-    --control-height-sm: 1.25rem;
-    --control-height-md: 1.5rem;
-    --control-height-lg: 2rem;
-    --control-height-button: 1.5rem;
-    --control-padding-x-button: 0.75rem;
-    --control-padding-y: 0rem;
-    --list-item-height: 1.75rem;
-    --menu-item-height: 1.75rem;
-    --table-padding-y: 0.25rem;
-    --table-header-padding-y: 0.375rem;
 }
 
 /* ── Shape ──────────────────────────────────────────────────────────────
@@ -839,8 +898,12 @@
        border so a filled and an outlined button are the same size:
 
          accent fill      .btn-primary   = .btn-filled
-         neutral fill     .btn-brand     = .btn-tonal
+         solid neutral    .btn-neutral
+         soft neutral     .btn-brand     = .btn-tonal
          neutral outline  .btn-secondary = .btn-outlined
+         accent outline   .btn-outline-accent
+         neutral-solid outline  .btn-outline-neutral
+         negative outline .btn-outline-danger
          quiet            .btn-ghost     = .btn-text
          raised           .btn-elevated
          negative fill    .btn-danger
@@ -848,10 +911,14 @@
        One accent fill per view. Hover steps a fill one shade, press two
        (`accent-background-hover` / `-down`); outlined and quiet buttons
        fill with `fill-neutral-hover` / `-down`. Sizes: `.btn-sm` (24px),
-       default (32px, 40px on touch), `.btn-lg` (40px), `.btn-xl` (48px). */
+       default (32px, 40px on touch), `.btn-lg` (40px), `.btn-xl` (48px);
+       every size is at least 2.25 times its height wide, and its icon gap
+       grows with it (5 / 6 / 7 / 8px). A toggle button carries
+       aria-pressed="true" and fills with neutral-background. */
     .btn {
         @apply inline-flex items-center justify-center gap-1.5 text-title-s;
         height: var(--control-height-button);
+        min-width: calc(var(--control-height-button) * 2.25);
         padding-inline: var(--control-padding-x-button);
         font-family: var(--font-plain);
         border: var(--border-width-200) solid transparent;
@@ -868,18 +935,24 @@
 
     .btn-sm {
         height: var(--component-height-75);
+        min-width: calc(var(--component-height-75) * 2.25);
+        gap: 0.3125rem;
         padding-inline: 0.75rem;
         @apply text-title-xs;
     }
 
     .btn-lg {
         height: var(--component-height-200);
+        min-width: calc(var(--component-height-200) * 2.25);
+        gap: 0.4375rem;
         padding-inline: 1.25rem;
         @apply text-title-m;
     }
 
     .btn-xl {
         height: var(--component-height-300);
+        min-width: calc(var(--component-height-300) * 2.25);
+        gap: 0.5rem;
         padding-inline: 1.5rem;
         @apply text-title-l;
     }
@@ -898,6 +971,18 @@
     .btn-primary:active,
     .btn-filled:active {
         background-color: var(--color-accent-background-down);
+    }
+
+    /* Lumen's primary button: a solid neutral fill. Hover and press both
+       step to content-heading. */
+    .btn-neutral {
+        background-color: var(--color-neutral-background);
+        color: var(--color-on-neutral);
+    }
+
+    .btn-neutral:hover,
+    .btn-neutral:active {
+        background-color: var(--color-content-heading);
     }
 
     .btn-brand,
@@ -919,8 +1004,28 @@
         color: var(--color-content-default);
     }
 
+    /* The other outlines: a 2px border and label in one color, filling
+       with fill-neutral-hover / -down like .btn-secondary. */
+    .btn-outline-accent {
+        border-color: var(--color-accent-content);
+        color: var(--color-accent-content);
+    }
+
+    .btn-outline-neutral {
+        border-color: var(--color-content-heading);
+        color: var(--color-content-heading);
+    }
+
+    .btn-outline-danger {
+        border-color: var(--color-negative-content);
+        color: var(--color-negative-content);
+    }
+
     .btn-secondary:hover,
     .btn-outlined:hover,
+    .btn-outline-accent:hover,
+    .btn-outline-neutral:hover,
+    .btn-outline-danger:hover,
     .btn-ghost:hover,
     .btn-text:hover {
         background-color: var(--color-fill-neutral-hover);
@@ -928,6 +1033,9 @@
 
     .btn-secondary:active,
     .btn-outlined:active,
+    .btn-outline-accent:active,
+    .btn-outline-neutral:active,
+    .btn-outline-danger:active,
     .btn-ghost:active,
     .btn-text:active {
         background-color: var(--color-fill-neutral-down);
@@ -971,6 +1079,7 @@
     .btn-icon {
         @apply inline-flex shrink-0 items-center justify-center;
         width: var(--control-height-button);
+        min-width: 0;
         height: var(--control-height-button);
         padding: 0;
         border: var(--border-width-200) solid transparent;
@@ -1003,8 +1112,8 @@
         background-color: var(--color-fill-neutral-down);
     }
 
-    /* Disabled - content-disabled on a neutral hover fill (no fill at all
-       for outlined and quiet buttons). */
+    /* Disabled - content-disabled on a neutral hover fill, whatever the
+       variant (no fill at all for quiet buttons). */
     .btn:disabled,
     .btn[disabled],
     .btn.disabled,
@@ -1019,20 +1128,22 @@
         opacity: 1;
     }
 
-    .btn-secondary:disabled,
-    .btn-secondary[disabled],
-    .btn-secondary.disabled,
-    .btn-outlined:disabled {
-        background-color: transparent;
-        border-color: var(--color-content-disabled);
-    }
-
     .btn-ghost:disabled,
     .btn-ghost[disabled],
     .btn-ghost.disabled,
     .btn-text:disabled,
     .btn-icon:not(.btn-primary, .btn-brand, .btn-tonal, .btn-filled, .btn-danger):disabled {
         background-color: transparent;
+    }
+
+    /* A toggle button in its pressed state - Lumen's pressed action button:
+       neutral-background with on-neutral text, whichever variant it is. */
+    .btn[aria-pressed="true"],
+    .btn[aria-pressed="true"]:hover,
+    .btn[aria-pressed="true"]:active {
+        background-color: var(--color-neutral-background);
+        border-color: var(--color-neutral-background);
+        color: var(--color-on-neutral);
     }
 
     /* ── Button group ────────────────────────────────────────────────────
@@ -1055,6 +1166,7 @@
 
     .btn-group > .btn.btn-icon {
         width: var(--control-height-button);
+        min-width: 0;
         padding: 0;
     }
 
@@ -1078,7 +1190,8 @@
         @apply relative z-10;
     }
 
-    .btn-group > .btn.selected {
+    .btn-group > .btn.selected,
+    .btn-group > .btn[aria-pressed="true"] {
         background-color: var(--color-neutral-background);
         border-color: var(--color-neutral-background);
         color: var(--color-on-neutral);
@@ -1131,13 +1244,15 @@
     }
 
     /* ── Cards ───────────────────────────────────────────────────────────
-       A layer-2 surface with a subtle border, 8px corners and 16px padding.
-       The default follows the data-shadow axis - outlined when flat, raised
-       with a shadow and no border when soft or elevated. The three
-       variants are also available explicitly: .card-outlined (on the page
-       color), .card-elevated, .card-filled (a layer-1 panel). A card that
+       A white (layer-2) surface on the gray page with a subtle border, 8px
+       corners and 16px padding. The default follows the data-shadow axis -
+       outlined when flat, raised with a shadow and no border when soft or
+       elevated. The three variants are also available explicitly:
+       .card-outlined (white, bordered), .card-elevated (white, shadow),
+       .card-filled (a light-gray fill, no border). A card that
        is a link or button (or carries .card-interactive) darkens its
-       border on hover. */
+       border and lifts with the elevated shadow on hover; .card-selected
+       marks the chosen one. */
     .card {
         @apply block p-4 no-underline;
         background-color: var(--wise-card-bg);
@@ -1150,7 +1265,7 @@
     }
 
     .card-outlined {
-        background-color: var(--color-background-base);
+        background-color: var(--color-background-layer-2);
         border-color: var(--color-border-subtle);
         box-shadow: none;
     }
@@ -1162,7 +1277,7 @@
     }
 
     .card-filled {
-        background-color: var(--color-background-layer-1);
+        background-color: var(--color-fill-neutral-subtle);
         border-color: transparent;
         box-shadow: none;
     }
@@ -1171,6 +1286,17 @@
     button.card:hover,
     .card-interactive:hover {
         border-color: var(--color-border-hover);
+        box-shadow: var(--shadow-elevated);
+    }
+
+    /* A chosen card: an accent border thickened to 2px with a ring, so the
+       selection never relies on color alone (pair it with a check icon). */
+    .card-selected,
+    a.card-selected:hover,
+    button.card-selected:hover,
+    .card-interactive.card-selected:hover {
+        border-color: var(--color-accent-content);
+        box-shadow: 0 0 0 var(--border-width-100) var(--color-accent-content);
     }
 
     a.card.card-elevated:hover,
@@ -1201,6 +1327,44 @@
         color: var(--color-content-subdued);
     }
 
+    /* ── Table card ──────────────────────────────────────────────────────
+       A table always sits in a card: `<div class="card card-table mt-4
+       overflow-x-auto">` around the `<table class="data-table">`. The card
+       is flush (no padding, so the table meets its edges) and scrolls the
+       table sideways when it is too wide. There is no header; a pager or
+       summary goes in a `.card-footer`:
+
+         <div class="card card-table mt-4 overflow-x-auto">
+           <table class="data-table">...</table>
+           <div class="card-footer">...pager...</div>
+         </div> */
+    .card-table {
+        @apply p-0;
+        overflow: hidden;
+    }
+
+    .card-footer {
+        @apply px-4 py-3;
+        border-top: var(--border-width-100) solid var(--color-border-subtle);
+    }
+
+    /* Inside a table card the table's own edges are the card's, so the
+       first and last cells keep a 16px inset and the last row needs no
+       rule of its own. */
+    .card-table .data-table th:first-child,
+    .card-table .data-table td:first-child {
+        padding-inline-start: 1rem;
+    }
+
+    .card-table .data-table th:last-child,
+    .card-table .data-table td:last-child {
+        padding-inline-end: 1rem;
+    }
+
+    .card-table .data-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
     /* Empty state - what a list renders instead of rows, from
        wise_core/components/_no_data.html. Roomy and centered: an empty list
        is a dead end unless the way out of it (create the first record, drop
@@ -1221,7 +1385,7 @@
     }
 
     .empty-state-title {
-        @apply text-heading-xs;
+        @apply text-heading-m;
         font-family: var(--font-brand);
         color: var(--color-content-heading);
     }
@@ -1300,13 +1464,13 @@
        Approved</span>`. The dot colors are Lumen's status families plus
        neutral, purple and cyan for categories. */
     .status-light {
-        @apply inline-flex items-center gap-2 text-body-s;
+        @apply inline-flex items-center gap-1.5 text-body-s;
         color: var(--color-content-default);
     }
 
     .status-light::before {
         content: '';
-        @apply h-2 w-2 shrink-0;
+        @apply h-2.5 w-2.5 shrink-0;
         background-color: var(--lumen-gray-600);
         border-radius: 9999px;
     }
@@ -1336,8 +1500,9 @@
     }
 
     /* ── Filter side-panel form ──────────────────────────────────────────
-       Dense by design (many fields in a narrow 400px sheet), so its fields
-       use the small control height. */
+       Many fields in a narrow 400px sheet. Its fields are ordinary fields
+       (see Text fields below) at the same single height as every other
+       form control; only the label spacing is its own. */
     .filter-container {
         @apply w-full;
     }
@@ -1345,34 +1510,6 @@
     .filter-container label {
         @apply mb-1 block text-detail-m;
         color: var(--color-content-default);
-    }
-
-    .filter-container input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not(.btn),
-    .filter-container select {
-        @apply w-full px-3 text-body-s;
-        height: var(--control-height-sm);
-        background-color: var(--color-background-layer-2);
-        color: var(--color-content-default);
-        border: var(--border-width-100) solid var(--color-border-default);
-        border-radius: var(--corner-radius-500);
-    }
-
-    .filter-container input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not(.btn):hover,
-    .filter-container select:hover {
-        border-color: var(--color-border-hover);
-    }
-
-    .language-switcher select {
-        @apply w-full cursor-pointer px-3 text-detail-m;
-        height: var(--control-height-md);
-        background-color: var(--color-background-layer-2);
-        color: var(--color-content-default);
-        border: var(--border-width-100) solid var(--color-border-default);
-        border-radius: var(--corner-radius-500);
-    }
-
-    .language-switcher select:hover {
-        background-color: var(--color-fill-neutral-hover);
     }
 
     .helptext {
@@ -1387,43 +1524,89 @@
     }
 
     /* ── Text fields ─────────────────────────────────────────────────────
-       A Lumen text field: 32px tall (24px compact, 40px on touch), 8px
-       corners, a 1px `border-default` border on a layer-2 fill, 14px input
-       text. Hover darkens the border; keyboard focus draws the global 2px
-       focus ring; an invalid field thickens its border to 2px in
-       `negative-content`. Labels sit above the field (.form-label) rather
-       than floating, which keeps them working with Django's plain
-       server-rendered widgets.
+       A Lumen text field. Every single-line control - text, number, date,
+       time, select, OTP box, color well, and the filter panel's fields -
+       reads the same --control-height-md (32px, 40px on touch), so a row of
+       mixed fields lines up; only `.input-sm` / `.input-lg` opt out, and a
+       text area is as tall as its rows. Corners are 8px, the border 2px
+       `border-default` on a layer-2 fill, the text 14px. Hover darkens the
+       border; on focus (mouse or keyboard) the border turns `border-focus`
+       and stays 2px - there is no separate ring. An invalid field keeps
+       its border and turns it `negative-border` (set aria-invalid="true",
+       or wrap it in .form-field-error), with the message below; a disabled
+       one takes `fill-disabled`, `border-disabled` and `content-disabled`
+       text. Labels sit above the field (.form-label) rather than floating,
+       which keeps them working with Django's plain server-rendered widgets.
+
+       A <select> is Lumen's picker instead: no border, a `fill-picker` fill
+       that deepens on hover, a chevron, and the focus ring on keyboard
+       focus. Keep a visible label on it - the fill alone is a faint cue.
 
        `.input`/`.select`/`.textarea` are the bare atomic controls; the
-       `.form-field` rules below apply the same look to whatever Django
-       renders inside a labeled field. */
+       `.form-field` and `.filter-container` rules apply the same look to
+       whatever Django renders inside them. */
     .input,
     .select,
     .textarea,
-    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"], [type="reset"], [type="hidden"], [type="file"], [type="color"], [type="range"], .btn, .switch), select, textarea) {
-        @apply w-full px-3 text-body-s;
+    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"], [type="reset"], [type="hidden"], [type="file"], [type="color"], [type="range"], .btn, .switch), select, textarea),
+    .filter-container :where(input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"], [type="reset"], [type="hidden"], [type="file"], [type="color"], [type="range"], .btn, .switch), select, textarea),
+    .language-switcher select {
+        @apply w-full text-body-s;
         height: var(--control-height-md);
         padding-block: var(--control-padding-y);
+        padding-inline: calc(0.75rem - 1px);
         background-color: var(--color-background-layer-2);
         color: var(--color-content-default);
         caret-color: var(--color-accent-content);
-        border: var(--border-width-100) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-default);
         border-radius: var(--corner-radius-500);
-        transition: border-color 130ms var(--ease-standard);
+        transition: border-color 130ms var(--ease-standard), background-color 130ms var(--ease-standard);
     }
 
     .input:hover,
     .select:hover,
     .textarea:hover,
-    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):hover {
+    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):hover,
+    .filter-container :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):hover {
         border-color: var(--color-border-hover);
+    }
+
+    /* Focus: the border darkens; no ring (and no outline, which the base
+       :focus-visible rule would otherwise draw). */
+    .input:focus,
+    .textarea:focus,
+    .select[multiple]:focus,
+    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), textarea):focus,
+    .form-field select[multiple]:focus,
+    .filter-container :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), textarea):focus,
+    .otp-input:focus {
+        outline: none;
+        border-color: var(--color-border-focus);
+    }
+
+    .input[aria-invalid="true"],
+    .select[aria-invalid="true"],
+    .textarea[aria-invalid="true"],
+    .form-field :where(input, select, textarea)[aria-invalid="true"] {
+        border-color: var(--color-negative-border);
+        caret-color: var(--color-negative-border);
+    }
+
+    .input[aria-invalid="true"]:hover,
+    .input[aria-invalid="true"]:focus,
+    .select[aria-invalid="true"]:hover,
+    .textarea[aria-invalid="true"]:hover,
+    .textarea[aria-invalid="true"]:focus,
+    .form-field :where(input, select, textarea)[aria-invalid="true"]:hover,
+    .form-field :where(input, textarea)[aria-invalid="true"]:focus {
+        border-color: var(--color-negative-border-hover);
     }
 
     .input::placeholder,
     .textarea::placeholder,
     .form-field input::placeholder,
-    .form-field textarea::placeholder {
+    .form-field textarea::placeholder,
+    .filter-container input::placeholder {
         color: var(--color-content-subdued);
         opacity: 1;
     }
@@ -1431,26 +1614,67 @@
     .input:disabled,
     .select:disabled,
     .textarea:disabled,
-    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):disabled {
-        background-color: transparent;
-        border-color: var(--color-content-disabled);
+    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):disabled,
+    .filter-container :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):disabled {
+        background-color: var(--color-fill-disabled);
+        border-color: var(--color-border-disabled);
         color: var(--color-content-disabled);
         cursor: not-allowed;
     }
 
-    /* The drop-down arrow is drawn from two gradients in currentColor-ish
-       content-subdued, so it follows the theme with no icon asset. */
+    .input:disabled::placeholder,
+    .textarea:disabled::placeholder,
+    .form-field input:disabled::placeholder,
+    .form-field textarea:disabled::placeholder {
+        color: var(--color-content-disabled);
+    }
+
+    /* The picker (a single-choice <select>): borderless on a fill-picker
+       fill. The chevron is drawn from two gradients in content-subdued, so
+       it follows the theme with no icon asset. A multiple select is a
+       listbox and keeps the bordered field look above. */
     .select:not([multiple]),
     .form-field select:not([multiple]),
-    .filter-container select:not([multiple]) {
+    .filter-container select:not([multiple]),
+    .language-switcher select:not([multiple]) {
         appearance: none;
         -webkit-appearance: none;
-        padding-inline-end: 2rem;
+        border-width: 0;
+        padding-inline: 0.75rem 2rem;
+        background-color: var(--color-fill-picker);
         background-image: linear-gradient(45deg, transparent 50%, var(--color-content-subdued) 50%),
         linear-gradient(135deg, var(--color-content-subdued) 50%, transparent 50%);
         background-position: calc(100% - 1rem) 50%, calc(100% - 0.6875rem) 50%;
         background-size: 0.3125rem 0.3125rem, 0.3125rem 0.3125rem;
         background-repeat: no-repeat;
+        cursor: pointer;
+    }
+
+    .select:not([multiple]):hover,
+    .form-field select:not([multiple]):hover,
+    .filter-container select:not([multiple]):hover,
+    .language-switcher select:not([multiple]):hover {
+        background-color: var(--color-fill-neutral-down);
+    }
+
+    /* An invalid picker has no border to recolor, so it draws a thin inset
+       outline in negative-border instead. */
+    .select[aria-invalid="true"]:not([multiple]),
+    .form-field select[aria-invalid="true"]:not([multiple]) {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border);
+    }
+
+    .select[aria-invalid="true"]:not([multiple]):hover,
+    .form-field select[aria-invalid="true"]:not([multiple]):hover {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border-hover);
+    }
+
+    .select:not([multiple]):disabled,
+    .form-field select:not([multiple]):disabled,
+    .filter-container select:not([multiple]):disabled,
+    .language-switcher select:not([multiple]):disabled {
+        background-color: var(--color-fill-disabled);
+        box-shadow: none;
     }
 
     .input-sm, .select-sm {
@@ -1461,19 +1685,27 @@
         height: var(--control-height-lg);
     }
 
+    /* A text area is as tall as its rows, never shorter than two fields
+       (64px); the handle at the bottom right resizes it vertically. */
     .textarea,
-    .form-field textarea {
+    .form-field textarea,
+    .filter-container textarea {
+        display: block;
         height: auto;
-        min-height: 6rem;
-        padding-block: 0.375rem;
+        min-height: calc(var(--component-height-100) * 2);
+        padding-block: 0.3125rem;
         resize: vertical;
+    }
+
+    .textarea-fixed {
+        resize: none;
     }
 
     /* Checkbox and radio: Lumen's own shapes, drawn on a real input so they
        post, validate and read to assistive tech as usual. A 16px box with a
        2px `border-default` border and 4px corners, filled with the accent
        and a white check (or dash, when indeterminate) once selected; a
-       radio is a 16px circle that grows a 5px accent ring. */
+       radio is a 14px circle that grows a 4px accent ring. */
     .checkbox,
     .radio,
     .form-checkbox-label input[type="checkbox"]:not(.switch),
@@ -1495,6 +1727,8 @@
 
     .radio,
     .form-field input[type="radio"] {
+        width: 0.875rem;
+        height: 0.875rem;
         border-radius: 9999px;
     }
 
@@ -1525,7 +1759,7 @@
 
     .radio:checked,
     .form-field input[type="radio"]:checked {
-        border-width: 5px;
+        border-width: 4px;
         border-color: var(--color-accent-background);
     }
 
@@ -1535,14 +1769,14 @@
     .form-field input[type="checkbox"]:not(.switch):disabled,
     .form-field input[type="radio"]:disabled {
         background-color: transparent;
-        border-color: var(--color-content-disabled);
+        border-color: var(--color-border-disabled);
         cursor: not-allowed;
     }
 
     .checkbox:checked:disabled,
     .form-checkbox-label input[type="checkbox"]:not(.switch):checked:disabled,
     .form-field input[type="checkbox"]:not(.switch):checked:disabled {
-        background-color: var(--color-content-disabled);
+        background-color: var(--color-border-disabled);
     }
 
     /* Native <input type="color">. The browser paints the swatch inside its
@@ -1552,7 +1786,7 @@
         @apply w-14 cursor-pointer p-0;
         height: var(--control-height-md);
         background-color: var(--color-background-layer-2);
-        border: var(--border-width-100) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-default);
         border-radius: var(--corner-radius-500);
     }
 
@@ -1589,7 +1823,7 @@
     }
 
     .form-required {
-        @apply ml-0.5;
+        @apply ml-1;
         color: var(--color-content-default);
     }
 
@@ -1613,17 +1847,30 @@
         background-color: var(--color-fill-neutral-down);
     }
 
-    .form-field-error .form-label,
     .form-field-error .helptext {
         color: var(--color-negative-content);
     }
 
     /* Two classes (.form-field.form-field-error) + :where() keeps the error
-       look ahead of the hover rule above without an !important. */
+       look ahead of the hover rule above without an !important. The label
+       stays content-default; the message below carries the error. */
     .form-field.form-field-error :where(input:not([type="checkbox"], [type="radio"], [type="file"]), select, textarea) {
-        border-width: var(--border-width-200);
-        border-color: var(--color-negative-content);
-        caret-color: var(--color-negative-content);
+        border-color: var(--color-negative-border);
+        caret-color: var(--color-negative-border);
+    }
+
+    .form-field.form-field-error :where(input:not([type="checkbox"], [type="radio"], [type="file"]), select, textarea):hover,
+    .form-field.form-field-error :where(input:not([type="checkbox"], [type="radio"], [type="file"]), textarea):focus {
+        border-color: var(--color-negative-border-hover);
+    }
+
+    /* A picker in an errored field: the inset outline stands in for the border. */
+    .form-field.form-field-error select:not([multiple]) {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border);
+    }
+
+    .form-field.form-field-error select:not([multiple]):hover {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border-hover);
     }
 
     .form-field-checkbox {
@@ -1637,8 +1884,8 @@
 
     /* A form-level error: a Lumen inline alert in the negative family. */
     .form-alert {
-        @apply flex items-start gap-3 px-4 py-3 text-body-s;
-        background-color: var(--color-background-layer-2);
+        @apply flex items-start gap-3 p-4 text-body-s;
+        background-color: var(--color-negative-subtle);
         color: var(--color-content-default);
         border: var(--border-width-200) solid var(--color-negative-content);
         border-radius: var(--corner-radius-500);
@@ -1668,16 +1915,6 @@
 
     .form-stack-compact .form-label {
         @apply text-detail-s;
-    }
-
-    .form-stack-compact .form-field input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="hidden"]):not([type="file"]):not(.btn),
-    .form-stack-compact .form-field select {
-        height: var(--control-height-sm);
-        padding-block: 0;
-    }
-
-    .form-stack-compact .form-field textarea {
-        min-height: 4rem;
     }
 
     /* ── Detail panel ────────────────────────────────────────────────────
@@ -1722,6 +1959,7 @@
 
     .detail-panel th {
         @apply w-40 py-3 pr-4 text-left align-top text-title-s sm:w-52;
+        height: var(--component-height-300);
         color: var(--color-content-subdued);
     }
 
@@ -1733,11 +1971,30 @@
     /* ── Data table ──────────────────────────────────────────────────────
        List views rendered as a table, normally driven by WiseListView +
        django-filter; see docs/generic-views-and-mixins.md. Lumen styling:
-       bold title-s headers (sentence case, never uppercased), body-s cells,
-       subtle row dividers and a `fill-neutral-hover` fill on the hovered
-       row. */
+       bold 12px `content-subdued` headers (sentence case, never
+       uppercased) over a 2px rule, 40px body-s rows with 12px cell padding
+       and 1px dividers, a `row-hover` tint on the hovered row and
+       `selected-subtle` on a row marked `.selected` or aria-selected. */
     .data-table {
         @apply w-full border-collapse text-body-s;
+    }
+
+    /* Lumen's row heights: header 32px, body rows 40px (`.data-table-compact`
+       32px, `.data-table-spacious` 48px), set as a minimum so a wrapped cell
+       grows its row; the 4px of block padding only breathes around wrapped
+       text and a 32px row-action button still fits a 40px row. Line height
+       is Lumen's 1.3. */
+    .data-table td,
+    .data-table th {
+        line-height: 1.3;
+    }
+
+    .data-table-compact td {
+        height: var(--component-height-100);
+    }
+
+    .data-table-spacious td {
+        height: var(--component-height-300);
     }
 
     /* Columns fit their content by default. `width: 1%` is the standard
@@ -1761,9 +2018,9 @@
     }
 
     .data-table th {
-        @apply px-4 text-left text-title-s;
-        padding-block: var(--table-header-padding-y);
-        color: var(--color-content-heading);
+        @apply px-3 text-left text-title-xs;
+        height: var(--component-height-100);
+        color: var(--color-content-subdued);
         border-bottom: var(--border-width-200) solid var(--color-border-subtle);
     }
 
@@ -1772,12 +2029,12 @@
        (see docs/generic-views-and-mixins.md). Every sortable header shows an
        icon, even unsorted ones, so the capability reads as clickable. */
     .data-table th a {
-        @apply flex w-full items-center justify-between gap-2 no-underline;
-        color: var(--color-content-heading);
+        @apply flex w-full items-center justify-between gap-1 no-underline;
+        color: inherit;
     }
 
     .data-table th a:hover {
-        color: var(--color-accent-content);
+        color: var(--color-content-heading);
     }
 
     .data-table th a svg {
@@ -1790,14 +2047,25 @@
     }
 
     .data-table td {
-        @apply px-4;
-        padding-block: var(--table-padding-y);
+        @apply px-3;
+        height: var(--component-height-200);
+        padding-block: 0.25rem;
         color: var(--color-content-default);
         border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .data-table tr:hover td {
-        background-color: var(--color-fill-neutral-hover);
+        background-color: var(--color-row-hover);
+    }
+
+    .data-table tr.selected td,
+    .data-table tr[aria-selected="true"] td {
+        background-color: var(--color-selected-subtle);
+    }
+
+    .data-table tr.selected:hover td,
+    .data-table tr[aria-selected="true"]:hover td {
+        background-color: var(--color-selected-subtle-hover);
     }
 
     /* ── Calendar ────────────────────────────────────────────────────────
@@ -1851,7 +2119,7 @@
 
     .calendar-day.is-outside {
         color: var(--color-content-subdued);
-        background-color: var(--color-background-layer-1);
+        background-color: var(--color-fill-neutral-subtle);
     }
 
     .calendar-day.is-today .calendar-day-number {
@@ -1871,14 +2139,26 @@
        fill with `fill-neutral-hover` on hover and `fill-neutral-down` on
        press. `:where()` keeps it at zero specificity so any component can
        still override its own background - the selected states below do. */
-    :where(.top-nav-item, .menu-link, .dropdown-item, .pagination-link, .tree-item > summary,
-    .tree-item-label, .tree-leaf, .accordion-item > summary):hover {
+    :where(.top-nav-item, .menu-link, .dropdown-item, .pagination-link,
+    .accordion-item > summary):hover {
         background-color: var(--color-fill-neutral-hover);
     }
 
     :where(.top-nav-item, .menu-link, .dropdown-item, .pagination-link, .tree-item > summary,
     .tree-item-label, .tree-leaf, .accordion-item > summary):active {
         background-color: var(--color-fill-neutral-down);
+    }
+
+    /* Tree rows are list rows: the translucent row tint, like a table row. */
+    :where(.tree-item > summary, .tree-item-label, .tree-leaf):hover {
+        background-color: var(--color-row-hover);
+    }
+
+    /* A row that fills its own box (the text sits right at its edge) draws
+       the focus ring inside it, so a clipping parent can't cut it off. */
+    :where(.top-nav-item, .menu-link, .dropdown-item, .tree-item > summary, .tree-item-label,
+    .tree-leaf, .accordion-item > summary):focus-visible {
+        outline-offset: calc(var(--focus-ring-width) * -1);
     }
 
     /* Small round controls that sit on a colored surface (a toast, a tag)
@@ -1890,6 +2170,13 @@
 
     :where(.tag-remove, .toast-close):active {
         background-color: color-mix(in srgb, currentColor 24%, transparent);
+    }
+
+    /* Their focus ring is drawn over the colored surface they sit on, where
+       the accent could vanish (graphite on a neutral toast), so it takes the
+       surface's own text color - always readable on that fill. */
+    :where(.tag-remove, .toast-close):focus-visible {
+        outline-color: currentColor;
     }
 
     /* ── Top app bar ─────────────────────────────────────────────────────
@@ -1962,7 +2249,7 @@
     }
 
     /* ── Tabs ────────────────────────────────────────────────────────────
-       Lumen tabs: bold title-s labels in `content-subdued`, a 2px subtle
+       Lumen tabs: 48px tall, 24px apart, bold title-s labels in `content-subdued`, a 2px subtle
        rule under the whole row, and the selected tab turns `content-heading`
        with a 2px heading-colored indicator over the rule. The rule is an
        inset shadow on the row (not a border) so the row can scroll
@@ -1975,7 +2262,7 @@
     .tab-bar .bar-item {
         @apply relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 px-0 py-2.5
         text-center no-underline text-title-s;
-        min-height: var(--component-height-200);
+        min-height: var(--component-height-300);
         border: 0;
         background-color: transparent;
         color: var(--color-content-subdued);
@@ -2146,7 +2433,8 @@
     }
 
     .autocomplete-table th, .autocomplete-table td {
-        @apply whitespace-nowrap px-3 py-2;
+        @apply whitespace-nowrap px-3 py-1;
+        height: var(--component-height-200);
         border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
@@ -2156,13 +2444,14 @@
 
     .autocomplete-table th {
         @apply text-left text-title-xs;
-        background-color: var(--color-background-layer-1);
-        color: var(--color-content-default);
+        height: var(--component-height-100);
+        color: var(--color-content-subdued);
+        border-bottom: var(--border-width-200) solid var(--color-border-subtle);
     }
 
     .autocomplete-table tr:hover td {
         cursor: pointer;
-        background-color: var(--color-fill-neutral-hover);
+        background-color: var(--color-row-hover);
     }
 
     /* The `td` selector isn't redundant with `tr.selected`: Preflight sets
@@ -2171,32 +2460,55 @@
        against `td` gives it its own declaration to win with. */
     .autocomplete-table tr.selected,
     .autocomplete-table tr.selected td {
-        background-color: var(--color-accent-subtle);
-        color: var(--color-on-accent-subtle);
+        background-color: var(--color-selected-subtle);
+        color: var(--color-content-heading);
     }
 
     /* ── Pagination ──────────────────────────────────────────────────────
-       Pager links are quiet action buttons; the current page is filled
-       with neutral-background, the way a pressed action button is. */
+       Pager links are quiet round buttons with tabular 500-weight numbers;
+       the current page is filled with neutral-background and set in 700,
+       the way a pressed action button is. */
     .pagination-link {
-        @apply inline-flex items-center gap-1 px-3 no-underline text-title-s;
+        @apply inline-flex items-center gap-1 px-2 no-underline text-detail-m tabular-nums;
         min-height: var(--control-height-button);
         min-width: var(--control-height-button);
         justify-content: center;
         color: var(--color-content-default);
-        border-radius: var(--corner-radius-500);
+        border-radius: var(--corner-radius-full);
     }
 
     .pagination-link.selected,
     .pagination-link[aria-current="page"] {
         background-color: var(--color-neutral-background);
         color: var(--color-on-neutral);
+        font-weight: 700;
     }
 
     .pagination-link.disabled {
         @apply pointer-events-none;
         color: var(--wise-disabled-content);
         opacity: 1;
+    }
+
+    /* An elided run of pages: not a link, no hover. */
+    .pagination-gap {
+        @apply pointer-events-none;
+        color: var(--color-content-subdued);
+    }
+
+    /* The pager row (_pagination.html): a "Showing 21-40 of 312" summary at
+       the start, Lumen's numbered pagination at the end. */
+    .pagination {
+        @apply inline-flex flex-wrap items-center gap-1;
+    }
+
+    .pagination-bar {
+        @apply flex flex-wrap items-center justify-between gap-3;
+    }
+
+    .pagination-summary {
+        @apply m-0 text-body-s;
+        color: var(--color-content-subdued);
     }
 
     .large-button {
@@ -2336,19 +2648,21 @@
        .dropdown-panel is `position: absolute` against .dropdown, which a
        scrollable ancestor would otherwise clip - repositions the open panel
        to `position: fixed` so it always escapes ancestor overflow.
-       A popover: background-elevated with a subtle edge, 10px corners, the
-       `elevated` shadow and 32px (40px on touch) items. */
+       A popover: background-elevated, 8px corners, 8px padding, the
+       `elevated` shadow and 32px (40px on touch) items. Light popovers have
+       no border (the shadow separates them); dark ones get a 1px
+       `border-popover` outline. */
     .dropdown {
         @apply relative inline-block;
     }
 
     .dropdown-panel {
-        @apply absolute right-0 top-full mt-1 min-w-[7rem] max-w-[280px] p-1;
+        @apply absolute right-0 top-full mt-2 min-w-[7rem] max-w-[280px] p-2;
         z-index: var(--z-dropdown);
         background-color: var(--color-background-elevated);
         color: var(--color-content-default);
-        border: var(--border-width-100) solid var(--color-border-subtle);
-        border-radius: var(--corner-radius-700);
+        border: var(--border-width-100) solid var(--color-border-popover);
+        border-radius: var(--corner-radius-500);
         box-shadow: var(--shadow-elevated);
     }
 
@@ -2364,10 +2678,10 @@
     }
 
     .dropdown-item {
-        @apply flex w-full cursor-pointer items-center gap-2 px-3 text-left no-underline text-body-s;
+        @apply flex w-full cursor-pointer items-center gap-2 px-2 text-left no-underline text-body-s;
         min-height: var(--menu-item-height);
         border: none;
-        border-radius: var(--corner-radius-400);
+        border-radius: var(--corner-radius-300);
         background-color: transparent;
         color: var(--color-content-default);
     }
@@ -2407,12 +2721,12 @@
     /* ── Switch ──────────────────────────────────────────────────────────
        A real <input type="checkbox">, restyled - so it posts, validates and
        reads to assistive tech exactly like a checkbox. Lumen's switch is a
-       28x16 pill: unselected = a 2px `border-default` outline around an 8px
-       `content-default` handle, selected = an accent track with an 8px
+       26x16 pill: unselected = a 2px `border-default` outline around an 8px
+       `content-default` handle, selected = an accent track with a 10px
        `on-accent` handle. */
     .switch {
         @apply relative inline-block shrink-0 cursor-pointer align-middle;
-        width: 1.75rem;
+        width: 1.625rem;
         height: 1rem;
         appearance: none;
         -webkit-appearance: none;
@@ -2432,7 +2746,8 @@
         background-color: var(--color-content-default);
         border-radius: var(--corner-radius-full);
         transform: translateY(-50%);
-        transition: transform 130ms var(--ease-standard), background-color 130ms var(--ease-standard);
+        transition: left 130ms var(--ease-standard), width 130ms var(--ease-standard),
+        height 130ms var(--ease-standard), background-color 130ms var(--ease-standard);
     }
 
     .switch:hover {
@@ -2445,25 +2760,27 @@
     }
 
     .switch:checked::after {
-        transform: translate(0.75rem, -50%);
+        left: 0.625rem;
+        width: 0.625rem;
+        height: 0.625rem;
         background-color: var(--color-on-accent);
     }
 
     .switch:disabled {
         @apply cursor-not-allowed;
-        border-color: var(--color-content-disabled);
+        border-color: var(--color-border-disabled);
     }
 
     .switch:disabled::after {
-        background-color: var(--color-content-disabled);
+        background-color: var(--color-border-disabled);
     }
 
     .switch:checked:disabled {
-        background-color: var(--color-content-disabled);
+        background-color: var(--color-border-disabled);
     }
 
     .switch:checked:disabled::after {
-        background-color: var(--color-background-base);
+        background-color: var(--color-fill-disabled);
     }
 
     /* ── Rating ──────────────────────────────────────────────────────────
@@ -2515,13 +2832,14 @@
     }
 
     .otp-input {
-        @apply w-10 text-center text-title-l;
-        height: var(--control-height-lg);
+        @apply w-10 p-0 text-center text-title-l;
+        height: var(--control-height-md);
         background-color: var(--color-background-layer-2);
         color: var(--color-content-heading);
         caret-color: var(--color-accent-content);
-        border: var(--border-width-100) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-default);
         border-radius: var(--corner-radius-500);
+        transition: border-color 130ms var(--ease-standard);
     }
 
     .otp-input:hover {
@@ -2542,7 +2860,7 @@
     }
 
     .input-group > * + * {
-        margin-inline-start: -1px;
+        margin-inline-start: calc(var(--border-width-200) * -1);
     }
 
     .input-group > :not(:first-child) {
@@ -2568,7 +2886,7 @@
         @apply inline-flex shrink-0 items-center px-3 text-body-s;
         background-color: var(--color-fill-neutral-hover);
         color: var(--color-content-subdued);
-        border: var(--border-width-100) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-default);
         border-radius: var(--corner-radius-500);
     }
 
@@ -2616,7 +2934,8 @@
        top-layer stacking come from the browser, so the only JS involved is
        the one call that opens it (wiseOpenDialog). A Lumen dialog:
        background-elevated, 16px corners, the `dragged` shadow, 24px
-       padding, heading-xs title, actions right-aligned - no dividers. */
+       padding, a 22px heading-m title, 16px body copy, actions
+       right-aligned - no dividers. */
     .dialog {
         @apply w-full max-w-[560px] p-0;
         margin: auto; /* Preflight zeroes every margin, which would pin a modal to the top-left */
@@ -2654,13 +2973,13 @@
     }
 
     .dialog-title {
-        @apply m-0 text-heading-xs;
+        @apply m-0 text-heading-m;
         font-family: var(--font-brand);
         color: var(--color-content-heading);
     }
 
     .dialog-body {
-        @apply px-6 pb-6 text-body-s;
+        @apply px-6 pb-6 text-body-m;
         color: var(--color-content-default);
     }
 
@@ -2671,15 +2990,16 @@
     /* ── Drawer → side sheet ─────────────────────────────────────────────
        Edge-anchored panel. Same mechanic as .filter-panel (which is a
        right-hand side sheet with a fixed job) - this is the general form.
-       background-elevated with a subtle inner edge and the `elevated`
-       shadow, over a scrim. */
+       background-elevated with a subtle inner edge and the `dragged`
+       shadow, over a scrim. The header and footer are set off by subtle
+       rules. */
     .drawer {
         @apply fixed inset-y-0 right-0 flex w-full max-w-[400px] flex-col overflow-y-auto;
         z-index: var(--z-drawer);
         background-color: var(--color-background-elevated);
         color: var(--color-content-default);
         border-left: var(--border-width-100) solid var(--color-border-subtle);
-        box-shadow: var(--shadow-elevated);
+        box-shadow: var(--shadow-dragged);
     }
 
     .drawer-left {
@@ -2691,14 +3011,15 @@
     .drawer-header {
         @apply flex items-center justify-between gap-3 py-3 pl-6 pr-3;
         min-height: var(--component-height-400);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .drawer-header :is(h1, h2, h3, h4, .dialog-title) {
-        @apply text-title-l;
+        @apply text-heading-m;
     }
 
     .drawer-body {
-        @apply flex-1 px-6 py-4 text-body-s;
+        @apply flex-1 px-6 py-4 text-body-m;
     }
 
     .drawer-footer {
@@ -2836,30 +3157,31 @@
     }
 
     .tree-leaf.selected {
-        background-color: var(--color-fill-neutral-hover);
+        background-color: var(--color-selected-subtle);
         color: var(--color-content-heading);
         font-weight: 700;
     }
 
     .tree-leaf.selected:hover {
-        background-color: var(--color-fill-neutral-down);
+        background-color: var(--color-selected-subtle-hover);
     }
 
     /* ── Callout → inline alert ──────────────────────────────────────────
        A block-level message inside page content (as opposed to a toast,
-       which floats above it): a Lumen inline alert - a layer-2 box with a
-       2px border and icon in the status color, a bold heading-colored title
-       and body-s text. The plain callout is neutral. */
+       which floats above it): a Lumen inline alert - a box tinted with the
+       status family's `-subtle` fill, a 2px border and icon in the status
+       color, a bold heading-colored title and body-s text. The plain
+       callout is neutral. */
     .callout {
-        @apply flex items-start gap-3 px-4 py-3 text-body-s;
-        background-color: var(--color-background-layer-2);
+        @apply flex items-start gap-3 p-4 text-body-s;
+        background-color: var(--color-neutral-subtle);
         color: var(--color-content-default);
         border: var(--border-width-200) solid var(--color-content-default);
         border-radius: var(--corner-radius-500);
     }
 
     .callout-title {
-        @apply mb-0.5 text-title-s;
+        @apply mb-1 text-title-s;
         color: var(--color-content-heading);
     }
 
@@ -2868,6 +3190,7 @@
     }
 
     .callout-info {
+        background-color: var(--color-informative-subtle);
         border-color: var(--color-informative-content);
     }
 
@@ -2876,6 +3199,7 @@
     }
 
     .callout-success {
+        background-color: var(--color-positive-subtle);
         border-color: var(--color-positive-content);
     }
 
@@ -2884,6 +3208,7 @@
     }
 
     .callout-warning {
+        background-color: var(--color-notice-subtle);
         border-color: var(--color-notice-content);
     }
 
@@ -2892,6 +3217,7 @@
     }
 
     .callout-danger {
+        background-color: var(--color-negative-subtle);
         border-color: var(--color-negative-content);
     }
 
@@ -2988,6 +3314,17 @@
             animation: none;
             width: 40%;
         }
+    }
+
+    /* ── Color dot ───────────────────────────────────────────────────────
+       A small round sample of a color - an accent choice in the settings
+       panel. Illustration only: fill it with a --lumen-swatch-<option> (or
+       --lumen-<hue>-900) value. The hairline keeps a near-black or
+       near-white sample visible on either theme. */
+    .color-dot {
+        @apply inline-block h-3 w-3 shrink-0;
+        border: var(--border-width-100) solid var(--color-border-default);
+        border-radius: 9999px;
     }
 
     /* ── Tag ─────────────────────────────────────────────────────────────
@@ -3096,11 +3433,13 @@
     }
 
     /* ── Avatar ──────────────────────────────────────────────────────────
-       Round by default; a neutral fill with initials in title-m. */
+       Round by default; a neutral fill with initials in title-s. Sizes:
+       .avatar-xs 20px, .avatar-sm 24px, .avatar-md 32px, default 40px,
+       .avatar-lg 56px. */
     .avatar {
-        @apply inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden text-title-m;
-        background-color: var(--color-fill-neutral-hover);
-        color: var(--color-content-heading);
+        @apply inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden text-title-s;
+        background-color: var(--color-fill-neutral-down);
+        color: var(--color-content-default);
         border-radius: var(--corner-radius-full);
     }
 
@@ -3108,12 +3447,22 @@
         @apply h-full w-full object-cover;
     }
 
+    .avatar-xs {
+        @apply h-5 w-5;
+        font-size: 0.5625rem;
+    }
+
     .avatar-sm {
-        @apply h-6 w-6 text-title-xs;
+        @apply h-6 w-6;
+        font-size: 0.625rem;
+    }
+
+    .avatar-md {
+        @apply h-8 w-8 text-title-xs;
     }
 
     .avatar-lg {
-        @apply h-14 w-14 text-title-xl;
+        @apply h-14 w-14 text-title-l;
     }
 
     .avatar-circle {
@@ -3130,7 +3479,7 @@
 
     .avatar-group > .avatar + .avatar {
         @apply -ml-2;
-        box-shadow: 0 0 0 2px var(--color-background-base);
+        box-shadow: 0 0 0 var(--border-width-100) var(--color-background-layer-2);
     }
 
     /* ── Image & video ───────────────────────────────────────────────────*/

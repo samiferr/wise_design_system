@@ -28,8 +28,8 @@
                 <div class="marketing-stat-label">Components</div>
             </div>
             <div>
-                <div class="marketing-stat-value">6</div>
-                <div class="marketing-stat-label">Live design tokens</div>
+                <div class="marketing-stat-value">4</div>
+                <div class="marketing-stat-label">Live design settings</div>
             </div>
             <div>
                 <div class="marketing-stat-value">3</div>
@@ -56,7 +56,7 @@
                 {% lucide "settings" size=20 cls="text-action-600" %}
                 <h3 class="card-title mt-3">Tokens, not magic numbers</h3>
                 <p class="card-content mt-2">
-                    Theme, palette, density, corner radius, card shadow and background are each one
+                    Theme, accent color, rounding and card shadow are each one
                     CSS custom property, switched by one HTML attribute — no second stylesheet, no
                     rebuild.
                 </p>
@@ -74,7 +74,7 @@
                 <h3 class="card-title mt-3">Dark mode, four palettes, zero rebuild</h3>
                 <p class="card-content mt-2">
                     Dark mode inverts the whole neutral ramp rather than tinting the light theme, so
-                    every existing <code>text-gray-600</code> lands the right way up automatically.
+                    every existing <code>text-content-subdued</code> lands the right way up automatically.
                 </p>
             </div>
             <div class="card">
@@ -89,13 +89,13 @@
         </div>
     </section>
 
-    <section class="marketing-section bg-panel">
+    <section class="marketing-section">
         <div class="marketing-section-header">
             <div class="card-kicker">Try it now</div>
             <h2 class="mt-2">Every token, switched live — right here</h2>
             <p class="mt-3 text-gray-700">
-                Open the settings panel and change theme, palette, density, radius, shadow or
-                background. This whole page re-renders instantly, with no reload.
+                Open the settings panel and change theme, accent color, rounding or card shadow.
+                This whole page re-renders instantly, with no reload.
             </p>
             <div class="mt-5">
                 <button type="button" class="btn btn-primary large-button" onclick="wiseOpenDrawer('wise-settings-drawer')">
@@ -107,7 +107,7 @@
             <div class="card">
                 <div class="card-kicker">Card</div>
                 <h3 class="card-title mt-1">Surfaces follow every token</h3>
-                <p class="card-content mt-2">Radius, shadow and background all update on this card.</p>
+                <p class="card-content mt-2">Radius and shadow update on this card.</p>
                 <div class="mt-3 flex flex-wrap items-center gap-2">
                     <button class="btn btn-primary" type="button">Primary</button>
                     <span class="badge badge-action">Badge</span>
@@ -150,7 +150,7 @@
         </div>
     </section>
 
-    <section class="marketing-section bg-panel">
+    <section class="marketing-section">
         <div class="marketing-section-header">
             <div class="card-kicker">What's in the box</div>
             <h2 class="mt-2">Three installable apps, one demo site</h2>

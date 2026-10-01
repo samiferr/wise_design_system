@@ -5,7 +5,7 @@
  * on its own it ignores the theme - white borders and dim toolbar icons in dark mode, a font
  * that matches nothing. This file is loaded right after it (see widgets.py) and re-points those
  * colors at the Lumen tokens from wise_core's tokens.css, so the editor follows data-theme,
- * data-palette, data-radius and data-bg like every other field. The fallbacks after each comma
+ * data-palette and data-radius like every other field. The fallbacks after each comma
  * are Quill's own values, so the file degrades to stock Quill in a project without the tokens.
  */
 
@@ -13,7 +13,7 @@
     padding: 4px 8px;
     font-family: var(--font-plain, 'Helvetica Neue', Helvetica, Arial, sans-serif);
     background: var(--color-background-layer-1, #fff);
-    border: 1px solid var(--color-border-default, #ccc);
+    border: 2px solid var(--color-border-default, #ccc);
     border-radius: var(--corner-radius-500, 8px) var(--corner-radius-500, 8px) 0 0;
 }
 
@@ -22,7 +22,7 @@
     font-size: 0.875rem;
     color: var(--color-content-default, #444);
     background: var(--color-background-layer-2, #fff);
-    border: 1px solid var(--color-border-default, #ccc);
+    border: 2px solid var(--color-border-default, #ccc);
     border-radius: 0 0 var(--corner-radius-500, 8px) var(--corner-radius-500, 8px);
 }
 
@@ -30,9 +30,12 @@
     border-top: 0;
 }
 
-.ql-container.ql-snow:focus-within {
-    outline: var(--focus-ring-width, 2px) solid var(--color-focus-ring, #06c);
-    outline-offset: var(--focus-ring-offset, 2px);
+/* Like every text field: focus turns the 2px border dark (toolbar and editor together),
+   with no separate ring. */
+.ql-container.ql-snow:focus-within,
+.ql-toolbar.ql-snow:has(+ .ql-container.ql-snow:focus-within) {
+    outline: none;
+    border-color: var(--color-border-focus, #06c);
 }
 
 .ql-editor.ql-blank::before {

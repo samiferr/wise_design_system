@@ -20,7 +20,7 @@ sizes.**
    `bg-notice-background text-on-notice`). No `text-white`, no `bg-[#...]`, no `dark:` variants:
    tokens already flip in dark mode. Palette steps like `--lumen-blue-900` are for charts and
    illustration only.
-2. **One accent, one main action.** The accent hue (blue by default; `data-palette` swaps it) fills
+2. **One accent, one main action.** The accent color (blue by default; `data-palette` swaps it) fills
    the single main action per view (`btn-primary`) and colors links (`text-accent-content`). Everything
    else is neutral: `btn-brand` (neutral fill), `btn-secondary` (outline), `btn-ghost` (quiet).
 3. **Type = the Lumen scale.** `text-heading-*` (800), `text-title-*` (700), `text-body-*` (400),
@@ -31,15 +31,23 @@ sizes.**
    fully round; fields, pickers, cards, alerts and nav items are 8px (`rounded-md`); checkboxes and
    tags 4px (`rounded-xs`); menus and popovers 10px (`rounded-lg`); dialogs 16px (`rounded-xl`).
    Use the component, or those utilities.
-5. **Layers and borders, not shadows.** Page `background-base` → raised panel `background-layer-1`
-   → card/field `background-layer-2` → popover/dialog `background-elevated`. Cards use a
-   `border-subtle` edge or a layer step. Shadows (`shadow-emphasized`, `shadow-elevated`,
+5. **A gray canvas with white surfaces; layers and borders, not shadows.** The page
+   (`background-base`) is one fixed gray - it is not a setting, never override it - and everything on
+   it is a surface: raised panel `background-layer-1`, card/field `background-layer-2`,
+   popover/dialog `background-elevated`. In light all three are white (so **cards are white**); in dark
+   they step up from near-black. Cards use a `border-subtle` edge. Put quiet regions inside a surface
+   (table header, hovered row) on `fill-neutral-subtle`. Shadows (`shadow-emphasized`, `shadow-elevated`,
    `shadow-dragged`) only for things that float: menus, toasts, dialogs. A control's own border is
-   `border-default` (3:1); `border-subtle` is for decorative dividers only.
+   `border-default` (3:1 on the page and every surface); `border-subtle` is for decorative dividers only.
+   Text fields, text areas and search fields use a 2px border that turns `border-focus` on focus; a
+   `<select>` is a borderless picker on `fill-picker`. **Every single-line control has the same height.**
+   **A table always sits in a card** - `<div class="card card-table mt-4 overflow-x-auto">` around the
+   `table.data-table`, no card header - with the pager (Lumen's Pagination) in a `card-footer`.
 6. **Interaction = stepped fills.** Hover moves a fill one shade, press two; the component classes
    already do this. Don't hand-write hover colors - add the selector to the quiet-hover `:where(...)`
    rule in `tokens.css`. Every interactive element shows a 2px `focus-ring` outline (offset 2px) on
-   keyboard focus; don't remove it.
+   keyboard focus; don't remove it. (Text fields and text areas are the one exception: their 2px border
+   turns `border-focus` instead of drawing a ring.)
 
 ## Pick the component first
 
@@ -78,23 +86,26 @@ Details and values: [references/tokens.md](references/tokens.md).
 
 - **Tailwind color tokens** (`bg-`/`text-`/`border-` + name): `background-base`, `background-layer-1`,
   `background-layer-2`, `background-elevated`, `fill-neutral-hover`, `fill-neutral-down`,
+  `fill-neutral-subtle` (Wise extension),
   `content-heading`, `content-default`, `content-subdued`, `content-disabled`, `border-default`,
-  `border-hover`, `border-subtle`, `accent-background` (+ `-hover`, `-down`), `accent-content`,
+  `border-hover`, `border-focus`, `border-subtle`, `fill-picker`, `row-hover`, `selected-subtle`, `accent-background` (+ `-hover`, `-down`), `accent-content`,
   `on-accent`, `accent-subtle` / `on-accent-subtle` (Wise extension), `neutral-background`,
   `on-neutral`, `informative-` / `positive-` / `notice-` / `negative-background` and `-content`,
   `on-notice`, `focus-ring`. (`border-border-subtle` is the real utility name: Lumen's token is
   `border-subtle`, Tailwind's prefix is `border-`.)
 - **In CSS:** `var(--color-content-default)`, `var(--corner-radius-500)`, `var(--shadow-elevated)`,
   `var(--border-width-200)`, `var(--component-height-100)`, `var(--control-height-md)`.
-- **Which layer?** page `background-base`, panels/sidebar `background-layer-1`, cards and fields
-  `background-layer-2`, menus/popovers/dialogs `background-elevated`.
+- **Which layer?** page `background-base` (the fixed gray), panels/sidebar `background-layer-1`,
+  cards and fields `background-layer-2` (white), menus/popovers/dialogs `background-elevated`.
+  Text and controls that sit directly on the page use the same tokens as everywhere else: they are
+  all verified against the gray.
 - **Which text color?** headings `content-heading`; body, labels, field values `content-default`;
   help text, captions, icons `content-subdued`; links and selected text `accent-content`; errors
   `negative-content`. `content-disabled` is never used for live content.
 - **Which fill?** main action `accent-background`; neutral button / hover `fill-neutral-hover`;
   pressed / selected action `neutral-background`; destructive `negative-background`; status
   `positive-` / `notice-` / `informative-background`.
-- **Density:** read `--control-height-md` (fields), `--control-height-button`, `--list-item-height`,
+- **Control heights:** read `--control-height-md` (fields), `--control-height-button`, `--list-item-height`,
   `--menu-item-height`. Never hardcode component heights. Spacing is the 4px grid: Lumen's
   `spacing-75/100/200/300/400/600` are Tailwind `1/2/3/4/6/10`.
 - **Legacy and Material 3 names** (`brand-*`, `action-*`, `accent-*`, `page`, `panel`, `divider`,
@@ -107,16 +118,20 @@ Details and values: [references/tokens.md](references/tokens.md).
 
 ## Theming axes (runtime, on `<html>`)
 
-`data-theme` light|dark · `data-palette` (blue)|indigo|purple|green|amber · `data-density`
-comfortable|compact · `data-radius` (Lumen)|soft|sharp · `data-shadow` flat|soft|elevated · `data-bg`
-(neutral)|warm|cool. JS setters: `wiseSetTheme()` etc. in `wise_core/static/wise_core/js/common.js`.
+`data-theme` light|dark · `data-palette` (blue)|red|graphite|green (the accent color) · `data-radius`
+(Lumen)|soft|sharp (rounding) · `data-shadow` flat|soft|elevated (card shadow). These four are the whole
+settings panel. There is deliberately no background axis and no density axis (controls are 32px, 40px
+on touch). JS setters: `wiseSetTheme()` etc. in `wise_core/static/wise_core/js/common.js`.
 Anything you build must look right under **every** combination, which it will as long as it only reads
 tokens.
 
 ## Rebranding / new accent
 
-The palette is generated, not hand-picked. Lumen's hues live in `scripts/lumen-scales.json`; the
-accent options are `ACCENTS` in `scripts/generate_lumen_palettes.mjs`. Add a hue there, then
+The palette is generated, not hand-picked. Lumen's hues live in `scripts/lumen-scales.json`; each accent
+option is **one OKLCH color** in `ACCENT_COLORS` in `scripts/generate_lumen_palettes.mjs` (blue
+`oklch(54.6% 0.1724 254.2deg)`, red `oklch(58.29% 0.1941 25.59deg)`, graphite
+`oklch(27.39% 0.0055 286.03deg)`, green `oklch(64.32% 0.1338 164.7deg)`), grown into a 16-step scale for
+both themes. Add an option there (and in `ACCENTS` and the settings panel), then
 `npm run build:palettes && npm run build:css`. The script checks the contrast of every token pair in
 both themes, every palette and every background, and refuses to write if one fails. Never hand-edit
 `lumen-palettes.css`. To override the accent in one project without the generator, redefine
@@ -130,7 +145,7 @@ both themes, every palette and every background, and refuses to write if one fai
    `p-*`, `grid`) are fine; the spacing grid is 4px (use even Tailwind steps: `gap-2`, `p-4`, `p-6`).
 3. If you edited `tokens.css`, `input.css` or any template, run `npm run build:css` (Tailwind only
    emits utilities it finds in templates).
-4. Verify in **light and dark**, and ideally one other palette and `data-density="compact"`. The demo
+4. Verify in **light and dark**, and ideally one other accent and `data-radius="sharp"`. The demo
    site: `cd demo && python manage.py runserver` → `/docs/` (component catalog), `/demo/` (login
    `demo` / `wise-demo-2026`).
 5. Run the checklist in [references/review-checklist.md](references/review-checklist.md) before

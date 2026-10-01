@@ -45,7 +45,7 @@
                 <div class="top-bar-logo">
                     <a class="flex items-center gap-2 no-underline text-gray-900" href="#">Wise</a>
                 </div>
-                <div class="ml-auto truncate text-sm text-gray-600">Ada Lovelace</div>
+                <div class="ml-auto truncate text-sm text-content-subdued">Ada Lovelace</div>
             </div>
         </div>
     </div>
@@ -68,7 +68,7 @@
                 {{ project_name|default:"Wise" }}
             </a>
         </div>
-        <div class="ml-auto truncate text-sm text-gray-600">
+        <div class="ml-auto truncate text-sm text-content-subdued">
             {% if request.user.is_authenticated %}{{ request.user.get_full_name }}{% endif %}
         </div>
     </div>
@@ -86,7 +86,7 @@
     </p>
 
     <h2 class="mt-8">Reference</h2>
-    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+    <div class="card card-table mt-4 overflow-x-auto">
         <table class="doc-props w-full">
             <thead><tr><th>Class</th><th>Use</th></tr></thead>
             <tbody>

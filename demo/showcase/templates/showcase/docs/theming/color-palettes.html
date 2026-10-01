@@ -8,39 +8,54 @@
     dark value - so a step flips with the theme on its own. <em>Semantic tokens</em> pick steps out of
     them, and components only ever use semantic tokens (<code>content-default</code>,
     <code>accent-background</code>, <code>negative-content</code>, ...), which is why a palette or theme
-    switch is always legible. The accent is one hue: blue by default, switchable to indigo, purple, green
-    or amber.
+    switch is always legible. The accent is one color: blue by default, switchable to red, graphite or
+    green - each grown from a single OKLCH color into a full scale for both themes.
 {% endblock %}
 {% block doc_body %}
-    <h2 class="mt-8">Switch palette</h2>
+    <h2 class="mt-8">Accent options</h2>
     <p class="text-content-subdued">
-        A palette re-points the accent scale at another Lumen hue; every accent token below follows. Every
-        Lumen hue is built to the same contrast ladder, so white text on the accent fill and the accent as
-        link text hold 4.5:1 whichever one you pick, in both themes.
+        An accent option replaces the accent scale; every accent token below follows. Each is defined by
+        one OKLCH color - the fill of the main action in light - and the generator grows the other steps
+        from it on Lumen's lightness ladder, for light and dark. Every option is checked: white text on
+        the fill and the accent as link text hold 4.5:1, the focus ring 3:1, in both themes. Graphite is a
+        neutral accent, so links in it are told apart by their underline, not by color.
     </p>
     <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
-        <div class="btn-group" role="group" aria-label="Palette">
-            <button class="btn" onclick="wiseSetPalette('')">Blue</button>
-            <button class="btn" onclick="wiseSetPalette('indigo')">Indigo</button>
-            <button class="btn" onclick="wiseSetPalette('purple')">Purple</button>
-            <button class="btn" onclick="wiseSetPalette('green')">Green</button>
-            <button class="btn" onclick="wiseSetPalette('amber')">Amber</button>
+        <div class="btn-group" role="group" aria-label="Accent color">
+            <button class="btn" data-wise-pref="palette" data-wise-value="" aria-pressed="false" onclick="wiseSetPalette('')">Blue</button>
+            <button class="btn" data-wise-pref="palette" data-wise-value="red" aria-pressed="false" onclick="wiseSetPalette('red')">Red</button>
+            <button class="btn" data-wise-pref="palette" data-wise-value="graphite" aria-pressed="false" onclick="wiseSetPalette('graphite')">Graphite</button>
+            <button class="btn" data-wise-pref="palette" data-wise-value="green" aria-pressed="false" onclick="wiseSetPalette('green')">Green</button>
         </div>
         <div class="btn-group" role="group" aria-label="Theme">
-            <button class="btn" onclick="wiseSetTheme('light')">Light</button>
-            <button class="btn" onclick="wiseSetTheme('dark')">Dark</button>
+            <button class="btn" data-wise-pref="theme" data-wise-value="light" aria-pressed="false" onclick="wiseSetTheme('light')">Light</button>
+            <button class="btn" data-wise-pref="theme" data-wise-value="dark" aria-pressed="false" onclick="wiseSetTheme('dark')">Dark</button>
         </div>
+    </div>
+    <div class="card card-table mt-4 overflow-x-auto">
+        <table class="doc-props w-full">
+            <thead><tr><th>Option</th><th><code>data-palette</code></th><th>OKLCH color</th><th>Note</th></tr></thead>
+            <tbody>
+                <tr><td>Blue (default)</td><td>unset or <code>blue</code></td><td><code>oklch(54.6% 0.1724 254.2)</code></td><td>Used as given.</td></tr>
+                <tr><td>Red</td><td><code>red</code></td><td><code>oklch(58.29% 0.1941 25.59)</code></td><td>Used as given.</td></tr>
+                <tr><td>Graphite</td><td><code>graphite</code></td><td><code>oklch(27.39% 0.0055 286.03)</code></td><td>Used as given; in dark the fill steps up to a mid gray so it still reads on near-black.</td></tr>
+                <tr><td>Green</td><td><code>green</code></td><td><code>oklch(64.32% 0.1338 164.7)</code></td><td>Darkened to <code>#088761</code> (same hue and chroma): white text on the given color is only 3.1:1.</td></tr>
+            </tbody>
+        </table>
     </div>
 
     <h2 class="mt-8">Layers &amp; content</h2>
     <p class="text-content-subdued">
-        The page is <code>background-base</code>; raised panels are <code>background-layer-1</code>; cards
-        and fields are <code>background-layer-2</code>; floating surfaces are
-        <code>background-elevated</code>. Set text in <code>content-default</code>, headings in
+        The page is <code>background-base</code>, one fixed gray (gray-100 in light, and no setting
+        changes it); raised panels are <code>background-layer-1</code>; cards and fields are
+        <code>background-layer-2</code>; floating surfaces are <code>background-elevated</code>. In light
+        all three surfaces are white, so cards read as white sheets on the gray page. Set text in <code>content-default</code>, headings in
         <code>content-heading</code> and secondary text in <code>content-subdued</code>.
         <code>content-disabled</code> is never used for live content. A control's own border is
         <code>border-default</code> (3:1 on the page) - <code>border-subtle</code> is for decorative
-        dividers and card edges only.
+        dividers and card edges only. A popover has no border in light and a 1px
+        <code>border-popover</code> in dark; an invalid field's border is <code>negative-border</code>;
+        a disabled field takes <code>fill-disabled</code> and <code>border-disabled</code>.
     </p>
     <div class="doc-preview mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         <div class="swatch !h-16 bg-background-base text-content-default">background-base</div>
@@ -49,12 +64,21 @@
         <div class="swatch !h-16 bg-background-elevated text-content-default">background-elevated</div>
         <div class="swatch !h-16 bg-fill-neutral-hover text-content-default">fill-neutral-hover</div>
         <div class="swatch !h-16 bg-fill-neutral-down text-content-default">fill-neutral-down</div>
+        <div class="swatch !h-16 bg-fill-neutral-subtle text-content-default">fill-neutral-subtle</div>
         <div class="swatch !h-16 bg-background-base text-content-heading">content-heading</div>
         <div class="swatch !h-16 bg-background-base text-content-subdued">content-subdued</div>
         <div class="swatch !h-16 border-2 border-border-default bg-background-base text-content-default">border-default</div>
         <div class="swatch !h-16 border-2 border-border-hover bg-background-base text-content-default">border-hover</div>
         <div class="swatch !h-16 border-2 border-border-subtle bg-background-base text-content-default">border-subtle</div>
         <div class="swatch !h-16 bg-background-base text-content-disabled">content-disabled</div>
+        <div class="swatch !h-16 border-2 border-negative-border bg-background-layer-2 text-content-default">negative-border</div>
+        <div class="swatch !h-16 border-2 border-border-focus bg-background-layer-2 text-content-default">border-focus</div>
+        <div class="swatch !h-16 bg-fill-picker text-content-default">fill-picker</div>
+        <div class="swatch !h-16 border-2 border-border-disabled bg-fill-disabled text-content-disabled">fill-disabled</div>
+        <div class="swatch !h-16 border-2 border-border-popover bg-background-elevated text-content-default">border-popover</div>
+        <div class="swatch !h-16 bg-background-layer-2 text-content-default" style="background-image: linear-gradient(var(--color-row-hover), var(--color-row-hover))">row-hover</div>
+        <div class="swatch !h-16 bg-background-layer-2 text-content-default" style="background-image: linear-gradient(var(--color-selected-subtle), var(--color-selected-subtle))">selected-subtle</div>
+        <div class="swatch !h-16 bg-neutral-subtle text-content-default">neutral-subtle</div>
     </div>
 
     <h2 class="mt-8">Accent</h2>
@@ -62,8 +86,9 @@
         Always pair a fill with its own <code>on-</code> token. <strong>accent-background</strong> fills the
         single main action and selected checkboxes, radios and switches; hover steps it one shade
         (<code>accent-background-hover</code>), press two (<code>accent-background-down</code>).
-        <strong>accent-content</strong> colors links and selected text on a layer. In dark mode the filled
-        accent steps one shade lighter. <strong>neutral-background</strong> is the solid neutral: pressed
+        <strong>accent-content</strong> colors links and selected text on the page and every surface (step
+        1000, so it holds 4.5:1 on the gray page and inside a hovered or selected row). In dark mode the filled accent
+        steps one shade lighter. <strong>neutral-background</strong> is the solid neutral: pressed
         action buttons, tooltips, toasts.
     </p>
     <div class="doc-preview mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -81,7 +106,8 @@
         <strong>notice</strong> and <strong>negative</strong> - each paired with an icon and a word, never
         color alone. The <code>-background</code> token fills a badge or button (text is
         <code>on-accent</code>, or <code>on-notice</code> on the orange fill); the <code>-content</code>
-        token colors text and icons on a layer.
+        token colors text and icons on a layer; the <code>-subtle</code> token tints an inline alert,
+        which draws its icon and 2px border in the <code>-content</code> color.
     </p>
     <div class="doc-preview mt-4 grid gap-2 sm:grid-cols-4">
         <div class="swatch !h-16 bg-informative-background text-on-accent">informative</div>
@@ -92,6 +118,10 @@
         <div class="swatch !h-16 bg-background-base text-positive-content">positive-content</div>
         <div class="swatch !h-16 bg-background-base text-notice-content">notice-content</div>
         <div class="swatch !h-16 bg-background-base text-negative-content">negative-content</div>
+        <div class="swatch !h-16 bg-informative-subtle text-content-default">informative-subtle</div>
+        <div class="swatch !h-16 bg-positive-subtle text-content-default">positive-subtle</div>
+        <div class="swatch !h-16 bg-notice-subtle text-content-default">notice-subtle</div>
+        <div class="swatch !h-16 bg-negative-subtle text-content-default">negative-subtle</div>
     </div>
 
     <h2 class="mt-8">Palette steps</h2>
@@ -100,7 +130,8 @@
         <code>lumen-palettes.css</code> by <code>npm run build:palettes</code>. Semantic tokens point at
         these - templates shouldn't, except for charts and illustration. The scales are gray, blue, red,
         orange, yellow, green, celery, cyan, indigo, purple, fuchsia and magenta. The accent scale
-        <code>--lumen-accent-&lt;step&gt;</code> is whichever hue the palette switch selected.
+        <code>--lumen-accent-&lt;step&gt;</code> is whichever option the accent switch selected
+        (<code>--lumen-swatch-&lt;option&gt;</code> holds each option's fill, for pickers).
     </p>
     <div class="doc-preview mt-4 space-y-3">
         <div class="grid grid-cols-8 gap-1 sm:grid-cols-16">
@@ -121,7 +152,7 @@
             <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-1500)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">1500</div></div>
             <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-1600)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">1600</div></div>
         </div>
-        <p class="text-body-xs text-content-subdued">accent (blue by default) - 16 steps. Fills use 900 in light and 800 in dark; accent text uses 900.</p>
+        <p class="text-body-xs text-content-subdued">accent (blue by default) - 16 steps. Fills use 900 in light and 800 in dark; accent text uses 1000.</p>
         <div class="grid grid-cols-8 gap-1 sm:grid-cols-13">
             <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-25)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">25</div></div>
             <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-50)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">50</div></div>
@@ -144,16 +175,17 @@
         {% lucide "info" size=16 cls="callout-icon" %}
         <div>
             <div class="callout-title">Rebranding</div>
-            Add a hue to <code>ACCENTS</code> in <code>scripts/generate_lumen_palettes.mjs</code> (it must
-            exist in <code>lumen-scales.json</code>) and run
+            Add an option to <code>ACCENT_COLORS</code> in <code>scripts/generate_lumen_palettes.mjs</code>
+            - an id, a label, one OKLCH color and the Lumen hue (<code>ref</code>) whose lightness ladder
+            it follows - add it to <code>ACCENTS</code>, give it a button in the settings panel, and run
             <code>npm run build:palettes &amp;&amp; npm run build:css</code>. The script checks the contrast
-            of every token pair across both themes, every palette and every background, and refuses to
-            write anything that fails.
+            of every token pair across both themes, every accent and every surface, darkens a color whose
+            white label would fall under 4.5:1, and refuses to write anything that fails.
         </div>
     </div>
 
     <h2 class="mt-8">Reference</h2>
-    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+    <div class="card card-table mt-4 overflow-x-auto">
         <table class="doc-props w-full">
             <thead><tr><th>Utility</th><th>Use</th></tr></thead>
             <tbody>

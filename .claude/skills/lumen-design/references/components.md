@@ -13,13 +13,17 @@ tables, ...) is built from the same tokens in the same shapes.
 
 ### Buttons
 
-Fully round, `title-s` (14px, 700), 32px tall (24px compact, 40px on touch), 16px side padding
-(12px for quiet buttons), 2px border so filled and outlined buttons are the same size.
+Fully round, `title-s` (14px, 700), 32px tall (40px on touch), 16px side padding (12px for quiet
+buttons), at least 2.25 times its height wide, 2px border so filled and outlined buttons are the same
+size. Disabled is always `content-disabled` on `fill-neutral-hover`, whatever the variant.
 
 ```django
 <button class="btn btn-primary">Save</button>                 {# accent fill: the one main action #}
 <button class="btn btn-brand">Save draft</button>             {# neutral fill (fill-neutral-hover) #}
 <button class="btn btn-secondary">Cancel</button>             {# neutral outline #}
+<button class="btn btn-neutral">Continue</button>             {# solid neutral (Lumen's primary): neutral-background #}
+<button class="btn btn-outline-accent">Details</button>       {# accent outline; also btn-outline-neutral, btn-outline-danger #}
+<button class="btn btn-secondary" aria-pressed="true">Grid</button>  {# a toggle in its pressed state #}
 <button class="btn btn-ghost">Learn more</button>             {# quiet: lowest emphasis #}
 <button class="btn btn-elevated">Import</button>              {# raised: layer-2 + emphasized shadow #}
 <button class="btn btn-danger">Delete</button>                {# negative fill #}
@@ -120,18 +124,20 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 | Tabs | `.tab-bar` > `a.bar-item(.selected)` with optional icon and `.tab-count`; tabs are links (one URL per tab). Bold `title-s`, selected tab gets a 2px `content-heading` indicator |
 | Top app bar | `.top-bar` (mobile), `.top-bar-logo` |
 | Breadcrumb | `nav.breadcrumb` > `a.breadcrumb-item`, `.breadcrumb-separator` |
-| Pagination | `a.pagination-link` (`.selected` = `neutral-background`, `.disabled`), rendered by `_pagination.html` |
+| Pagination | Lumen's Pagination, rendered by `_pagination.html`: `.pagination-bar` > `.pagination-summary` ("Showing 21-40 of 312") + `nav.pagination` > chevron-only Previous / Next and numbered `a.pagination-link` pills (`.selected` + `aria-current="page"` = `neutral-background`, `.disabled`, `.pagination-gap` for ellipses); the run of pages is windowed by the `page_window` filter and every link keeps the other query parameters (`page_url`). Under a table it goes in the `.card-footer` |
 
 ## Selection & text inputs
 
 | Lumen | Wise |
 |---|---|
-| TextField | `.input` (`.input-sm`, `.input-lg`), `.select`, `.textarea`; inside `.form-field` any Django widget is styled automatically. 32px, 8px corners, `border-default` on `background-layer-2`; focus draws the 2px ring; invalid thickens the border to 2px `negative-content` |
+| TextField | `.input` (`.input-sm`, `.input-lg`), `.textarea`; inside `.form-field` (or the filter panel) any Django widget is styled automatically. **Every single-line control - text, number, date, time, select, OTP box, color well - is the same height** (`--control-height-md`: 32px, 40px on touch); only `-sm` / `-lg` opt out. 8px corners, 2px `border-default` on `background-layer-2`; on focus the border turns `border-focus` (no ring); invalid keeps the border and recolors it `negative-border` (`aria-invalid="true"` or `.form-field-error`); disabled = `fill-disabled` + `border-disabled` |
+| TextArea | `.textarea` (min 64px = two fields, vertical resize; `.textarea-fixed` = none); same border and focus as a text field |
+| Dropdown / picker | `.select` (a single-choice `<select>`): borderless, `fill-picker` fill (deeper on hover), chevron, focus ring on keyboard focus; invalid = inset 1px `negative-border`. Always keep a visible label. `select[multiple]` is a listbox and keeps the bordered look |
 | Label / help / error | `.form-label` (+ `.form-required`), `.helptext`, `.errorlist`; wrap in `.form-field.form-field-error` for the error state |
 | Form layout | `.form-stack` (one column) / `.form-stack-compact` (two), `.form-actions` footer, `.form-alert` for non-field errors; `_form_fields.html` renders all of this from a Django form |
 | Prefix/suffix | `.input-group` > `.input-group-addon` + `.input` |
-| Checkbox / radio | `.checkbox`, `.radio` (16px, 2px `border-default`; accent fill + white check / 5px accent ring when selected). Also applied to unclassed checkboxes and radios inside `.form-field` |
-| Switch | `<input type="checkbox" class="switch">` (28×16 pill, 8px handle) |
+| Checkbox / radio | `.checkbox`, `.radio` (16px / 14px, 2px `border-default`; accent fill + white check / 4px accent ring when selected). Also applied to unclassed checkboxes and radios inside `.form-field` |
+| Switch | `<input type="checkbox" class="switch">` (26×16 pill, 8px handle, 10px when on) |
 | Tag | `.tag` (24px outlined, 4px corners), `.tag-action` (selected, neutral fill), `.tag-remove` (trailing ×) |
 | Rating | `.rating` / `.rating-input` |
 | OTP | `.otp-group` > `input.otp-input` |
@@ -142,7 +148,7 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 
 | Need | Wise |
 |---|---|
-| Table | `table.data-table` (title-s headers with a 2px rule, body-s cells, subtle row dividers, `fill-neutral-hover` row hover); sortable headers via `_sortable_th.html` |
+| Table | **Always inside a card**: `<div class="card card-table mt-4 overflow-x-auto">` > `table.data-table`, with no card header (the page's actions stay in the page header) and the pager in a `.card-footer`. `data-table`: 12px bold subdued headers (32px tall) over a 2px rule, 40px body-s rows (`.data-table-compact` 32px, `.data-table-spacious` 48px; Lumen's heights, as minimums), 12px cell padding, `row-hover` / `selected-subtle` row tints; sortable headers via `_sortable_th.html` |
 | Record detail | `.detail-panel` (> `.detail-panel-header`, `table` of `th`/`td`) |
 | Avatar | `.avatar` (40px circle, neutral fill), `.avatar-sm`/`-lg`, `.avatar-square`, `.avatar-group` |
 | Charts | `<canvas class="chart-canvas" data-chart="{% chart_json cfg %}">` in a `.chart-frame`; series colors are the accent then Lumen step-900 hues (`wise_core/charts.py`) |

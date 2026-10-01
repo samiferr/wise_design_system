@@ -35,7 +35,7 @@
         <div class="doc-preview flex flex-wrap items-center gap-6">
         <div class="qr-code">{% qr_code "https://example.com/products/1042" scale=3 %}</div>
         <div class="qr-code text-action-600">{% qr_code "WISE-2026-0042" scale=3 %}</div>
-        <div class="text-sm text-gray-600">The second inherits <code>text-action-600</code> — try switching theme.</div>
+        <div class="text-sm text-content-subdued">The second inherits <code>text-action-600</code> — try switching theme.</div>
     </div>
     </div>
     <div class="doc-example-panel-code">
@@ -111,7 +111,7 @@ pip install python-barcode  # for {% barcode %}{% endverbatim %}{% endfilter %}<
 </div>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Reference</h2>
-    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+    <div class="card card-table mt-4 overflow-x-auto">
         <table class="doc-props w-full">
             <thead><tr><th>Tag / class</th><th>Use</th></tr></thead>
             <tbody>

@@ -25,7 +25,7 @@
         <code>text-content-subdued</code> or <code>bg-accent-background</code> in the component layer
         <em>and in your own templates</em> is right in both themes with no <code>dark:</code> variants.
         The Tailwind gray ramp is repointed at Lumen's gray scale and inverts the same way, so older
-        <code>text-gray-600</code> markup still lands the right way up.
+        <code>text-content-subdued</code> markup still lands the right way up.
     </p>
     <div class="doc-preview mt-4">
         <div class="grid grid-cols-6 gap-1 text-[10px] sm:grid-cols-11">
@@ -41,7 +41,7 @@
             <div class="swatch" style="background:var(--color-gray-900)">900</div>
             <div class="swatch" style="background:var(--color-gray-950)">1000</div>
         </div>
-        <p class="mt-2 text-xs text-gray-600">Toggle the theme above — this ramp reverses in place.</p>
+        <p class="mt-2 text-xs text-content-subdued">Toggle the theme above — this ramp reverses in place.</p>
     </div>
 
     <h2 class="mt-8">The on-colors</h2>
@@ -87,12 +87,13 @@
 
     <h2 class="mt-8">Surfaces</h2>
     <p class="text-gray-700">
-        Lumen expresses depth with layers: <code>background-base</code> is the page,
-        <code>background-layer-1</code> is a raised panel, <code>background-layer-2</code> a card or field,
-        <code>background-elevated</code> a popover or dialog, and <code>fill-neutral-hover</code> /
-        <code>fill-neutral-down</code> the hover and press fills. In dark mode cards and popovers sit
-        slightly <em>lighter</em> than the page, which is how a raised surface still reads as raised on
-        near-black.
+        Lumen expresses depth with layers: <code>background-base</code> is the page - a fixed gray in
+        light - <code>background-layer-1</code> is a raised panel, <code>background-layer-2</code> a card
+        or field, <code>background-elevated</code> a popover or dialog, and
+        <code>fill-neutral-hover</code> / <code>fill-neutral-down</code> the hover and press fills. In
+        light the three surfaces are white, so they read as white sheets on the gray canvas. In dark mode
+        they sit slightly <em>lighter</em> than the near-black page, which is how a raised surface still
+        reads as raised.
     </p>
     <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-3">
         <div class="swatch !h-16 bg-background-base">background-base</div>
@@ -101,6 +102,7 @@
         <div class="swatch !h-16 bg-background-elevated">background-elevated</div>
         <div class="swatch !h-16 bg-fill-neutral-hover">fill-neutral-hover</div>
         <div class="swatch !h-16 bg-fill-neutral-down">fill-neutral-down</div>
+        <div class="swatch !h-16 bg-fill-neutral-subtle">fill-neutral-subtle</div>
     </div>
 
     <h2 class="mt-8">Components in both themes</h2>

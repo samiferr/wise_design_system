@@ -35,6 +35,19 @@ column list, a detail-panel row list) rather than hardcoding field access per te
 {{ invoice|get_value:"customer__company_name" }}
 ```
 
+### `{{ record.color|on_color }}` (filter)
+
+`#000000` or `#ffffff`, whichever has the higher WCAG contrast on the CSS hex color (`#rgb` /
+`#rrggbb`; anything else falls back to white, which is always at least 4.58:1). For text on a color
+the *user* chose - a category swatch, a tag color - where a fixed token like `on-accent` can't be
+right because the background isn't a token:
+
+```django
+<span class="avatar" style="background-color: {{ category.color }}; color: {{ category.color|on_color }}">
+    {{ category.name|slice:":1" }}
+</span>
+```
+
 ### `{{ url_name|startswith:"invoice_" }}` (filter)
 
 `str.startswith()` for templates. Used by `nav_menu.html` to decide which sidebar item is selected
@@ -62,6 +75,20 @@ template — see `demo/showcase/templates/showcase/category/detail.html` for a l
 ### `{% get_model_verbose_name object %}` / `{% get_model_verbose_name_plural object %}`
 
 `Model._meta.verbose_name` / `.verbose_name_plural`.
+
+### `{% page_url number %}` (simple_tag) and `{{ page_obj|page_window }}` (filter)
+
+The two helpers behind `wise_core/components/_pagination.html`, Lumen's Pagination. `page_url` builds a
+`?page=N` URL that keeps every other query parameter (`?view=table`, the sort, the filters), so paging
+never drops them. `page_window` returns the numbers to show as a list: every page when there are at most
+`5 + 2 * siblings` (default `siblings=1`), otherwise the first, last and current page with `siblings`
+pages either side, and `None` wherever an ellipsis goes.
+
+```django
+{% for item in page_obj|page_window %}
+    {% if item is None %}…{% else %}<a href="{% page_url item %}">{{ item }}</a>{% endif %}
+{% endfor %}
+```
 
 ### `{% get_url_for_model "product" "detail_view" pk=object.pk %}` (simple_tag)
 

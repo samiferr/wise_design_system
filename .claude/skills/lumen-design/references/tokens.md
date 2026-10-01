@@ -4,7 +4,8 @@ Three tiers:
 
 1. **Reference**: `--lumen-<hue>-<step>` for gray, blue, red, orange, yellow, green, celery, cyan,
    indigo, purple, fuchsia and magenta (16 steps, 100–1600; gray has 13, 25–1000), plus
-   `--lumen-accent-<step>` (the accent hue). Every step has a light and a dark value, so a step flips
+   `--lumen-accent-<step>` (the accent option: blue, red, graphite or green, each grown from one OKLCH
+   color) and `--lumen-swatch-<option>` (each option's fill). Every step has a light and a dark value, so a step flips
    with the theme. Generated into `wise_core/static/wise_core/css/lumen-palettes.css` by
    `scripts/generate_lumen_palettes.mjs` from `scripts/lumen-scales.json`. Components and templates
    never use them (charts and illustration may).
@@ -22,32 +23,41 @@ Adobe.
 
 | Token | Light | Dark | Tailwind |
 |---|---|---|---|
-| background-base | gray-25 | gray-25 | `bg-background-base` |
-| background-layer-1 | gray-50 | gray-50 | `bg-background-layer-1` |
-| background-layer-2 | gray-25 | gray-75 | `bg-background-layer-2` |
-| background-elevated | gray-25 | gray-75 | `bg-background-elevated` |
-| fill-neutral-hover / -down | gray-100 / 200 | gray-100 / 200 | `bg-fill-neutral-hover` |
+| background-base (the fixed gray page) | gray-100 | gray-25 | `bg-background-base` |
+| background-layer-1 (white in light) | gray-25 | gray-50 | `bg-background-layer-1` |
+| background-layer-2 (cards, fields: white in light) | gray-25 | gray-75 | `bg-background-layer-2` |
+| background-elevated (white in light) | gray-25 | gray-75 | `bg-background-elevated` |
+| fill-neutral-hover / -down | gray-200 / 300 | gray-100 / 200 | `bg-fill-neutral-hover` |
+| fill-neutral-subtle (Wise extension) | gray-75 | gray-100 | `bg-fill-neutral-subtle` |
 | content-heading | gray-900 | gray-900 | `text-content-heading` |
 | content-default | gray-800 | gray-800 | `text-content-default` |
 | content-subdued | gray-700 | gray-700 | `text-content-subdued` |
 | content-disabled | gray-400 | gray-400 | `text-content-disabled` |
-| border-default | gray-500 | gray-500 | `border-border-default` |
-| border-hover | gray-600 | gray-600 | `border-border-hover` |
+| border-default | gray-600 | gray-600 | `border-border-default` |
+| border-hover | gray-700 | gray-700 | `border-border-hover` |
+| border-focus | gray-900 | gray-900 | `border-border-focus` |
+| fill-picker | gray-200 | gray-100 | `bg-fill-picker` |
 | border-subtle | gray-300 | gray-300 | `border-border-subtle` |
+| border-popover | transparent | gray-400 | `border-border-popover` |
+| negative-border / -hover | red-900 / 1000 | red-900 / 1000 | `border-negative-border` |
+| fill-disabled / border-disabled | gray-100 / gray-300 | gray-100 / gray-300 | `bg-fill-disabled` |
+| row-hover | 7% gray-900 | 7% gray-900 | `bg-row-hover` |
+| selected-subtle / -hover | 10% / 15% accent-900 | 10% / 15% accent-900 | `bg-selected-subtle` |
+| neutral- / informative- / positive- / notice- / negative-`subtle` | gray-75, blue / green / orange / red-200 | same step names | `bg-negative-subtle` |
 | accent-background | accent-900 | accent-800 | `bg-accent-background` |
 | accent-background-hover | accent-1000 | accent-700 | `bg-accent-background-hover` |
 | accent-background-down | accent-1100 | accent-600 | `bg-accent-background-down` |
-| accent-content | accent-900 | accent-900 | `text-accent-content` |
+| accent-content | accent-1000 | accent-1000 | `text-accent-content` |
 | on-accent | white | white | `text-on-accent` |
 | accent-subtle / on-accent-subtle (Wise extension) | accent-200 / 1300 | same step names | `bg-accent-subtle` |
 | neutral-background / on-neutral | gray-800 / gray-25 | gray-800 / gray-25 | `bg-neutral-background` |
 | negative-background (+ `-hover`, `-down`) | red-900 (1000, 1100) | red-800 (700, 600) | `bg-negative-background` |
-| negative-content | red-900 | red-900 | `text-negative-content` |
-| informative-background / -content | blue-900 | blue-800 / blue-900 | `bg-informative-background` |
-| positive-background / -content | green-900 | green-800 / green-900 | `bg-positive-background` |
+| negative-content | red-1000 | red-1000 | `text-negative-content` |
+| informative-background / -content | blue-900 / 1000 | blue-800 / 1000 | `bg-informative-background` |
+| positive-background / -content | green-900 / 1000 | green-800 / 1000 | `bg-positive-background` |
 | notice-background | orange-600 | orange-900 | `bg-notice-background` |
 | on-notice | gray-900 | black | `text-on-notice` |
-| notice-content | orange-900 | orange-900 | `text-notice-content` |
+| notice-content | orange-1000 | orange-1000 | `text-notice-content` |
 | focus-ring | accent-800 | accent-800 | `ring-focus-ring` |
 
 Text on a filled control is always its own `on-` token. Because a Lumen hue step flips with the theme,
@@ -96,7 +106,8 @@ badges, switches, progress tracks). `rounded-3xl` / `4xl` are 800 × 1.25 / × 1
 
 ## Layers and shadow
 
-Layers: base → layer-1 (panels) → layer-2 (cards, fields) → elevated (popovers, dialogs). Shadows:
+Layers: base (the fixed gray page) → layer-1 (panels) → layer-2 (cards, fields) → elevated (popovers,
+dialogs); in light all three surfaces are white, in dark they step up from near-black. Shadows:
 `--shadow-emphasized` (`0 1px 6px`, resting raised control), `--shadow-elevated` (`0 2px 8px`, menus,
 popovers, tooltips, toasts), `--shadow-dragged` (`0 6px 16px`, dialogs, dragged items); alpha .15 in
 light, .5 in dark. `shadow-elevation-1..5` and `--shadow-blueprint-*` alias onto them. `.elevation-1/2/3`
@@ -120,17 +131,19 @@ Disabled: `--wise-disabled-content` (content-disabled) on `--wise-disabled-conta
 (dialog, drawer: 200ms), `--ease-exit` `(0.4,0,1,1)`. Animate color, opacity and transform only;
 honour `prefers-reduced-motion`.
 
-## Density
+## Control heights
 
-| Token | Default | Coarse pointer | `data-density="compact"` |
-|---|---|---|---|
-| `--control-height-sm / -md / -lg` | 24 / 32 / 40px | 32 / 40 / 48px | 20 / 24 / 32px |
-| `--control-height-button` | 32px | 40px | 24px |
-| `--control-padding-x-button` | 16px | 16px | 12px |
-| `--control-padding-y` | 4px | 4px | 0 |
-| `--list-item-height` | 32px | 40px | 28px |
-| `--menu-item-height` | 32px | 40px | 28px |
-| `--table-padding-y / --table-header-padding-y` | 8 / 8px | same | 4 / 6px |
+| Token | Default | Coarse pointer |
+|---|---|---|
+| `--control-height-sm / -md / -lg` | 24 / 32 / 40px | 32 / 40 / 48px |
+| `--control-height-button` | 32px | 40px |
+| `--control-padding-x-button` | 16px | 16px |
+| `--control-padding-y` | 4px | 4px |
+| `--list-item-height` | 32px | 40px |
+| `--menu-item-height` | 32px | 40px |
+| `--table-padding-y` | 8px | 8px |
+
+There is no compact density mode: density is not a setting.
 
 Lumen's own heights: `--component-height-50..500` = 20 / 24 / 32 / 40 / 48 / 56 / 64px.
 

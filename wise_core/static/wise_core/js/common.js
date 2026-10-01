@@ -81,7 +81,7 @@ const compressImage = async (file, resize_width, {quality = 1, type = file.type}
     });
 
 };
-// ── Theme / palette / density switching ────────────────────────────────────
+// ── Theme / accent / rounding / card-shadow switching ──────────────────────
 // The *initial* value is applied by the inline bootstrap script in base.html
 // (before first paint); these helpers only handle switching at runtime and
 // persisting the choice. Each writes one attribute on <html>, which the token
@@ -101,7 +101,35 @@ function wiseSetPreference(name, value) {
             localStorage.removeItem(name)
         }
     } catch (e) { /* storage disabled - the attribute still applies for this page */ }
+    wiseSyncPreferenceButtons()
 }
+
+// Marks the settings-panel button for the current choice aria-pressed (the
+// .btn[aria-pressed="true"] rule in tokens.css fills it). A button declares
+// what it sets with data-wise-pref="theme" data-wise-value="dark"; an unset
+// attribute means the default - light for the theme, '' for the rest - and
+// so does a stored value no button offers any more (an old palette name),
+// which the stylesheet ignores too.
+function wiseSyncPreferenceButtons() {
+    var root = document.documentElement
+    var buttons = document.querySelectorAll('[data-wise-pref]')
+    var fallback = function (key) { return key === 'theme' ? 'light' : '' }
+    var offered = {}
+    buttons.forEach(function (button) {
+        var key = button.getAttribute('data-wise-pref')
+        var own = button.getAttribute('data-wise-value') || fallback(key)
+        ;(offered[key] = offered[key] || []).push(own)
+    })
+    buttons.forEach(function (button) {
+        var key = button.getAttribute('data-wise-pref')
+        var current = root.getAttribute('data-' + key) || fallback(key)
+        if (offered[key].indexOf(current) === -1) current = fallback(key)
+        var own = button.getAttribute('data-wise-value') || fallback(key)
+        button.setAttribute('aria-pressed', String(current === own))
+    })
+}
+
+document.addEventListener('DOMContentLoaded', wiseSyncPreferenceButtons)
 
 function wiseSetTheme(theme) {
     wiseSetPreference('wise-theme', theme)
@@ -111,20 +139,12 @@ function wiseSetPalette(palette) {
     wiseSetPreference('wise-palette', palette)
 }
 
-function wiseSetDensity(density) {
-    wiseSetPreference('wise-density', density)
-}
-
 function wiseSetRadius(radius) {
     wiseSetPreference('wise-radius', radius)
 }
 
 function wiseSetShadow(shadow) {
     wiseSetPreference('wise-shadow', shadow)
-}
-
-function wiseSetBg(bg) {
-    wiseSetPreference('wise-bg', bg)
 }
 
 function wiseToggleTheme() {
@@ -145,19 +165,19 @@ var WISE_EXPORT_TOKENS = [
     '--color-background-elevated',
     '--color-fill-neutral-hover', '--color-fill-neutral-down',
     '--color-content-heading', '--color-content-default', '--color-content-subdued',
-    '--color-border-default', '--color-border-subtle',
+    '--color-border-default', '--color-border-hover', '--color-border-subtle',
     '--color-accent-background', '--color-accent-background-hover', '--color-accent-content',
     '--color-on-accent', '--color-neutral-background', '--color-on-neutral',
     '--color-informative-background', '--color-positive-background', '--color-notice-background',
     '--color-negative-background', '--color-focus-ring',
     '--corner-radius-100', '--corner-radius-500', '--corner-radius-800', '--corner-radius-full',
     '--shadow-card',
-    '--control-height-sm', '--control-height-md', '--control-height-button', '--list-item-height',
+    '--component-height-100',
 ]
 
 function wiseBuildTokenExport() {
     var root = document.documentElement
-    var attrs = ['theme', 'palette', 'density', 'radius', 'shadow', 'bg']
+    var attrs = ['theme', 'palette', 'radius', 'shadow']
         .map(function (key) {
             var value = root.getAttribute('data-' + key)
             return value ? 'data-' + key + '="' + value + '"' : null

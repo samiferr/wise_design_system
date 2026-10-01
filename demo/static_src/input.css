@@ -241,11 +241,15 @@
     }
 
     .doc-props th {
-        @apply border-b border-divider px-3 py-2 text-left text-title-s text-content-heading;
+        @apply px-3 text-left text-title-xs text-content-subdued;
+        height: var(--component-height-100);
+        border-bottom: var(--border-width-200) solid var(--color-border-subtle);
     }
 
     .doc-props td {
-        @apply border-b border-gray-900/[0.08] px-3 py-2 align-top text-sm;
+        @apply px-3 py-1 align-middle text-body-s;
+        height: var(--component-height-200);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .doc-props td code, .doc-code-inline {

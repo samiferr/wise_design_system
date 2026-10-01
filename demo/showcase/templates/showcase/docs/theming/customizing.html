@@ -32,8 +32,8 @@
             <div class="callout-title">Check contrast when you retune a ramp</div>
             Buttons paint their label with <code>--color-on-accent</code> (white) over
             <code>--color-accent-background</code>, and links use <code>--color-accent-content</code>
-            on the page. Keep 4.5:1 for both in light and dark - or, better, add the hue to the palette
-            generator, which checks it for you. If your fill is light, set <code>--color-on-accent</code>
+            on the page. Keep 4.5:1 for both in light and dark - or, better, add the color to the accent
+            generator (<code>ACCENT_COLORS</code>), which grows the scale and checks it for you. If your fill is light, set <code>--color-on-accent</code>
             to a dark value too, or button labels will wash out.
         </div>
     </div>
@@ -66,7 +66,7 @@
     <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
         <button class="btn btn-secondary" onclick="wiseSetTheme('light')">Light</button>
         <button class="btn btn-secondary" onclick="wiseSetTheme('dark')">Dark</button>
-        <span class="text-sm text-gray-600">A custom theme registers the same way.</span>
+        <span class="text-sm text-content-subdued">A custom theme registers the same way.</span>
     </div>
 
     <h2 class="mt-8">Overriding a component</h2>

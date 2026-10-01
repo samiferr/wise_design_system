@@ -53,7 +53,11 @@
 {% block list_body %}
     {% with view_mode=request.GET.view|default:"cards" %}
         {% if view_mode == 'table' %}
-            <table class="data-table">…</table>
+            {# a table always sits in a card; the pager goes in its footer #}
+            <div class="card card-table mt-4 overflow-x-auto">
+                <table class="data-table">…</table>
+                <div class="card-footer">{% include 'wise_core/components/_pagination.html' %}</div>
+            </div>
         {% else %}
             <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {% for item in object_list %}

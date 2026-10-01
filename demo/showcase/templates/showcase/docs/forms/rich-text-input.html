@@ -70,16 +70,16 @@ def clean_notes(self):
         In a datatable cell or a card summary, strip the markup rather than rendering it — a
         half-closed tag in a truncated string will break the surrounding layout.
     </p>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<td class="text-gray-600">{{ product.notes|striptags|truncatechars:60 }}</td>{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<td class="text-content-subdued">{{ product.notes|striptags|truncatechars:60 }}</td>{% endverbatim %}{% endfilter %}</code></pre>
     <div class="doc-preview mt-4">
         <table class="data-table">
             <thead><tr><th>Product</th><th>Notes</th></tr></thead>
-            <tbody><tr><td>USB-C hub</td><td class="text-gray-600">4 ports, includes HDMI passthrough.</td></tr></tbody>
+            <tbody><tr><td>USB-C hub</td><td class="text-content-subdued">4 ports, includes HDMI passthrough.</td></tr></tbody>
         </table>
     </div>
 
     <h2 class="mt-8">Reference</h2>
-    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+    <div class="card card-table mt-4 overflow-x-auto">
         <table class="doc-props w-full">
             <thead><tr><th>Thing</th><th>Note</th></tr></thead>
             <tbody>

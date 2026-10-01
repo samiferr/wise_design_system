@@ -103,6 +103,53 @@
     </div>
 </div>
 
+    <h2 class="mt-8">Table card</h2>
+    <p class="text-gray-700">
+        A table always sits in a card: <code>&lt;div class="card card-table mt-4 overflow-x-auto"&gt;</code>
+        around the <code>&lt;table class="data-table"&gt;</code>. <code>.card-table</code> makes the card flush so
+        the table meets its edges, and <code>overflow-x-auto</code> scrolls a table that is too wide. There is
+        no card header; a pager or summary goes in a <code>.card-footer</code>.
+    </p>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex74b" id="ex74b-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex74b" id="ex74b-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex74b-preview">Preview</label>
+        <label class="doc-example-tab" for="ex74b-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
+        <div class="card card-table mt-4 overflow-x-auto">
+            <table class="data-table">
+                <thead><tr><th>Name</th><th>Role</th></tr></thead>
+                <tbody>
+                    <tr><td>Ada Lovelace</td><td>Owner</td></tr>
+                    <tr><td>Grace Hopper</td><td>Editor</td></tr>
+                </tbody>
+            </table>
+            <div class="card-footer">
+                <div class="pagination-bar">
+                    <p class="pagination-summary">Showing 1–2 of 24</p>
+                    <nav class="pagination" aria-label="Pagination">
+                        <span class="pagination-link disabled" aria-disabled="true" aria-label="Previous page">{% lucide "chevron-left" size=16 %}</span>
+                        <a class="pagination-link selected" href="#" aria-label="Page 1" aria-current="page">1</a>
+                        <a class="pagination-link" href="#" aria-label="Page 2">2</a>
+                        <a class="pagination-link" href="#" aria-label="Page 3">3</a>
+                        <a class="pagination-link" href="#" aria-label="Next page">{% lucide "chevron-right" size=16 %}</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="card card-table mt-4 overflow-x-auto">
+    <table class="data-table">…</table>
+    <div class="card-footer">{% include 'wise_core/components/_pagination.html' %}</div>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+
     <h2 class="mt-8">Stat tiles</h2>
     <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-3">
         <div class="card">
@@ -132,7 +179,7 @@
 </div>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Reference</h2>
-    <div class="mt-4 overflow-x-auto border border-divider bg-panel">
+    <div class="card card-table mt-4 overflow-x-auto">
         <table class="doc-props w-full">
             <thead><tr><th>Class</th><th>Use</th></tr></thead>
             <tbody>
@@ -141,6 +188,8 @@
                 <tr><td><code>card-title</code></td><td>Heading — pair with a real <code>&lt;h3&gt;</code>.</td></tr>
                 <tr><td><code>card-content</code> / <code>card-body</code></td><td>Body copy, slightly smaller.</td></tr>
                 <tr><td><code>card-meta</code></td><td>Icon + secondary detail row.</td></tr>
+                <tr><td><code>card-table</code></td><td>With <code>.card</code> (and <code>mt-4 overflow-x-auto</code>): a flush card for a table, no padding, no header. Every table lives in one.</td></tr>
+                <tr><td><code>card-footer</code></td><td>The row under the body: the pager (Lumen's pagination), a summary.</td></tr>
             </tbody>
         </table>
     </div>
@@ -160,7 +209,7 @@
       <h3 class="card-title mt-1">Title</h3>
       <p class="card-content mt-2">Supporting text.</p>
   </div>
-- Respects the data-radius/data-shadow/data-bg design tokens automatically - never hardcode a border-radius or box-shadow on a card, or it stops following the user's chosen design settings.
+- Respects the data-radius/data-shadow design tokens automatically - never hardcode a border-radius or box-shadow on a card, or it stops following the user's chosen design settings.
 - For a grid of these, wrap them in a responsive grid utility class rather than a flex row, so they reflow at narrow widths.
 - If the content is genuinely tabular and needs sorting or scanning across many rows, use the Data Table component instead - see the Patterns section's Card list vs Data table guidance.{% endverbatim %}{% endfilter %}</code></pre>
 
