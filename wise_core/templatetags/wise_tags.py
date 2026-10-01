@@ -160,6 +160,46 @@ def sort_url(context, field):
     return '?' + params.urlencode()
 
 
+@register.simple_tag(takes_context=True)
+def page_url(context, number):
+    """
+    Build the `?page=` URL for one pager link, preserving every other query
+    parameter - the `?view=table` mode, the active sort and the filters - so
+    paging never drops them. Used by `wise_core/components/_pagination.html`.
+    """
+    params = context['request'].GET.copy()
+    params['page'] = number
+    return '?' + params.urlencode()
+
+
+@register.filter
+def page_window(page_obj, siblings=1):
+    """
+    The numbered buttons of a pager, as Lumen's Pagination component lays
+    them out: every page when there are at most `5 + 2 * siblings` of them,
+    otherwise the first, the last and the current page with `siblings` pages
+    either side, and `None` wherever a gap (an ellipsis) goes -
+    `{% for item in page_obj|page_window %}`.
+    """
+    siblings = int(siblings)
+    page, count = page_obj.number, page_obj.paginator.num_pages
+    if count <= 5 + 2 * siblings:
+        return list(range(1, count + 1))
+    left, right = max(page - siblings, 2), min(page + siblings, count - 1)
+    if page <= siblings + 3:
+        left, right = 2, 2 * siblings + 3
+    elif page >= count - siblings - 2:
+        left, right = count - (2 * siblings + 2), count - 1
+    items = [1]
+    if left > 2:
+        items.append(None)
+    items.extend(range(left, right + 1))
+    if right < count - 1:
+        items.append(None)
+    items.append(count)
+    return items
+
+
 @register.simple_tag
 def get_url_for_model(model_name, action, *args, **kwargs):
     """

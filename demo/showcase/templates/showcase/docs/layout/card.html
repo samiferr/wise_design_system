@@ -105,11 +105,10 @@
 
     <h2 class="mt-8">Table card</h2>
     <p class="text-gray-700">
-        A table always sits in a card, and the card's header holds the table's actions: the view
-        toggle, filters, <em>New</em>, export. <code>.card-table</code> makes the card flush so the table
-        meets its edges; <code>.card-header</code> is a wrapping row (an optional
-        <code>.card-header-title</code> on the left, the first button group - a view toggle - staying at
-        the start and everything else at the end); <code>.card-footer</code> holds the pager.
+        A table always sits in a card: <code>&lt;div class="card card-table mt-4 overflow-x-auto"&gt;</code>
+        around the <code>&lt;table class="data-table"&gt;</code>. <code>.card-table</code> makes the card flush so
+        the table meets its edges, and <code>overflow-x-auto</code> scrolls a table that is too wide. There is
+        no card header; a pager or summary goes in a <code>.card-footer</code>.
     </p>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex74b" id="ex74b-preview" value="preview" checked>
@@ -120,35 +119,32 @@
     </div>
     <div class="doc-example-panel-preview">
         <div class="doc-preview">
-        <div class="card card-table">
-            <div class="card-header">
-                <h3 class="card-header-title">Members</h3>
-                <button class="btn btn-secondary btn-icon" type="button" aria-label="Filter">{% lucide "filter" size=16 %}</button>
-                <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>Add member</span></a>
+        <div class="card card-table mt-4 overflow-x-auto">
+            <table class="data-table">
+                <thead><tr><th>Name</th><th>Role</th></tr></thead>
+                <tbody>
+                    <tr><td>Ada Lovelace</td><td>Owner</td></tr>
+                    <tr><td>Grace Hopper</td><td>Editor</td></tr>
+                </tbody>
+            </table>
+            <div class="card-footer">
+                <div class="pagination-bar">
+                    <p class="pagination-summary">Showing 1–2 of 24</p>
+                    <nav class="pagination" aria-label="Pagination">
+                        <span class="pagination-link disabled" aria-disabled="true" aria-label="Previous page">{% lucide "chevron-left" size=16 %}</span>
+                        <a class="pagination-link selected" href="#" aria-label="Page 1" aria-current="page">1</a>
+                        <a class="pagination-link" href="#" aria-label="Page 2">2</a>
+                        <a class="pagination-link" href="#" aria-label="Page 3">3</a>
+                        <a class="pagination-link" href="#" aria-label="Next page">{% lucide "chevron-right" size=16 %}</a>
+                    </nav>
+                </div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="data-table">
-                    <thead><tr><th>Name</th><th>Role</th></tr></thead>
-                    <tbody>
-                        <tr><td>Ada Lovelace</td><td>Owner</td></tr>
-                        <tr><td>Grace Hopper</td><td>Editor</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="card-footer text-body-xs text-content-subdued">2 members</div>
         </div>
     </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="card card-table">
-    <div class="card-header">
-        <h3 class="card-header-title">Members</h3>
-        <button class="btn btn-secondary btn-icon" aria-label="Filter">{% lucide "filter" size=16 %}</button>
-        <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>Add member</span></a>
-    </div>
-    <div class="overflow-x-auto">
-        <table class="data-table">…</table>
-    </div>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="card card-table mt-4 overflow-x-auto">
+    <table class="data-table">…</table>
     <div class="card-footer">{% include 'wise_core/components/_pagination.html' %}</div>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
@@ -192,9 +188,8 @@
                 <tr><td><code>card-title</code></td><td>Heading — pair with a real <code>&lt;h3&gt;</code>.</td></tr>
                 <tr><td><code>card-content</code> / <code>card-body</code></td><td>Body copy, slightly smaller.</td></tr>
                 <tr><td><code>card-meta</code></td><td>Icon + secondary detail row.</td></tr>
-                <tr><td><code>card-table</code></td><td>With <code>.card</code>: a flush card for a table (no padding). Every table lives in one.</td></tr>
-                <tr><td><code>card-header</code> / <code>card-header-title</code></td><td>The row above the body that holds the table's actions; the title is optional.</td></tr>
-                <tr><td><code>card-footer</code></td><td>The row under the body: the pager, a summary.</td></tr>
+                <tr><td><code>card-table</code></td><td>With <code>.card</code> (and <code>mt-4 overflow-x-auto</code>): a flush card for a table, no padding, no header. Every table lives in one.</td></tr>
+                <tr><td><code>card-footer</code></td><td>The row under the body: the pager (Lumen's pagination), a summary.</td></tr>
             </tbody>
         </table>
     </div>

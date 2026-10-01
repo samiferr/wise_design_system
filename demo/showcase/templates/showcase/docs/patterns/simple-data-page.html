@@ -37,13 +37,8 @@
                 <a class="text-xs text-action-600 underline" href="#">Clear all</a>
             </div>
 
-            <div class="card card-table mt-4">
-                <div class="card-header">
-                    <button class="btn btn-secondary btn-icon" type="button" aria-label="Filter">{% lucide "filter" size=16 %}</button>
-                    <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>New</span></a>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="data-table">
+            <div class="card card-table mt-4 overflow-x-auto">
+                <table class="data-table">
                     <thead><tr><th>Name</th><th>Products</th><th>Status</th><th class="w-px"></th></tr></thead>
                     <tbody>
                         <tr><td><a class="font-semibold text-action-700 no-underline" href="#">Electronics</a></td><td>12</td><td><span class="badge badge-green">Active</span></td><td class="whitespace-nowrap"><a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a></td></tr>
@@ -51,12 +46,16 @@
                         <tr><td><a class="font-semibold text-action-700 no-underline" href="#">Furniture</a></td><td>2</td><td><span class="badge badge-grey">Archived</span></td><td class="whitespace-nowrap"><a class="btn-ghost" href="#">{% lucide "pencil" size=14 %}</a></td></tr>
                     </tbody>
                 </table>
-                </div>
                 <div class="card-footer">
-                    <div class="flex flex-wrap items-center justify-center gap-1">
-                        <a href="#" class="pagination-link disabled">{% lucide "chevron-left" size=16 %}Prev.</a>
-                        <div class="px-2 text-sm text-content-subdued">Page 1 / 3</div>
-                        <a href="#" class="pagination-link">Next{% lucide "chevron-right" size=16 %}</a>
+                    <div class="pagination-bar">
+                        <p class="pagination-summary">Showing 1–10 of 24</p>
+                        <nav class="pagination" aria-label="Pagination">
+                            <span class="pagination-link disabled" aria-disabled="true" aria-label="Previous page">{% lucide "chevron-left" size=16 %}</span>
+                            <a class="pagination-link selected" href="#" aria-label="Page 1" aria-current="page">1</a>
+                            <a class="pagination-link" href="#" aria-label="Page 2">2</a>
+                            <a class="pagination-link" href="#" aria-label="Page 3">3</a>
+                            <a class="pagination-link" href="#" aria-label="Next page">{% lucide "chevron-right" size=16 %}</a>
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -112,20 +111,19 @@ class CategoryListView(WiseListView):
 {% block list_icon %}{% lucide "tag" size=28 cls="text-brand-600" %}{% endblock %}
 {% block list_title %}Categories{% endblock %}
 
-{# a table always sits in a card, and the card's header holds its actions - so the page header has none #}
-{% block list_actions %}{% endblock %}
+{% block list_actions %}
+    {% include 'wise_core/components/filter_button.html' %}
+    {% if perms.showcase.add_category %}
+        <a class="btn btn-primary" href="{% url 'category_create_view' %}">
+            {% lucide "plus" size=16 %}<span>New</span>
+        </a>
+    {% endif %}
+{% endblock %}
 
 {% block list_body %}
-    <div class="card card-table mt-5">
-        <div class="card-header">
-            {% include 'wise_core/components/filter_button.html' %}
-            {% if perms.showcase.add_category %}
-                <a class="btn btn-primary" href="{% url 'category_create_view' %}">
-                    {% lucide "plus" size=16 %}<span>New</span>
-                </a>
-            {% endif %}
-        </div>
-        <div class="overflow-x-auto"><table class="data-table">…</table></div>
+    {# a table always sits in a card; the pager goes in its footer #}
+    <div class="card card-table mt-4 overflow-x-auto">
+        <table class="data-table">…</table>
         <div class="card-footer">{% include 'wise_core/components/_pagination.html' %}</div>
     </div>
 {% endblock %}{% endverbatim %}{% endfilter %}</code></pre>

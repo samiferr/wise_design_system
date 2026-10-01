@@ -4,16 +4,17 @@
 {% block doc_section %}Navigation{% endblock %}
 {% block doc_title %}Pagination{% endblock %}
 {% block doc_intro %}
-    Rendered by <code>wise_core/components/_pagination.html</code> against Django's own
-    <code>Paginator</code>. You include the partial; you do not write pagination markup.
+    Lumen's Pagination - previous, next and numbered page buttons - rendered by
+    <code>wise_core/components/_pagination.html</code> against Django's own <code>Paginator</code>. You
+    include the partial; you do not write pagination markup. Under a table it goes in the card's footer.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Use cases</h2>
     <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
         <li>Any list view backed by Django's Paginator - a WiseListView subclass gets this automatically once paginate_by is set.</li>
-        <li>Paging through search results, a datatable, or a card grid that returns more rows than fit on one page.</li>
-        <li>Preserving the current filters/sort while moving between pages, since the partial reads and re-emits the existing query string.</li>
-        <li>Not something to hand-write per page - the partial handles first/prev/next/last and the page-number window.</li>
+        <li>Paging through search results, a data table, or a card list that returns more rows than fit on one page.</li>
+        <li>Preserving the view mode, sort and filters while moving between pages - every link re-emits the existing query string.</li>
+        <li>Not something to hand-write per page - the partial handles the page-number window, the ends and the summary.</li>
     </ul>
 
     <div class="tab-bar border-b border-divider mt-8" role="tablist" aria-label="Pagination documentation views">
@@ -23,6 +24,12 @@
 
     <div data-doc-tab="overview">
     <h2 class="mt-8">Appearance</h2>
+    <p class="text-gray-700">
+        A <code>nav</code> with a chevron-only Previous and Next (disabled in place at the ends, so the control
+        never changes width), numbered pill buttons, and ellipses where a run of pages is elided. The current
+        page is <code>aria-current="page"</code> and filled with <code>neutral-background</code>. Beside it, a
+        "Showing 21–40 of 312" summary tells people where they are.
+    </p>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex93" id="ex93-preview" value="preview" checked>
     <input class="doc-example-radio" type="radio" name="ex93" id="ex93-code" value="code">
@@ -31,18 +38,44 @@
         <label class="doc-example-tab" for="ex93-code">Code</label>
     </div>
     <div class="doc-example-panel-preview">
-        <div class="doc-preview flex flex-wrap items-center justify-center gap-1">
-        <a href="#" class="pagination-link disabled">{% lucide "chevrons-left" size=16 %}</a>
-        <a href="#" class="pagination-link disabled">{% lucide "chevron-left" size=16 %}Prev.</a>
-        <div class="px-2 text-sm text-content-subdued">Page 1 / 3</div>
-        <a href="#" class="pagination-link">Next{% lucide "chevron-right" size=16 %}</a>
-        <a href="#" class="pagination-link">{% lucide "chevrons-right" size=16 %}</a>
-    </div>
+        <div class="doc-preview space-y-4">
+            <div class="pagination-bar">
+                <p class="pagination-summary">Showing 141–160 of 400</p>
+                <nav class="pagination" aria-label="Pagination">
+                    <a class="pagination-link" href="#" aria-label="Previous page">{% lucide "chevron-left" size=16 %}</a>
+                    <a class="pagination-link" href="#" aria-label="Page 1">1</a>
+                    <span class="pagination-link pagination-gap" aria-hidden="true">…</span>
+                    <a class="pagination-link" href="#" aria-label="Page 7">7</a>
+                    <a class="pagination-link selected" href="#" aria-label="Page 8" aria-current="page">8</a>
+                    <a class="pagination-link" href="#" aria-label="Page 9">9</a>
+                    <span class="pagination-link pagination-gap" aria-hidden="true">…</span>
+                    <a class="pagination-link" href="#" aria-label="Page 20">20</a>
+                    <a class="pagination-link" href="#" aria-label="Next page">{% lucide "chevron-right" size=16 %}</a>
+                </nav>
+            </div>
+            <div class="pagination-bar">
+                <p class="pagination-summary">Showing 1–20 of 100</p>
+                <nav class="pagination" aria-label="Pagination">
+                    <span class="pagination-link disabled" aria-disabled="true" aria-label="Previous page">{% lucide "chevron-left" size=16 %}</span>
+                    <a class="pagination-link selected" href="#" aria-label="Page 1" aria-current="page">1</a>
+                    <a class="pagination-link" href="#" aria-label="Page 2">2</a>
+                    <a class="pagination-link" href="#" aria-label="Page 3">3</a>
+                    <a class="pagination-link" href="#" aria-label="Page 4">4</a>
+                    <a class="pagination-link" href="#" aria-label="Page 5">5</a>
+                    <a class="pagination-link" href="#" aria-label="Next page">{% lucide "chevron-right" size=16 %}</a>
+                </nav>
+            </div>
+        </div>
     </div>
     <div class="doc-example-panel-code">
-        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="pt-4">
-    {% include 'wise_core/components/_pagination.html' %}
-</div>{% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{# under a table: in the card's footer #}
+<div class="card card-table mt-4 overflow-x-auto">
+    <table class="data-table">…</table>
+    <div class="card-footer">{% include 'wise_core/components/_pagination.html' %}</div>
+</div>
+
+{# under a card list #}
+<div class="pt-4">{% include 'wise_core/components/_pagination.html' %}</div>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
 
@@ -50,8 +83,8 @@
     <p class="text-gray-700">
         <code>page_obj</code> — the standard name Django's <code>ListView</code> puts in the context.
         <code>WiseListView</code> supplies it as soon as you set <code>paginate_by</code>. The partial
-        also carries the current search parameter across page links, so paging through filtered
-        results does not silently reset the filter.
+        also carries every other query parameter across page links, so paging through filtered or
+        sorted results does not silently reset them.
     </p>
     <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class CategoryListView(WiseListView):
     model = Category
@@ -63,29 +96,25 @@
         <a class="text-action-600 underline" href="{% url 'category_list_view' %}">Categories</a>.
     </p>
 
-    <h2 class="mt-8">Boundaries</h2>
+    <h2 class="mt-8">Windowing and short lists</h2>
     <p class="text-gray-700">
-        Prev./Next are disabled in place rather than removed, so the control keeps its width and the
-        page does not shift as you move between pages.
+        Up to seven pages are all shown. Beyond that the pager shows the first and last page and the current page
+        with one page either side, and an ellipsis for each elided run - the <code>page_window</code> filter works
+        this out, exactly as Lumen's Pagination does. Lumen advises against pagination for fewer than three
+        pages; because a Django <code>Paginator</code> has already split the rows, a list of two pages keeps its
+        buttons (otherwise page 2 is unreachable), while a list that fits one page shows only the summary.
     </p>
 
     <h2 class="mt-8">Preserving other query parameters</h2>
-    <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
-        <div>
-            If you add your own query parameters — a sort column, a tab — carry them onto the page
-            links too, or page 2 will silently drop them. A small template filter that merges the
-            current <code>request.GET</code> with the new page number is the tidiest fix.
-        </div>
-    </div>
-    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}@register.simple_tag(takes_context=True)
-def query_replace(context, **kwargs):
-    """{% query_replace page=3 %} -> keeps every other param intact."""
-    query = context['request'].GET.copy()
-    for key, value in kwargs.items():
-        query[key] = value
-    return query.urlencode(){% endverbatim %}{% endfilter %}</code></pre>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<a class="pagination-link" href="?{% query_replace page=page_obj.next_page_number %}">Next</a>{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="text-gray-700">
+        Every link is built by the <code>page_url</code> tag, which merges the new page number into the current
+        <code>request.GET</code>, so <code>?view=table</code>, the sort and the active filters all survive paging.
+        Use it for any pager of your own:
+    </p>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_tags %}
+{% for item in page_obj|page_window %}
+    {% if item is None %}…{% else %}<a class="pagination-link" href="{% page_url item %}">{{ item }}</a>{% endif %}
+{% endfor %}{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Large tables</h2>
     <p class="text-gray-700">
@@ -100,12 +129,16 @@ def query_replace(context, **kwargs):
         <table class="doc-props w-full">
             <thead><tr><th>Class</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td><code>pagination-link</code></td><td>One page-nav link.</td></tr>
-                <tr><td><code>pagination-link.disabled</code></td><td>Inert boundary link.</td></tr>
+                <tr><td><code>pagination-bar</code></td><td>The row: the summary at the start, the pager at the end.</td></tr>
+                <tr><td><code>pagination-summary</code></td><td>"Showing 21–40 of 312".</td></tr>
+                <tr><td><code>pagination</code></td><td>The <code>nav</code> holding the buttons.</td></tr>
+                <tr><td><code>pagination-link</code></td><td>One button: Previous, Next or a page number.</td></tr>
+                <tr><td><code>pagination-link.selected</code></td><td>The current page (also set <code>aria-current="page"</code>).</td></tr>
+                <tr><td><code>pagination-link.disabled</code></td><td>Inert Previous / Next at the ends.</td></tr>
+                <tr><td><code>pagination-gap</code></td><td>An elided run of pages (an ellipsis).</td></tr>
             </tbody>
         </table>
     </div>
-
     </div>
 
     <div data-doc-tab="ai-prompt" class="hidden">
@@ -113,16 +146,17 @@ def query_replace(context, **kwargs):
         <p class="text-gray-700">
             Paste this into an AI coding assistant to get a Pagination implementation that matches this design system instead of inventing new markup.
         </p>
-        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Pagination by including the shared partial - do not hand-write pagination markup. Rules:
-- In a WiseListView-based list template, include: {% include 'wise_core/components/_pagination.html' %} - it reads `page_obj`/`paginator` from context (already provided by Django's ListView/Paginator) and renders first/prev/next/last plus a window of page-number links, each styled with `.pagination-link` (and `.disabled` on prev/next at the ends).
-- It automatically preserves the current query string (filters, sort) when generating each page link - never build page links by hand with only `?page=N`, or active filters/sort get silently dropped when the user pages through results.
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Pagination (Lumen's Pagination component) by including the shared partial - do not hand-write pagination markup. Rules:
+- In a WiseListView-based list template, include: {% include 'wise_core/components/_pagination.html' %} - it reads `page_obj`/`paginator` from context and renders a "Showing 21-40 of 312" summary plus a nav with chevron-only Previous/Next, numbered `.pagination-link` pills (the current one `.selected` with aria-current="page") and ellipses (`.pagination-gap`). Prev/Next are `.disabled` in place at the ends.
+- Under a data table, put it in the table card's footer: <div class="card card-table mt-4 overflow-x-auto"><table class="data-table">...</table><div class="card-footer">{% include 'wise_core/components/_pagination.html' %}</div></div>. Under a card list, wrap it in <div class="pt-4">.
+- Every link is built with the `page_url` tag, which keeps the other query parameters (?view=table, sort, filters) - never build page links by hand with only `?page=N`.
 - Set `paginate_by` on your ListView (WiseListView defaults to 20) - the partial then just works with no further configuration.
-- Do not build your own page-number loop in the template; the partial is the single source of truth for this component's markup across the whole design system.{% endverbatim %}{% endfilter %}</code></pre>
+- Do not build your own page-number loop; if you must, use `page_obj|page_window` and `{% page_url n %}` from wise_tags.{% endverbatim %}{% endfilter %}</code></pre>
 
         <h2 class="mt-8">GitHub source</h2>
         <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
             <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templates/wise_core/components/_pagination.html">_pagination.html — the shared pagination partial</a></li>
-            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css#L1094-L1101">tokens.css — .pagination-link</a></li>
+            <li><a class="text-action-600 underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css">tokens.css — .pagination-link</a></li>
         </ul>
     </div>
 {% endblock %}

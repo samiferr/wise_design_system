@@ -41,8 +41,8 @@ Run through this before finishing any UI change. Grep helpers are at the bottom.
 - [ ] Disabled uses the `disabled` attribute (or `.btn-disabled` on `<a>`), not opacity hacks.
 
 ## Tables
-- [ ] Every table is inside a `card card-table`; its actions (view toggle, filter, New, export) are in the
-      `card-header`, the scroll wrapper is `overflow-x-auto`, and the pager is in `card-footer`.
+- [ ] Every table is inside `<div class="card card-table mt-4 overflow-x-auto">` - no card header - and the
+      pager (`_pagination.html`, Lumen's Pagination) is in a `card-footer`.
 
 ## Layout & sizes
 - [ ] Spacing on the 4px grid; window margins 16px (compact) / 24px (medium+) - `.page-panel` does this.

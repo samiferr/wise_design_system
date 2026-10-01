@@ -76,6 +76,20 @@ template — see `demo/showcase/templates/showcase/category/detail.html` for a l
 
 `Model._meta.verbose_name` / `.verbose_name_plural`.
 
+### `{% page_url number %}` (simple_tag) and `{{ page_obj|page_window }}` (filter)
+
+The two helpers behind `wise_core/components/_pagination.html`, Lumen's Pagination. `page_url` builds a
+`?page=N` URL that keeps every other query parameter (`?view=table`, the sort, the filters), so paging
+never drops them. `page_window` returns the numbers to show as a list: every page when there are at most
+`5 + 2 * siblings` (default `siblings=1`), otherwise the first, last and current page with `siblings`
+pages either side, and `None` wherever an ellipsis goes.
+
+```django
+{% for item in page_obj|page_window %}
+    {% if item is None %}…{% else %}<a href="{% page_url item %}">{{ item }}</a>{% endif %}
+{% endfor %}
+```
+
 ### `{% get_url_for_model "product" "detail_view" pk=object.pk %}` (simple_tag)
 
 Builds a CRUD URL from a model name and action string, joined as `{model_name}_{action}` —

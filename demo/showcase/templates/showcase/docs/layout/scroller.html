@@ -96,16 +96,12 @@
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>
             For a datatable that overflows, put it in a table card
-            (<code>.card.card-table</code>) and wrap the table in a plain
-            <code>overflow-x-auto</code> container instead. Snap points on table columns fight the
+            (<code>card card-table mt-4 overflow-x-auto</code>), which scrolls it sideways, instead. Snap points on table columns fight the
             user — they expect free scrolling there.
         </div>
     </div>
-    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="card card-table">
-    <div class="card-header">…the table's actions…</div>
-    <div class="overflow-x-auto">
-        <table class="data-table">…</table>
-    </div>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="card card-table mt-4 overflow-x-auto">
+    <table class="data-table">…</table>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Reference</h2>

@@ -41,7 +41,8 @@ sizes.**
    `border-default` (3:1 on the page and every surface); `border-subtle` is for decorative dividers only.
    Text fields, text areas and search fields use a 2px border that turns `border-focus` on focus; a
    `<select>` is a borderless picker on `fill-picker`. **Every single-line control has the same height.**
-   **A table always sits in a card** (`card card-table`), and the card's header holds the table's actions.
+   **A table always sits in a card** - `<div class="card card-table mt-4 overflow-x-auto">` around the
+   `table.data-table`, no card header - with the pager (Lumen's Pagination) in a `card-footer`.
 6. **Interaction = stepped fills.** Hover moves a fill one shade, press two; the component classes
    already do this. Don't hand-write hover colors - add the selector to the quiet-hover `:where(...)`
    rule in `tokens.css`. Every interactive element shows a 2px `focus-ring` outline (offset 2px) on

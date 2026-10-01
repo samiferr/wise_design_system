@@ -124,7 +124,7 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 | Tabs | `.tab-bar` > `a.bar-item(.selected)` with optional icon and `.tab-count`; tabs are links (one URL per tab). Bold `title-s`, selected tab gets a 2px `content-heading` indicator |
 | Top app bar | `.top-bar` (mobile), `.top-bar-logo` |
 | Breadcrumb | `nav.breadcrumb` > `a.breadcrumb-item`, `.breadcrumb-separator` |
-| Pagination | `a.pagination-link` (`.selected` = `neutral-background`, `.disabled`), rendered by `_pagination.html` |
+| Pagination | Lumen's Pagination, rendered by `_pagination.html`: `.pagination-bar` > `.pagination-summary` ("Showing 21-40 of 312") + `nav.pagination` > chevron-only Previous / Next and numbered `a.pagination-link` pills (`.selected` + `aria-current="page"` = `neutral-background`, `.disabled`, `.pagination-gap` for ellipses); the run of pages is windowed by the `page_window` filter and every link keeps the other query parameters (`page_url`). Under a table it goes in the `.card-footer` |
 
 ## Selection & text inputs
 
@@ -148,7 +148,7 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 
 | Need | Wise |
 |---|---|
-| Table | **Always inside a card, with the table's actions in the card header**: `.card.card-table` > `.card-header` (view toggle, filter, New - `_list_actions.html`) + `div.overflow-x-auto > table.data-table` + `.card-footer` (pager). `data-table`: 12px bold subdued headers over a 2px rule, 40px body-s rows, `row-hover` / `selected-subtle` row tints; sortable headers via `_sortable_th.html` |
+| Table | **Always inside a card**: `<div class="card card-table mt-4 overflow-x-auto">` > `table.data-table`, with no card header (the page's actions stay in the page header) and the pager in a `.card-footer`. `data-table`: 12px bold subdued headers over a 2px rule, 40px body-s rows, `row-hover` / `selected-subtle` row tints; sortable headers via `_sortable_th.html` |
 | Record detail | `.detail-panel` (> `.detail-panel-header`, `table` of `th`/`td`) |
 | Avatar | `.avatar` (40px circle, neutral fill), `.avatar-sm`/`-lg`, `.avatar-square`, `.avatar-group` |
 | Charts | `<canvas class="chart-canvas" data-chart="{% chart_json cfg %}">` in a `.chart-frame`; series colors are the accent then Lumen step-900 hues (`wise_core/charts.py`) |

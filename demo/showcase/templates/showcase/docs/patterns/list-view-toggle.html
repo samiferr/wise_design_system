@@ -43,20 +43,20 @@
     <h2 class="mt-8">Wiring it into a list template</h2>
     <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% extends 'wise_core/generic/list_generic.html' %}
 
-{# the actions live in the page header for the card list... #}
 {% block list_actions %}
-    {% include 'wise_core/components/_list_actions.html' with placement='page' %}
+    {% with view_mode=request.GET.view|default:"cards" %}
+        {% include 'wise_core/components/_view_toggle.html' %}
+    {% endwith %}
+    {% include 'wise_core/components/filter_button.html' %}
 {% endblock %}
 
 {% block list_body %}
     {% with view_mode=request.GET.view|default:"cards" %}
         {% if view_mode == 'table' %}
-            {# ...and in the card header for the table: a table always sits in a card #}
-            <div class="card card-table mt-5">
-                <div class="card-header">
-                    {% include 'wise_core/components/_list_actions.html' with placement='card' %}
-                </div>
-                <div class="overflow-x-auto"><table class="data-table">…</table></div>
+            {# a table always sits in a card; the pager goes in its footer #}
+            <div class="card card-table mt-4 overflow-x-auto">
+                <table class="data-table">…</table>
+                <div class="card-footer">{% include 'wise_core/components/_pagination.html' %}</div>
             </div>
         {% else %}
             <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

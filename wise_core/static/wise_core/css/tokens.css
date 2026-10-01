@@ -1327,40 +1327,20 @@
         color: var(--color-content-subdued);
     }
 
-    /* ── Card header, footer and the table card ─────────────────────────
-       A table always sits in a card, and the card's header holds the
-       table's actions: the view toggle, filters, "New", export. Wrap the
-       table in `.card.card-table` (flush: no padding, so the table meets
-       the card's edges), put the actions in a `.card-header` (a title in
-       `.card-header-title` is optional), scroll the table in an
-       `overflow-x-auto` div, and put the pager in a `.card-footer`:
+    /* ── Table card ──────────────────────────────────────────────────────
+       A table always sits in a card: `<div class="card card-table mt-4
+       overflow-x-auto">` around the `<table class="data-table">`. The card
+       is flush (no padding, so the table meets its edges) and scrolls the
+       table sideways when it is too wide. There is no header; a pager or
+       summary goes in a `.card-footer`:
 
-         <div class="card card-table">
-           <div class="card-header">...actions...</div>
-           <div class="overflow-x-auto"><table class="data-table">...</table></div>
+         <div class="card card-table mt-4 overflow-x-auto">
+           <table class="data-table">...</table>
            <div class="card-footer">...pager...</div>
-         </div>
-
-       The first button group in a header (the view toggle) stays at the
-       start; everything after it is pushed to the end. */
+         </div> */
     .card-table {
         @apply p-0;
         overflow: hidden;
-    }
-
-    .card-header {
-        @apply flex flex-wrap items-center justify-end gap-2 px-4 py-3;
-        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
-    }
-
-    .card-header > .btn-group:first-child {
-        margin-inline-end: auto;
-    }
-
-    .card-header-title {
-        @apply m-0 mr-auto text-title-m;
-        font-family: var(--font-brand);
-        color: var(--color-content-heading);
     }
 
     .card-footer {
@@ -1369,8 +1349,8 @@
     }
 
     /* Inside a table card the table's own edges are the card's, so the
-       first and last cells line up with the header's 16px padding and the
-       last row needs no rule of its own. */
+       first and last cells keep a 16px inset and the last row needs no
+       rule of its own. */
     .card-table .data-table th:first-child,
     .card-table .data-table td:first-child {
         padding-inline-start: 1rem;
@@ -2487,6 +2467,27 @@
         @apply pointer-events-none;
         color: var(--wise-disabled-content);
         opacity: 1;
+    }
+
+    /* An elided run of pages: not a link, no hover. */
+    .pagination-gap {
+        @apply pointer-events-none;
+        color: var(--color-content-subdued);
+    }
+
+    /* The pager row (_pagination.html): a "Showing 21-40 of 312" summary at
+       the start, Lumen's numbered pagination at the end. */
+    .pagination {
+        @apply inline-flex flex-wrap items-center gap-1;
+    }
+
+    .pagination-bar {
+        @apply flex flex-wrap items-center justify-between gap-3;
+    }
+
+    .pagination-summary {
+        @apply m-0 text-body-s;
+        color: var(--color-content-subdued);
     }
 
     .large-button {
