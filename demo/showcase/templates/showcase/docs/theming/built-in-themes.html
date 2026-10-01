@@ -4,10 +4,11 @@
 {% block doc_section %}Theming &amp; Utilities{% endblock %}
 {% block doc_title %}Built-in Themes{% endblock %}
 {% block doc_intro %}
-    Light and dark, shipped - the two Material 3 schemes generated from the same seed color. Dark
-    mode is not a tint pass over the light theme: every M3 color role reads a different tone of the
-    same palette (primary40 becomes primary80, surface is neutral6 instead of neutral98, ...), so
-    contrast is designed in, not patched.
+    Light and dark, shipped - one Lumen palette with a light and a dark value for every step. Dark
+    mode is not a tint pass over the light theme: the scales themselves are authored for both (gray-25
+    is white in light and near-black in dark), and the few tokens that need a different <em>step</em>
+    say so (the filled accent is blue-900 in light and blue-800 in dark), so contrast is designed in,
+    not patched.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Switch</h2>
@@ -19,12 +20,12 @@
 
     <h2 class="mt-8">What actually changes</h2>
     <p class="text-gray-700">
-        <code>data-theme="dark"</code> only changes <strong>which tone each M3 role reads</strong>,
-        so every <code>bg-surface-container</code>, <code>text-on-surface-variant</code> or
-        <code>bg-primary</code> in the component layer <em>and in your own templates</em> is right
-        in both themes with no <code>dark:</code> variants. The Tailwind gray ramp is repointed at
-        the M3 neutral palette and inverts the same way, so older <code>text-gray-600</code> markup
-        still lands the right way up.
+        <code>data-theme="dark"</code> re-points the palette steps (and the handful of tokens that read a
+        different step in dark), so every <code>bg-background-layer-1</code>,
+        <code>text-content-subdued</code> or <code>bg-accent-background</code> in the component layer
+        <em>and in your own templates</em> is right in both themes with no <code>dark:</code> variants.
+        The Tailwind gray ramp is repointed at Lumen's gray scale and inverts the same way, so older
+        <code>text-gray-600</code> markup still lands the right way up.
     </p>
     <div class="doc-preview mt-4">
         <div class="grid grid-cols-6 gap-1 text-[10px] sm:grid-cols-11">
@@ -38,19 +39,19 @@
             <div class="swatch" style="background:var(--color-gray-700)">700</div>
             <div class="swatch" style="background:var(--color-gray-800)">800</div>
             <div class="swatch" style="background:var(--color-gray-900)">900</div>
-            <div class="swatch" style="background:var(--color-gray-950)">950</div>
+            <div class="swatch" style="background:var(--color-gray-950)">1000</div>
         </div>
         <p class="mt-2 text-xs text-gray-600">Toggle the theme above — this ramp reverses in place.</p>
     </div>
 
     <h2 class="mt-8">The on-colors</h2>
     <p class="text-gray-700">
-        A filled button in light mode is primary40 with a primary100 (white) label. Dark mode
-        lightens the fill to primary80 - at which point white text would fail - and the label
-        becomes primary20. That's what the M3 <code>on-*</code> roles are for: always paint a
-        container's content with its own <code>on-</code> role (<code>on-primary</code>,
-        <code>on-secondary-container</code>, <code>on-error</code>, ...), never a hardcoded
-        <code>text-white</code>.
+        A filled accent button in light mode is blue-900 with a white label. In dark mode the fill steps
+        one shade lighter (blue-800) so it still reads as a bright action on near-black, and white text
+        still holds 4.5:1. The notice (orange) fill is the exception: its label turns black in dark.
+        That's what the <code>on-*</code> tokens are for: always paint a fill's content with its own
+        <code>on-</code> token (<code>on-accent</code>, <code>on-neutral</code>, <code>on-notice</code>),
+        never a hardcoded <code>text-white</code>.
     </p>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex103" id="ex103-preview" value="preview" checked>
@@ -62,15 +63,15 @@
     <div class="doc-example-panel-preview">
         <div class="doc-preview flex flex-wrap items-center gap-3">
         <button class="btn btn-primary">Primary</button>
-        <button class="btn btn-brand">Tonal</button>
+        <button class="btn btn-brand">Neutral</button>
         <button class="btn btn-danger">Danger</button>
         <span class="badge badge-action">Badge</span>
     </div>
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}.btn-primary {
-    background-color: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);   /* not text-white */
+    background-color: var(--color-accent-background);
+    color: var(--color-on-accent);   /* not text-white */
 }{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
@@ -78,26 +79,28 @@
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>
             <div class="callout-title">Writing your own filled component?</div>
-            Pair the container role with its <code>on-</code> role - <code>bg-primary text-on-primary</code>,
-            <code>bg-tertiary-container text-on-tertiary-container</code>. Hardcoding
+            Pair the fill with its <code>on-</code> token - <code>bg-accent-background text-on-accent</code>,
+            <code>bg-neutral-background text-on-neutral</code>. Hardcoding
             <code>text-white</code> works in light mode and becomes unreadable in dark.
         </div>
     </div>
 
     <h2 class="mt-8">Surfaces</h2>
     <p class="text-gray-700">
-        M3 expresses depth with tone: <code>surface</code> is the page, and five
-        <code>surface-container-*</code> roles step up from it - lowest, low (cards, sheets),
-        container (menus), high (dialogs), highest (filled fields, chips). In dark mode each step is
-        slightly <em>lighter</em>, which is how a raised surface still reads as raised on near-black.
+        Lumen expresses depth with layers: <code>background-base</code> is the page,
+        <code>background-layer-1</code> is a raised panel, <code>background-layer-2</code> a card or field,
+        <code>background-elevated</code> a popover or dialog, and <code>fill-neutral-hover</code> /
+        <code>fill-neutral-down</code> the hover and press fills. In dark mode cards and popovers sit
+        slightly <em>lighter</em> than the page, which is how a raised surface still reads as raised on
+        near-black.
     </p>
     <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-3">
-        <div class="swatch !h-16 bg-surface">surface</div>
-        <div class="swatch !h-16 bg-surface-container-lowest">container-lowest</div>
-        <div class="swatch !h-16 bg-surface-container-low">container-low</div>
-        <div class="swatch !h-16 bg-surface-container">container</div>
-        <div class="swatch !h-16 bg-surface-container-high">container-high</div>
-        <div class="swatch !h-16 bg-surface-container-highest">container-highest</div>
+        <div class="swatch !h-16 bg-background-base">background-base</div>
+        <div class="swatch !h-16 bg-background-layer-1">background-layer-1</div>
+        <div class="swatch !h-16 bg-background-layer-2">background-layer-2</div>
+        <div class="swatch !h-16 bg-background-elevated">background-elevated</div>
+        <div class="swatch !h-16 bg-fill-neutral-hover">fill-neutral-hover</div>
+        <div class="swatch !h-16 bg-fill-neutral-down">fill-neutral-down</div>
     </div>
 
     <h2 class="mt-8">Components in both themes</h2>

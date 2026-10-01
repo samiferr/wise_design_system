@@ -27,12 +27,12 @@ selected - e.g. "invoice_" for every invoice_* route)}.
 {% endfor %}
 {% if request.user.is_authenticated %}
     <a href="{% url 'home' %}"
-       class="menu-link mt-4 text-on-surface">
-        <div class="avatar avatar-sm h-8 w-8 text-label-medium">
+       class="menu-link mt-4">
+        <div class="avatar avatar-sm h-8 w-8 text-title-xs">
             {{ request.user.first_name|default:request.user.username|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}
         </div>
         <div class="min-w-0">
-            <div class="truncate text-label-large">{{ request.user.get_full_name|default:request.user.username }}</div>
+            <div class="truncate text-detail-m">{{ request.user.get_full_name|default:request.user.username }}</div>
         </div>
     </a>
 {% endif %}

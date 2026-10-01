@@ -1,210 +1,244 @@
 # Design tokens
 
 Source: [`wise_core/static/wise_core/css/tokens.css`](../wise_core/static/wise_core/css/tokens.css)
-plus the generated [`md3-palettes.css`](../wise_core/static/wise_core/css/md3-palettes.css) it
+plus the generated [`lumen-palettes.css`](../wise_core/static/wise_core/css/lumen-palettes.css) it
 imports. Together they are a Tailwind CSS v4 partial (an `@theme` block plus `@layer
-base`/`components`/`utilities`) styled after **[Material Design 3](https://m3.material.io/)**. See
-[getting-started.md](getting-started.md) for how a project builds this into a real stylesheet.
+base`/`components`/`utilities`) styled after **Lumen**, a calm, neutral-first design system in the
+Spectrum tradition: one neutral scale and a single accent hue, semantic tokens that reference a small
+palette, a type scale in Source Sans 3, fully round buttons with 8px fields and cards, and layers and
+borders instead of shadows. See [getting-started.md](getting-started.md) for how a project builds this
+into a real stylesheet.
+
+Lumen's palette, spacing, radius, type-size and component-height values are adapted from Adobe's
+open-source Spectrum design tokens (Apache License 2.0). Lumen is an independent system and is not
+affiliated with or endorsed by Adobe.
 
 Live, rendered version: run the demo site and visit `/docs/theming/design-tokens/` and
 `/docs/theming/color-palettes/`. Every example there is a real, running control. AI agents: the
-[Material Design 3 skill](../.claude/skills/material-design-3/SKILL.md) is the condensed version
-of this page, plus the M3-component → Wise-class mapping.
+[Lumen design skill](../.claude/skills/lumen-design/SKILL.md) is the condensed version of this page,
+plus the component → Wise-class mapping.
 
 ## Token tiers
 
-The same three tiers Material 3 itself uses:
-
 | Tier | Names | Where | Use it for |
 |---|---|---|---|
-| Reference | `--md-ref-palette-<palette><tone>` (e.g. `--md-ref-palette-primary40`) | `md3-palettes.css`, generated | Nothing directly. System tokens point at these. |
-| System | `--md-sys-color-*`, `--md-sys-shape-corner-*`, `--md-sys-elevation-level*`, `--md-sys-motion-*`, `--md-sys-state-*` | `tokens.css` | Hand-written CSS (`var(--md-sys-color-primary)`) |
-| Tailwind | `--color-primary`, `--text-title-medium`, `--radius-md`, `--shadow-elevation-2`, `--ease-standard`, ... | `tokens.css` `@theme static` | Templates (`bg-primary`, `text-title-medium`, `rounded-md`, `shadow-elevation-2`) |
+| Reference | `--lumen-<hue>-<step>` (e.g. `--lumen-blue-900`), `--lumen-accent-<step>` | `lumen-palettes.css`, generated | Charts and illustration. System tokens point at these. |
+| System | `--color-background-base`, `--color-content-default`, `--color-accent-background`, ... `--text-*`, `--corner-radius-*`, `--shadow-*`, `--component-height-*`, `--border-width-*` | `tokens.css` (`@theme static` and `:root`) | Hand-written CSS (`var(--color-accent-background)`); the color and type tokens are also Tailwind theme values |
+| Tailwind | `bg-accent-background`, `text-content-subdued`, `text-title-s`, `rounded-md`, `shadow-elevated`, ... | generated from the system tier | Templates |
 
 ## Color
 
-M3 dynamic color. A **seed color** is expanded by Google's
-[`@material/material-color-utilities`](https://github.com/material-foundation/material-color-utilities)
-into tonal palettes: primary, secondary, tertiary, neutral, neutral-variant and error, plus
-harmonized **success** and **warning** (M3 "custom colors"). Each palette has tones 0–100.
-**Color roles** then pick tones: `primary` = primary40 in light and primary80 in dark,
-`on-primary` = primary100 / primary20, and so on. Components only ever use roles, so contrast holds
-in every palette and both themes.
+Lumen color is one neutral scale (gray) and eleven hue scales (blue, red, orange, yellow, green, celery,
+cyan, indigo, purple, fuchsia, magenta), each in numbered steps. **Every step has a light and a dark
+value**, so a step flips with `data-theme` on its own. **Semantic tokens** pick steps, and components
+only ever use semantic tokens, so contrast holds in every palette and both themes.
 
-| Role (Tailwind utility suffix) | Use |
+| Token (Tailwind utility suffix) | Use |
 |---|---|
-| `primary` / `on-primary` | Filled buttons, the most important action, active indicators, links |
-| `primary-container` / `on-primary-container` | FAB, info callouts, highlighted accents |
-| `secondary` / `secondary-container` / `on-secondary-container` | Tonal buttons, selected nav item, selected chip or segment |
-| `tertiary` / `tertiary-container` / `on-tertiary-container` | Contrasting accents |
-| `error` / `error-container` / `on-error(-container)` | **Destructive and error only** |
-| `success-*`, `warning-*` | Status: done / needs attention (same four-role shape as error) |
-| `surface`, `surface-dim`, `surface-bright` | The page |
-| `surface-container-lowest/low/(none)/high/highest` | Tonal elevation: cards & sheets (low), menus (container), dialogs (high), filled fields & chips (highest) |
-| `on-surface` / `on-surface-variant` | Body text / secondary text and icons |
-| `outline` / `outline-variant` | Field and outlined-button borders / dividers and card outlines |
-| `inverse-surface` / `inverse-on-surface` / `inverse-primary` | Snackbars, tooltips |
-| `scrim`, `shadow` | Modal backdrops, shadows |
+| `background-base` | The page |
+| `background-layer-1` | Raised panels: the sidebar, the action bar, an empty state |
+| `background-layer-2` | Cards, tables and field fills |
+| `background-elevated` | Popovers, menus, dialogs, tooltips that float above the page |
+| `fill-neutral-hover` / `fill-neutral-down` | Hover and pressed fill for quiet buttons, list rows, tabs; the neutral button |
+| `content-heading` / `content-default` / `content-subdued` | Headings / body text and labels / help text, captions, icons |
+| `content-disabled` | Disabled text. Never for live content |
+| `border-default` / `border-hover` | A control's own border (3:1 on the page) / its hover |
+| `border-subtle` | Decorative dividers and card edges only |
+| `accent-background` (+ `-hover`, `-down`) / `on-accent` | The single main action, selected checkbox / radio / switch; text on it |
+| `accent-content` | Links and selected text |
+| `accent-subtle` / `on-accent-subtle` | *Wise extension.* A quiet accent tint for a highlighted region (calendar event, autocomplete row) |
+| `neutral-background` / `on-neutral` | The solid neutral: neutral badges, pressed action buttons, tooltips, toasts |
+| `informative-` / `positive-` / `notice-` / `negative-` `background` and `-content` | Status. Fills take `on-accent` text (`on-notice` on the orange fill). Always with a word and an icon |
+| `focus-ring` | The 2px keyboard focus outline |
 
 ```html
-<button class="bg-primary text-on-primary">Filled</button>
-<div class="bg-surface-container-high text-on-surface rounded-2xl p-6">Dialog-like surface</div>
-<p class="text-on-surface-variant">Secondary text</p>
-<span class="bg-tertiary-container text-on-tertiary-container rounded-sm px-2">Accent</span>
-<hr class="border-outline-variant">
+<button class="bg-accent-background text-on-accent">Filled</button>
+<div class="bg-background-elevated text-content-default rounded-xl p-6">Dialog-like surface</div>
+<p class="text-content-subdued">Secondary text</p>
+<span class="bg-positive-background text-on-accent rounded-full px-2">Approved</span>
+<hr class="border-border-subtle">
 ```
 
-Always pair a container with its own `on-` role, and never hardcode `text-white`: in dark mode the
-filled roles become light tones and need a dark label.
+Always pair a fill with its own `on-` token, and never hardcode `text-white`: in dark mode the filled
+accent steps one shade lighter, and the notice (orange) fill's label turns black.
 
-### Legacy color names
+The accent is one hue: blue by default, switchable to indigo, purple, green or amber with
+`data-palette`. Every Lumen hue is built to the same contrast ladder, so white text on the accent fill
+and the accent as link text hold 4.5:1 whichever one you pick.
 
-The pre-M3 names still exist as aliases, so older templates render correctly, but new markup should
-use the roles above:
+### Material 3 and legacy color names
 
-| Legacy | Now points at |
+The Material 3 role names and the pre-M3 names still exist as aliases, so older templates and
+downstream projects render correctly, but new markup should use the Lumen tokens above:
+
+| Alias | Now points at |
 |---|---|
-| `brand-*`, `action-*` | primary palette tones (`action-600` = `primary`, `action-100` = `primary-container`, `action-700` = `on-primary-container`) |
-| `accent-*` | error roles (`accent-500` = `error`, `accent-50` = `error-container`) |
-| `warning-50/500/600` | `warning-container` / `warning` / `on-warning-container` |
-| `page`, `panel`, `panel-alt`, `divider` | `surface`, `surface-container-low`, `surface-container`, `outline-variant` |
-| `surface` | **now the M3 `surface` role** (the page). It used to be the input fill; M3 outlined fields are transparent. |
-| `on-action`, `on-brand`, `on-accent` | `on-primary`, `on-primary`, `on-error` |
-| `gray-50..950` | M3 neutral tones: `gray-900` = on-surface, `gray-600` = on-surface-variant, `gray-500` = outline, `gray-300` = outline-variant. Inverts in dark mode. |
-| `--shadow-blueprint-sm/md/lg` | `--md-sys-elevation-level1/2/3` |
+| `primary` / `on-primary` | `accent-background` / `on-accent` |
+| `primary-container` / `on-primary-container` | `accent-subtle` / `on-accent-subtle` |
+| `secondary` / `secondary-container` | `neutral-background` / `fill-neutral-hover` |
+| `tertiary(-container)` | the purple scale |
+| `error`, `success`, `warning` (+ `-container`) | `negative-` / `positive-` / `notice-background`; containers are the 200 step of the hue |
+| `surface`, `surface-container-low/(none)/high/highest` | `background-base`, `background-layer-1`, gray-75, `fill-neutral-hover`, `fill-neutral-down` |
+| `on-surface` / `on-surface-variant` | `content-default` / `content-subdued` |
+| `outline` / `outline-variant` | `border-default` / `border-subtle` |
+| `inverse-surface` / `inverse-on-surface` | `neutral-background` / `on-neutral` |
+| `brand-*`, `action-*` | the accent scale (`action-600` = `accent-content`, `action-100` = accent-200) |
+| `accent-*` (legacy) | negative (`accent-500` = `negative-content`, `accent-50` = red-200) |
+| `warning-50/500/600` | orange tints / `notice-content` |
+| `page`, `panel`, `panel-alt`, `divider` | `background-base`, `background-layer-1`, gray-75, `border-subtle` |
+| `on-action`, `on-brand`, `on-accent` | `on-accent` |
+| `gray-50..950` | Lumen's gray scale itself (`gray-900` heading, `gray-800` default, `gray-700` subdued, `gray-500` border, `gray-300` subtle; `950` = gray-1000). Inverts in dark mode |
+| `--shadow-blueprint-sm/md/lg`, `shadow-elevation-1..5` | `--shadow-emphasized` / `-elevated` / `-dragged` |
+
+The `-fixed` roles and the `--md-sys-*` / `--md-ref-*` custom properties from the Material 3 release
+no longer exist; read the `--color-*` tokens instead.
 
 ### Rebranding
 
-Add a seed to `PALETTES` in [`scripts/generate_m3_palettes.mjs`](../scripts/generate_m3_palettes.mjs)
-(or change the `null` entry, which is the default palette) and run:
+The accent options are `ACCENTS` in
+[`scripts/generate_lumen_palettes.mjs`](../scripts/generate_lumen_palettes.mjs); each is a name for
+`data-palette` and a hue from [`scripts/lumen-scales.json`](../scripts/lumen-scales.json). Add one (or
+change the `null` entry, which is the default) and run:
 
 ```bash
 npm run build:palettes && npm run build:css
 ```
 
-In a consuming project that doesn't want to run the generator, export a scheme from
-[Material Theme Builder](https://material-foundation.github.io/material-theme-builder/) and paste its
-`--md-sys-color-*` values into `:root { ... }` and `:root[data-theme="dark"] { ... }` blocks in your
-own entry CSS, imported *after* `tokens.css`. Every component follows, since they only read those
-system tokens.
+The script checks the contrast of every token pair across both themes, every palette and every
+background, and refuses to write anything that fails. In a consuming project that doesn't want to run
+the generator, redefine `--color-accent-background`, `--color-accent-background-hover`,
+`--color-accent-background-down`, `--color-accent-content` and `--color-focus-ring` in an `@theme`
+block imported *after* `tokens.css` (keep 4.5:1 for white text on the fill and for the content color
+on the page, in both themes). Every component follows, since they only read those tokens.
 
 ## Typography
 
-Roboto, vendored as a variable woff2 (weights 100–900, latin + latin-ext, OFL - see
-`wise_core/static/wise_core/font/`). `--font-brand`/`--font-plain` are the M3 names;
-`--font-heading`/`--font-body`/`--font-sans` alias them.
+Source Sans 3 for everything and Source Code Pro for code, vendored as variable woff2 (weights
+200–900, latin + latin-ext, OFL - see `wise_core/static/wise_core/font/`).
+`--font-brand`/`--font-plain` are the names; `--font-heading`/`--font-body`/`--font-sans` alias them
+and `--font-mono` is the code face.
 
-The M3 type scale, each role one Tailwind utility setting size, line height, tracking and weight:
+Lumen's type scale, each style one Tailwind utility setting size, line height and weight:
 
-| Utility | Size / line height | Weight | Default use |
-|---|---|---|---|
-| `text-display-large/medium/small` | 57/64, 45/52, 36/44 | 400 | Hero numbers and headlines |
-| `text-headline-large/medium/small` | 32/40, 28/36, 24/32 | 400 | `h1`, `h2`, `h3`; dialog titles |
-| `text-title-large/medium/small` | 22/28 (400), 16/24, 14/20 (500) | | `h4`, `h5`, `h6`; card titles, tabs, table headers |
-| `text-body-large/medium/small` | 16/24, 14/20, 12/16 | 400 | Body (large is the page default), cells, help text |
-| `text-label-large/medium/small` | 14/20, 12/16, 11/16 | 500 | Buttons, nav items, chips / badges / counts |
+| Utility | Sizes (px) | Line height | Weight | Default use |
+|---|---|---|---|---|
+| `text-heading-xxs…xxxxl` | 14, 18, 20, 22, 28, 36, 45, 58, 73 | 1.3 | 800 | `h1` (l), `h2` (m), `h3` (s); page and section headings |
+| `text-title-xs…xxxl` | 12, 14, 16, 18, 20, 22, 25 | 1.3 | 700 | `h4` (l), `h5` (m), `h6` (s); buttons, tabs, table headers, card titles |
+| `text-body-xxs…xxxl` | 11, 12, 14, 16, 18, 20, 22, 25 | 1.5 | 400 | Body (`m` is the page default), cells (`s`), help text (`xs`) |
+| `text-detail-xs…xl` | 11, 12, 14, 16, 18 | 1.3 | 500 | Labels, nav items, kickers, counts |
+| `text-code-xs…xl` | 12, 14, 16, 18, 20 | 1.5 | 400 | Code (pair with `font-mono`) |
 
-Headings get their role automatically. Sentence case everywhere: M3 never uppercases headings,
-labels or buttons.
+Headings get their style automatically. Sentence case everywhere: Lumen never uppercases headings,
+labels or buttons. The sizes are the desktop scale; add about 20% on touch. The Material 3 names
+(`text-body-large`, `text-label-medium`, ...) remain as aliases onto the nearest Lumen style.
 
 ## Shape
 
-The M3 corner scale, `--md-sys-shape-corner-*`, and Tailwind's radius scale mapped onto it:
+Lumen's corner radii, `--corner-radius-*`, and Tailwind's radius scale mapped onto them:
 
-| M3 token | Value | Tailwind | Used by |
+| Token | Value | Tailwind | Used by |
 |---|---|---|---|
-| `extra-small` | 4px | `rounded-xs` | Text fields, menus, snackbars, tooltips |
-| `small` | 8px | `rounded-sm` | Chips (`.tag`), badges |
-| `medium` | 12px | `rounded-md` | Cards, detail panel, callouts, accordion |
-| `large` | 16px | `rounded-lg` | Side sheets (`.drawer`), FAB, toolbar |
-| `large-increased` | 20px | `rounded-xl` | |
-| `extra-large` | 28px | `rounded-2xl` | Dialogs, carousel items |
-| `full` | 9999px | `rounded-full` | Buttons, icon buttons, nav items, switches, avatars |
+| `corner-radius-100` | 4px | `rounded-xs` | Checkboxes, tags, tooltips, calendar events |
+| `corner-radius-300` | 6px | `rounded-sm` | Extra-small swatches |
+| `corner-radius-400` | 7px | | Menu items |
+| `corner-radius-500` | 8px | `rounded-md` | Text fields, cards, detail panel, alerts, nav items, toasts |
+| `corner-radius-700` | 10px | `rounded-lg` | Popovers: menus, autocomplete results |
+| `corner-radius-800` | 16px | `rounded-xl`, `rounded-2xl` | Dialogs, empty states, carousel items |
+| `corner-radius-full` | 9999px | `rounded-full` | Buttons, icon buttons, badges, switches, progress tracks, avatars |
 
-`data-radius="soft"` halves the scale; `data-radius="sharp"` zeroes all of it, pills included.
-Things that are round by definition (spinner, donut, `.avatar-circle`) use a literal `9999px`.
+`data-radius="soft"` halves the scale; `data-radius="sharp"` zeroes all of it, pills included. Things
+that are round by definition (spinner, donut, radio, `.avatar-circle`) use a literal `9999px`.
 
-## Elevation
+## Layers and shadow
 
-M3 elevation is mostly **tonal** (a higher `surface-container-*` role). Shadows are for things that
-float: `--md-sys-elevation-level1..5` / `shadow-elevation-1..5`. Menus use level 2, dialogs and
-snackbars level 3, the FAB level 3 (4 on hover). `.elevation-1/2/3` utility classes apply the
-matching surface *and* shadow together.
+Lumen raises a surface by layer and border, not shadow: `background-base` → `background-layer-1`
+(panels) → `background-layer-2` (cards, fields) → `background-elevated` (popovers, dialogs). Shadows
+are for things that float, and there are three: `--shadow-emphasized` (`shadow-emphasized`, the resting
+state of a raised control), `--shadow-elevated` (menus, popovers, tooltips, toasts) and
+`--shadow-dragged` (dialogs, dragged items), deeper in dark mode. `.elevation-1/2/3` utility classes
+apply a layer *and* a shadow together.
 
-`.card`, `.detail-panel` and the other panels follow `data-shadow`: flat (default) = M3 **outlined**
-card, soft/elevated = M3 **elevated** card (level 1/2). `.card-outlined`, `.card-elevated` and
-`.card-filled` pin one type.
+`.card`, `.detail-panel` and the other panels follow `data-shadow`: flat (default) = a layer-2 surface
+with a `border-subtle` edge and no shadow, soft/elevated = the same card with no border and an
+`emphasized` / `elevated` shadow. `.card-outlined`, `.card-elevated` and `.card-filled` pin one type.
 
-## State layers
+## Hover, press, focus
 
-Every interactive component paints the M3 state layer: an overlay of its own content color
-(`currentColor`) at 8% on hover, 10% on focus-visible and 10% while pressed
-(`--md-sys-state-*-state-layer-opacity`). It's one `:where(...)` rule in `tokens.css`; add your own
-component's selector to it rather than writing hover colors by hand. Disabled: 38% `on-surface`
-content on a 12% `on-surface` container.
+There are no overlay layers: hover steps a fill one shade and press two. A filled accent control goes
+`accent-background` → `-hover` → `-down` (negative likewise); outlined, quiet and list-row controls
+fill with `fill-neutral-hover` then `fill-neutral-down`. The quiet-hover rule is one `:where(...)` block
+in `tokens.css`; add your own component's selector to it rather than writing hover colors by hand.
+Disabled: `content-disabled` text on `fill-neutral-hover` (no fill for outlined and quiet controls).
 
-Focus: the M3 focus indicator, a 3px `secondary` ring 2px out (`--focus-ring-width/-offset/-color`)
-on every `:focus-visible`. Text fields use their own 2px `primary` outline instead.
+Focus: a 2px `focus-ring` outline offset 2px (`--focus-ring-width/-offset/-color`) on every
+`:focus-visible`, text fields included.
 
 ## Motion
 
-`--md-sys-motion-easing-standard` (`cubic-bezier(0.2, 0, 0, 1)`) is also Tailwind's default
-transition easing, with a 200ms default duration. Emphasized decelerate/accelerate are for
-entering/leaving elements. Durations `short1`–`long4` run 50–600ms. Utilities: `ease-standard`,
-`ease-emphasized-decelerate`, ...
+Hover, press and color changes take 130ms (`--default-transition-duration`, Tailwind's default too) on
+`--ease-standard` (`cubic-bezier(0.4, 0, 0.2, 1)`). Things arriving (dialogs, drawers) take 200ms on
+`--ease-enter`; `--ease-exit` is for leaving. Animate color, opacity and transform only, and respect
+`prefers-reduced-motion`.
 
 ## Density
 
-| Token | Comfortable (M3 density 0) | Compact |
+Lumen's component heights are 20, 24, 32 (the default), 40 and 48px (`--component-height-50` …
+`-300`). Components read the control tokens rather than a fixed height:
+
+| Token | Comfortable | Compact |
 |---|---|---|
-| `--control-height-md` | 3.5rem (56px text field) | 2.5rem |
-| `--control-height-sm` / `-lg` | 2.5rem / 4rem | 2rem / 3rem |
-| `--control-height-button` | 2.5rem (40px button) | 2rem |
-| `--control-padding-x-button` | 1.5rem | 1rem |
-| `--list-item-height` | 3.5rem (nav item) | 2.5rem |
-| `--menu-item-height` | 3rem | 2.25rem |
-| `--table-padding-y` / `--table-header-padding-y` | 0.875rem / 1rem | 0.375rem / 0.625rem |
+| `--control-height-md` | 2rem (32px text field) | 1.5rem |
+| `--control-height-sm` / `-lg` | 1.5rem / 2.5rem | 1.25rem / 2rem |
+| `--control-height-button` | 2rem (32px button) | 1.5rem |
+| `--control-padding-x-button` | 1rem | 0.75rem |
+| `--list-item-height` / `--menu-item-height` | 2rem | 1.75rem |
+| `--table-padding-y` / `--table-header-padding-y` | 0.5rem / 0.5rem | 0.25rem / 0.375rem |
+
+On a coarse pointer (touch) the comfortable values step up one size - 40px fields, buttons and rows -
+following Lumen's "add about 20% on touch". Compact stays compact.
 
 ## Switchable axes
 
 Six independent attributes on `<html>`, each redefining a handful of tokens at runtime (no rebuild,
 no second stylesheet). They compose freely, because each touches a different tier: palette and
-background swap reference tones, theme swaps which tone each system role reads. `base.html` applies
-whatever's in `localStorage` before first paint; `wise_core/static/wise_core/js/common.js` exposes
-one setter per axis, and `wise_core/components/_settings_panel.html` is a ready-made side sheet for
-all six (open it with `wiseOpenDrawer('wise-settings-drawer')`, normally via
-`_settings_toggle.html`). Its **Copy tokens** tab exports the current `data-*` line and the resolved
-`--md-sys-*` values (see `WISE_EXPORT_TOKENS` in `common.js`).
+background re-point reference steps, theme re-points which step each semantic token reads.
+`base.html` applies whatever's in `localStorage` before first paint;
+`wise_core/static/wise_core/js/common.js` exposes one setter per axis, and
+`wise_core/components/_settings_panel.html` is a ready-made side sheet for all six (open it with
+`wiseOpenDrawer('wise-settings-drawer')`, normally via `_settings_toggle.html`). Its **Copy tokens** tab
+exports the current `data-*` line and the resolved `--color-*` / `--corner-radius-*` values (see
+`WISE_EXPORT_TOKENS` in `common.js`).
 
 | Attribute | Values | Retunes |
 |---|---|---|
-| `data-theme` | `light` (default), `dark` | Which palette tone every M3 color role reads |
-| `data-palette` | baseline (default, seed `#6750A4`), `green`, `blue`, `amber` | The seed - every generated palette |
+| `data-theme` | `light` (default), `dark` | Which palette step each semantic color token reads |
+| `data-palette` | `blue` (default), `indigo`, `purple`, `green`, `amber` | The accent hue |
 | `data-density` | `comfortable` (default), `compact` | Field, button, list-item and table heights |
-| `data-radius` | M3 scale (default), `soft`, `sharp` | The whole corner scale |
-| `data-shadow` | `flat` (default), `soft`, `elevated` | Outlined vs. elevated cards and panels |
-| `data-bg` | tonal (default, seed-tinted), `warm`, `cool` | The neutral palettes behind every surface role |
+| `data-radius` | Lumen radii (default), `soft`, `sharp` | The whole corner scale |
+| `data-shadow` | `flat` (default), `soft`, `elevated` | Outlined vs. raised cards and panels |
+| `data-bg` | neutral (default), `warm`, `cool` | The neutral scale behind every layer, fill and border |
 
 ```js
 wiseSetTheme('dark')       // '' or 'light' resets to light
-wiseSetPalette('blue')     // '' resets to the M3 baseline
+wiseSetPalette('green')    // '' resets to blue, the Lumen default
 wiseSetDensity('compact')  // '' resets to comfortable
-wiseSetRadius('sharp')     // '' resets to the M3 shape scale
+wiseSetRadius('sharp')     // '' resets to the Lumen corner radii
 wiseSetShadow('elevated')  // '' resets to flat (outlined cards)
-wiseSetBg('warm')          // '' resets to tonal
+wiseSetBg('warm')          // '' resets to neutral
 ```
 
 ## Component class names
 
 The component layer (`.btn`, `.card`, `.badge`, `.form-stack`, `.detail-panel`, `.data-table`,
 `.menu-link`, `.tab-bar`, `.pagination-link`, ...) is the design system's real public API. The class
-names stayed the same through the move to Material 3; only their look changed. Each maps onto an M3
-component: `.btn-primary` is a filled button, `.btn-brand` tonal, `.btn-secondary` outlined,
-`.btn-ghost` text, `.btn-group` a segmented button, `.tag` a chip, `.toast` a snackbar, `.drawer` a
-side sheet, `.dropdown-panel` a menu, `.menu-link` a navigation-drawer item. M3-named aliases
-(`.btn-filled`, `.btn-tonal`, `.btn-outlined`, `.btn-text`) and a few new M3 pieces (`.btn-elevated`,
-`.fab`, `.card-elevated/-filled/-outlined`, `.badge-count`) sit alongside. The full mapping is in the
-[Material Design 3 skill](../.claude/skills/material-design-3/references/components.md). See
+names stayed the same through the moves to Material 3 and then Lumen; only their look changed. In
+Lumen terms: `.btn-primary` is the accent button, `.btn-brand` the neutral-fill button,
+`.btn-secondary` the neutral outline, `.btn-ghost` the quiet action button, `.btn-group` an action
+group, `.badge` a badge, `.status-light` a status light, `.callout` an inline alert, `.toast` a toast,
+`.drawer` a side sheet, `.dropdown-panel` a menu, `.menu-link` a side-nav item. Material 3 aliases
+(`.btn-filled`, `.btn-tonal`, `.btn-outlined`, `.btn-text`) sit alongside, with `.btn-elevated`, `.fab`,
+`.card-elevated/-filled/-outlined` and `.badge-count`. The full mapping is in the
+[Lumen design skill](../.claude/skills/lumen-design/references/components.md). See
 [template-tags-and-filters.md](template-tags-and-filters.md) and
 [generic-views-and-mixins.md](generic-views-and-mixins.md) for how the generic templates use them,
 or the Components sections of `/docs/` for a rendered catalog.

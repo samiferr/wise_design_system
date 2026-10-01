@@ -1,35 +1,45 @@
 /* ══════════════════════════════════════════════════════════════════════
-   Wise Design System — Material Design 3 tokens & component layer
-   (Tailwind CSS v4).
+   Wise Design System — Lumen tokens & component layer (Tailwind CSS v4).
 
-   Styled after Material Design 3 (https://m3.material.io/): tonal color
-   roles generated from a single seed color, the M3 type scale set in
-   Roboto, the M3 shape scale (pill buttons, 12px cards, 28px dialogs),
-   tonal elevation plus the five M3 shadow levels, state layers for
-   hover/focus/press, and the M3 motion easings. Component *class names*
+   Styled after Lumen, a calm, neutral-first system for dense productivity
+   software in the Spectrum tradition: one neutral scale and a single accent
+   hue, semantic tokens that reference a small palette, a type scale set in
+   Source Sans 3, and pill-and-rounded-rectangle controls - fully round
+   buttons, badges and switches, 8px fields, cards and alerts, 16px
+   dialogs. Surfaces are told apart by layer and border, not by shadow;
+   hover and press step a fill one and two shades. Component *class names*
    (.card, .detail-panel, .badge, .top-nav-item, .menu-link, .data-table,
-   ...) are the system's public API — they have stayed stable across the
-   move to M3; only what they look like changed.
+   ...) are the system's public API - they have stayed stable across the
+   moves to Material 3 and now Lumen; only what they look like changed.
 
-   Token tiers, the same three M3 itself uses:
+   Token tiers:
 
-     1. Reference  --md-ref-palette-<palette><tone>   md3-palettes.css
-                   (generated - scripts/generate_m3_palettes.mjs)
-     2. System     --md-sys-color-*, --md-sys-typescale-*,
-                   --md-sys-shape-*, --md-sys-elevation-*,
-                   --md-sys-motion-*, --md-sys-state-*          this file
-     3. Tailwind   --color-primary, --text-body-large,
-                   --radius-md, --shadow-elevation-2, ...      this file
-                   (so `bg-primary`, `text-on-surface-variant`,
-                   `text-title-medium`, `rounded-lg`, `shadow-elevation-1`
-                   are all ordinary utilities)
+     1. Reference  --lumen-<hue>-<step>, --lumen-accent-<step>
+                   lumen-palettes.css (generated -
+                   scripts/generate_lumen_palettes.mjs)
+     2. System     --color-background-base, --color-content-default,
+                   --color-accent-background, ... plus --text-*,
+                   --corner-radius-*, --shadow-*, --component-height-*
+                   (this file; the Lumen semantic tokens, registered as
+                   Tailwind theme values so `bg-background-layer-1`,
+                   `text-content-subdued`, `border-border-subtle`,
+                   `text-title-s`, `rounded-md` are all ordinary utilities)
+     3. Compat     --color-primary, --color-on-surface-variant,
+                   --color-action-600, --color-gray-700, ... aliases onto
+                   the system tier (below)
 
-   The pre-M3 token names (--color-brand-*, --color-action-*,
-   --color-accent-*, --color-warning-*, --color-page, --color-panel,
-   --color-divider, --shadow-blueprint-*, ...) still exist as aliases onto
-   the M3 roles, so older templates keep rendering - but new markup should
-   use the M3 role names. See docs/design-tokens.md and
-   .claude/skills/material-design-3/SKILL.md.
+   The Material 3 role names (primary, surface-container-high, on-surface,
+   outline-variant, ...), the M3 type names (body-large, label-medium, ...)
+   and the pre-M3 names (brand-*, action-*, page, panel, divider, gray-*,
+   --shadow-blueprint-*) still exist as aliases onto the Lumen tokens, so
+   older templates and downstream projects keep rendering - but new markup
+   should use the Lumen names. See docs/design-tokens.md and
+   .claude/skills/lumen-design/SKILL.md.
+
+   Lumen's palette, spacing, radius, type-size and component-height values
+   are adapted from Adobe's open-source Spectrum design tokens (Apache
+   License 2.0). Lumen is an independent system and is not affiliated with
+   or endorsed by Adobe.
 
    This file is a partial, not an entry point: it has no `@import
    "tailwindcss"` and no `@source` directives of its own, because those
@@ -39,7 +49,7 @@
    file. See docs/getting-started.md for the exact recipe.
    ══════════════════════════════════════════════════════════════════════ */
 
-@import "./md3-palettes.css";
+@import "./lumen-palettes.css";
 
 /* `static` - emit every variable below even when no utility in the
    project's templates references it, because JavaScript reads them at
@@ -47,262 +57,432 @@
    export reads the computed values). */
 @theme static {
     /* ── Typeface ────────────────────────────────────────────────────────
-       M3's default brand and plain typeface is Roboto (vendored as a
-       variable woff2 below). `heading`/`body` are kept as aliases so the
-       existing `font-heading`/`font-body` utilities keep working. */
-    --font-brand: "Roboto", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-plain: "Roboto", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+       Source Sans 3 for everything, Source Code Pro for code (both vendored
+       as variable woff2 below). `brand`/`plain`/`heading`/`body` are kept as
+       aliases so the existing `font-heading`/`font-body` utilities keep
+       working. */
+    --font-brand: "Source Sans 3", "Source Sans Pro", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-plain: var(--font-brand);
     --font-heading: var(--font-brand);
     --font-body: var(--font-plain);
     --font-sans: var(--font-plain);
+    --font-mono: "Source Code Pro", ui-monospace, Menlo, Consolas, monospace;
 
-    /* ── M3 type scale ───────────────────────────────────────────────────
-       Every role is a Tailwind `text-*` utility that sets size, line
-       height, tracking and weight together: `text-display-large`,
-       `text-headline-small`, `text-title-medium`, `text-body-large`,
-       `text-label-small`, ... Values are the M3 baseline (rem at 16px). */
-    --text-display-large: 3.5625rem;
-    --text-display-large--line-height: 4rem;
-    --text-display-large--letter-spacing: -0.015625rem;
-    --text-display-large--font-weight: 400;
-    --text-display-medium: 2.8125rem;
-    --text-display-medium--line-height: 3.25rem;
-    --text-display-medium--letter-spacing: 0rem;
-    --text-display-medium--font-weight: 400;
-    --text-display-small: 2.25rem;
-    --text-display-small--line-height: 2.75rem;
-    --text-display-small--letter-spacing: 0rem;
-    --text-display-small--font-weight: 400;
+    /* ── Type scale ──────────────────────────────────────────────────────
+       Every style is a Tailwind `text-*` utility that sets size, line
+       height and weight together: `text-heading-l`, `text-title-s`,
+       `text-body-m`, `text-detail-m`, `text-code-s`. Headings are
+       extra-bold (800), titles bold (700), details medium (500), body and
+       code regular. Body copy is body-m (16px); controls are title-s or
+       detail-m (14px). Sizes are the desktop scale (11-73px); add about
+       20% on touch. (There is no `text-code-*` font family - pair it with
+       `font-mono`.) */
+    --text-heading-xxs: 0.875rem;
+    --text-heading-xxs--line-height: 1.3;
+    --text-heading-xxs--font-weight: 800;
+    --text-heading-xs: 1.125rem;
+    --text-heading-xs--line-height: 1.3;
+    --text-heading-xs--font-weight: 800;
+    --text-heading-s: 1.25rem;
+    --text-heading-s--line-height: 1.3;
+    --text-heading-s--font-weight: 800;
+    --text-heading-m: 1.375rem;
+    --text-heading-m--line-height: 1.3;
+    --text-heading-m--font-weight: 800;
+    --text-heading-l: 1.75rem;
+    --text-heading-l--line-height: 1.3;
+    --text-heading-l--font-weight: 800;
+    --text-heading-xl: 2.25rem;
+    --text-heading-xl--line-height: 1.3;
+    --text-heading-xl--font-weight: 800;
+    --text-heading-xxl: 2.8125rem;
+    --text-heading-xxl--line-height: 1.3;
+    --text-heading-xxl--font-weight: 800;
+    --text-heading-xxxl: 3.625rem;
+    --text-heading-xxxl--line-height: 1.3;
+    --text-heading-xxxl--font-weight: 800;
+    --text-heading-xxxxl: 4.5625rem;
+    --text-heading-xxxxl--line-height: 1.3;
+    --text-heading-xxxxl--font-weight: 800;
 
-    --text-headline-large: 2rem;
-    --text-headline-large--line-height: 2.5rem;
-    --text-headline-large--letter-spacing: 0rem;
-    --text-headline-large--font-weight: 400;
-    --text-headline-medium: 1.75rem;
-    --text-headline-medium--line-height: 2.25rem;
-    --text-headline-medium--letter-spacing: 0rem;
-    --text-headline-medium--font-weight: 400;
-    --text-headline-small: 1.5rem;
-    --text-headline-small--line-height: 2rem;
-    --text-headline-small--letter-spacing: 0rem;
-    --text-headline-small--font-weight: 400;
+    --text-title-xs: 0.75rem;
+    --text-title-xs--line-height: 1.3;
+    --text-title-xs--font-weight: 700;
+    --text-title-s: 0.875rem;
+    --text-title-s--line-height: 1.3;
+    --text-title-s--font-weight: 700;
+    --text-title-m: 1rem;
+    --text-title-m--line-height: 1.3;
+    --text-title-m--font-weight: 700;
+    --text-title-l: 1.125rem;
+    --text-title-l--line-height: 1.3;
+    --text-title-l--font-weight: 700;
+    --text-title-xl: 1.25rem;
+    --text-title-xl--line-height: 1.3;
+    --text-title-xl--font-weight: 700;
+    --text-title-xxl: 1.375rem;
+    --text-title-xxl--line-height: 1.3;
+    --text-title-xxl--font-weight: 700;
+    --text-title-xxxl: 1.5625rem;
+    --text-title-xxxl--line-height: 1.3;
+    --text-title-xxxl--font-weight: 700;
 
-    --text-title-large: 1.375rem;
-    --text-title-large--line-height: 1.75rem;
-    --text-title-large--letter-spacing: 0rem;
-    --text-title-large--font-weight: 400;
-    --text-title-medium: 1rem;
-    --text-title-medium--line-height: 1.5rem;
-    --text-title-medium--letter-spacing: 0.009375rem;
-    --text-title-medium--font-weight: 500;
-    --text-title-small: 0.875rem;
-    --text-title-small--line-height: 1.25rem;
-    --text-title-small--letter-spacing: 0.00625rem;
-    --text-title-small--font-weight: 500;
+    --text-body-xxs: 0.6875rem;
+    --text-body-xxs--line-height: 1.5;
+    --text-body-xxs--font-weight: 400;
+    --text-body-xs: 0.75rem;
+    --text-body-xs--line-height: 1.5;
+    --text-body-xs--font-weight: 400;
+    --text-body-s: 0.875rem;
+    --text-body-s--line-height: 1.5;
+    --text-body-s--font-weight: 400;
+    --text-body-m: 1rem;
+    --text-body-m--line-height: 1.5;
+    --text-body-m--font-weight: 400;
+    --text-body-l: 1.125rem;
+    --text-body-l--line-height: 1.5;
+    --text-body-l--font-weight: 400;
+    --text-body-xl: 1.25rem;
+    --text-body-xl--line-height: 1.5;
+    --text-body-xl--font-weight: 400;
+    --text-body-xxl: 1.375rem;
+    --text-body-xxl--line-height: 1.5;
+    --text-body-xxl--font-weight: 400;
+    --text-body-xxxl: 1.5625rem;
+    --text-body-xxxl--line-height: 1.5;
+    --text-body-xxxl--font-weight: 400;
 
-    --text-body-large: 1rem;
-    --text-body-large--line-height: 1.5rem;
-    --text-body-large--letter-spacing: 0.03125rem;
-    --text-body-large--font-weight: 400;
-    --text-body-medium: 0.875rem;
-    --text-body-medium--line-height: 1.25rem;
-    --text-body-medium--letter-spacing: 0.015625rem;
-    --text-body-medium--font-weight: 400;
-    --text-body-small: 0.75rem;
-    --text-body-small--line-height: 1rem;
-    --text-body-small--letter-spacing: 0.025rem;
-    --text-body-small--font-weight: 400;
+    --text-detail-xs: 0.6875rem;
+    --text-detail-xs--line-height: 1.3;
+    --text-detail-xs--font-weight: 500;
+    --text-detail-s: 0.75rem;
+    --text-detail-s--line-height: 1.3;
+    --text-detail-s--font-weight: 500;
+    --text-detail-m: 0.875rem;
+    --text-detail-m--line-height: 1.3;
+    --text-detail-m--font-weight: 500;
+    --text-detail-l: 1rem;
+    --text-detail-l--line-height: 1.3;
+    --text-detail-l--font-weight: 500;
+    --text-detail-xl: 1.125rem;
+    --text-detail-xl--line-height: 1.3;
+    --text-detail-xl--font-weight: 500;
 
-    --text-label-large: 0.875rem;
-    --text-label-large--line-height: 1.25rem;
-    --text-label-large--letter-spacing: 0.00625rem;
-    --text-label-large--font-weight: 500;
-    --text-label-medium: 0.75rem;
-    --text-label-medium--line-height: 1rem;
-    --text-label-medium--letter-spacing: 0.03125rem;
-    --text-label-medium--font-weight: 500;
-    --text-label-small: 0.6875rem;
-    --text-label-small--line-height: 1rem;
-    --text-label-small--letter-spacing: 0.03125rem;
-    --text-label-small--font-weight: 500;
+    --text-code-xs: 0.75rem;
+    --text-code-xs--line-height: 1.5;
+    --text-code-xs--font-weight: 400;
+    --text-code-s: 0.875rem;
+    --text-code-s--line-height: 1.5;
+    --text-code-s--font-weight: 400;
+    --text-code-m: 1rem;
+    --text-code-m--line-height: 1.5;
+    --text-code-m--font-weight: 400;
+    --text-code-l: 1.125rem;
+    --text-code-l--line-height: 1.5;
+    --text-code-l--font-weight: 400;
+    --text-code-xl: 1.25rem;
+    --text-code-xl--line-height: 1.5;
+    --text-code-xl--font-weight: 400;
 
-    /* ── M3 color roles ──────────────────────────────────────────────────
-       Tailwind color utilities for every M3 system color role. Each one
-       points at the matching --md-sys-color-* token (defined per theme
-       below), so `bg-primary-container text-on-primary-container` is
-       correct in light *and* dark with no `dark:` variant. Always pair a
-       container with its own `on-` role. */
-    --color-primary: var(--md-sys-color-primary);
-    --color-on-primary: var(--md-sys-color-on-primary);
-    --color-primary-container: var(--md-sys-color-primary-container);
-    --color-on-primary-container: var(--md-sys-color-on-primary-container);
-    --color-primary-fixed: var(--md-sys-color-primary-fixed);
-    --color-primary-fixed-dim: var(--md-sys-color-primary-fixed-dim);
-    --color-on-primary-fixed: var(--md-sys-color-on-primary-fixed);
-    --color-on-primary-fixed-variant: var(--md-sys-color-on-primary-fixed-variant);
-    --color-inverse-primary: var(--md-sys-color-inverse-primary);
+    /* The Material 3 type names, kept as aliases onto the nearest Lumen
+       style so `text-body-large` and friends in older markup still work. */
+    --text-display-large: var(--text-heading-xxxl);
+    --text-display-large--line-height: var(--text-heading-xxxl--line-height);
+    --text-display-large--font-weight: var(--text-heading-xxxl--font-weight);
+    --text-display-medium: var(--text-heading-xxl);
+    --text-display-medium--line-height: var(--text-heading-xxl--line-height);
+    --text-display-medium--font-weight: var(--text-heading-xxl--font-weight);
+    --text-display-small: var(--text-heading-xl);
+    --text-display-small--line-height: var(--text-heading-xl--line-height);
+    --text-display-small--font-weight: var(--text-heading-xl--font-weight);
 
-    --color-secondary: var(--md-sys-color-secondary);
-    --color-on-secondary: var(--md-sys-color-on-secondary);
-    --color-secondary-container: var(--md-sys-color-secondary-container);
-    --color-on-secondary-container: var(--md-sys-color-on-secondary-container);
+    --text-headline-large: var(--text-heading-l);
+    --text-headline-large--line-height: var(--text-heading-l--line-height);
+    --text-headline-large--font-weight: var(--text-heading-l--font-weight);
+    --text-headline-medium: var(--text-heading-m);
+    --text-headline-medium--line-height: var(--text-heading-m--line-height);
+    --text-headline-medium--font-weight: var(--text-heading-m--font-weight);
+    --text-headline-small: var(--text-heading-s);
+    --text-headline-small--line-height: var(--text-heading-s--line-height);
+    --text-headline-small--font-weight: var(--text-heading-s--font-weight);
 
-    --color-tertiary: var(--md-sys-color-tertiary);
-    --color-on-tertiary: var(--md-sys-color-on-tertiary);
-    --color-tertiary-container: var(--md-sys-color-tertiary-container);
-    --color-on-tertiary-container: var(--md-sys-color-on-tertiary-container);
+    --text-title-large: var(--text-title-xl);
+    --text-title-large--line-height: var(--text-title-xl--line-height);
+    --text-title-large--font-weight: var(--text-title-xl--font-weight);
+    --text-title-medium: var(--text-title-m);
+    --text-title-medium--line-height: var(--text-title-m--line-height);
+    --text-title-medium--font-weight: var(--text-title-m--font-weight);
+    --text-title-small: var(--text-title-s);
+    --text-title-small--line-height: var(--text-title-s--line-height);
+    --text-title-small--font-weight: var(--text-title-s--font-weight);
 
-    --color-error: var(--md-sys-color-error);
-    --color-on-error: var(--md-sys-color-on-error);
-    --color-error-container: var(--md-sys-color-error-container);
-    --color-on-error-container: var(--md-sys-color-on-error-container);
+    --text-body-large: var(--text-body-m);
+    --text-body-large--line-height: var(--text-body-m--line-height);
+    --text-body-large--font-weight: var(--text-body-m--font-weight);
+    --text-body-medium: var(--text-body-s);
+    --text-body-medium--line-height: var(--text-body-s--line-height);
+    --text-body-medium--font-weight: var(--text-body-s--font-weight);
+    --text-body-small: var(--text-body-xs);
+    --text-body-small--line-height: var(--text-body-xs--line-height);
+    --text-body-small--font-weight: var(--text-body-xs--font-weight);
 
-    /* M3 "custom colors" - harmonized toward the seed, same role shape. */
-    --color-success: var(--md-sys-color-success);
-    --color-on-success: var(--md-sys-color-on-success);
-    --color-success-container: var(--md-sys-color-success-container);
-    --color-on-success-container: var(--md-sys-color-on-success-container);
-    --color-warning: var(--md-sys-color-warning);
-    --color-on-warning: var(--md-sys-color-on-warning);
-    --color-warning-container: var(--md-sys-color-warning-container);
-    --color-on-warning-container: var(--md-sys-color-on-warning-container);
+    --text-label-large: var(--text-detail-m);
+    --text-label-large--line-height: var(--text-detail-m--line-height);
+    --text-label-large--font-weight: var(--text-detail-m--font-weight);
+    --text-label-medium: var(--text-detail-s);
+    --text-label-medium--line-height: var(--text-detail-s--line-height);
+    --text-label-medium--font-weight: var(--text-detail-s--font-weight);
+    --text-label-small: var(--text-detail-xs);
+    --text-label-small--line-height: var(--text-detail-xs--line-height);
+    --text-label-small--font-weight: var(--text-detail-xs--font-weight);
 
-    --color-surface: var(--md-sys-color-surface);
-    --color-surface-dim: var(--md-sys-color-surface-dim);
-    --color-surface-bright: var(--md-sys-color-surface-bright);
-    --color-surface-container-lowest: var(--md-sys-color-surface-container-lowest);
-    --color-surface-container-low: var(--md-sys-color-surface-container-low);
-    --color-surface-container: var(--md-sys-color-surface-container);
-    --color-surface-container-high: var(--md-sys-color-surface-container-high);
-    --color-surface-container-highest: var(--md-sys-color-surface-container-highest);
-    --color-surface-variant: var(--md-sys-color-surface-variant);
-    --color-on-surface: var(--md-sys-color-on-surface);
-    --color-on-surface-variant: var(--md-sys-color-on-surface-variant);
-    --color-background: var(--md-sys-color-background);
-    --color-on-background: var(--md-sys-color-on-background);
-    --color-inverse-surface: var(--md-sys-color-inverse-surface);
-    --color-inverse-on-surface: var(--md-sys-color-inverse-on-surface);
-    --color-outline: var(--md-sys-color-outline);
-    --color-outline-variant: var(--md-sys-color-outline-variant);
-    --color-scrim: var(--md-sys-color-scrim);
-    --color-shadow: var(--md-sys-color-shadow);
+    /* ── Color: Lumen semantic tokens ────────────────────────────────────
+       Each one points at a step of the reference palette; the dark values
+       are re-pointed under [data-theme="dark"] below, so components never
+       need a `dark:` variant. Always pair a fill with its own `on-` token
+       (`bg-accent-background text-on-accent`). Use palette steps like
+       --lumen-blue-900 only for charts and illustration.
 
-    /* ── Legacy color names (pre-M3) ─────────────────────────────────────
-       Kept so existing templates keep rendering; each is an alias onto an
-       M3 role or tone. Prefer the role names above in new markup:
-         brand/action  -> primary        accent  -> error
-         warning       -> warning        page    -> surface
-         panel         -> surface-container-low
-         panel-alt     -> surface-container      divider -> outline-variant
-       The numbered ramps follow tones of the primary palette, and flip
-       under [data-theme="dark"] like the gray ramp does. */
-    --color-brand-50: var(--md-ref-palette-primary95);
-    --color-brand-100: var(--md-ref-palette-primary90);
-    --color-brand-200: var(--md-ref-palette-primary80);
-    --color-brand-300: var(--md-ref-palette-primary70);
-    --color-brand-400: var(--md-ref-palette-primary60);
-    --color-brand-500: var(--md-ref-palette-primary50);
-    --color-brand-600: var(--md-sys-color-primary);
-    --color-brand-700: var(--md-sys-color-primary);
-    --color-brand-800: var(--md-sys-color-on-primary-container);
-    --color-brand-900: var(--md-ref-palette-primary20);
-    --color-brand-950: var(--md-ref-palette-primary10);
+       Layers: the page is background-base, raised panels are
+       background-layer-1, cards and fields are background-layer-2,
+       floating surfaces are background-elevated. */
+    --color-background-base: var(--lumen-gray-25);
+    --color-background-layer-1: var(--lumen-gray-50);
+    --color-background-layer-2: var(--lumen-gray-25);
+    --color-background-elevated: var(--lumen-gray-25);
 
-    --color-action-50: var(--md-ref-palette-primary95);
-    --color-action-100: var(--md-sys-color-primary-container);
-    --color-action-400: var(--md-ref-palette-primary60);
-    --color-action-500: var(--md-sys-color-primary);
-    --color-action-600: var(--md-sys-color-primary);
-    --color-action-700: var(--md-sys-color-on-primary-container);
+    --color-fill-neutral-hover: var(--lumen-gray-100);
+    --color-fill-neutral-down: var(--lumen-gray-200);
 
-    --color-accent-50: var(--md-sys-color-error-container);
-    --color-accent-400: var(--md-ref-palette-error60);
-    --color-accent-500: var(--md-sys-color-error);
-    --color-accent-600: var(--md-sys-color-on-error-container);
+    --color-content-heading: var(--lumen-gray-900);
+    --color-content-default: var(--lumen-gray-800);
+    --color-content-subdued: var(--lumen-gray-700);
+    --color-content-disabled: var(--lumen-gray-400);
 
-    --color-warning-50: var(--md-sys-color-warning-container);
-    --color-warning-400: var(--md-ref-palette-warning70);
-    --color-warning-500: var(--md-sys-color-warning);
-    --color-warning-600: var(--md-sys-color-on-warning-container);
+    /* A control's own border is `border-default` (3:1 on the page), never
+       `border-subtle`, which is for decorative dividers and card edges. */
+    --color-border-default: var(--lumen-gray-500);
+    --color-border-hover: var(--lumen-gray-600);
+    --color-border-subtle: var(--lumen-gray-300);
 
-    --color-on-action: var(--md-sys-color-on-primary);
-    --color-on-brand: var(--md-sys-color-on-primary);
-    --color-on-accent: var(--md-sys-color-on-error);
+    /* The one accent hue (blue unless data-palette says otherwise) fills the
+       single main action and colors links. Hover steps one shade, pressed
+       two. */
+    --color-accent-background: var(--lumen-accent-900);
+    --color-accent-background-hover: var(--lumen-accent-1000);
+    --color-accent-background-down: var(--lumen-accent-1100);
+    --color-accent-content: var(--lumen-accent-900);
+    --color-on-accent: #ffffff;
 
-    --color-page: var(--md-sys-color-surface);
-    --color-panel: var(--md-sys-color-surface-container-low);
-    --color-panel-alt: var(--md-sys-color-surface-container);
-    --color-divider: var(--md-sys-color-outline-variant);
-    --color-overlay: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
+    /* Wise extension: a quiet tint of the accent for a selected or
+       highlighted region (a calendar event, an autocomplete row) where a
+       solid accent fill would shout. */
+    --color-accent-subtle: var(--lumen-accent-200);
+    --color-on-accent-subtle: var(--lumen-accent-1300);
 
-    /* Tailwind's gray scale, repointed at the M3 neutral palettes so every
-       existing `text-gray-600` / `bg-gray-100` / `border-gray-300` lands on
-       an M3 tone: 900 = on-surface, 600 = on-surface-variant, 300 =
-       outline-variant, 500 = outline. Inverts under dark mode below. */
-    --color-gray-50: var(--md-ref-palette-neutral98);
-    --color-gray-100: var(--md-ref-palette-neutral95);
-    --color-gray-200: var(--md-ref-palette-neutral92);
-    --color-gray-300: var(--md-ref-palette-neutral-variant80);
-    --color-gray-400: var(--md-ref-palette-neutral-variant60);
-    --color-gray-500: var(--md-ref-palette-neutral-variant50);
-    --color-gray-600: var(--md-ref-palette-neutral-variant30);
-    --color-gray-700: var(--md-ref-palette-neutral25);
-    --color-gray-800: var(--md-ref-palette-neutral20);
-    --color-gray-900: var(--md-ref-palette-neutral10);
-    --color-gray-950: var(--md-ref-palette-neutral0);
+    --color-neutral-background: var(--lumen-gray-800);
+    --color-on-neutral: var(--lumen-gray-25);
+
+    /* Status: four semantic families, each paired with an icon and a word.
+       Fills carry `on-accent` text (`on-notice` on the orange fill). */
+    --color-informative-background: var(--lumen-blue-900);
+    --color-informative-content: var(--lumen-blue-900);
+    --color-positive-background: var(--lumen-green-900);
+    --color-positive-content: var(--lumen-green-900);
+    --color-notice-background: var(--lumen-orange-600);
+    --color-on-notice: var(--lumen-gray-900);
+    --color-notice-content: var(--lumen-orange-900);
+    --color-negative-background: var(--lumen-red-900);
+    --color-negative-background-hover: var(--lumen-red-1000);
+    --color-negative-background-down: var(--lumen-red-1100);
+    --color-negative-content: var(--lumen-red-900);
+
+    --color-focus-ring: var(--lumen-accent-800);
+
+    /* ── Color: Material 3 role names (compat) ───────────────────────────
+       Aliases so `bg-primary`, `text-on-surface-variant`,
+       `bg-surface-container-high` ... in older markup land on a Lumen
+       token. Lumen has no tonal containers, so each `-container` is a quiet
+       palette tint (step 200 with step 1300 text, both flip in dark) and
+       the surface-container ladder is the layer/fill ladder:
+       low -> layer-1, (none) -> gray-75, high -> fill-hover,
+       highest -> fill-down. */
+    --color-primary: var(--color-accent-background);
+    --color-on-primary: var(--color-on-accent);
+    --color-primary-container: var(--color-accent-subtle);
+    --color-on-primary-container: var(--color-on-accent-subtle);
+    --color-inverse-primary: var(--lumen-accent-400);
+
+    --color-secondary: var(--color-neutral-background);
+    --color-on-secondary: var(--color-on-neutral);
+    --color-secondary-container: var(--color-fill-neutral-hover);
+    --color-on-secondary-container: var(--color-content-heading);
+
+    --color-tertiary: var(--lumen-purple-900);
+    --color-on-tertiary: #ffffff;
+    --color-tertiary-container: var(--lumen-purple-200);
+    --color-on-tertiary-container: var(--lumen-purple-1300);
+
+    --color-error: var(--color-negative-background);
+    --color-on-error: var(--color-on-accent);
+    --color-error-container: var(--lumen-red-200);
+    --color-on-error-container: var(--lumen-red-1300);
+
+    --color-success: var(--color-positive-background);
+    --color-on-success: var(--color-on-accent);
+    --color-success-container: var(--lumen-green-200);
+    --color-on-success-container: var(--lumen-green-1300);
+
+    --color-warning: var(--color-notice-background);
+    --color-on-warning: var(--color-on-notice);
+    --color-warning-container: var(--lumen-orange-200);
+    --color-on-warning-container: var(--lumen-orange-1300);
+
+    --color-surface: var(--color-background-base);
+    --color-surface-dim: var(--color-background-layer-1);
+    --color-surface-bright: var(--color-background-base);
+    --color-surface-container-lowest: var(--color-background-layer-2);
+    --color-surface-container-low: var(--color-background-layer-1);
+    --color-surface-container: var(--lumen-gray-75);
+    --color-surface-container-high: var(--color-fill-neutral-hover);
+    --color-surface-container-highest: var(--color-fill-neutral-down);
+    --color-surface-variant: var(--color-fill-neutral-hover);
+    --color-on-surface: var(--color-content-default);
+    --color-on-surface-variant: var(--color-content-subdued);
+    --color-background: var(--color-background-base);
+    --color-on-background: var(--color-content-default);
+    --color-inverse-surface: var(--color-neutral-background);
+    --color-inverse-on-surface: var(--color-on-neutral);
+    --color-outline: var(--color-border-default);
+    --color-outline-variant: var(--color-border-subtle);
+    --color-scrim: #000000;
+    --color-shadow: #000000;
+
+    /* Status accents for text and icons sitting on neutral-background
+       (toasts, tooltips) - a light step in light mode, a dark one in dark. */
+    --color-inverse-success: var(--lumen-green-400);
+    --color-inverse-warning: var(--lumen-orange-400);
+    --color-inverse-error: var(--lumen-red-400);
+
+    /* ── Color: legacy names (pre-M3) ────────────────────────────────────
+       Aliases onto the accent scale and the Lumen status tokens:
+         brand/action  -> accent     accent  -> negative
+         warning       -> notice     page    -> background-base
+         panel         -> background-layer-1
+         panel-alt     -> gray-75    divider -> border-subtle
+       The numbered ramps follow the accent scale, which flips under
+       [data-theme="dark"] on its own. */
+    --color-brand-50: var(--lumen-accent-100);
+    --color-brand-100: var(--lumen-accent-200);
+    --color-brand-200: var(--lumen-accent-300);
+    --color-brand-300: var(--lumen-accent-400);
+    --color-brand-400: var(--lumen-accent-500);
+    --color-brand-500: var(--lumen-accent-600);
+    --color-brand-600: var(--color-accent-content);
+    --color-brand-700: var(--color-accent-content);
+    --color-brand-800: var(--lumen-accent-1300);
+    --color-brand-900: var(--lumen-accent-1400);
+    --color-brand-950: var(--lumen-accent-1500);
+
+    --color-action-50: var(--lumen-accent-100);
+    --color-action-100: var(--lumen-accent-200);
+    --color-action-400: var(--lumen-accent-600);
+    --color-action-500: var(--color-accent-content);
+    --color-action-600: var(--color-accent-content);
+    --color-action-700: var(--lumen-accent-1100);
+
+    --color-accent-50: var(--lumen-red-200);
+    --color-accent-400: var(--lumen-red-600);
+    --color-accent-500: var(--color-negative-content);
+    --color-accent-600: var(--lumen-red-1200);
+
+    --color-warning-50: var(--lumen-orange-200);
+    --color-warning-400: var(--lumen-orange-500);
+    --color-warning-500: var(--color-notice-content);
+    --color-warning-600: var(--lumen-orange-1200);
+
+    --color-on-action: var(--color-on-accent);
+    --color-on-brand: var(--color-on-accent);
+
+    --color-page: var(--color-background-base);
+    --color-panel: var(--color-background-layer-1);
+    --color-panel-alt: var(--lumen-gray-75);
+    --color-divider: var(--color-border-subtle);
+    --color-overlay: color-mix(in srgb, #000000 40%, transparent);
+
+    /* Tailwind's gray scale, repointed at Lumen's neutral scale - the step
+       names line up (Lumen gray-700 is content-subdued, gray-800
+       content-default, gray-900 content-heading, gray-500 border-default,
+       gray-300 border-subtle), so every existing `text-gray-600` /
+       `bg-gray-100` / `border-gray-300` lands on a Lumen step and flips
+       under dark mode with it. */
+    --color-gray-50: var(--lumen-gray-50);
+    --color-gray-100: var(--lumen-gray-100);
+    --color-gray-200: var(--lumen-gray-200);
+    --color-gray-300: var(--lumen-gray-300);
+    --color-gray-400: var(--lumen-gray-400);
+    --color-gray-500: var(--lumen-gray-500);
+    --color-gray-600: var(--lumen-gray-600);
+    --color-gray-700: var(--lumen-gray-700);
+    --color-gray-800: var(--lumen-gray-800);
+    --color-gray-900: var(--lumen-gray-900);
+    --color-gray-950: var(--lumen-gray-1000);
 
     /* ── Shape ───────────────────────────────────────────────────────────
-       Tailwind's radius scale, mapped onto the M3 corner scale (see
-       --md-sys-shape-corner-* below): rounded-xs = extra-small (4px),
-       rounded-sm = small (8px), rounded-md = medium (12px), rounded-lg =
-       large (16px), rounded-xl = large-increased (20px), rounded-2xl =
-       extra-large (28px), rounded-full = full. The data-radius axis moves
-       all of them together. */
-    --radius-xs: var(--md-sys-shape-corner-extra-small);
-    --radius-sm: var(--md-sys-shape-corner-small);
-    --radius-md: var(--md-sys-shape-corner-medium);
-    --radius-lg: var(--md-sys-shape-corner-large);
-    --radius-xl: var(--md-sys-shape-corner-large-increased);
-    --radius-2xl: var(--md-sys-shape-corner-extra-large);
-    --radius-3xl: var(--md-sys-shape-corner-extra-large-increased);
-    --radius-4xl: var(--md-sys-shape-corner-extra-extra-large);
+       Tailwind's radius scale, mapped onto Lumen's corner radii (see
+       --corner-radius-* below): rounded-xs = 4px (checkboxes, tags),
+       rounded-sm = 6px, rounded-md = 8px (fields, cards, alerts),
+       rounded-lg = 10px (popovers), rounded-xl / 2xl = 16px (dialogs),
+       rounded-full = fully round (buttons, badges, switches). The
+       data-radius axis moves all of them together. */
+    --radius-xs: var(--corner-radius-100);
+    --radius-sm: var(--corner-radius-300);
+    --radius-md: var(--corner-radius-500);
+    --radius-lg: var(--corner-radius-700);
+    --radius-xl: var(--corner-radius-800);
+    --radius-2xl: var(--corner-radius-800);
+    --radius-3xl: calc(var(--corner-radius-800) * 1.25);
+    --radius-4xl: calc(var(--corner-radius-800) * 1.5);
 
-    /* ── Elevation ───────────────────────────────────────────────────────
-       `shadow-elevation-1` .. `shadow-elevation-5`, the M3 levels. In M3,
-       elevation is mostly *tonal* (a higher surface-container role) and
-       shadows are reserved for things that float: menus, dialogs, FABs,
-       snackbars. */
-    --shadow-elevation-1: var(--md-sys-elevation-level1);
-    --shadow-elevation-2: var(--md-sys-elevation-level2);
-    --shadow-elevation-3: var(--md-sys-elevation-level3);
-    --shadow-elevation-4: var(--md-sys-elevation-level4);
-    --shadow-elevation-5: var(--md-sys-elevation-level5);
+    /* ── Shadow ──────────────────────────────────────────────────────────
+       Lumen raises by layer and border, not shadow, so there are only
+       three: `shadow-emphasized` (the default state of a raised control),
+       `shadow-elevated` (popovers, menus, tooltips) and `shadow-dragged`
+       (dialogs, dragged items). Deeper in dark, where a shadow has to
+       fight a near-black page. */
+    --shadow-emphasized: 0 1px 6px rgba(0, 0, 0, 0.15);
+    --shadow-elevated: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --shadow-dragged: 0 6px 16px rgba(0, 0, 0, 0.15);
 
-    /* Legacy shadow names -> M3 levels 1/2/3. */
-    --shadow-blueprint-sm: var(--md-sys-elevation-level1);
-    --shadow-blueprint-md: var(--md-sys-elevation-level2);
-    --shadow-blueprint-lg: var(--md-sys-elevation-level3);
+    /* The Material 3 elevation names and the pre-M3 shadow names, kept as
+       aliases onto the three above. */
+    --shadow-elevation-1: var(--shadow-emphasized);
+    --shadow-elevation-2: var(--shadow-elevated);
+    --shadow-elevation-3: var(--shadow-elevated);
+    --shadow-elevation-4: var(--shadow-dragged);
+    --shadow-elevation-5: var(--shadow-dragged);
+    --shadow-blueprint-sm: var(--shadow-emphasized);
+    --shadow-blueprint-md: var(--shadow-elevated);
+    --shadow-blueprint-lg: var(--shadow-dragged);
 
-    /* Card elevation - retuned by the data-shadow axis. */
-    --shadow-card: var(--md-sys-elevation-level0);
+    /* Card shadow - retuned by the data-shadow axis. Flat by default. */
+    --shadow-card: 0 0 0 0 transparent;
 
     /* ── Motion ──────────────────────────────────────────────────────────
-       Every `transition-*` utility defaults to the M3 standard easing and
-       a short4 duration; `ease-emphasized-decelerate` etc. for entrances
-       and exits. */
-    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-    --ease-standard-decelerate: cubic-bezier(0, 0, 0, 1);
-    --ease-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
-    --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
-    --ease-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
-    --ease-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
-    --default-transition-duration: 200ms;
-    --default-transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+       Hover and press change color over 130ms. Larger moves (a dialog or
+       drawer arriving, an accordion chevron) take 200-250ms and decelerate
+       in. Animate color, opacity and transform only, and respect
+       prefers-reduced-motion. */
+    --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+    --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+    --default-transition-duration: 130ms;
+    --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Legacy motion names. */
-    --transition-fast: var(--md-sys-motion-duration-short2);
-    --transition-normal: var(--md-sys-motion-duration-short4);
-    --transition-slow: var(--md-sys-motion-duration-medium2);
+    --transition-fast: 100ms;
+    --transition-normal: 130ms;
+    --transition-slow: 250ms;
 
     /* ── Stacking ────────────────────────────────────────────────────────
        Named for the thing that sits at each level so two components never
@@ -315,158 +495,74 @@
     --z-tooltip: 80;
 
     /* ── Focus indicator ─────────────────────────────────────────────────
-       M3: a 3px ring in `secondary`, offset 2px from the component. */
-    --focus-ring-width: 3px;
+       Every interactive element shows a 2px `focus-ring` outline, offset
+       2px, on keyboard focus. Do not remove it. */
+    --focus-ring-width: 2px;
     --focus-ring-offset: 2px;
-    --focus-ring-color: var(--md-sys-color-secondary);
+    --focus-ring-color: var(--color-focus-ring);
 
     /* ── Density ─────────────────────────────────────────────────────────
-       M3 component heights at density 0; the data-density axis rewrites
-       these, which is why components read them rather than hardcode a
-       height. 56px text fields, 40px buttons, 56px navigation items. */
-    --control-height-sm: 2.5rem;
-    --control-height-md: 3.5rem;
-    --control-height-lg: 4rem;
-    --control-height-button: 2.5rem;
-    --control-padding-x-button: 1.5rem;
-    --control-padding-y: 1rem;
-    --list-item-height: 3.5rem;
-    --menu-item-height: 3rem;
-    --table-padding-y: 0.875rem;
-    --table-header-padding-y: 1rem;
+       Lumen's five component heights are 20, 24, 32 (the default), 40 and
+       48px; the data-density axis rewrites these, which is why components
+       read them rather than hardcode a height. Default: 32px buttons and
+       fields, 40px on a coarse pointer (touch). Compact: 24px. */
+    --control-height-sm: 1.5rem;
+    --control-height-md: 2rem;
+    --control-height-lg: 2.5rem;
+    --control-height-button: 2rem;
+    --control-padding-x-button: 1rem;
+    --control-padding-y: 0.25rem;
+    --list-item-height: 2rem;
+    --menu-item-height: 2rem;
+    --table-padding-y: 0.5rem;
+    --table-header-padding-y: 0.5rem;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   M3 system tokens (light) - the defaults
-   ══════════════════════════════════════════════════════════════════════
-   Each role points at a *tone* of a reference palette (md3-palettes.css);
-   the tone numbers are the M3 spec's own mapping. Swapping the palette
-   (data-palette) swaps the tones, swapping the theme (data-theme) swaps
-   which tone each role reads - the two never need a combined block. */
+   Lumen system tokens that are not Tailwind theme values
+   ══════════════════════════════════════════════════════════════════════ */
 
 :root {
-    --md-sys-color-primary: var(--md-ref-palette-primary40);
-    --md-sys-color-on-primary: var(--md-ref-palette-primary100);
-    --md-sys-color-primary-container: var(--md-ref-palette-primary90);
-    --md-sys-color-on-primary-container: var(--md-ref-palette-primary30);
-    --md-sys-color-primary-fixed: var(--md-ref-palette-primary90);
-    --md-sys-color-primary-fixed-dim: var(--md-ref-palette-primary80);
-    --md-sys-color-on-primary-fixed: var(--md-ref-palette-primary10);
-    --md-sys-color-on-primary-fixed-variant: var(--md-ref-palette-primary30);
-    --md-sys-color-inverse-primary: var(--md-ref-palette-primary80);
+    /* Component heights - Lumen's own scale. */
+    --component-height-50: 1.25rem;
+    --component-height-75: 1.5rem;
+    --component-height-100: 2rem;
+    --component-height-200: 2.5rem;
+    --component-height-300: 3rem;
+    --component-height-400: 3.5rem;
+    --component-height-500: 4rem;
 
-    --md-sys-color-secondary: var(--md-ref-palette-secondary40);
-    --md-sys-color-on-secondary: var(--md-ref-palette-secondary100);
-    --md-sys-color-secondary-container: var(--md-ref-palette-secondary90);
-    --md-sys-color-on-secondary-container: var(--md-ref-palette-secondary30);
+    /* Corner radii - Lumen's scale. Buttons, badges, switches, status dots
+       and progress tracks are fully round; fields, pickers, cards and
+       alerts use 500 (8px); checkboxes and tags 100 (4px); popovers 700;
+       dialogs 800 (16px). */
+    --corner-radius-0: 0px;
+    --corner-radius-75: 3px;
+    --corner-radius-100: 4px;
+    --corner-radius-200: 5px;
+    --corner-radius-300: 6px;
+    --corner-radius-400: 7px;
+    --corner-radius-500: 8px;
+    --corner-radius-600: 9px;
+    --corner-radius-700: 10px;
+    --corner-radius-800: 16px;
+    --corner-radius-full: 9999px;
 
-    --md-sys-color-tertiary: var(--md-ref-palette-tertiary40);
-    --md-sys-color-on-tertiary: var(--md-ref-palette-tertiary100);
-    --md-sys-color-tertiary-container: var(--md-ref-palette-tertiary90);
-    --md-sys-color-on-tertiary-container: var(--md-ref-palette-tertiary30);
+    /* Border widths. */
+    --border-width-100: 1px;
+    --border-width-200: 2px;
+    --border-width-400: 4px;
 
-    --md-sys-color-error: var(--md-ref-palette-error40);
-    --md-sys-color-on-error: var(--md-ref-palette-error100);
-    --md-sys-color-error-container: var(--md-ref-palette-error90);
-    --md-sys-color-on-error-container: var(--md-ref-palette-error30);
+    /* Disabled - content in content-disabled on a neutral hover fill (no
+       container at all for outlined and quiet controls). */
+    --wise-disabled-content: var(--color-content-disabled);
+    --wise-disabled-container: var(--color-fill-neutral-hover);
 
-    --md-sys-color-success: var(--md-ref-palette-success40);
-    --md-sys-color-on-success: var(--md-ref-palette-success100);
-    --md-sys-color-success-container: var(--md-ref-palette-success90);
-    --md-sys-color-on-success-container: var(--md-ref-palette-success30);
-
-    --md-sys-color-warning: var(--md-ref-palette-warning40);
-    --md-sys-color-on-warning: var(--md-ref-palette-warning100);
-    --md-sys-color-warning-container: var(--md-ref-palette-warning90);
-    --md-sys-color-on-warning-container: var(--md-ref-palette-warning30);
-
-    /* Status accents for text/icons sitting on inverse-surface (snackbars,
-       tooltips) - the same trick M3 uses for inverse-primary. */
-    --md-sys-color-inverse-success: var(--md-ref-palette-success80);
-    --md-sys-color-inverse-warning: var(--md-ref-palette-warning80);
-    --md-sys-color-inverse-error: var(--md-ref-palette-error80);
-
-    --md-sys-color-surface: var(--md-ref-palette-neutral98);
-    --md-sys-color-surface-dim: var(--md-ref-palette-neutral87);
-    --md-sys-color-surface-bright: var(--md-ref-palette-neutral98);
-    --md-sys-color-surface-container-lowest: var(--md-ref-palette-neutral100);
-    --md-sys-color-surface-container-low: var(--md-ref-palette-neutral96);
-    --md-sys-color-surface-container: var(--md-ref-palette-neutral94);
-    --md-sys-color-surface-container-high: var(--md-ref-palette-neutral92);
-    --md-sys-color-surface-container-highest: var(--md-ref-palette-neutral90);
-    --md-sys-color-surface-variant: var(--md-ref-palette-neutral-variant90);
-    --md-sys-color-on-surface: var(--md-ref-palette-neutral10);
-    --md-sys-color-on-surface-variant: var(--md-ref-palette-neutral-variant30);
-    --md-sys-color-background: var(--md-ref-palette-neutral98);
-    --md-sys-color-on-background: var(--md-ref-palette-neutral10);
-    --md-sys-color-inverse-surface: var(--md-ref-palette-neutral20);
-    --md-sys-color-inverse-on-surface: var(--md-ref-palette-neutral95);
-    --md-sys-color-outline: var(--md-ref-palette-neutral-variant50);
-    --md-sys-color-outline-variant: var(--md-ref-palette-neutral-variant80);
-    --md-sys-color-scrim: var(--md-ref-palette-neutral0);
-    --md-sys-color-shadow: var(--md-ref-palette-neutral0);
-    --md-sys-color-surface-tint: var(--md-sys-color-primary);
-
-    /* Shape - the M3 corner scale. */
-    --md-sys-shape-corner-none: 0px;
-    --md-sys-shape-corner-extra-small: 4px;
-    --md-sys-shape-corner-small: 8px;
-    --md-sys-shape-corner-medium: 12px;
-    --md-sys-shape-corner-large: 16px;
-    --md-sys-shape-corner-large-increased: 20px;
-    --md-sys-shape-corner-extra-large: 28px;
-    --md-sys-shape-corner-extra-large-increased: 32px;
-    --md-sys-shape-corner-extra-extra-large: 48px;
-    --md-sys-shape-corner-full: 9999px;
-
-    /* Elevation - the M3 shadow levels (key + ambient shadow pair). */
-    --md-sys-elevation-level0: 0 0 0 0 transparent;
-    --md-sys-elevation-level1: 0 1px 2px 0 rgb(0 0 0 / 0.3), 0 1px 3px 1px rgb(0 0 0 / 0.15);
-    --md-sys-elevation-level2: 0 1px 2px 0 rgb(0 0 0 / 0.3), 0 2px 6px 2px rgb(0 0 0 / 0.15);
-    --md-sys-elevation-level3: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 4px 8px 3px rgb(0 0 0 / 0.15);
-    --md-sys-elevation-level4: 0 2px 3px 0 rgb(0 0 0 / 0.3), 0 6px 10px 4px rgb(0 0 0 / 0.15);
-    --md-sys-elevation-level5: 0 4px 4px 0 rgb(0 0 0 / 0.3), 0 8px 12px 6px rgb(0 0 0 / 0.15);
-
-    /* State layers - the opacity of the content-colored overlay M3 paints
-       over an interactive component. The percentage twins are what the
-       component layer actually consumes (color-mix wants a percentage). */
-    --md-sys-state-hover-state-layer-opacity: 0.08;
-    --md-sys-state-focus-state-layer-opacity: 0.10;
-    --md-sys-state-pressed-state-layer-opacity: 0.10;
-    --md-sys-state-dragged-state-layer-opacity: 0.16;
-    --wise-state-hover: 8%;
-    --wise-state-focus: 10%;
-    --wise-state-pressed: 10%;
-    --wise-state-dragged: 16%;
-
-    /* Disabled - M3: content at 38% on-surface, container at 12%. */
-    --wise-disabled-content: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
-    --wise-disabled-container: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
-
-    /* Motion - M3 durations. */
-    --md-sys-motion-duration-short1: 50ms;
-    --md-sys-motion-duration-short2: 100ms;
-    --md-sys-motion-duration-short3: 150ms;
-    --md-sys-motion-duration-short4: 200ms;
-    --md-sys-motion-duration-medium1: 250ms;
-    --md-sys-motion-duration-medium2: 300ms;
-    --md-sys-motion-duration-medium3: 350ms;
-    --md-sys-motion-duration-medium4: 400ms;
-    --md-sys-motion-duration-long1: 450ms;
-    --md-sys-motion-duration-long2: 500ms;
-    --md-sys-motion-duration-long3: 550ms;
-    --md-sys-motion-duration-long4: 600ms;
-    --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
-    --md-sys-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
-    --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
-    --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
-    --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
-    --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
-
-    /* Card surface - retuned by data-shadow: flat = M3 outlined card,
-       soft/elevated = M3 elevated card. */
-    --wise-card-bg: var(--md-sys-color-surface-container-low);
-    --wise-card-border: var(--md-sys-color-outline-variant);
+    /* Card surface - retuned by data-shadow: flat = a layer-2 card with a
+       subtle border, soft/elevated = the same card with a shadow and no
+       border. */
+    --wise-card-bg: var(--color-background-layer-2);
+    --wise-card-border: var(--color-border-subtle);
 
     color-scheme: light;
 }
@@ -476,24 +572,25 @@
    ══════════════════════════════════════════════════════════════════════
 
    Tailwind v4 compiles every color utility to a `var(--color-*)` reference
-   - `.bg-primary` is literally `background-color: var(--color-primary)`,
-   which is `var(--md-sys-color-primary)`, which is a palette tone. So
-   redefining a token under an attribute selector re-themes the whole
-   system *at runtime*, with no rebuild and no second stylesheet.
+   - `.bg-accent-background` is literally `background-color:
+   var(--color-accent-background)`, which is `var(--lumen-accent-900)`, a
+   palette step. So redefining a token under an attribute selector
+   re-themes the whole system *at runtime*, with no rebuild and no second
+   stylesheet.
 
    Six independent axes, each one attribute on <html>:
 
      data-theme    light (default) | dark
-     data-palette  baseline (default, M3 #6750A4) | green | blue | amber
-     data-density  comfortable (default, M3 density 0) | compact
-     data-radius   M3 shape scale (default) | soft | sharp
+     data-palette  blue (default, Lumen's accent) | indigo | purple | green | amber
+     data-density  comfortable (default, 32px controls) | compact (24px)
+     data-radius   Lumen corner radii (default) | soft | sharp
      data-shadow   flat (default, outlined cards) | soft | elevated
-     data-bg       tonal (default, seed-tinted neutrals) | warm | cool
+     data-bg       neutral (default) | warm | cool
 
    They compose freely, because each touches a different tier: palettes
-   and backgrounds only swap reference tones (md3-palettes.css), the theme
-   only swaps which tone each system role reads. No `[data-theme][data-
-   palette]` combination blocks are needed.
+   and backgrounds only re-point reference steps (lumen-palettes.css), the
+   theme only re-points which step each semantic token reads. No
+   `[data-theme][data-palette]` combination blocks are needed.
 
    base.html applies the stored values before first paint; common.js's
    wiseSetTheme()/wiseSetPalette()/wiseSetDensity()/wiseSetRadius()/
@@ -503,114 +600,71 @@
    ────────────────────────────────────────────────────────────────────── */
 
 :root[data-theme="dark"] {
-    --md-sys-color-primary: var(--md-ref-palette-primary80);
-    --md-sys-color-on-primary: var(--md-ref-palette-primary20);
-    --md-sys-color-primary-container: var(--md-ref-palette-primary30);
-    --md-sys-color-on-primary-container: var(--md-ref-palette-primary90);
-    --md-sys-color-inverse-primary: var(--md-ref-palette-primary40);
+    /* Lumen's palette steps flip on their own; only the tokens that pick a
+       different *step* in dark need restating. Filled accent controls step
+       one shade lighter, cards and popovers sit a layer above the page,
+       and the notice label turns black. */
+    --color-background-layer-2: var(--lumen-gray-75);
+    --color-background-elevated: var(--lumen-gray-75);
 
-    --md-sys-color-secondary: var(--md-ref-palette-secondary80);
-    --md-sys-color-on-secondary: var(--md-ref-palette-secondary20);
-    --md-sys-color-secondary-container: var(--md-ref-palette-secondary30);
-    --md-sys-color-on-secondary-container: var(--md-ref-palette-secondary90);
+    --color-accent-background: var(--lumen-accent-800);
+    --color-accent-background-hover: var(--lumen-accent-700);
+    --color-accent-background-down: var(--lumen-accent-600);
 
-    --md-sys-color-tertiary: var(--md-ref-palette-tertiary80);
-    --md-sys-color-on-tertiary: var(--md-ref-palette-tertiary20);
-    --md-sys-color-tertiary-container: var(--md-ref-palette-tertiary30);
-    --md-sys-color-on-tertiary-container: var(--md-ref-palette-tertiary90);
+    --color-informative-background: var(--lumen-blue-800);
+    --color-positive-background: var(--lumen-green-800);
+    --color-notice-background: var(--lumen-orange-900);
+    --color-on-notice: #000000;
+    --color-negative-background: var(--lumen-red-800);
+    --color-negative-background-hover: var(--lumen-red-700);
+    --color-negative-background-down: var(--lumen-red-600);
 
-    --md-sys-color-error: var(--md-ref-palette-error80);
-    --md-sys-color-on-error: var(--md-ref-palette-error20);
-    --md-sys-color-error-container: var(--md-ref-palette-error30);
-    --md-sys-color-on-error-container: var(--md-ref-palette-error90);
+    --color-tertiary: var(--lumen-purple-800);
 
-    --md-sys-color-success: var(--md-ref-palette-success80);
-    --md-sys-color-on-success: var(--md-ref-palette-success20);
-    --md-sys-color-success-container: var(--md-ref-palette-success30);
-    --md-sys-color-on-success-container: var(--md-ref-palette-success90);
-
-    --md-sys-color-warning: var(--md-ref-palette-warning80);
-    --md-sys-color-on-warning: var(--md-ref-palette-warning20);
-    --md-sys-color-warning-container: var(--md-ref-palette-warning30);
-    --md-sys-color-on-warning-container: var(--md-ref-palette-warning90);
-
-    --md-sys-color-inverse-success: var(--md-ref-palette-success40);
-    --md-sys-color-inverse-warning: var(--md-ref-palette-warning40);
-    --md-sys-color-inverse-error: var(--md-ref-palette-error40);
-
-    --md-sys-color-surface: var(--md-ref-palette-neutral6);
-    --md-sys-color-surface-dim: var(--md-ref-palette-neutral6);
-    --md-sys-color-surface-bright: var(--md-ref-palette-neutral24);
-    --md-sys-color-surface-container-lowest: var(--md-ref-palette-neutral4);
-    --md-sys-color-surface-container-low: var(--md-ref-palette-neutral10);
-    --md-sys-color-surface-container: var(--md-ref-palette-neutral12);
-    --md-sys-color-surface-container-high: var(--md-ref-palette-neutral17);
-    --md-sys-color-surface-container-highest: var(--md-ref-palette-neutral22);
-    --md-sys-color-surface-variant: var(--md-ref-palette-neutral-variant30);
-    --md-sys-color-on-surface: var(--md-ref-palette-neutral90);
-    --md-sys-color-on-surface-variant: var(--md-ref-palette-neutral-variant80);
-    --md-sys-color-background: var(--md-ref-palette-neutral6);
-    --md-sys-color-on-background: var(--md-ref-palette-neutral90);
-    --md-sys-color-inverse-surface: var(--md-ref-palette-neutral90);
-    --md-sys-color-inverse-on-surface: var(--md-ref-palette-neutral20);
-    --md-sys-color-outline: var(--md-ref-palette-neutral-variant60);
-    --md-sys-color-outline-variant: var(--md-ref-palette-neutral-variant30);
-
-    /* The legacy numbered ramps flip, like M3 roles do: a light tone that
-       reads as a subtle tint on white becomes a dark one on near-black. */
-    --color-brand-50: var(--md-ref-palette-primary10);
-    --color-brand-100: var(--md-ref-palette-primary20);
-    --color-brand-200: var(--md-ref-palette-primary30);
-    --color-brand-300: var(--md-ref-palette-primary40);
-    --color-brand-400: var(--md-ref-palette-primary60);
-    --color-brand-500: var(--md-ref-palette-primary70);
-    --color-brand-900: var(--md-ref-palette-primary90);
-    --color-brand-950: var(--md-ref-palette-primary95);
-    --color-action-50: var(--md-ref-palette-primary20);
-    --color-action-400: var(--md-ref-palette-primary70);
-    --color-accent-400: var(--md-ref-palette-error70);
-    --color-warning-400: var(--md-ref-palette-warning60);
-
-    --color-gray-50: var(--md-ref-palette-neutral4);
-    --color-gray-100: var(--md-ref-palette-neutral12);
-    --color-gray-200: var(--md-ref-palette-neutral17);
-    --color-gray-300: var(--md-ref-palette-neutral-variant30);
-    --color-gray-400: var(--md-ref-palette-neutral-variant40);
-    --color-gray-500: var(--md-ref-palette-neutral-variant60);
-    --color-gray-600: var(--md-ref-palette-neutral-variant80);
-    --color-gray-700: var(--md-ref-palette-neutral80);
-    --color-gray-800: var(--md-ref-palette-neutral87);
-    --color-gray-900: var(--md-ref-palette-neutral90);
-    --color-gray-950: var(--md-ref-palette-neutral100);
+    --shadow-emphasized: 0 1px 6px rgba(0, 0, 0, 0.5);
+    --shadow-elevated: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --shadow-dragged: 0 6px 16px rgba(0, 0, 0, 0.5);
 
     color-scheme: dark;
 }
 
 /* ── Palette & background ───────────────────────────────────────────────
-   Both live in the generated md3-palettes.css (imported at the top of this
-   file): data-palette re-seeds the primary/secondary/tertiary/neutral
-   palettes, data-bg re-tints just the neutral ones warm or cool. */
+   Both live in the generated lumen-palettes.css (imported at the top of
+   this file): data-palette re-points the accent scale at another Lumen
+   hue, data-bg re-tints just the neutral scale warm or cool. */
 
 /* ── Density ────────────────────────────────────────────────────────────
-   Compact is M3 density -4 on text fields (56 -> 40px) and -2 on buttons
-   and list items, for data-dense admin screens. Type size and the spacing
-   scale stay put. */
+   Lumen asks for about 20% more on touch, so a coarse pointer steps every
+   control up one size (32 -> 40px). Compact steps down to 24px for
+   data-dense admin screens and wins over the touch bump. Type size and the
+   spacing scale stay put. */
+
+@media (pointer: coarse) {
+    :root {
+        --control-height-sm: 2rem;
+        --control-height-md: 2.5rem;
+        --control-height-lg: 3rem;
+        --control-height-button: 2.5rem;
+        --list-item-height: 2.5rem;
+        --menu-item-height: 2.5rem;
+    }
+}
 
 :root[data-density="compact"] {
-    --control-height-sm: 2rem;
-    --control-height-md: 2.5rem;
-    --control-height-lg: 3rem;
-    --control-height-button: 2rem;
-    --control-padding-x-button: 1rem;
-    --control-padding-y: 0.5rem;
-    --list-item-height: 2.5rem;
-    --menu-item-height: 2.25rem;
-    --table-padding-y: 0.375rem;
-    --table-header-padding-y: 0.625rem;
+    --control-height-sm: 1.25rem;
+    --control-height-md: 1.5rem;
+    --control-height-lg: 2rem;
+    --control-height-button: 1.5rem;
+    --control-padding-x-button: 0.75rem;
+    --control-padding-y: 0rem;
+    --list-item-height: 1.75rem;
+    --menu-item-height: 1.75rem;
+    --table-padding-y: 0.25rem;
+    --table-header-padding-y: 0.375rem;
 }
 
 /* ── Shape ──────────────────────────────────────────────────────────────
-   The default is the M3 corner scale above. `soft` halves it (pills stay
+   The default is Lumen's corner radii above. `soft` halves them (pills stay
    pills); `sharp` zeroes everything - pills included - for a squared-off
    technical look. Nothing in the component rules below hardcodes a
    radius, they all read this scale, so every one of them moves together.
@@ -618,283 +672,339 @@
    donut) use a literal 9999px and are exempt. */
 
 :root[data-radius="soft"] {
-    --md-sys-shape-corner-extra-small: 2px;
-    --md-sys-shape-corner-small: 4px;
-    --md-sys-shape-corner-medium: 6px;
-    --md-sys-shape-corner-large: 8px;
-    --md-sys-shape-corner-large-increased: 10px;
-    --md-sys-shape-corner-extra-large: 14px;
-    --md-sys-shape-corner-extra-large-increased: 16px;
-    --md-sys-shape-corner-extra-extra-large: 24px;
+    --corner-radius-75: 2px;
+    --corner-radius-100: 2px;
+    --corner-radius-200: 3px;
+    --corner-radius-300: 3px;
+    --corner-radius-400: 4px;
+    --corner-radius-500: 4px;
+    --corner-radius-600: 5px;
+    --corner-radius-700: 5px;
+    --corner-radius-800: 8px;
 }
 
 :root[data-radius="sharp"] {
-    --md-sys-shape-corner-extra-small: 0px;
-    --md-sys-shape-corner-small: 0px;
-    --md-sys-shape-corner-medium: 0px;
-    --md-sys-shape-corner-large: 0px;
-    --md-sys-shape-corner-large-increased: 0px;
-    --md-sys-shape-corner-extra-large: 0px;
-    --md-sys-shape-corner-extra-large-increased: 0px;
-    --md-sys-shape-corner-extra-extra-large: 0px;
-    --md-sys-shape-corner-full: 0px;
+    --corner-radius-75: 0px;
+    --corner-radius-100: 0px;
+    --corner-radius-200: 0px;
+    --corner-radius-300: 0px;
+    --corner-radius-400: 0px;
+    --corner-radius-500: 0px;
+    --corner-radius-600: 0px;
+    --corner-radius-700: 0px;
+    --corner-radius-800: 0px;
+    --corner-radius-full: 0px;
 }
 
-/* ── Card elevation ─────────────────────────────────────────────────────
-   flat (default) renders cards and panels as M3 *outlined* cards; soft and
-   elevated render them as M3 *elevated* cards (surface-container-low, no
-   outline, level 1 / level 2 shadow). Menus, dialogs and snackbars keep
-   their own fixed M3 levels regardless. */
+/* ── Card shadow ────────────────────────────────────────────────────────
+   flat (default) renders cards and panels as a layer-2 surface with a
+   subtle border and no shadow, the Lumen way. soft and elevated drop the
+   border and raise the card with `emphasized` / `elevated`. Menus,
+   dialogs and toasts keep their own fixed shadows regardless. */
 
 :root[data-shadow="soft"] {
-    --shadow-card: var(--md-sys-elevation-level1);
+    --shadow-card: var(--shadow-emphasized);
     --wise-card-border: transparent;
 }
 
 :root[data-shadow="elevated"] {
-    --shadow-card: var(--md-sys-elevation-level2);
+    --shadow-card: var(--shadow-elevated);
     --wise-card-border: transparent;
 }
 
-/* Roboto, as a single variable font (wght 100-900) per subset. OFL - see
-   ../font/Roboto-OFL.txt. */
+/* Source Sans 3 and Source Code Pro, as single variable fonts (wght
+   200-900) per subset. OFL - see ../font/SourceSans3-SourceCodePro-OFL.txt. */
 @font-face {
-    font-family: "Roboto";
+    font-family: "Source Sans 3";
     font-style: normal;
-    font-weight: 100 900;
+    font-weight: 200 900;
     font-display: swap;
-    src: url("../font/Roboto-latin-wght-normal.woff2") format("woff2-variations");
+    src: url("../font/SourceSans3-latin-wght-normal.woff2") format("woff2-variations");
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
     U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-    font-family: "Roboto";
+    font-family: "Source Sans 3";
     font-style: normal;
-    font-weight: 100 900;
+    font-weight: 200 900;
     font-display: swap;
-    src: url("../font/Roboto-latin-ext-wght-normal.woff2") format("woff2-variations");
+    src: url("../font/SourceSans3-latin-ext-wght-normal.woff2") format("woff2-variations");
     unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
     U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-    font-family: "Roboto";
+    font-family: "Source Sans 3";
     font-style: italic;
-    font-weight: 100 900;
+    font-weight: 200 900;
     font-display: swap;
-    src: url("../font/Roboto-latin-wght-italic.woff2") format("woff2-variations");
+    src: url("../font/SourceSans3-latin-wght-italic.woff2") format("woff2-variations");
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
     U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Source Code Pro";
+    font-style: normal;
+    font-weight: 200 900;
+    font-display: swap;
+    src: url("../font/SourceCodePro-latin-wght-normal.woff2") format("woff2-variations");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Source Code Pro";
+    font-style: normal;
+    font-weight: 200 900;
+    font-display: swap;
+    src: url("../font/SourceCodePro-latin-ext-wght-normal.woff2") format("woff2-variations");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @layer base {
     html, body {
         font-family: var(--font-plain);
-        background: var(--md-sys-color-surface);
-        color: var(--md-sys-color-on-surface);
+        background: var(--color-background-base);
+        color: var(--color-content-default);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
 
-    /* M3 body-large is the default reading style. */
-    body {
-        font-size: var(--text-body-large);
-        line-height: var(--text-body-large--line-height);
-        letter-spacing: var(--text-body-large--letter-spacing);
+    /* Any native control without a component class of its own (a range
+       slider, an unclassed checkbox, a <progress>) still picks up the
+       accent. */
+    html {
+        accent-color: var(--color-accent-background);
     }
 
-    /* One focus indicator for the whole system - the M3 3px `secondary`
-       ring. :focus-visible (not :focus) so it shows for keyboard users
-       without ringing every mouse click. Text fields opt out below: their
-       own 2px primary outline *is* their focus indicator in M3. */
+    /* body-m (16px, 1.5) is the default reading style. */
+    body {
+        font-size: var(--text-body-m);
+        line-height: var(--text-body-m--line-height);
+    }
+
+    /* One focus indicator for the whole system - a 2px `focus-ring`
+       outline offset 2px. :focus-visible (not :focus) so it shows for
+       keyboard users without ringing every mouse click. Text fields draw
+       the same ring on :focus-visible, so it never fights their border. */
     :focus-visible {
         outline: var(--focus-ring-width) solid var(--focus-ring-color);
         outline-offset: var(--focus-ring-offset);
     }
 
-    /* Headings map onto the M3 type scale: h1-h3 headline large/medium/
-       small, h4-h6 title large/medium/small. Sentence case - M3 never
-       uppercases headings. */
+    /* Headings map onto the Lumen scale: h1 heading-l, h2 heading-m, h3
+       heading-s (800 weight, content-heading); h4-h6 title-l/m/s (700).
+       Sentence case - Lumen never uppercases headings. */
     h1, h2, h3, h4, h5, h6 {
         font-family: var(--font-brand);
-        color: inherit;
+        color: var(--color-content-heading);
     }
 
     h1 {
-        @apply text-headline-large;
+        @apply text-heading-l;
     }
 
     h2 {
-        @apply text-headline-medium;
+        @apply text-heading-m;
     }
 
     h3 {
-        @apply text-headline-small;
+        @apply text-heading-s;
     }
 
     h4 {
-        @apply text-title-large;
+        @apply text-title-l;
     }
 
     h5 {
-        @apply text-title-medium;
+        @apply text-title-m;
     }
 
     h6 {
-        @apply text-title-small;
+        @apply text-title-s;
     }
 
     ::selection {
-        background: color-mix(in srgb, var(--md-sys-color-primary) 24%, transparent);
+        background: color-mix(in srgb, var(--color-accent-background) 24%, transparent);
     }
 }
 
 @layer components {
-    /* ── State layers ────────────────────────────────────────────────────
-       M3 paints a translucent overlay of the component's *content* color
-       over its container on hover (8%), keyboard focus (10%) and press
-       (10%). Doing it with a background-image gradient of `currentColor`
-       means one rule serves every interactive component - filled,
-       tonal, outlined or transparent - and always tints with the right
-       color. `:where()` keeps it at zero specificity so any component can
-       still override its own background. */
-    :where(.btn, .btn-icon, a.card, button.card, .card-interactive, .top-nav-item, .tab-bar .bar-item,
-    .menu-link, .dropdown-item, .pagination-link, .tree-item > summary, .tree-item-label, .tree-leaf,
-    .accordion-item > summary, .tag-remove, .toast-close, .token-export-copy, .language-switcher select) {
-        --wise-state-layer: color-mix(in srgb, currentColor var(--wise-state-opacity, 0%), transparent);
-        background-image: linear-gradient(var(--wise-state-layer), var(--wise-state-layer));
-    }
-
-    :where(.btn, .btn-icon, a.card, button.card, .card-interactive, .top-nav-item, .tab-bar .bar-item,
-    .menu-link, .dropdown-item, .pagination-link, .tree-item > summary, .tree-item-label, .tree-leaf,
-    .accordion-item > summary, .tag-remove, .toast-close, .token-export-copy, .language-switcher select):hover {
-        --wise-state-opacity: var(--wise-state-hover);
-    }
-
-    :where(.btn, .btn-icon, a.card, button.card, .card-interactive, .top-nav-item, .tab-bar .bar-item,
-    .menu-link, .dropdown-item, .pagination-link, .tree-item > summary, .tree-item-label, .tree-leaf,
-    .accordion-item > summary, .tag-remove, .toast-close, .token-export-copy, .language-switcher select):focus-visible {
-        --wise-state-opacity: var(--wise-state-focus);
-    }
-
-    :where(.btn, .btn-icon, a.card, button.card, .card-interactive, .top-nav-item, .tab-bar .bar-item,
-    .menu-link, .dropdown-item, .pagination-link, .tree-item > summary, .tree-item-label, .tree-leaf,
-    .accordion-item > summary, .tag-remove, .toast-close, .token-export-copy, .language-switcher select):active {
-        --wise-state-opacity: var(--wise-state-pressed);
-    }
-
     /* ── Buttons ─────────────────────────────────────────────────────────
        Always pair `.btn` with one variant, e.g. class="btn btn-primary".
-       The five M3 button types, under both their M3 name and the
-       original class name:
+       Lumen's buttons are fully round, 700-weight title-s labels with a 2px
+       border so a filled and an outlined button are the same size:
 
-         M3 filled     .btn-filled   = .btn-primary
-         M3 tonal      .btn-tonal    = .btn-brand
-         M3 outlined   .btn-outlined = .btn-secondary
-         M3 text       .btn-text     = .btn-ghost
-         M3 elevated   .btn-elevated
-         filled, error .btn-danger
+         accent fill      .btn-primary   = .btn-filled
+         neutral fill     .btn-brand     = .btn-tonal
+         neutral outline  .btn-secondary = .btn-outlined
+         quiet            .btn-ghost     = .btn-text
+         raised           .btn-elevated
+         negative fill    .btn-danger
 
-       Pill-shaped, 40px tall (32px compact), label-large. */
+       One accent fill per view. Hover steps a fill one shade, press two
+       (`accent-background-hover` / `-down`); outlined and quiet buttons
+       fill with `fill-neutral-hover` / `-down`. Sizes: `.btn-sm` (24px),
+       default (32px, 40px on touch), `.btn-lg` (40px), `.btn-xl` (48px). */
     .btn {
-        @apply inline-flex items-center justify-center gap-2 text-label-large;
+        @apply inline-flex items-center justify-center gap-1.5 text-title-s;
         height: var(--control-height-button);
         padding-inline: var(--control-padding-x-button);
         font-family: var(--font-plain);
-        border: 1px solid transparent;
-        border-radius: var(--md-sys-shape-corner-full);
+        border: var(--border-width-200) solid transparent;
+        border-radius: var(--corner-radius-full);
         background-color: transparent;
-        color: var(--md-sys-color-primary);
+        color: var(--color-content-default);
         cursor: pointer;
         text-decoration: none;
         user-select: none;
         white-space: nowrap;
-        transition: background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
-        box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
-        color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
-        border-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+        transition: background-color 130ms var(--ease-standard), border-color 130ms var(--ease-standard),
+        color 130ms var(--ease-standard), box-shadow 130ms var(--ease-standard);
+    }
+
+    .btn-sm {
+        height: var(--component-height-75);
+        padding-inline: 0.75rem;
+        @apply text-title-xs;
+    }
+
+    .btn-lg {
+        height: var(--component-height-200);
+        padding-inline: 1.25rem;
+        @apply text-title-m;
+    }
+
+    .btn-xl {
+        height: var(--component-height-300);
+        padding-inline: 1.5rem;
+        @apply text-title-l;
     }
 
     .btn-primary,
     .btn-filled {
-        background-color: var(--md-sys-color-primary);
-        color: var(--md-sys-color-on-primary);
+        background-color: var(--color-accent-background);
+        color: var(--color-on-accent);
+    }
+
+    .btn-primary:hover,
+    .btn-filled:hover {
+        background-color: var(--color-accent-background-hover);
+    }
+
+    .btn-primary:active,
+    .btn-filled:active {
+        background-color: var(--color-accent-background-down);
     }
 
     .btn-brand,
     .btn-tonal {
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
+        background-color: var(--color-fill-neutral-hover);
+        color: var(--color-content-default);
     }
 
-    .btn-primary:hover,
-    .btn-filled:hover,
     .btn-brand:hover,
     .btn-tonal:hover,
-    .btn-danger:hover {
-        box-shadow: var(--md-sys-elevation-level1);
+    .btn-brand:active,
+    .btn-tonal:active {
+        background-color: var(--color-fill-neutral-down);
     }
 
     .btn-secondary,
     .btn-outlined {
-        border-color: var(--md-sys-color-outline);
-        color: var(--md-sys-color-primary);
+        border-color: var(--color-border-default);
+        color: var(--color-content-default);
+    }
+
+    .btn-secondary:hover,
+    .btn-outlined:hover,
+    .btn-ghost:hover,
+    .btn-text:hover {
+        background-color: var(--color-fill-neutral-hover);
+    }
+
+    .btn-secondary:active,
+    .btn-outlined:active,
+    .btn-ghost:active,
+    .btn-text:active {
+        background-color: var(--color-fill-neutral-down);
     }
 
     .btn-danger {
-        background-color: var(--md-sys-color-error);
-        color: var(--md-sys-color-on-error);
+        background-color: var(--color-negative-background);
+        color: var(--color-on-accent);
+    }
+
+    .btn-danger:hover {
+        background-color: var(--color-negative-background-hover);
+    }
+
+    .btn-danger:active {
+        background-color: var(--color-negative-background-down);
     }
 
     .btn-ghost,
     .btn-text {
         padding-inline: 0.75rem;
-        color: var(--md-sys-color-primary);
+        color: var(--color-content-default);
     }
 
     .btn-elevated {
-        background-color: var(--md-sys-color-surface-container-low);
-        color: var(--md-sys-color-primary);
-        box-shadow: var(--md-sys-elevation-level1);
+        background-color: var(--color-background-layer-2);
+        color: var(--color-content-default);
+        box-shadow: var(--shadow-emphasized);
     }
 
     .btn-elevated:hover {
-        box-shadow: var(--md-sys-elevation-level2);
+        background-color: var(--color-fill-neutral-hover);
+        box-shadow: var(--shadow-elevated);
     }
 
-    /* Icon button - a 40px circle. Works with or without `.btn`, and
-       combines with a variant: bare / .btn-ghost = M3 standard icon
-       button, .btn-secondary = outlined, .btn-primary = filled, .btn-brand
-       = tonal. The bare color sits in :where() so a variant wins. */
+    /* Icon button - a round button sized to the control height. Works with
+       or without `.btn`, and combines with a variant: bare / .btn-ghost =
+       quiet, .btn-secondary = outlined, .btn-primary = accent fill,
+       .btn-brand = neutral fill. The bare color sits in :where() so a
+       variant wins. */
     .btn-icon {
         @apply inline-flex shrink-0 items-center justify-center;
         width: var(--control-height-button);
         height: var(--control-height-button);
         padding: 0;
-        border: 1px solid transparent;
-        border-radius: var(--md-sys-shape-corner-full);
+        border: var(--border-width-200) solid transparent;
+        border-radius: var(--corner-radius-full);
         cursor: pointer;
+        transition: background-color 130ms var(--ease-standard), border-color 130ms var(--ease-standard);
     }
 
     :where(.btn-icon) {
-        color: var(--md-sys-color-on-surface-variant);
+        color: var(--color-content-default);
     }
 
     .btn-icon.btn-secondary,
     .btn-icon.btn-outlined {
-        border-color: var(--md-sys-color-outline-variant);
-        color: var(--md-sys-color-on-surface-variant);
+        border-color: var(--color-border-default);
+        color: var(--color-content-default);
     }
 
     .btn-icon.btn-ghost,
     .btn-icon.btn-text {
         padding: 0;
-        color: var(--md-sys-color-on-surface-variant);
+        color: var(--color-content-default);
     }
 
-    /* Disabled - M3: 38% on-surface content on a 12% on-surface container
-       (no container at all for outlined/text buttons). */
+    .btn-icon:not(.btn-primary, .btn-filled, .btn-brand, .btn-tonal, .btn-danger, .btn-elevated):hover {
+        background-color: var(--color-fill-neutral-hover);
+    }
+
+    .btn-icon:not(.btn-primary, .btn-filled, .btn-brand, .btn-tonal, .btn-danger, .btn-elevated):active {
+        background-color: var(--color-fill-neutral-down);
+    }
+
+    /* Disabled - content-disabled on a neutral hover fill (no fill at all
+       for outlined and quiet buttons). */
     .btn:disabled,
     .btn[disabled],
     .btn.disabled,
@@ -914,7 +1024,7 @@
     .btn-secondary.disabled,
     .btn-outlined:disabled {
         background-color: transparent;
-        border-color: var(--wise-disabled-container);
+        border-color: var(--color-content-disabled);
     }
 
     .btn-ghost:disabled,
@@ -925,35 +1035,37 @@
         background-color: transparent;
     }
 
-    /* ── Button group → M3 segmented button ──────────────────────────────
-       Outlined segments with shared borders, pill ends, and the selected
-       segment filled with secondary-container. */
+    /* ── Button group ────────────────────────────────────────────────────
+       A segmented row of outlined buttons with shared borders and round
+       ends. The selected segment is filled with neutral-background, the
+       way a pressed Lumen action button is. */
     .btn-group {
         @apply inline-flex items-center;
     }
 
     .btn-group > .btn {
+        border-width: var(--border-width-100);
         border-radius: 0;
-        border-color: var(--md-sys-color-outline);
+        border-color: var(--color-border-default);
         background-color: transparent;
-        color: var(--md-sys-color-on-surface);
+        color: var(--color-content-default);
         box-shadow: none;
         padding-inline: 0.75rem;
     }
 
     .btn-group > .btn.btn-icon {
-        width: 3rem;
+        width: var(--control-height-button);
         padding: 0;
     }
 
     .btn-group > .btn:first-child {
-        border-start-start-radius: var(--md-sys-shape-corner-full);
-        border-end-start-radius: var(--md-sys-shape-corner-full);
+        border-start-start-radius: var(--corner-radius-full);
+        border-end-start-radius: var(--corner-radius-full);
     }
 
     .btn-group > .btn:last-child {
-        border-start-end-radius: var(--md-sys-shape-corner-full);
-        border-end-end-radius: var(--md-sys-shape-corner-full);
+        border-start-end-radius: var(--corner-radius-full);
+        border-end-end-radius: var(--corner-radius-full);
     }
 
     .btn-group > .btn + .btn {
@@ -967,30 +1079,36 @@
     }
 
     .btn-group > .btn.selected {
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
+        background-color: var(--color-neutral-background);
+        border-color: var(--color-neutral-background);
+        color: var(--color-on-neutral);
     }
 
     /* ── FAB ─────────────────────────────────────────────────────────────
-       M3 floating action button: 56px, large corner, primary-container,
-       elevation 3. `.fab-extended` adds a label. */
+       A floating action button: a 56px accent pill with the `elevated`
+       shadow. `.fab-extended` adds a label. One per screen. */
     .fab {
-        @apply inline-flex shrink-0 items-center justify-center gap-3 text-label-large;
-        height: 3.5rem;
-        min-width: 3.5rem;
+        @apply inline-flex shrink-0 items-center justify-center gap-2 text-title-m;
+        height: var(--component-height-400);
+        min-width: var(--component-height-400);
         padding-inline: 1rem;
         border: 0;
-        border-radius: var(--md-sys-shape-corner-large);
-        background-color: var(--md-sys-color-primary-container);
-        color: var(--md-sys-color-on-primary-container);
-        box-shadow: var(--md-sys-elevation-level3);
+        border-radius: var(--corner-radius-full);
+        background-color: var(--color-accent-background);
+        color: var(--color-on-accent);
+        box-shadow: var(--shadow-elevated);
         cursor: pointer;
         text-decoration: none;
-        transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+        transition: background-color 130ms var(--ease-standard), box-shadow 130ms var(--ease-standard);
     }
 
     .fab:hover {
-        box-shadow: var(--md-sys-elevation-level4);
+        background-color: var(--color-accent-background-hover);
+        box-shadow: var(--shadow-dragged);
+    }
+
+    .fab:active {
+        background-color: var(--color-accent-background-down);
     }
 
     .fab-extended {
@@ -998,10 +1116,10 @@
     }
 
     /* ── Layout panels ───────────────────────────────────────────────────
-       M3 window margins: 16px compact, 24px from the medium breakpoint. */
+       Window margins: 16px compact, 24px from the medium breakpoint. */
     .page-panel {
         @apply bg-transparent p-4 sm:p-6;
-        color: var(--md-sys-color-on-surface);
+        color: var(--color-content-default);
         min-height: calc(100vh - 40px);
     }
 
@@ -1013,36 +1131,38 @@
     }
 
     /* ── Cards ───────────────────────────────────────────────────────────
-       M3 cards: medium (12px) corners, 16px padding. The default follows
-       the data-shadow axis - outlined when flat, elevated when soft or
-       elevated. The three M3 card types are also available explicitly:
-       .card-outlined, .card-elevated, .card-filled. A card that is a link
-       or button (or carries .card-interactive) gets a state layer. */
+       A layer-2 surface with a subtle border, 8px corners and 16px padding.
+       The default follows the data-shadow axis - outlined when flat, raised
+       with a shadow and no border when soft or elevated. The three
+       variants are also available explicitly: .card-outlined (on the page
+       color), .card-elevated, .card-filled (a layer-1 panel). A card that
+       is a link or button (or carries .card-interactive) darkens its
+       border on hover. */
     .card {
         @apply block p-4 no-underline;
         background-color: var(--wise-card-bg);
-        border: 1px solid var(--wise-card-border);
-        color: var(--md-sys-color-on-surface);
-        border-radius: var(--md-sys-shape-corner-medium);
+        border: var(--border-width-100) solid var(--wise-card-border);
+        color: var(--color-content-default);
+        border-radius: var(--corner-radius-500);
         box-shadow: var(--shadow-card);
-        transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
-        background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+        transition: border-color 130ms var(--ease-standard), box-shadow 130ms var(--ease-standard),
+        background-color 130ms var(--ease-standard);
     }
 
     .card-outlined {
-        background-color: var(--md-sys-color-surface);
-        border-color: var(--md-sys-color-outline-variant);
+        background-color: var(--color-background-base);
+        border-color: var(--color-border-subtle);
         box-shadow: none;
     }
 
     .card-elevated {
-        background-color: var(--md-sys-color-surface-container-low);
+        background-color: var(--color-background-layer-2);
         border-color: transparent;
-        box-shadow: var(--md-sys-elevation-level1);
+        box-shadow: var(--shadow-emphasized);
     }
 
     .card-filled {
-        background-color: var(--md-sys-color-surface-container-highest);
+        background-color: var(--color-background-layer-1);
         border-color: transparent;
         box-shadow: none;
     }
@@ -1050,64 +1170,66 @@
     a.card:hover,
     button.card:hover,
     .card-interactive:hover {
-        box-shadow: var(--md-sys-elevation-level1);
+        border-color: var(--color-border-hover);
     }
 
     a.card.card-elevated:hover,
     button.card.card-elevated:hover,
     .card-interactive.card-elevated:hover {
-        box-shadow: var(--md-sys-elevation-level2);
+        border-color: transparent;
+        box-shadow: var(--shadow-elevated);
     }
 
     .card-kicker {
-        @apply text-label-medium;
-        color: var(--md-sys-color-primary);
+        @apply text-detail-s;
+        color: var(--color-accent-content);
     }
 
     .card-title {
-        @apply text-title-medium;
+        @apply text-title-m;
         font-family: var(--font-brand);
+        color: var(--color-content-heading);
     }
 
     .card-content, .card-body {
-        @apply text-body-medium;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply text-body-s;
+        color: var(--color-content-subdued);
     }
 
     .card-meta {
-        @apply flex items-center gap-1.5 text-body-small;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply flex items-center gap-1.5 text-body-xs;
+        color: var(--color-content-subdued);
     }
 
     /* Empty state - what a list renders instead of rows, from
        wise_core/components/_no_data.html. Roomy and centered: an empty list
        is a dead end unless the way out of it (create the first record, drop
-       the filters) is the most visible thing in the frame. A tonal
-       surface-container-low block rather than a card, so it can't be
-       mistaken for a record the visitor could open. */
+       the filters) is the most visible thing in the frame. A layer-1 block
+       rather than a card, so it can't be mistaken for a record the visitor
+       could open. */
     .empty-state {
         @apply flex flex-col items-center gap-2 px-6 py-10 text-center;
-        background-color: var(--md-sys-color-surface-container-low);
-        border-radius: var(--md-sys-shape-corner-large);
+        background-color: var(--color-background-layer-1);
+        border-radius: var(--corner-radius-800);
     }
 
     .empty-state-icon {
         @apply mb-1 flex h-14 w-14 items-center justify-center;
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
-        border-radius: var(--md-sys-shape-corner-large);
+        background-color: var(--color-fill-neutral-hover);
+        color: var(--color-content-heading);
+        border-radius: var(--corner-radius-800);
     }
 
     .empty-state-title {
-        @apply text-title-large;
+        @apply text-heading-xs;
         font-family: var(--font-brand);
-        color: var(--md-sys-color-on-surface);
+        color: var(--color-content-heading);
     }
 
     /* Capped at a readable measure rather than the full table width. */
     .empty-state-text {
-        @apply max-w-[46ch] text-body-medium;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply max-w-[46ch] text-body-s;
+        color: var(--color-content-subdued);
     }
 
     .empty-state-actions {
@@ -1115,117 +1237,163 @@
     }
 
     /* ── Badge ───────────────────────────────────────────────────────────
-       A status label (workflow state, category): a small tonal pill in a
-       container color, label-medium. `.badge-count` is the M3 *badge* - the
-       small error-colored count on an icon or tab. */
+       A status label (workflow state, category): a solid pill with a
+       bold title-xs label. The default is neutral; the colored variants are
+       Lumen's four status families plus the accent, each with its own
+       `on-` text color - always carry a word, never color alone.
+       `.badge-count` is the small count on an icon or tab. */
     .badge {
-        @apply inline-flex items-center gap-1 px-2 text-label-medium;
-        min-height: 1.5rem;
-        background-color: var(--md-sys-color-surface-container-highest);
-        color: var(--md-sys-color-on-surface-variant);
-        border-radius: var(--md-sys-shape-corner-small);
+        @apply inline-flex items-center gap-1 px-2 text-title-xs;
+        min-height: var(--component-height-75);
+        background-color: var(--color-neutral-background);
+        color: var(--color-on-neutral);
+        border-radius: var(--corner-radius-full);
     }
 
     .badge-action,
     .badge-blue {
-        background-color: var(--md-sys-color-primary-container);
-        color: var(--md-sys-color-on-primary-container);
+        background-color: var(--color-informative-background);
+        color: var(--color-on-accent);
     }
 
     .badge-brand {
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
+        background-color: var(--color-accent-background);
+        color: var(--color-on-accent);
     }
 
     .badge-tertiary {
-        background-color: var(--md-sys-color-tertiary-container);
-        color: var(--md-sys-color-on-tertiary-container);
+        background-color: var(--color-tertiary);
+        color: var(--color-on-tertiary);
     }
 
     .badge-grey {
-        background-color: var(--md-sys-color-surface-container-highest);
-        color: var(--md-sys-color-on-surface-variant);
+        background-color: var(--color-neutral-background);
+        color: var(--color-on-neutral);
     }
 
     .badge-orange {
-        background-color: var(--md-sys-color-warning-container);
-        color: var(--md-sys-color-on-warning-container);
+        background-color: var(--color-notice-background);
+        color: var(--color-on-notice);
     }
 
     .badge-green {
-        background-color: var(--md-sys-color-success-container);
-        color: var(--md-sys-color-on-success-container);
+        background-color: var(--color-positive-background);
+        color: var(--color-on-accent);
     }
 
     .badge-red {
-        background-color: var(--md-sys-color-error-container);
-        color: var(--md-sys-color-on-error-container);
+        background-color: var(--color-negative-background);
+        color: var(--color-on-accent);
     }
 
     .badge-count {
-        @apply inline-flex items-center justify-center px-1 text-label-small tabular-nums;
+        @apply inline-flex items-center justify-center px-1 text-detail-xs tabular-nums;
         min-width: 1rem;
         height: 1rem;
-        background-color: var(--md-sys-color-error);
-        color: var(--md-sys-color-on-error);
-        border-radius: var(--md-sys-shape-corner-full);
+        background-color: var(--color-negative-background);
+        color: var(--color-on-accent);
+        border-radius: var(--corner-radius-full);
+    }
+
+    /* ── Status light ────────────────────────────────────────────────────
+       A dot and a label: `<span class="status-light status-light-positive">
+       Approved</span>`. The dot colors are Lumen's status families plus
+       neutral, purple and cyan for categories. */
+    .status-light {
+        @apply inline-flex items-center gap-2 text-body-s;
+        color: var(--color-content-default);
+    }
+
+    .status-light::before {
+        content: '';
+        @apply h-2 w-2 shrink-0;
+        background-color: var(--lumen-gray-600);
+        border-radius: 9999px;
+    }
+
+    .status-light-informative::before {
+        background-color: var(--color-informative-background);
+    }
+
+    .status-light-positive::before {
+        background-color: var(--color-positive-background);
+    }
+
+    .status-light-notice::before {
+        background-color: var(--color-notice-background);
+    }
+
+    .status-light-negative::before {
+        background-color: var(--color-negative-background);
+    }
+
+    .status-light-purple::before {
+        background-color: var(--lumen-purple-900);
+    }
+
+    .status-light-cyan::before {
+        background-color: var(--lumen-cyan-900);
     }
 
     /* ── Filter side-panel form ──────────────────────────────────────────
        Dense by design (many fields in a narrow 400px sheet), so its fields
-       use the small (40px) text-field height. */
+       use the small control height. */
     .filter-container {
         @apply w-full;
     }
 
     .filter-container label {
-        @apply mb-1 block text-body-small;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply mb-1 block text-detail-m;
+        color: var(--color-content-default);
     }
 
     .filter-container input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not(.btn),
     .filter-container select {
-        @apply w-full px-3 text-body-medium;
+        @apply w-full px-3 text-body-s;
         height: var(--control-height-sm);
-        background-color: transparent;
-        color: var(--md-sys-color-on-surface);
-        border: 1px solid var(--md-sys-color-outline);
-        border-radius: var(--md-sys-shape-corner-extra-small);
-        outline: none;
+        background-color: var(--color-background-layer-2);
+        color: var(--color-content-default);
+        border: var(--border-width-100) solid var(--color-border-default);
+        border-radius: var(--corner-radius-500);
     }
 
-    .filter-container input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not(.btn):focus,
-    .filter-container select:focus {
-        border-color: var(--md-sys-color-primary);
-        box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
+    .filter-container input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not(.btn):hover,
+    .filter-container select:hover {
+        border-color: var(--color-border-hover);
     }
 
     .language-switcher select {
-        @apply h-10 w-full cursor-pointer px-3 text-label-large;
-        background-color: transparent;
-        color: var(--md-sys-color-on-surface-variant);
-        border: 1px solid var(--md-sys-color-outline-variant);
-        border-radius: var(--md-sys-shape-corner-full);
-        outline: none;
+        @apply w-full cursor-pointer px-3 text-detail-m;
+        height: var(--control-height-md);
+        background-color: var(--color-background-layer-2);
+        color: var(--color-content-default);
+        border: var(--border-width-100) solid var(--color-border-default);
+        border-radius: var(--corner-radius-500);
+    }
+
+    .language-switcher select:hover {
+        background-color: var(--color-fill-neutral-hover);
     }
 
     .helptext {
-        @apply block text-body-small;
+        @apply block text-body-xs;
         font-family: var(--font-plain);
-        color: var(--md-sys-color-on-surface-variant);
+        color: var(--color-content-subdued);
     }
 
     .errorlist {
-        @apply m-0 list-none p-0 text-body-small;
-        color: var(--md-sys-color-error);
+        @apply m-0 list-none p-0 text-body-xs;
+        color: var(--color-negative-content);
     }
 
     /* ── Text fields ─────────────────────────────────────────────────────
-       M3 *outlined* text field: 56px tall (40px compact), 4px corners, a
-       1px `outline` border that thickens to 2px `primary` on focus (drawn
-       with an inset shadow so nothing shifts), body-large input text.
-       Labels sit above the field (.form-label) rather than floating, which
-       keeps them working with Django's plain server-rendered widgets.
+       A Lumen text field: 32px tall (24px compact, 40px on touch), 8px
+       corners, a 1px `border-default` border on a layer-2 fill, 14px input
+       text. Hover darkens the border; keyboard focus draws the global 2px
+       focus ring; an invalid field thickens its border to 2px in
+       `negative-content`. Labels sit above the field (.form-label) rather
+       than floating, which keeps them working with Django's plain
+       server-rendered widgets.
 
        `.input`/`.select`/`.textarea` are the bare atomic controls; the
        `.form-field` rules below apply the same look to whatever Django
@@ -1234,46 +1402,29 @@
     .select,
     .textarea,
     .form-field :where(input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"], [type="reset"], [type="hidden"], [type="file"], [type="color"], [type="range"], .btn, .switch), select, textarea) {
-        @apply w-full px-4 text-body-large;
+        @apply w-full px-3 text-body-s;
         height: var(--control-height-md);
         padding-block: var(--control-padding-y);
-        background-color: transparent;
-        color: var(--md-sys-color-on-surface);
-        caret-color: var(--md-sys-color-primary);
-        border: 1px solid var(--md-sys-color-outline);
-        border-radius: var(--md-sys-shape-corner-extra-small);
-        outline: none;
-        transition: border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-        box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
-    }
-
-    /* Compact density shrinks the field but not the type: body-large in a
-       40px box leaves no vertical padding, so drop to body-medium there. */
-    :root[data-density="compact"] :is(.input, .select, .textarea, .form-field input:not([type="checkbox"], [type="radio"], [type="file"]), .form-field select, .form-field textarea) {
-        @apply text-body-medium;
-        padding-block: 0.25rem;
+        background-color: var(--color-background-layer-2);
+        color: var(--color-content-default);
+        caret-color: var(--color-accent-content);
+        border: var(--border-width-100) solid var(--color-border-default);
+        border-radius: var(--corner-radius-500);
+        transition: border-color 130ms var(--ease-standard);
     }
 
     .input:hover,
     .select:hover,
     .textarea:hover,
     .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):hover {
-        border-color: var(--md-sys-color-on-surface);
-    }
-
-    .input:focus,
-    .select:focus,
-    .textarea:focus,
-    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):focus {
-        border-color: var(--md-sys-color-primary);
-        box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
+        border-color: var(--color-border-hover);
     }
 
     .input::placeholder,
     .textarea::placeholder,
     .form-field input::placeholder,
     .form-field textarea::placeholder {
-        color: var(--md-sys-color-on-surface-variant);
+        color: var(--color-content-subdued);
         opacity: 1;
     }
 
@@ -1281,22 +1432,23 @@
     .select:disabled,
     .textarea:disabled,
     .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):disabled {
-        border-color: var(--wise-disabled-container);
-        color: var(--wise-disabled-content);
+        background-color: transparent;
+        border-color: var(--color-content-disabled);
+        color: var(--color-content-disabled);
         cursor: not-allowed;
     }
 
-    /* M3 drop-down arrow (arrow_drop_down) drawn from two gradients in
-       currentColor, so it follows the theme with no icon asset. */
+    /* The drop-down arrow is drawn from two gradients in currentColor-ish
+       content-subdued, so it follows the theme with no icon asset. */
     .select:not([multiple]),
     .form-field select:not([multiple]),
     .filter-container select:not([multiple]) {
         appearance: none;
         -webkit-appearance: none;
-        padding-inline-end: 2.5rem;
-        background-image: linear-gradient(45deg, transparent 50%, var(--md-sys-color-on-surface-variant) 50%),
-        linear-gradient(135deg, var(--md-sys-color-on-surface-variant) 50%, transparent 50%);
-        background-position: calc(100% - 1.25rem) 50%, calc(100% - 0.9375rem) 50%;
+        padding-inline-end: 2rem;
+        background-image: linear-gradient(45deg, transparent 50%, var(--color-content-subdued) 50%),
+        linear-gradient(135deg, var(--color-content-subdued) 50%, transparent 50%);
+        background-position: calc(100% - 1rem) 50%, calc(100% - 0.6875rem) 50%;
         background-size: 0.3125rem 0.3125rem, 0.3125rem 0.3125rem;
         background-repeat: no-repeat;
     }
@@ -1312,18 +1464,85 @@
     .textarea,
     .form-field textarea {
         height: auto;
-        min-height: 7rem;
+        min-height: 6rem;
+        padding-block: 0.375rem;
         resize: vertical;
     }
 
+    /* Checkbox and radio: Lumen's own shapes, drawn on a real input so they
+       post, validate and read to assistive tech as usual. A 16px box with a
+       2px `border-default` border and 4px corners, filled with the accent
+       and a white check (or dash, when indeterminate) once selected; a
+       radio is a 16px circle that grows a 5px accent ring. */
     .checkbox,
     .radio,
     .form-checkbox-label input[type="checkbox"]:not(.switch),
+    .form-field input[type="checkbox"]:not(.switch),
     .form-field input[type="radio"] {
-        @apply shrink-0 cursor-pointer;
-        width: 1.125rem;
-        height: 1.125rem;
-        accent-color: var(--md-sys-color-primary);
+        @apply m-0 shrink-0 cursor-pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        width: 1rem;
+        height: 1rem;
+        background-color: var(--color-background-layer-2);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 0.75rem;
+        border: var(--border-width-200) solid var(--color-border-default);
+        border-radius: var(--corner-radius-100);
+        transition: background-color 130ms var(--ease-standard), border-color 130ms var(--ease-standard);
+    }
+
+    .radio,
+    .form-field input[type="radio"] {
+        border-radius: 9999px;
+    }
+
+    .checkbox:hover,
+    .radio:hover,
+    .form-checkbox-label input[type="checkbox"]:not(.switch):hover,
+    .form-field input[type="checkbox"]:not(.switch):hover,
+    .form-field input[type="radio"]:hover {
+        border-color: var(--color-border-hover);
+    }
+
+    .checkbox:checked,
+    .checkbox:indeterminate,
+    .form-checkbox-label input[type="checkbox"]:not(.switch):checked,
+    .form-field input[type="checkbox"]:not(.switch):checked,
+    .form-checkbox-label input[type="checkbox"]:not(.switch):indeterminate,
+    .form-field input[type="checkbox"]:not(.switch):indeterminate {
+        background-color: var(--color-accent-background);
+        border-color: var(--color-accent-background);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+    }
+
+    .checkbox:indeterminate,
+    .form-checkbox-label input[type="checkbox"]:not(.switch):indeterminate,
+    .form-field input[type="checkbox"]:not(.switch):indeterminate {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M4 8h8'/%3E%3C/svg%3E");
+    }
+
+    .radio:checked,
+    .form-field input[type="radio"]:checked {
+        border-width: 5px;
+        border-color: var(--color-accent-background);
+    }
+
+    .checkbox:disabled,
+    .radio:disabled,
+    .form-checkbox-label input[type="checkbox"]:not(.switch):disabled,
+    .form-field input[type="checkbox"]:not(.switch):disabled,
+    .form-field input[type="radio"]:disabled {
+        background-color: transparent;
+        border-color: var(--color-content-disabled);
+        cursor: not-allowed;
+    }
+
+    .checkbox:checked:disabled,
+    .form-checkbox-label input[type="checkbox"]:not(.switch):checked:disabled,
+    .form-field input[type="checkbox"]:not(.switch):checked:disabled {
+        background-color: var(--color-content-disabled);
     }
 
     /* Native <input type="color">. The browser paints the swatch inside its
@@ -1332,23 +1551,23 @@
     .color-input {
         @apply w-14 cursor-pointer p-0;
         height: var(--control-height-md);
-        background-color: transparent;
-        border: 1px solid var(--md-sys-color-outline);
-        border-radius: var(--md-sys-shape-corner-extra-small);
+        background-color: var(--color-background-layer-2);
+        border: var(--border-width-100) solid var(--color-border-default);
+        border-radius: var(--corner-radius-500);
     }
 
     .color-input::-webkit-color-swatch-wrapper {
-        padding: 4px;
+        padding: 3px;
     }
 
     .color-input::-webkit-color-swatch {
         border: none;
-        border-radius: var(--md-sys-shape-corner-extra-small);
+        border-radius: var(--corner-radius-100);
     }
 
     .color-input::-moz-color-swatch {
         border: none;
-        border-radius: var(--md-sys-shape-corner-extra-small);
+        border-radius: var(--corner-radius-100);
     }
 
     /* ── Page forms ──────────────────────────────────────────────────────
@@ -1357,7 +1576,7 @@
        at any viewport. wise_core/components/_form_fields.html is the one
        partial every form template includes to get this markup. */
     .form-stack {
-        @apply flex flex-col gap-6;
+        @apply flex flex-col gap-4;
     }
 
     .form-field {
@@ -1365,46 +1584,46 @@
     }
 
     .form-label {
-        @apply text-body-medium;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply text-detail-m;
+        color: var(--color-content-default);
     }
 
     .form-required {
         @apply ml-0.5;
-        color: var(--md-sys-color-error);
+        color: var(--color-content-default);
     }
 
     .form-field input[type="file"] {
-        @apply block w-full cursor-pointer text-body-medium;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply block w-full cursor-pointer text-body-s;
+        color: var(--color-content-subdued);
     }
 
-    /* The file button is an M3 tonal button. */
+    /* The file button is a neutral-fill button. */
     .form-field input[type="file"]::file-selector-button {
-        @apply mr-4 cursor-pointer px-4 text-label-large;
+        @apply mr-3 cursor-pointer px-4 text-title-s;
         height: var(--control-height-button);
         border: 0;
-        border-radius: var(--md-sys-shape-corner-full);
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
+        border-radius: var(--corner-radius-full);
+        background-color: var(--color-fill-neutral-hover);
+        color: var(--color-content-default);
         font-family: var(--font-plain);
+    }
+
+    .form-field input[type="file"]::file-selector-button:hover {
+        background-color: var(--color-fill-neutral-down);
     }
 
     .form-field-error .form-label,
     .form-field-error .helptext {
-        color: var(--md-sys-color-error);
+        color: var(--color-negative-content);
     }
 
     /* Two classes (.form-field.form-field-error) + :where() keeps the error
        look ahead of the hover rule above without an !important. */
     .form-field.form-field-error :where(input:not([type="checkbox"], [type="radio"], [type="file"]), select, textarea) {
-        border-color: var(--md-sys-color-error);
-        caret-color: var(--md-sys-color-error);
-    }
-
-    .form-field.form-field-error :where(input:not([type="checkbox"], [type="radio"], [type="file"]), select, textarea):focus {
-        border-color: var(--md-sys-color-error);
-        box-shadow: inset 0 0 0 1px var(--md-sys-color-error);
+        border-width: var(--border-width-200);
+        border-color: var(--color-negative-content);
+        caret-color: var(--color-negative-content);
     }
 
     .form-field-checkbox {
@@ -1412,20 +1631,26 @@
     }
 
     .form-checkbox-label {
-        @apply inline-flex cursor-pointer items-center gap-3 text-body-large;
-        color: var(--md-sys-color-on-surface);
+        @apply inline-flex cursor-pointer items-center gap-2 text-body-s;
+        color: var(--color-content-default);
     }
 
+    /* A form-level error: a Lumen inline alert in the negative family. */
     .form-alert {
-        @apply flex items-start gap-3 px-4 py-3 text-body-medium;
-        background-color: var(--md-sys-color-error-container);
-        color: var(--md-sys-color-on-error-container);
-        border-radius: var(--md-sys-shape-corner-medium);
+        @apply flex items-start gap-3 px-4 py-3 text-body-s;
+        background-color: var(--color-background-layer-2);
+        color: var(--color-content-default);
+        border: var(--border-width-200) solid var(--color-negative-content);
+        border-radius: var(--corner-radius-500);
+    }
+
+    .form-alert svg {
+        color: var(--color-negative-content);
     }
 
     .form-actions {
         @apply mt-2 flex flex-wrap items-center justify-end gap-2 pt-6;
-        border-top: 1px solid var(--md-sys-color-outline-variant);
+        border-top: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     /* Dense 2-col variant of .form-stack, for compact modal forms. Fields
@@ -1434,7 +1659,7 @@
        `.form-stack-compact .form-field[data-field="notes"] { @apply col-span-2; }`
        in your own project's CSS if a given form needs it. */
     .form-stack-compact {
-        @apply grid grid-cols-2 gap-x-4 gap-y-4;
+        @apply grid grid-cols-2 gap-x-4 gap-y-3;
     }
 
     .form-stack-compact .form-field {
@@ -1442,14 +1667,13 @@
     }
 
     .form-stack-compact .form-label {
-        @apply text-body-small;
+        @apply text-detail-s;
     }
 
     .form-stack-compact .form-field input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="hidden"]):not([type="file"]):not(.btn),
     .form-stack-compact .form-field select {
-        @apply text-body-medium;
         height: var(--control-height-sm);
-        padding-block: 0.25rem;
+        padding-block: 0;
     }
 
     .form-stack-compact .form-field textarea {
@@ -1464,8 +1688,8 @@
         max-width: 700px;
         font-family: var(--font-plain);
         background-color: var(--wise-card-bg);
-        border: 1px solid var(--wise-card-border);
-        border-radius: var(--md-sys-shape-corner-medium);
+        border: var(--border-width-100) solid var(--wise-card-border);
+        border-radius: var(--corner-radius-500);
         box-shadow: var(--shadow-card);
     }
 
@@ -1489,7 +1713,7 @@
     }
 
     .detail-panel tr {
-        border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .detail-panel tr:last-child {
@@ -1497,23 +1721,23 @@
     }
 
     .detail-panel th {
-        @apply w-40 py-4 pr-4 text-left align-top text-label-large sm:w-52;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply w-40 py-3 pr-4 text-left align-top text-title-s sm:w-52;
+        color: var(--color-content-subdued);
     }
 
     .detail-panel td {
-        @apply px-3 py-4 text-body-large;
-        color: var(--md-sys-color-on-surface);
+        @apply px-3 py-3 text-body-m;
+        color: var(--color-content-default);
     }
 
     /* ── Data table ──────────────────────────────────────────────────────
        List views rendered as a table, normally driven by WiseListView +
-       django-filter; see docs/generic-views-and-mixins.md. M3 styling:
-       title-small headers in on-surface-variant (sentence case, never
-       uppercased), body-medium cells, outline-variant row dividers and an
-       8% on-surface state layer on the hovered row. */
+       django-filter; see docs/generic-views-and-mixins.md. Lumen styling:
+       bold title-s headers (sentence case, never uppercased), body-s cells,
+       subtle row dividers and a `fill-neutral-hover` fill on the hovered
+       row. */
     .data-table {
-        @apply w-full border-collapse text-body-medium;
+        @apply w-full border-collapse text-body-s;
     }
 
     /* Columns fit their content by default. `width: 1%` is the standard
@@ -1537,10 +1761,10 @@
     }
 
     .data-table th {
-        @apply px-4 text-left text-title-small;
+        @apply px-4 text-left text-title-s;
         padding-block: var(--table-header-padding-y);
-        color: var(--md-sys-color-on-surface-variant);
-        border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        color: var(--color-content-heading);
+        border-bottom: var(--border-width-200) solid var(--color-border-subtle);
     }
 
     /* A sortable column header - the whole label + icon is one link, built by
@@ -1549,35 +1773,31 @@
        icon, even unsorted ones, so the capability reads as clickable. */
     .data-table th a {
         @apply flex w-full items-center justify-between gap-2 no-underline;
-        color: var(--md-sys-color-on-surface-variant);
+        color: var(--color-content-heading);
     }
 
     .data-table th a:hover {
-        color: var(--md-sys-color-on-surface);
+        color: var(--color-accent-content);
     }
 
     .data-table th a svg {
-        color: var(--md-sys-color-outline);
-        transition: color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
-    }
-
-    .data-table th a.is-sorted {
-        color: var(--md-sys-color-on-surface);
+        color: var(--color-content-subdued);
+        transition: color 130ms var(--ease-standard);
     }
 
     .data-table th a.is-sorted svg {
-        color: var(--md-sys-color-primary);
+        color: var(--color-accent-content);
     }
 
     .data-table td {
         @apply px-4;
         padding-block: var(--table-padding-y);
-        color: var(--md-sys-color-on-surface);
-        border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        color: var(--color-content-default);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .data-table tr:hover td {
-        background-color: color-mix(in srgb, var(--md-sys-color-on-surface) var(--wise-state-hover), transparent);
+        background-color: var(--color-fill-neutral-hover);
     }
 
     /* ── Calendar ────────────────────────────────────────────────────────
@@ -1589,19 +1809,20 @@
     .calendar {
         @apply overflow-hidden;
         background-color: var(--wise-card-bg);
-        border: 1px solid var(--md-sys-color-outline-variant);
-        border-radius: var(--md-sys-shape-corner-medium);
+        border: var(--border-width-100) solid var(--color-border-subtle);
+        border-radius: var(--corner-radius-500);
     }
 
     .calendar-header {
-        @apply flex items-center justify-between px-4 py-3 text-title-medium;
-        border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        @apply flex items-center justify-between px-4 py-3 text-title-m;
+        color: var(--color-content-heading);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .calendar-weekdays {
-        @apply grid grid-cols-7 text-center text-label-medium;
-        color: var(--md-sys-color-on-surface-variant);
-        border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        @apply grid grid-cols-7 text-center text-detail-s;
+        color: var(--color-content-subdued);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .calendar-weekdays > div {
@@ -1614,9 +1835,9 @@
 
     .calendar-day {
         @apply relative flex h-24 flex-col gap-1 p-1.5;
-        color: var(--md-sys-color-on-surface);
-        border-bottom: 1px solid var(--md-sys-color-outline-variant);
-        border-right: 1px solid var(--md-sys-color-outline-variant);
+        color: var(--color-content-default);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
+        border-right: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .calendar-day:nth-child(7n) {
@@ -1624,37 +1845,64 @@
     }
 
     .calendar-day-number {
-        @apply inline-flex h-6 w-6 items-center justify-center text-label-medium;
+        @apply inline-flex h-6 w-6 items-center justify-center text-detail-s;
         border-radius: 9999px;
     }
 
     .calendar-day.is-outside {
-        color: var(--md-sys-color-outline);
-        background-color: var(--md-sys-color-surface-container-lowest);
+        color: var(--color-content-subdued);
+        background-color: var(--color-background-layer-1);
     }
 
     .calendar-day.is-today .calendar-day-number {
-        background-color: var(--md-sys-color-primary);
-        color: var(--md-sys-color-on-primary);
+        background-color: var(--color-accent-background);
+        color: var(--color-on-accent);
     }
 
     .calendar-event {
-        @apply truncate px-1.5 py-0.5 text-label-small;
-        background-color: var(--md-sys-color-primary-container);
-        color: var(--md-sys-color-on-primary-container);
-        border-radius: var(--md-sys-shape-corner-extra-small);
+        @apply truncate px-1.5 py-0.5 text-detail-xs;
+        background-color: var(--color-accent-subtle);
+        color: var(--color-on-accent-subtle);
+        border-radius: var(--corner-radius-100);
+    }
+
+    /* ── Quiet hover and press ───────────────────────────────────────────
+       Items on a neutral surface (nav, menu rows, pager links, summaries)
+       fill with `fill-neutral-hover` on hover and `fill-neutral-down` on
+       press. `:where()` keeps it at zero specificity so any component can
+       still override its own background - the selected states below do. */
+    :where(.top-nav-item, .menu-link, .dropdown-item, .pagination-link, .tree-item > summary,
+    .tree-item-label, .tree-leaf, .accordion-item > summary):hover {
+        background-color: var(--color-fill-neutral-hover);
+    }
+
+    :where(.top-nav-item, .menu-link, .dropdown-item, .pagination-link, .tree-item > summary,
+    .tree-item-label, .tree-leaf, .accordion-item > summary):active {
+        background-color: var(--color-fill-neutral-down);
+    }
+
+    /* Small round controls that sit on a colored surface (a toast, a tag)
+       veil themselves in their own text color instead, so the hover reads
+       on any fill. */
+    :where(.tag-remove, .toast-close):hover {
+        background-color: color-mix(in srgb, currentColor 16%, transparent);
+    }
+
+    :where(.tag-remove, .toast-close):active {
+        background-color: color-mix(in srgb, currentColor 24%, transparent);
     }
 
     /* ── Top app bar ─────────────────────────────────────────────────────
        The mobile-only strip; desktop chrome lives entirely in the sidebar.
-       M3 small top app bar: surface, title-large. */
+       A layer-1 bar with a subtle bottom edge and a title-l title. */
     .top-bar {
         @apply relative z-[99];
-        min-height: 4rem;
+        min-height: var(--component-height-300);
         display: flex;
         align-items: center;
-        background-color: var(--md-sys-color-surface-container);
-        color: var(--md-sys-color-on-surface);
+        background-color: var(--color-background-layer-1);
+        color: var(--color-content-default);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .top-bar > * {
@@ -1662,105 +1910,114 @@
     }
 
     .top-bar-logo {
-        @apply p-2 text-title-large;
+        @apply p-2 text-title-l;
         font-family: var(--font-brand);
+        color: var(--color-content-heading);
     }
 
     /* Reused both for the sidebar's own quick-nav row and for every CRUD
-       page's back/edit/delete action bar. */
+       page's back/edit/delete action bar. A quiet action button: 8px
+       corners, title-s label. */
     .top-nav-item {
-        @apply flex items-center gap-2 px-4 no-underline text-label-large;
+        @apply flex items-center gap-2 px-3 no-underline text-title-s;
         min-height: var(--control-height-button);
-        color: var(--md-sys-color-on-surface-variant);
-        border-radius: var(--md-sys-shape-corner-full);
+        color: var(--color-content-default);
+        border-radius: var(--corner-radius-500);
     }
 
-    /* The action bar above a record: an M3 docked toolbar - one
-       surface-container strip of text/icon actions. */
+    /* The action bar above a record: one layer-1 strip of text/icon
+       actions with a subtle edge. */
     .top-actions-header {
-        @apply mb-6 flex flex-wrap items-center justify-between gap-2 p-2;
-        background-color: var(--md-sys-color-surface-container);
-        color: var(--md-sys-color-on-surface);
-        border-radius: var(--md-sys-shape-corner-large);
-    }
-
-    .top-actions-header .top-nav-item {
-        @apply px-4;
-        color: var(--md-sys-color-on-surface);
+        @apply mb-6 flex flex-wrap items-center justify-between gap-2 p-1.5;
+        background-color: var(--color-background-layer-1);
+        color: var(--color-content-default);
+        border: var(--border-width-100) solid var(--color-border-subtle);
+        border-radius: var(--corner-radius-500);
     }
 
     .top-actions-header .top-nav-item .lucide,
     .top-actions-header .top-nav-item i {
-        color: var(--md-sys-color-on-surface-variant);
+        color: var(--color-content-subdued);
     }
 
     .top-nav-item.selected {
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
+        background-color: var(--color-fill-neutral-hover);
+        color: var(--color-content-heading);
+    }
+
+    .top-nav-item.selected:hover {
+        background-color: var(--color-fill-neutral-down);
     }
 
     /* A subordinate "back" link, for a page that already carries a
        .top-actions-header above it. */
     .back-link {
-        @apply mb-3 inline-flex items-center gap-1.5 no-underline text-label-large;
-        color: var(--md-sys-color-on-surface-variant);
-        transition: color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+        @apply mb-3 inline-flex items-center gap-1.5 no-underline text-title-s;
+        color: var(--color-content-subdued);
+        transition: color 130ms var(--ease-standard);
     }
 
     .back-link:hover {
-        color: var(--md-sys-color-primary);
+        color: var(--color-accent-content);
     }
 
     /* ── Tabs ────────────────────────────────────────────────────────────
-       M3 primary tabs: 48px, title-small, on-surface-variant; the selected
-       tab turns primary and carries a 3px indicator with rounded top
-       corners, as wide as its content. */
+       Lumen tabs: bold title-s labels in `content-subdued`, a 2px subtle
+       rule under the whole row, and the selected tab turns `content-heading`
+       with a 2px heading-colored indicator over the rule. The rule is an
+       inset shadow on the row (not a border) so the row can scroll
+       sideways without clipping the indicator. */
     .tab-bar {
-        @apply flex items-center gap-0 overflow-x-auto whitespace-nowrap;
-        border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        @apply flex items-center gap-6 overflow-x-auto whitespace-nowrap;
+        box-shadow: inset 0 calc(var(--border-width-200) * -1) 0 var(--color-border-subtle);
     }
 
     .tab-bar .bar-item {
-        @apply relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 px-4
-        text-center no-underline text-title-small;
-        min-height: 3rem;
+        @apply relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 px-0 py-2.5
+        text-center no-underline text-title-s;
+        min-height: var(--component-height-200);
         border: 0;
         background-color: transparent;
-        color: var(--md-sys-color-on-surface-variant);
-        transition: color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+        color: var(--color-content-subdued);
+        transition: color 130ms var(--ease-standard);
     }
 
     .tab-bar .bar-item:hover {
-        color: var(--md-sys-color-on-surface);
+        color: var(--color-content-heading);
     }
 
     .tab-bar .bar-item.selected {
-        color: var(--md-sys-color-primary);
+        color: var(--color-content-heading);
     }
 
     .tab-bar .bar-item.selected::after {
         content: '';
         position: absolute;
-        inset-inline: 1rem;
+        inset-inline: 0;
         bottom: 0;
-        height: 3px;
-        background-color: var(--md-sys-color-primary);
-        border-radius: 3px 3px 0 0;
+        height: var(--border-width-200);
+        background-color: var(--color-content-heading);
+    }
+
+    .tab-bar .bar-item:disabled,
+    .tab-bar .bar-item.disabled {
+        color: var(--wise-disabled-content);
+        cursor: not-allowed;
     }
 
     /* How many children are behind a tab - "Variants 4". Neutral until its
        tab is the selected one. */
     .tab-bar .bar-item .tab-count {
-        @apply inline-flex min-w-5 items-center justify-center px-1.5 text-label-small tabular-nums;
+        @apply inline-flex min-w-5 items-center justify-center px-1.5 text-detail-xs tabular-nums;
         height: 1.125rem;
-        background-color: var(--md-sys-color-surface-container-highest);
-        color: var(--md-sys-color-on-surface-variant);
-        border-radius: var(--md-sys-shape-corner-full);
+        background-color: var(--color-fill-neutral-hover);
+        color: var(--color-content-default);
+        border-radius: var(--corner-radius-full);
     }
 
     .tab-bar .bar-item.selected .tab-count {
-        background-color: var(--md-sys-color-primary);
-        color: var(--md-sys-color-on-primary);
+        background-color: var(--color-neutral-background);
+        color: var(--color-on-neutral);
     }
 
     /* The record a parent/child page is working inside: its name (and any
@@ -1774,93 +2031,101 @@
     }
 
     .record-meta {
-        @apply mt-1 flex flex-wrap items-center gap-2 text-body-medium;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply mt-1 flex flex-wrap items-center gap-2 text-body-s;
+        color: var(--color-content-subdued);
     }
 
-    /* ── Navigation drawer ───────────────────────────────────────────────
-       Section headings are title-small in on-surface-variant; items are
-       56px (40px compact) pills in label-large, the selected one filled
-       with secondary-container - the M3 active indicator. */
+    /* ── Navigation (side nav) ───────────────────────────────────────────
+       Section headings are bold title-xs in `content-subdued`; items are
+       32px (40px on touch, 28px compact) rows with 8px corners and a
+       detail-m label, the selected one filled with `fill-neutral-hover` and
+       set in `content-heading`. */
     .menu-node h3 {
-        @apply mt-4 px-4 pb-2 pt-3 text-title-small;
-        color: var(--md-sys-color-on-surface-variant);
-        border-top: 1px solid var(--md-sys-color-outline-variant);
+        @apply mt-4 px-3 pb-2 pt-3 text-title-xs;
+        color: var(--color-content-subdued);
+        border-top: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .menu-link {
-        @apply flex items-center gap-3 pl-4 pr-6 no-underline text-label-large;
+        @apply flex items-center gap-3 px-3 no-underline text-detail-m;
         min-height: var(--list-item-height);
-        color: var(--md-sys-color-on-surface-variant);
-        border-radius: var(--md-sys-shape-corner-full);
+        color: var(--color-content-default);
+        border-radius: var(--corner-radius-500);
     }
 
     .menu-link.selected {
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
-        font-weight: 600;
+        background-color: var(--color-fill-neutral-hover);
+        color: var(--color-content-heading);
+        font-weight: 700;
     }
 
-    /* ── Flash messages → M3 snackbar ────────────────────────────────────
-       Django's messages framework, rendered as snackbars: inverse-surface,
-       4px corners, elevation 3. The message level shows as a leading
-       accent in the matching inverse status color. */
+    .menu-link.selected:hover {
+        background-color: var(--color-fill-neutral-down);
+    }
+
+    /* ── Flash messages → toasts ─────────────────────────────────────────
+       Django's messages framework, rendered as toasts: a neutral fill by
+       default, a solid status fill for success / error / warning / info -
+       the same four families as the badge. */
     .flash-messages {
         @apply fixed bottom-4 right-4 m-0 w-80 max-w-[calc(100vw-2rem)] list-none space-y-2 p-0 sm:right-6;
         z-index: var(--z-toast);
     }
 
     .flash-messages li {
-        @apply w-full px-4 py-3.5 text-body-medium;
-        background-color: var(--md-sys-color-inverse-surface);
-        color: var(--md-sys-color-inverse-on-surface);
-        border-radius: var(--md-sys-shape-corner-extra-small);
-        box-shadow: var(--md-sys-elevation-level3);
-        border-inline-start: 4px solid transparent;
+        @apply w-full px-4 py-3 text-body-s;
+        background-color: var(--color-neutral-background);
+        color: var(--color-on-neutral);
+        border-radius: var(--corner-radius-500);
+        box-shadow: var(--shadow-elevated);
     }
 
     .flash-messages li.success {
-        border-inline-start-color: var(--md-sys-color-inverse-success);
+        background-color: var(--color-positive-background);
+        color: var(--color-on-accent);
     }
 
     .flash-messages li.error {
-        border-inline-start-color: var(--md-sys-color-inverse-error);
+        background-color: var(--color-negative-background);
+        color: var(--color-on-accent);
     }
 
     .flash-messages li.warning {
-        border-inline-start-color: var(--md-sys-color-inverse-warning);
+        background-color: var(--color-notice-background);
+        color: var(--color-on-notice);
     }
 
     .flash-messages li.info {
-        border-inline-start-color: var(--md-sys-color-inverse-primary);
+        background-color: var(--color-informative-background);
+        color: var(--color-on-accent);
     }
 
-    /* Filter side panel → M3 modal side sheet. Starts hidden via a literal
+    /* Filter side panel → a side sheet. Starts hidden via a literal
        `hidden` class on the element (toggled by JS). */
     .filter-panel {
         @apply fixed inset-y-0 right-0 z-20 w-full max-w-[400px] overflow-y-auto;
-        background-color: var(--md-sys-color-surface-container-low);
-        color: var(--md-sys-color-on-surface);
-        border-start-start-radius: var(--md-sys-shape-corner-large);
-        border-end-start-radius: var(--md-sys-shape-corner-large);
-        box-shadow: var(--md-sys-elevation-level1);
+        background-color: var(--color-background-elevated);
+        color: var(--color-content-default);
+        border-left: var(--border-width-100) solid var(--color-border-subtle);
+        box-shadow: var(--shadow-elevated);
     }
 
-    /* Autocomplete / autosuggest results → an M3 menu surface. */
+    /* Autocomplete / autosuggest results → a popover surface. */
     .autocomplete-panel {
         @apply absolute z-10 w-full min-w-max overflow-hidden p-0;
-        background-color: var(--md-sys-color-surface-container);
-        border-radius: var(--md-sys-shape-corner-extra-small);
-        box-shadow: var(--md-sys-elevation-level2);
+        background-color: var(--color-background-elevated);
+        border: var(--border-width-100) solid var(--color-border-subtle);
+        border-radius: var(--corner-radius-700);
+        box-shadow: var(--shadow-elevated);
     }
 
     /* The *indeterminate* linear progress the autocomplete widgets show
        while a request is in flight. */
     .progress-bar {
         width: 10%;
-        background-color: var(--md-sys-color-primary);
-        border-radius: var(--md-sys-shape-corner-full);
-        animation: progress-bar-loading 1s var(--md-sys-motion-easing-standard) infinite;
+        background-color: var(--color-accent-background);
+        border-radius: var(--corner-radius-full);
+        animation: progress-bar-loading 1s var(--ease-standard) infinite;
     }
 
     @keyframes progress-bar-loading {
@@ -1876,13 +2141,13 @@
     }
 
     .autocomplete-table {
-        @apply w-full table-auto border-collapse text-body-medium;
-        background-color: var(--md-sys-color-surface-container);
+        @apply w-full table-auto border-collapse text-body-s;
+        background-color: var(--color-background-elevated);
     }
 
     .autocomplete-table th, .autocomplete-table td {
         @apply whitespace-nowrap px-3 py-2;
-        border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .autocomplete-table tr:last-child td {
@@ -1890,14 +2155,14 @@
     }
 
     .autocomplete-table th {
-        @apply text-left text-title-small;
-        background-color: var(--md-sys-color-surface-container-high);
-        color: var(--md-sys-color-on-surface-variant);
+        @apply text-left text-title-xs;
+        background-color: var(--color-background-layer-1);
+        color: var(--color-content-default);
     }
 
     .autocomplete-table tr:hover td {
         cursor: pointer;
-        background-color: color-mix(in srgb, var(--md-sys-color-on-surface) var(--wise-state-hover), transparent);
+        background-color: var(--color-fill-neutral-hover);
     }
 
     /* The `td` selector isn't redundant with `tr.selected`: Preflight sets
@@ -1906,25 +2171,26 @@
        against `td` gives it its own declaration to win with. */
     .autocomplete-table tr.selected,
     .autocomplete-table tr.selected td {
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
+        background-color: var(--color-accent-subtle);
+        color: var(--color-on-accent-subtle);
     }
 
     /* ── Pagination ──────────────────────────────────────────────────────
-       Pager links are M3 text buttons in on-surface-variant. */
+       Pager links are quiet action buttons; the current page is filled
+       with neutral-background, the way a pressed action button is. */
     .pagination-link {
-        @apply inline-flex items-center gap-1 px-3 no-underline text-label-large;
+        @apply inline-flex items-center gap-1 px-3 no-underline text-title-s;
         min-height: var(--control-height-button);
         min-width: var(--control-height-button);
         justify-content: center;
-        color: var(--md-sys-color-on-surface-variant);
-        border-radius: var(--md-sys-shape-corner-full);
+        color: var(--color-content-default);
+        border-radius: var(--corner-radius-500);
     }
 
     .pagination-link.selected,
     .pagination-link[aria-current="page"] {
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
+        background-color: var(--color-neutral-background);
+        color: var(--color-on-neutral);
     }
 
     .pagination-link.disabled {
@@ -1939,13 +2205,13 @@
 
     .section-title {
         @apply text-center;
-        color: var(--md-sys-color-on-surface);
+        color: var(--color-content-heading);
     }
 
     .section-title-border {
         @apply mx-auto h-1 w-20;
-        background-color: var(--md-sys-color-primary);
-        border-radius: var(--md-sys-shape-corner-full);
+        background-color: var(--color-accent-background);
+        border-radius: var(--corner-radius-full);
     }
 
     /* ── Charts ──────────────────────────────────────────────────────────
@@ -1973,7 +2239,7 @@
     .donut-chart {
         @apply relative inline-flex h-32 w-32 shrink-0 items-center justify-center;
         border-radius: 9999px;
-        background: conic-gradient(var(--md-sys-color-primary) calc(var(--value, 0) * 1%), var(--md-sys-color-secondary-container) 0);
+        background: conic-gradient(var(--color-accent-background) calc(var(--value, 0) * 1%), var(--color-border-subtle) 0);
     }
 
     .donut-chart::before {
@@ -1984,8 +2250,8 @@
     }
 
     .donut-chart-label {
-        @apply relative text-title-medium;
-        color: var(--md-sys-color-on-surface);
+        @apply relative text-title-m;
+        color: var(--color-content-heading);
     }
 
     /* ── Theme toggle ────────────────────────────────────────────────────
@@ -2025,59 +2291,65 @@
     }
 
     .copy-button.is-copied {
-        border-color: var(--md-sys-color-primary);
-        color: var(--md-sys-color-primary);
+        border-color: var(--color-accent-content);
+        color: var(--color-accent-content);
     }
 
     /* ── Token export panel ──────────────────────────────────────────────
        The "Copy tokens" settings tab's read-only <pre> and its copy button.
-       Fixed colors (the M3 baseline neutral10/neutral90), not theme roles:
-       a code panel that flipped to near-white under dark mode would read as
-       broken, and the button must never match its own background. */
+       Fixed colors (Lumen's light gray-900 / dark gray-100 steps), not theme
+       roles: a code panel that flipped to near-white under dark mode would
+       read as broken, and the button must never match its own background. */
     .token-export {
         @apply max-h-80 overflow-auto whitespace-pre-wrap break-all p-4 pr-24 font-mono text-[11px] leading-relaxed;
-        background: #1d1b20;
-        color: #e6e0e9;
-        border-radius: var(--md-sys-shape-corner-medium);
+        background: #131313;
+        color: #e9e9e9;
+        border-radius: var(--corner-radius-500);
     }
 
     /* min-w-16 reserves "Copied" (the wider of the two labels) up front so
        the button doesn't reflow when the state switches. */
     .token-export-copy {
-        @apply absolute right-2 top-2 inline-flex h-8 min-w-16 cursor-pointer items-center justify-center px-3 text-label-medium;
-        background-color: #322f35;
+        @apply absolute right-2 top-2 inline-flex h-8 min-w-16 cursor-pointer items-center justify-center px-3 text-title-xs;
+        background-color: #2c2c2c;
         border: 0;
-        color: #e6e0e9;
-        border-radius: var(--md-sys-shape-corner-full);
+        color: #e9e9e9;
+        border-radius: var(--corner-radius-full);
+        transition: background-color 130ms var(--ease-standard);
     }
 
-    .token-export-copy:focus-visible {
-        outline: var(--focus-ring-width) solid var(--focus-ring-color);
-        outline-offset: var(--focus-ring-offset);
+    .token-export-copy:hover {
+        background-color: #393939;
+    }
+
+    .token-export-copy:active {
+        background-color: #444444;
     }
 
     .token-export-copy.is-copied {
-        color: #d0bcff;
+        color: #accffd;
     }
 
-    /* ── Dropdown → M3 menu ──────────────────────────────────────────────
+    /* ── Dropdown → menu ─────────────────────────────────────────────────
        Built on a <details> wrapper, so opening/closing needs no JS of its
        own; common.js only adds click-away/Escape handling and - because
        .dropdown-panel is `position: absolute` against .dropdown, which a
        scrollable ancestor would otherwise clip - repositions the open panel
        to `position: fixed` so it always escapes ancestor overflow.
-       M3 menu: surface-container, 4px corners, elevation 2, 48px items. */
+       A popover: background-elevated with a subtle edge, 10px corners, the
+       `elevated` shadow and 32px (40px on touch) items. */
     .dropdown {
         @apply relative inline-block;
     }
 
     .dropdown-panel {
-        @apply absolute right-0 top-full mt-1 min-w-[7rem] max-w-[280px] py-2;
+        @apply absolute right-0 top-full mt-1 min-w-[7rem] max-w-[280px] p-1;
         z-index: var(--z-dropdown);
-        background-color: var(--md-sys-color-surface-container);
-        color: var(--md-sys-color-on-surface);
-        border-radius: var(--md-sys-shape-corner-extra-small);
-        box-shadow: var(--md-sys-elevation-level2);
+        background-color: var(--color-background-elevated);
+        color: var(--color-content-default);
+        border: var(--border-width-100) solid var(--color-border-subtle);
+        border-radius: var(--corner-radius-700);
+        box-shadow: var(--shadow-elevated);
     }
 
     /* Suppress the native <details> disclosure marker - the trigger (.btn /
@@ -2092,20 +2364,22 @@
     }
 
     .dropdown-item {
-        @apply flex w-full cursor-pointer items-center gap-3 px-3 text-left no-underline text-label-large;
+        @apply flex w-full cursor-pointer items-center gap-2 px-3 text-left no-underline text-body-s;
         min-height: var(--menu-item-height);
         border: none;
+        border-radius: var(--corner-radius-400);
         background-color: transparent;
-        color: var(--md-sys-color-on-surface);
+        color: var(--color-content-default);
     }
 
     .dropdown-item svg {
-        color: var(--md-sys-color-on-surface-variant);
+        color: var(--color-content-subdued);
     }
 
     .dropdown-item.selected {
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
+        background-color: var(--color-fill-neutral-hover);
+        color: var(--color-content-heading);
+        font-weight: 700;
     }
 
     .dropdown-item[disabled],
@@ -2117,77 +2391,79 @@
 
     .dropdown-item-danger,
     .dropdown-item-danger svg {
-        color: var(--md-sys-color-error);
+        color: var(--color-negative-content);
     }
 
     .dropdown-divider {
-        @apply my-2 h-px border-0;
-        background-color: var(--md-sys-color-outline-variant);
+        @apply my-1 h-px border-0;
+        background-color: var(--color-border-subtle);
     }
 
     .dropdown-header {
-        @apply px-3 py-2 text-title-small;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply px-3 py-1.5 text-title-xs;
+        color: var(--color-content-subdued);
     }
 
     /* ── Switch ──────────────────────────────────────────────────────────
        A real <input type="checkbox">, restyled - so it posts, validates and
-       reads to assistive tech exactly like a checkbox. M3 switch: 52x32
-       track; unselected = surface-container-highest with a 2px outline and
-       a 16px outline-colored handle, selected = primary track with a 24px
-       on-primary handle. */
+       reads to assistive tech exactly like a checkbox. Lumen's switch is a
+       28x16 pill: unselected = a 2px `border-default` outline around an 8px
+       `content-default` handle, selected = an accent track with an 8px
+       `on-accent` handle. */
     .switch {
         @apply relative inline-block shrink-0 cursor-pointer align-middle;
-        width: 3.25rem;
-        height: 2rem;
+        width: 1.75rem;
+        height: 1rem;
         appearance: none;
         -webkit-appearance: none;
-        background-color: var(--md-sys-color-surface-container-highest);
-        border: 2px solid var(--md-sys-color-outline);
-        border-radius: var(--md-sys-shape-corner-full);
-        transition: background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
-        border-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+        background-color: transparent;
+        border: var(--border-width-200) solid var(--color-border-default);
+        border-radius: var(--corner-radius-full);
+        transition: background-color 130ms var(--ease-standard), border-color 130ms var(--ease-standard);
     }
 
     .switch::after {
         content: '';
         position: absolute;
         top: 50%;
-        left: 0.375rem;
-        width: 1rem;
-        height: 1rem;
-        background-color: var(--md-sys-color-outline);
-        border-radius: var(--md-sys-shape-corner-full);
+        left: 0.125rem;
+        width: 0.5rem;
+        height: 0.5rem;
+        background-color: var(--color-content-default);
+        border-radius: var(--corner-radius-full);
         transform: translateY(-50%);
-        transition: left var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized),
-        width var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized),
-        height var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized),
-        background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+        transition: transform 130ms var(--ease-standard), background-color 130ms var(--ease-standard);
     }
 
-    .switch:hover::after {
-        background-color: var(--md-sys-color-on-surface-variant);
+    .switch:hover {
+        border-color: var(--color-border-hover);
     }
 
     .switch:checked {
-        background-color: var(--md-sys-color-primary);
-        border-color: var(--md-sys-color-primary);
+        background-color: var(--color-accent-background);
+        border-color: var(--color-accent-background);
     }
 
     .switch:checked::after {
-        left: 1.375rem;
-        width: 1.5rem;
-        height: 1.5rem;
-        background-color: var(--md-sys-color-on-primary);
-    }
-
-    .switch:checked:hover::after {
-        background-color: var(--md-sys-color-primary-container);
+        transform: translate(0.75rem, -50%);
+        background-color: var(--color-on-accent);
     }
 
     .switch:disabled {
         @apply cursor-not-allowed;
-        opacity: 0.38;
+        border-color: var(--color-content-disabled);
+    }
+
+    .switch:disabled::after {
+        background-color: var(--color-content-disabled);
+    }
+
+    .switch:checked:disabled {
+        background-color: var(--color-content-disabled);
+    }
+
+    .switch:checked:disabled::after {
+        background-color: var(--color-background-base);
     }
 
     /* ── Rating ──────────────────────────────────────────────────────────
@@ -2198,11 +2474,11 @@
        with no JS. */
     .rating {
         @apply inline-flex items-center gap-0.5;
-        color: var(--md-sys-color-outline-variant);
+        color: var(--color-border-default);
     }
 
     .rating-star.is-on {
-        color: var(--md-sys-color-primary);
+        color: var(--color-accent-content);
     }
 
     .rating-input {
@@ -2215,50 +2491,47 @@
 
     .rating-input label {
         @apply cursor-pointer;
-        color: var(--md-sys-color-outline-variant);
-        transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+        color: var(--color-border-default);
+        transition: color 100ms var(--ease-standard);
     }
 
     .rating-input input:checked ~ label,
     .rating-input label:hover,
     .rating-input label:hover ~ label {
-        color: var(--md-sys-color-primary);
+        color: var(--color-accent-content);
     }
 
     .rating-input input:focus-visible + label {
         outline: var(--focus-ring-width) solid var(--focus-ring-color);
         outline-offset: var(--focus-ring-offset);
-        border-radius: var(--md-sys-shape-corner-extra-small);
+        border-radius: var(--corner-radius-100);
     }
 
     /* ── OTP input ───────────────────────────────────────────────────────
-       One outlined field per digit; the view reassembles them into a single
-       code. See the OTP Input page for the Django form that does the
-       joining. */
+       One field per digit; the view reassembles them into a single code.
+       See the OTP Input page for the Django form that does the joining. */
     .otp-group {
         @apply inline-flex items-center gap-2;
     }
 
     .otp-input {
-        @apply w-12 text-center text-title-large;
-        height: var(--control-height-md);
-        background-color: transparent;
-        color: var(--md-sys-color-on-surface);
-        caret-color: var(--md-sys-color-primary);
-        border: 1px solid var(--md-sys-color-outline);
-        border-radius: var(--md-sys-shape-corner-small);
-        outline: none;
+        @apply w-10 text-center text-title-l;
+        height: var(--control-height-lg);
+        background-color: var(--color-background-layer-2);
+        color: var(--color-content-heading);
+        caret-color: var(--color-accent-content);
+        border: var(--border-width-100) solid var(--color-border-default);
+        border-radius: var(--corner-radius-500);
     }
 
-    .otp-input:focus {
-        border-color: var(--md-sys-color-primary);
-        box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
+    .otp-input:hover {
+        border-color: var(--color-border-hover);
     }
 
     /* ── Input group ─────────────────────────────────────────────────────
-       An outlined field with an attached prefix/suffix (currency, unit,
-       search icon, an inline button). Inner corners are squared so the
-       group reads as one field. */
+       A field with an attached prefix/suffix (currency, unit, search icon,
+       an inline button). Inner corners are squared so the group reads as
+       one field. */
     .input-group {
         @apply flex w-full items-stretch;
     }
@@ -2292,31 +2565,31 @@
     }
 
     .input-group-addon {
-        @apply inline-flex shrink-0 items-center px-4 text-body-large;
-        background-color: var(--md-sys-color-surface-container-highest);
-        color: var(--md-sys-color-on-surface-variant);
-        border: 1px solid var(--md-sys-color-outline);
-        border-radius: var(--md-sys-shape-corner-extra-small);
+        @apply inline-flex shrink-0 items-center px-3 text-body-s;
+        background-color: var(--color-fill-neutral-hover);
+        color: var(--color-content-subdued);
+        border: var(--border-width-100) solid var(--color-border-default);
+        border-radius: var(--corner-radius-500);
     }
 
     /* ── Accordion ───────────────────────────────────────────────────────
-       <details>/<summary>, so open/close needs no JavaScript at all. Styled
-       as an M3 list inside an outlined card. */
+       <details>/<summary>, so open/close needs no JavaScript at all. Rows
+       separated by subtle rules inside an outlined layer-2 container. */
     .accordion {
         @apply overflow-hidden;
         background-color: var(--wise-card-bg);
-        border: 1px solid var(--md-sys-color-outline-variant);
-        border-radius: var(--md-sys-shape-corner-medium);
+        border: var(--border-width-100) solid var(--color-border-subtle);
+        border-radius: var(--corner-radius-500);
     }
 
     .accordion-item + .accordion-item {
-        border-top: 1px solid var(--md-sys-color-outline-variant);
+        border-top: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .accordion-item > summary {
-        @apply flex cursor-pointer list-none items-center gap-3 px-4 text-title-medium;
-        min-height: var(--list-item-height);
-        color: var(--md-sys-color-on-surface);
+        @apply flex cursor-pointer list-none items-center gap-3 px-4 text-title-m;
+        min-height: calc(var(--list-item-height) + 0.5rem);
+        color: var(--color-content-heading);
     }
 
     .accordion-item > summary::-webkit-details-marker {
@@ -2325,8 +2598,8 @@
 
     .accordion-chevron {
         @apply shrink-0;
-        color: var(--md-sys-color-on-surface-variant);
-        transition: transform var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized);
+        color: var(--color-content-subdued);
+        transition: transform 200ms var(--ease-standard);
     }
 
     .accordion-item[open] > summary .accordion-chevron {
@@ -2334,34 +2607,41 @@
     }
 
     .accordion-content {
-        @apply px-4 pb-4 pt-1 text-body-medium;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply px-4 pb-4 pt-1 text-body-s;
+        color: var(--color-content-subdued);
     }
 
     /* ── Dialog ──────────────────────────────────────────────────────────
        The native <dialog> element: focus trapping, Esc-to-close and the
        top-layer stacking come from the browser, so the only JS involved is
-       the one call that opens it (wiseOpenDialog). M3 basic dialog:
-       surface-container-high, 28px corners, 24px padding, headline-small
-       title, actions right-aligned - no dividers. */
+       the one call that opens it (wiseOpenDialog). A Lumen dialog:
+       background-elevated, 16px corners, the `dragged` shadow, 24px
+       padding, heading-xs title, actions right-aligned - no dividers. */
     .dialog {
         @apply w-full max-w-[560px] p-0;
+        margin: auto; /* Preflight zeroes every margin, which would pin a modal to the top-left */
         min-width: min(280px, 100%);
-        background-color: var(--md-sys-color-surface-container-high);
-        color: var(--md-sys-color-on-surface);
+        background-color: var(--color-background-elevated);
+        color: var(--color-content-default);
         border: 0;
-        border-radius: var(--md-sys-shape-corner-extra-large);
-        box-shadow: var(--md-sys-elevation-level3);
+        border-radius: var(--corner-radius-800);
+        box-shadow: var(--shadow-dragged);
     }
 
     .dialog[open] {
-        animation: wise-dialog-in var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized-decelerate);
+        animation: wise-dialog-in 200ms var(--ease-enter);
     }
 
     @keyframes wise-dialog-in {
         from {
             opacity: 0;
-            transform: translateY(-1rem) scale(0.98);
+            transform: translateY(-0.5rem) scale(0.98);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .dialog[open] {
+            animation: none;
         }
     }
 
@@ -2370,60 +2650,60 @@
     }
 
     .dialog-header {
-        @apply flex items-center justify-between gap-3 px-6 pb-4 pt-6;
+        @apply flex items-center justify-between gap-3 px-6 pb-3 pt-6;
     }
 
     .dialog-title {
-        @apply m-0 text-headline-small;
+        @apply m-0 text-heading-xs;
         font-family: var(--font-brand);
-        color: var(--md-sys-color-on-surface);
+        color: var(--color-content-heading);
     }
 
     .dialog-body {
-        @apply px-6 pb-6 text-body-medium;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply px-6 pb-6 text-body-s;
+        color: var(--color-content-default);
     }
 
     .dialog-footer {
         @apply flex flex-wrap items-center justify-end gap-2 px-6 pb-6;
     }
 
-    /* ── Drawer → M3 modal side sheet ────────────────────────────────────
+    /* ── Drawer → side sheet ─────────────────────────────────────────────
        Edge-anchored panel. Same mechanic as .filter-panel (which is a
        right-hand side sheet with a fixed job) - this is the general form.
-       surface-container-low, large corners on the inner edge, elevation 1
-       over a scrim. */
+       background-elevated with a subtle inner edge and the `elevated`
+       shadow, over a scrim. */
     .drawer {
         @apply fixed inset-y-0 right-0 flex w-full max-w-[400px] flex-col overflow-y-auto;
         z-index: var(--z-drawer);
-        background-color: var(--md-sys-color-surface-container-low);
-        color: var(--md-sys-color-on-surface);
-        border-start-start-radius: var(--md-sys-shape-corner-large);
-        border-end-start-radius: var(--md-sys-shape-corner-large);
-        box-shadow: var(--md-sys-elevation-level1);
+        background-color: var(--color-background-elevated);
+        color: var(--color-content-default);
+        border-left: var(--border-width-100) solid var(--color-border-subtle);
+        box-shadow: var(--shadow-elevated);
     }
 
     .drawer-left {
         @apply inset-y-0 left-0 right-auto;
-        border-radius: 0 var(--md-sys-shape-corner-large) var(--md-sys-shape-corner-large) 0;
+        border-left: 0;
+        border-right: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .drawer-header {
-        @apply flex items-center justify-between gap-3 py-4 pl-6 pr-3;
-        min-height: 4.5rem;
+        @apply flex items-center justify-between gap-3 py-3 pl-6 pr-3;
+        min-height: var(--component-height-400);
     }
 
     .drawer-header :is(h1, h2, h3, h4, .dialog-title) {
-        @apply text-title-large;
+        @apply text-title-l;
     }
 
     .drawer-body {
-        @apply flex-1 px-6 py-4 text-body-medium;
+        @apply flex-1 px-6 py-4 text-body-s;
     }
 
     .drawer-footer {
         @apply flex flex-wrap items-center justify-end gap-2 px-6 py-4;
-        border-top: 1px solid var(--md-sys-color-outline-variant);
+        border-top: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .drawer-backdrop {
@@ -2433,10 +2713,21 @@
     }
 
     /* ── Divider ─────────────────────────────────────────────────────────
-       Styles a plain <hr>; .divider-labeled centers text in the rule. */
+       Styles a plain <hr>: 1px `border-subtle`; `.divider-m` is 2px and
+       `.divider-l` 4px in `content-default`. `.divider-labeled` centers
+       text in the rule. */
     .divider {
         @apply my-4 h-px w-full border-0;
-        background-color: var(--md-sys-color-outline-variant);
+        background-color: var(--color-border-subtle);
+    }
+
+    .divider-m {
+        height: var(--border-width-200);
+    }
+
+    .divider-l {
+        height: var(--border-width-400);
+        background-color: var(--color-content-default);
     }
 
     .divider-vertical {
@@ -2444,15 +2735,15 @@
     }
 
     .divider-labeled {
-        @apply my-4 flex items-center gap-3 text-label-medium;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply my-4 flex items-center gap-3 text-detail-s;
+        color: var(--color-content-subdued);
     }
 
     .divider-labeled::before,
     .divider-labeled::after {
         content: '';
         @apply h-px flex-1;
-        background-color: var(--md-sys-color-outline-variant);
+        background-color: var(--color-border-subtle);
     }
 
     /* ── Scroller ────────────────────────────────────────────────────────
@@ -2476,28 +2767,28 @@
 
     /* ── Breadcrumb ──────────────────────────────────────────────────────*/
     .breadcrumb {
-        @apply flex flex-wrap items-center gap-1.5 text-body-medium;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply flex flex-wrap items-center gap-1.5 text-body-s;
+        color: var(--color-content-subdued);
     }
 
     .breadcrumb-item {
         @apply inline-flex items-center gap-1.5 no-underline;
-        color: var(--md-sys-color-on-surface-variant);
+        color: var(--color-content-subdued);
     }
 
     .breadcrumb-item:hover {
-        color: var(--md-sys-color-primary);
+        color: var(--color-accent-content);
     }
 
     .breadcrumb-item:last-child,
     .breadcrumb-item[aria-current="page"] {
-        font-weight: 500;
-        color: var(--md-sys-color-on-surface);
+        font-weight: 700;
+        color: var(--color-content-heading);
     }
 
     .breadcrumb-separator {
         @apply inline-flex shrink-0 items-center;
-        color: var(--md-sys-color-outline);
+        color: var(--color-border-default);
     }
 
     /* ── Tree ────────────────────────────────────────────────────────────
@@ -2505,16 +2796,16 @@
        whole thing expands and collapses without JavaScript and a
        server-rendered page can mark branches `open` to reveal the current
        node - which is exactly how this site's own sidebar works. Items are
-       M3 navigation-drawer pills. */
+       side-nav rows: 8px corners, detail-m labels. */
     .tree {
-        @apply flex flex-col gap-0.5 text-label-large;
+        @apply flex flex-col gap-0.5 text-detail-m;
     }
 
     .tree-item > summary,
     .tree-item-label {
-        @apply flex cursor-pointer list-none items-center gap-2 px-3 py-2;
-        color: var(--md-sys-color-on-surface-variant);
-        border-radius: var(--md-sys-shape-corner-full);
+        @apply flex cursor-pointer list-none items-center gap-2 px-3 py-1.5;
+        color: var(--color-content-default);
+        border-radius: var(--corner-radius-500);
     }
 
     .tree-item > summary::-webkit-details-marker {
@@ -2523,8 +2814,8 @@
 
     .tree-item-chevron {
         @apply shrink-0;
-        color: var(--md-sys-color-on-surface-variant);
-        transition: transform var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+        color: var(--color-content-subdued);
+        transition: transform 130ms var(--ease-standard);
     }
 
     .tree-item[open] > summary .tree-item-chevron {
@@ -2535,38 +2826,41 @@
        show a continuous guide line down the left of their children. */
     .tree-item-children {
         @apply my-0.5 ml-[1.3rem] flex flex-col gap-0.5 pl-2;
-        border-left: 1px solid var(--md-sys-color-outline-variant);
+        border-left: var(--border-width-100) solid var(--color-border-subtle);
     }
 
     .tree-leaf {
-        @apply flex items-center gap-2 px-3 py-2 no-underline;
-        color: var(--md-sys-color-on-surface-variant);
-        border-radius: var(--md-sys-shape-corner-full);
-    }
-
-    .tree-leaf:hover {
-        color: var(--md-sys-color-on-surface);
+        @apply flex items-center gap-2 px-3 py-1.5 no-underline;
+        color: var(--color-content-default);
+        border-radius: var(--corner-radius-500);
     }
 
     .tree-leaf.selected {
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
-        font-weight: 600;
+        background-color: var(--color-fill-neutral-hover);
+        color: var(--color-content-heading);
+        font-weight: 700;
     }
 
-    /* ── Callout ─────────────────────────────────────────────────────────
+    .tree-leaf.selected:hover {
+        background-color: var(--color-fill-neutral-down);
+    }
+
+    /* ── Callout → inline alert ──────────────────────────────────────────
        A block-level message inside page content (as opposed to a toast,
-       which floats above it): a tonal container in the matching M3 color
-       role, medium corners, no side stripe. */
+       which floats above it): a Lumen inline alert - a layer-2 box with a
+       2px border and icon in the status color, a bold heading-colored title
+       and body-s text. The plain callout is neutral. */
     .callout {
-        @apply flex items-start gap-3 px-4 py-3 text-body-medium;
-        background-color: var(--md-sys-color-surface-container-high);
-        color: var(--md-sys-color-on-surface-variant);
-        border-radius: var(--md-sys-shape-corner-medium);
+        @apply flex items-start gap-3 px-4 py-3 text-body-s;
+        background-color: var(--color-background-layer-2);
+        color: var(--color-content-default);
+        border: var(--border-width-200) solid var(--color-content-default);
+        border-radius: var(--corner-radius-500);
     }
 
     .callout-title {
-        @apply mb-0.5 text-title-small;
+        @apply mb-0.5 text-title-s;
+        color: var(--color-content-heading);
     }
 
     .callout-icon {
@@ -2574,40 +2868,53 @@
     }
 
     .callout-info {
-        background-color: var(--md-sys-color-primary-container);
-        color: var(--md-sys-color-on-primary-container);
+        border-color: var(--color-informative-content);
+    }
+
+    .callout-info .callout-icon {
+        color: var(--color-informative-content);
     }
 
     .callout-success {
-        background-color: var(--md-sys-color-success-container);
-        color: var(--md-sys-color-on-success-container);
+        border-color: var(--color-positive-content);
+    }
+
+    .callout-success .callout-icon {
+        color: var(--color-positive-content);
     }
 
     .callout-warning {
-        background-color: var(--md-sys-color-warning-container);
-        color: var(--md-sys-color-on-warning-container);
+        border-color: var(--color-notice-content);
+    }
+
+    .callout-warning .callout-icon {
+        color: var(--color-notice-content);
     }
 
     .callout-danger {
-        background-color: var(--md-sys-color-error-container);
-        color: var(--md-sys-color-on-error-container);
+        border-color: var(--color-negative-content);
+    }
+
+    .callout-danger .callout-icon {
+        color: var(--color-negative-content);
     }
 
     /* ── Linear progress (determinate) ───────────────────────────────────
-       Distinct from `.progress-bar` above (the indeterminate strip). M3:
-       4px, secondary-container track, primary indicator, rounded ends. */
+       Distinct from `.progress-bar` above (the indeterminate strip). Lumen:
+       a 6px `border-subtle` track with an accent fill, fully round. */
     .progress {
-        @apply h-1 w-full overflow-hidden;
-        background-color: var(--md-sys-color-secondary-container);
-        border-radius: var(--md-sys-shape-corner-full);
+        @apply w-full overflow-hidden;
+        height: 0.375rem;
+        background-color: var(--color-border-subtle);
+        border-radius: var(--corner-radius-full);
     }
 
     .progress-value {
         @apply block h-full;
         width: var(--value, 0%);
-        background-color: var(--md-sys-color-primary);
-        border-radius: var(--md-sys-shape-corner-full);
-        transition: width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
+        background-color: var(--color-accent-background);
+        border-radius: var(--corner-radius-full);
+        transition: width 200ms var(--ease-standard);
     }
 
     .progress-lg {
@@ -2615,8 +2922,8 @@
     }
 
     .progress-label {
-        @apply mt-1 flex items-center justify-between text-body-small;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply mt-1 flex items-center justify-between text-detail-m;
+        color: var(--color-content-default);
     }
 
     /* ── Circular progress ───────────────────────────────────────────────
@@ -2632,26 +2939,26 @@
 
     .progress-ring-track {
         fill: none;
-        stroke: var(--md-sys-color-secondary-container);
+        stroke: var(--color-border-subtle);
     }
 
     .progress-ring-indicator {
         fill: none;
-        stroke: var(--md-sys-color-primary);
+        stroke: var(--color-accent-background);
         stroke-linecap: round;
-        transition: stroke-dashoffset var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
+        transition: stroke-dashoffset 200ms var(--ease-standard);
     }
 
     .progress-ring-label {
-        @apply absolute text-label-large;
-        color: var(--md-sys-color-on-surface);
+        @apply absolute text-title-s;
+        color: var(--color-content-heading);
     }
 
     /* ── Spinner (indeterminate circular progress) ───────────────────────*/
     .spinner {
         @apply inline-block h-6 w-6 shrink-0;
-        border: 3px solid var(--md-sys-color-secondary-container);
-        border-top-color: var(--md-sys-color-primary);
+        border: 3px solid var(--color-border-subtle);
+        border-top-color: var(--color-accent-background);
         border-radius: 9999px;
         animation: wise-spin 0.8s linear infinite;
     }
@@ -2676,49 +2983,55 @@
         .spinner {
             animation-duration: 2s;
         }
+
+        .progress-bar {
+            animation: none;
+            width: 40%;
+        }
     }
 
-    /* ── Tag → M3 chip ───────────────────────────────────────────────────
+    /* ── Tag ─────────────────────────────────────────────────────────────
        Badge's interactive sibling: badges label a *state*, tags label a
-       user-supplied value and can be removable. M3 input/filter chip: 32px,
-       small (8px) corners, outline-variant border, label-large. `.tag-action`
-       is the selected filter chip. */
+       user-supplied value and can be removable. A 24px outlined chip with
+       4px corners and a detail-m label. `.tag-action` is the selected one,
+       filled with neutral-background. */
     .tag {
-        @apply inline-flex items-center gap-2 px-3 text-label-large;
-        min-height: 2rem;
+        @apply inline-flex items-center gap-1.5 px-2 text-detail-m;
+        min-height: var(--component-height-75);
         background-color: transparent;
-        color: var(--md-sys-color-on-surface-variant);
-        border: 1px solid var(--md-sys-color-outline-variant);
-        border-radius: var(--md-sys-shape-corner-small);
+        color: var(--color-content-default);
+        border: var(--border-width-100) solid var(--color-border-default);
+        border-radius: var(--corner-radius-100);
     }
 
     .tag-action {
-        background-color: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
-        border-color: transparent;
+        background-color: var(--color-neutral-background);
+        color: var(--color-on-neutral);
+        border-color: var(--color-neutral-background);
     }
 
     .tag-remove {
-        @apply -mr-1.5 inline-flex h-6 w-6 cursor-pointer items-center justify-center border-none bg-transparent p-0;
+        @apply -mr-1 inline-flex h-5 w-5 cursor-pointer items-center justify-center border-none bg-transparent p-0;
         color: inherit;
-        border-radius: var(--md-sys-shape-corner-full);
+        border-radius: var(--corner-radius-full);
     }
 
-    /* ── Toast → M3 snackbar ─────────────────────────────────────────────
+    /* ── Toast ───────────────────────────────────────────────────────────
        The generic form of `.flash-messages`, which is the Django-messages
-       binding of exactly this. inverse-surface, 4px corners, elevation 3;
-       status variants color only the icon (inverse status colors). */
+       binding of exactly this. A neutral fill with an 8px corner and the
+       `elevated` shadow; `.toast-success` / `-error` / `-warning` /
+       `-info` take the matching solid status fill and its `on-` text. */
     .toast-stack {
         @apply fixed bottom-4 right-4 m-0 flex w-80 max-w-[calc(100vw-2rem)] list-none flex-col gap-2 p-0 sm:right-6;
         z-index: var(--z-toast);
     }
 
     .toast {
-        @apply flex items-start gap-3 px-4 py-3.5 text-body-medium;
-        background-color: var(--md-sys-color-inverse-surface);
-        color: var(--md-sys-color-inverse-on-surface);
-        border-radius: var(--md-sys-shape-corner-extra-small);
-        box-shadow: var(--md-sys-elevation-level3);
+        @apply flex items-start gap-3 px-4 py-3 text-body-s;
+        background-color: var(--color-neutral-background);
+        color: var(--color-on-neutral);
+        border-radius: var(--corner-radius-500);
+        box-shadow: var(--shadow-elevated);
     }
 
     .toast-icon {
@@ -2726,30 +3039,38 @@
     }
 
     .toast-title {
-        @apply text-title-small;
+        @apply text-title-s;
     }
 
     .toast-close {
         @apply -my-1.5 -mr-2 ml-auto inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0;
-        color: var(--md-sys-color-inverse-on-surface);
-        border-radius: var(--md-sys-shape-corner-full);
+        color: inherit;
+        border-radius: var(--corner-radius-full);
     }
 
-    .toast-success .toast-icon {
-        color: var(--md-sys-color-inverse-success);
+    .toast-success {
+        background-color: var(--color-positive-background);
+        color: var(--color-on-accent);
     }
 
-    .toast-error .toast-icon {
-        color: var(--md-sys-color-inverse-error);
+    .toast-error {
+        background-color: var(--color-negative-background);
+        color: var(--color-on-accent);
     }
 
-    .toast-warning .toast-icon {
-        color: var(--md-sys-color-inverse-warning);
+    .toast-warning {
+        background-color: var(--color-notice-background);
+        color: var(--color-on-notice);
     }
 
-    /* ── Tooltip → M3 plain tooltip ──────────────────────────────────────
+    .toast-info {
+        background-color: var(--color-informative-background);
+        color: var(--color-on-accent);
+    }
+
+    /* ── Tooltip ─────────────────────────────────────────────────────────
        Pure CSS, text supplied through a data-tooltip attribute. Hover and
-       keyboard focus both trigger it. */
+       keyboard focus both trigger it. neutral-background with 4px corners. */
     .tooltip {
         @apply relative inline-flex;
     }
@@ -2757,11 +3078,11 @@
     .tooltip::after {
         content: attr(data-tooltip);
         @apply pointer-events-none absolute bottom-full left-1/2 mb-1 hidden -translate-x-1/2
-        whitespace-nowrap px-2 py-1 text-body-small;
+        whitespace-nowrap px-2 py-1 text-body-xs;
         z-index: var(--z-tooltip);
-        background-color: var(--md-sys-color-inverse-surface);
-        color: var(--md-sys-color-inverse-on-surface);
-        border-radius: var(--md-sys-shape-corner-extra-small);
+        background-color: var(--color-neutral-background);
+        color: var(--color-on-neutral);
+        border-radius: var(--corner-radius-100);
     }
 
     .tooltip:hover::after,
@@ -2775,13 +3096,12 @@
     }
 
     /* ── Avatar ──────────────────────────────────────────────────────────
-       Circular by default in M3; primary-container with initials in
-       title-medium. */
+       Round by default; a neutral fill with initials in title-m. */
     .avatar {
-        @apply inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden text-title-medium;
-        background-color: var(--md-sys-color-primary-container);
-        color: var(--md-sys-color-on-primary-container);
-        border-radius: var(--md-sys-shape-corner-full);
+        @apply inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden text-title-m;
+        background-color: var(--color-fill-neutral-hover);
+        color: var(--color-content-heading);
+        border-radius: var(--corner-radius-full);
     }
 
     .avatar img {
@@ -2789,11 +3109,11 @@
     }
 
     .avatar-sm {
-        @apply h-6 w-6 text-label-small;
+        @apply h-6 w-6 text-title-xs;
     }
 
     .avatar-lg {
-        @apply h-14 w-14 text-title-large;
+        @apply h-14 w-14 text-title-xl;
     }
 
     .avatar-circle {
@@ -2801,7 +3121,7 @@
     }
 
     .avatar-square {
-        border-radius: var(--md-sys-shape-corner-medium);
+        border-radius: var(--corner-radius-500);
     }
 
     .avatar-group {
@@ -2810,14 +3130,14 @@
 
     .avatar-group > .avatar + .avatar {
         @apply -ml-2;
-        box-shadow: 0 0 0 2px var(--md-sys-color-surface);
+        box-shadow: 0 0 0 2px var(--color-background-base);
     }
 
     /* ── Image & video ───────────────────────────────────────────────────*/
     .image {
         @apply block max-w-full;
-        background-color: var(--md-sys-color-surface-container-highest);
-        border-radius: var(--md-sys-shape-corner-medium);
+        background-color: var(--color-fill-neutral-hover);
+        border-radius: var(--corner-radius-500);
     }
 
     .image-figure {
@@ -2825,15 +3145,15 @@
     }
 
     .image-caption {
-        @apply mt-2 text-body-small;
-        color: var(--md-sys-color-on-surface-variant);
+        @apply mt-2 text-body-xs;
+        color: var(--color-content-subdued);
     }
 
     .aspect-video-frame {
         @apply relative block w-full overflow-hidden;
         aspect-ratio: 16 / 9;
-        background-color: var(--md-sys-color-surface-container-highest);
-        border-radius: var(--md-sys-shape-corner-large);
+        background-color: var(--color-fill-neutral-hover);
+        border-radius: var(--corner-radius-800);
     }
 
     .aspect-video-frame > iframe,
@@ -2845,8 +3165,8 @@
 
     /* ── Carousel ────────────────────────────────────────────────────────
        Scroll-snap, so swiping works natively on touch and the arrows are
-       just anchors to #ids. M3 carousel items carry extra-large corners;
-       the active page-indicator dot stretches into a pill. */
+       just anchors to #ids. Items carry 16px corners; the active
+       page-indicator dot stretches into a pill. */
     .carousel {
         @apply relative;
     }
@@ -2860,7 +3180,7 @@
     .carousel-item {
         @apply w-full shrink-0 overflow-hidden;
         scroll-snap-align: center;
-        border-radius: var(--md-sys-shape-corner-extra-large);
+        border-radius: var(--corner-radius-800);
     }
 
     .carousel-nav {
@@ -2869,24 +3189,23 @@
 
     .carousel-dot {
         @apply block h-2 w-2 no-underline;
-        background-color: var(--md-sys-color-outline-variant);
+        background-color: var(--color-border-subtle);
         border-radius: 9999px;
-        transition: width var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized),
-        background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+        transition: width 200ms var(--ease-standard), background-color 130ms var(--ease-standard);
     }
 
     .carousel-dot.selected {
         @apply w-6;
-        background-color: var(--md-sys-color-primary);
+        background-color: var(--color-accent-background);
     }
 
     /* ── QR code / barcode ───────────────────────────────────────────────
        Container for a server-generated SVG (see wise_core/qrcode.py). */
     .qr-code {
         @apply inline-block p-3;
-        background-color: var(--md-sys-color-surface-container-lowest);
-        border: 1px solid var(--md-sys-color-outline-variant);
-        border-radius: var(--md-sys-shape-corner-medium);
+        background-color: var(--color-background-layer-2);
+        border: var(--border-width-100) solid var(--color-border-subtle);
+        border-radius: var(--corner-radius-500);
     }
 
     .qr-code svg {
@@ -2896,9 +3215,9 @@
 
     .barcode {
         @apply inline-block px-3 py-2;
-        background-color: var(--md-sys-color-surface-container-lowest);
-        border: 1px solid var(--md-sys-color-outline-variant);
-        border-radius: var(--md-sys-shape-corner-medium);
+        background-color: var(--color-background-layer-2);
+        border: var(--border-width-100) solid var(--color-border-subtle);
+        border-radius: var(--corner-radius-500);
     }
 
     .barcode svg {
@@ -2917,21 +3236,22 @@
         opacity: 0.38;
     }
 
-    /* The M3 elevation levels as surface *and* shadow in one class, for a
-       custom floating element: `.elevation-2` = surface-container + level 2. */
+    /* The Lumen layers as surface *and* shadow in one class, for a custom
+       floating element: `.elevation-2` = background-elevated + `elevated`
+       shadow. (The names are the Material 3 levels they replace.) */
     .elevation-1 {
-        background-color: var(--md-sys-color-surface-container-low);
-        box-shadow: var(--md-sys-elevation-level1);
+        background-color: var(--color-background-layer-2);
+        box-shadow: var(--shadow-emphasized);
     }
 
     .elevation-2 {
-        background-color: var(--md-sys-color-surface-container);
-        box-shadow: var(--md-sys-elevation-level2);
+        background-color: var(--color-background-elevated);
+        box-shadow: var(--shadow-elevated);
     }
 
     .elevation-3 {
-        background-color: var(--md-sys-color-surface-container-high);
-        box-shadow: var(--md-sys-elevation-level3);
+        background-color: var(--color-background-elevated);
+        box-shadow: var(--shadow-dragged);
     }
 }
 
@@ -2942,12 +3262,12 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        background: var(--md-sys-color-outline-variant);
+        background: var(--color-border-subtle);
         border-radius: 9999px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: var(--md-sys-color-outline);
+        background: var(--color-border-default);
     }
 }
 

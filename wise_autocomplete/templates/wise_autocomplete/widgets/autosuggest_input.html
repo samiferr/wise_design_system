@@ -4,7 +4,7 @@
     <div class="relative">
         <input id="id_{{ widget.name }}_fake" autocomplete="off"
                autocorrect="off" autocapitalize="none" spellcheck="false" role="presentation"
-               class="h-10 w-full border border-divider bg-surface px-3 pr-10 py-1.5 text-sm text-gray-900 outline-none focus:border-action-500"
+               class="input pr-10"
                oninput="document.getElementById('id_{{ widget.name }}').value=this.value"
         >
         {# `.btn-icon` only sets the box's size - pairing it with `.btn` (as every #}
@@ -14,7 +14,7 @@
         {# `border-transparent` drops the button's own border, redundant next to #}
         {# the field's border it already sits inside - `btn-secondary`'s hover #}
         {# fill still marks it as clickable. #}
-        <span type="button" class="btn btn-icon btn-secondary border-transparent absolute right-1 top-1/2 -translate-y-1/2"
+        <span type="button" class="btn btn-icon btn-ghost absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2"
               onclick="document.getElementById('id_{{ widget.name }}_fake').click();
                       document.getElementById('id_{{ widget.name }}_fake').focus();"
         >
@@ -30,7 +30,7 @@
            tabindex="-1">
 
     <div class="relative">
-        <div id="{{ widget.name }}_progress_bar" class="absolute left-0 top-0 h-[3px] w-0 rounded bg-action-500 transition-all"></div>
+        <div id="{{ widget.name }}_progress_bar" class="absolute left-0 top-0 h-[3px] w-0 rounded bg-accent-background transition-all"></div>
         <div class="autocomplete-panel hidden"
              id='{{ widget.name }}_autocomplete_container'>
             <div class="max-h-72 overflow-auto">
@@ -194,7 +194,7 @@
                     let response = results[i]
                     let regex = new RegExp(val, 'gi')
                     response = response.replace(regex, function (str) {
-                        return "<span class='font-bold bg-yellow-100'>" + str + "</span>"
+                        return "<span class='font-bold bg-accent-subtle text-on-accent-subtle'>" + str + "</span>"
                     })
 
                     new_td.innerHTML = response;

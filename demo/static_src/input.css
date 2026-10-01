@@ -18,15 +18,15 @@
 @layer components {
     .doc-preview {
         @apply border border-divider bg-panel p-6;
-        border-radius: var(--md-sys-shape-corner-medium);
+        border-radius: var(--corner-radius-500);
     }
 
-    /* Tab bar + panel read as one M3 card: the bar takes the top corners,
+    /* Tab bar + panel read as one card: the bar takes the top corners,
      * whichever panel is showing takes the bottom ones. */
     .doc-example .doc-preview,
     .doc-example .doc-code,
     .doc-code-wrap .doc-code {
-        border-radius: 0 0 var(--md-sys-shape-corner-medium) var(--md-sys-shape-corner-medium);
+        border-radius: 0 0 var(--corner-radius-500) var(--corner-radius-500);
     }
 
     /* Fixed colors, not gray-900/gray-100/var(--color-divider): a code block
@@ -38,9 +38,9 @@
      * page would read as broken, not "deliberately themed". */
     .doc-code {
         @apply m-0 overflow-x-auto border border-t-0 p-4 text-[12.5px] leading-relaxed;
-        --doc-code-bg: #f7f2fa;
-        --doc-code-fg: #1d1b20;
-        --doc-code-border: #cac4d0;
+        --doc-code-bg: #f8f8f8;
+        --doc-code-fg: #131313;
+        --doc-code-border: #dadada;
         --doc-code-comment: #6b7280;
         --doc-code-punctuation: #6e7781;
         --doc-code-entity: #b5124e;
@@ -59,9 +59,9 @@
      * near-black base text, or a dark red/green/blue meant to sit on a
      * near-white card) are too dark to read against a near-black one. */
     :root[data-theme="dark"] .doc-code {
-        --doc-code-bg: #1d1b20;
-        --doc-code-fg: #e6e0e9;
-        --doc-code-border: #49454f;
+        --doc-code-bg: #1b1b1b;
+        --doc-code-fg: #dbdbdb;
+        --doc-code-border: #393939;
         --doc-code-comment: #8b949e;
         --doc-code-punctuation: #8b949e;
         --doc-code-entity: #ff7b72;
@@ -177,24 +177,24 @@
      * naming the snippet's language, with the copy button right-aligned.
      * `.doc-code-tabs` is a sibling of `.doc-code`, not a descendant, so it
      * can't read that element's --doc-code-* custom properties by
-     * inheritance - these are the same two literal palettes (M3 baseline neutral tones) duplicated
+     * inheritance - these are the same two literal palettes (Lumen's gray steps) duplicated
      * directly, matched exactly so the tab bar and the code panel below it
      * read as one card in both themes instead of a light strip glued onto
      * a fixed-dark panel. */
     .doc-code-tabs {
         @apply flex items-center border border-b-0 px-3;
-        border-radius: var(--md-sys-shape-corner-medium) var(--md-sys-shape-corner-medium) 0 0;
-        background: #f7f2fa;
-        border-color: #cac4d0;
+        border-radius: var(--corner-radius-500) var(--corner-radius-500) 0 0;
+        background: #f8f8f8;
+        border-color: #dadada;
     }
 
     :root[data-theme="dark"] .doc-code-tabs {
-        background: #1d1b20;
-        border-color: #49454f;
+        background: #1b1b1b;
+        border-color: #393939;
     }
 
     .doc-code-tab {
-        @apply inline-flex items-center border-b-[3px] border-primary py-2 text-title-small text-primary;
+        @apply inline-flex items-center border-b-2 border-content-heading py-2 text-title-s text-content-heading;
     }
 
     /* Fixed colors, not `.btn-secondary`'s theme-aware ones, matching
@@ -206,24 +206,24 @@
      * the button doesn't reflow when the state switches. */
     .doc-code-copy {
         @apply ml-auto inline-flex h-7 min-w-16 cursor-pointer items-center justify-center
-        border px-3 text-label-medium transition-colors;
-        --doc-code-copy-bg: #f7f2fa;
-        --doc-code-copy-hover-bg: #ece6f0;
-        --doc-code-copy-border: #cac4d0;
-        --doc-code-copy-fg: #49454f;
-        --doc-code-copy-done: #6750a4;
+        border px-3 text-title-xs transition-colors;
+        --doc-code-copy-bg: #f8f8f8;
+        --doc-code-copy-hover-bg: #e9e9e9;
+        --doc-code-copy-border: #dadada;
+        --doc-code-copy-fg: #505050;
+        --doc-code-copy-done: #3b63fb;
         background: var(--doc-code-copy-bg);
         border-color: var(--doc-code-copy-border);
         color: var(--doc-code-copy-fg);
-        border-radius: var(--md-sys-shape-corner-full);
+        border-radius: var(--corner-radius-full);
     }
 
     :root[data-theme="dark"] .doc-code-copy {
-        --doc-code-copy-bg: #1d1b20;
-        --doc-code-copy-hover-bg: #2b2930;
-        --doc-code-copy-border: #49454f;
-        --doc-code-copy-fg: #e6e0e9;
-        --doc-code-copy-done: #d0bcff;
+        --doc-code-copy-bg: #1b1b1b;
+        --doc-code-copy-hover-bg: #2c2c2c;
+        --doc-code-copy-border: #393939;
+        --doc-code-copy-fg: #dbdbdb;
+        --doc-code-copy-done: #5681ff;
     }
 
     .doc-code-copy:hover {
@@ -241,7 +241,7 @@
     }
 
     .doc-props th {
-        @apply border-b border-divider px-3 py-2 text-left text-title-small text-on-surface-variant;
+        @apply border-b border-divider px-3 py-2 text-left text-title-s text-content-heading;
     }
 
     .doc-props td {
@@ -249,8 +249,8 @@
     }
 
     .doc-props td code, .doc-code-inline {
-        @apply bg-surface-container-high px-1 py-0.5 text-[0.85em];
-        border-radius: var(--md-sys-shape-corner-extra-small);
+        @apply bg-fill-neutral-hover px-1 py-0.5 font-mono text-[0.85em];
+        border-radius: var(--corner-radius-100);
     }
 
     /* The docs shell: a persistent tree sidebar beside the page column. */
@@ -269,13 +269,13 @@
     }
 
     .doc-pager-kicker {
-        @apply block text-label-small text-on-surface-variant;
+        @apply block text-detail-xs text-content-subdued;
     }
 
     /* Swatch grid used by the Color Palettes page. */
     .swatch {
         @apply flex h-14 items-end justify-between border border-divider px-2 py-1 text-[10px];
-        border-radius: var(--md-sys-shape-corner-small);
+        border-radius: var(--corner-radius-500);
     }
 
     .doc-section-grid {
@@ -300,7 +300,7 @@
 
     .doc-example-tabs {
         @apply flex items-center gap-4 border border-b-0 border-divider bg-panel-alt px-4 pt-2;
-        border-radius: var(--md-sys-shape-corner-medium) var(--md-sys-shape-corner-medium) 0 0;
+        border-radius: var(--corner-radius-500) var(--corner-radius-500) 0 0;
     }
 
     /* Matches `.doc-code`'s fixed dark palette exactly (not just bg-panel-alt's
@@ -308,18 +308,18 @@
      * the tab bar and the code panel it sits above read as one card instead
      * of two mismatched grays glued together. */
     :root[data-theme="dark"] .doc-example-tabs {
-        background: #1d1b20;
-        border-color: #49454f;
+        background: #1b1b1b;
+        border-color: #393939;
     }
 
     .doc-example-tab {
-        @apply -mb-px cursor-pointer border-b-[3px] border-transparent py-2 text-title-small
-        text-on-surface-variant transition-colors hover:text-on-surface;
+        @apply -mb-px cursor-pointer border-b-2 border-transparent py-2 text-title-s
+        text-content-subdued transition-colors hover:text-content-heading;
     }
 
     .doc-example-radio[value="preview"]:checked ~ .doc-example-tabs .doc-example-tab[for$="-preview"],
     .doc-example-radio[value="code"]:checked ~ .doc-example-tabs .doc-example-tab[for$="-code"] {
-        @apply border-primary text-primary;
+        @apply border-content-heading text-content-heading;
     }
 
     .doc-example-panel-preview,
@@ -360,12 +360,12 @@
     }
 
     .marketing-brand {
-        @apply flex items-center gap-2 font-heading text-title-large text-on-surface no-underline;
+        @apply flex items-center gap-2 font-heading text-title-xl text-content-heading no-underline;
     }
 
     .marketing-brand-mark {
-        @apply inline-block h-3 w-3 bg-primary;
-        border-radius: var(--md-sys-shape-corner-full);
+        @apply inline-block h-3 w-3 bg-accent-background;
+        border-radius: var(--corner-radius-full);
     }
 
     .marketing-nav-links {
@@ -381,17 +381,17 @@
     }
 
     .marketing-hero-kicker {
-        @apply inline-flex items-center gap-1.5 bg-secondary-container px-3 py-1.5 text-label-large
-        text-on-secondary-container;
-        border-radius: var(--md-sys-shape-corner-small);
+        @apply inline-flex items-center gap-1.5 bg-fill-neutral-hover px-3 py-1.5 text-detail-m
+        text-content-heading;
+        border-radius: var(--corner-radius-full);
     }
 
     .marketing-hero-title {
-        @apply mt-5 text-display-small sm:text-display-medium;
+        @apply mt-5 text-heading-xl sm:text-heading-xxl;
     }
 
     .marketing-hero-subtitle {
-        @apply mx-auto mt-5 max-w-2xl text-body-large text-on-surface-variant;
+        @apply mx-auto mt-5 max-w-2xl text-body-l text-content-subdued;
     }
 
     .marketing-hero-actions {
@@ -403,11 +403,11 @@
     }
 
     .marketing-stat-value {
-        @apply font-heading text-headline-large text-on-surface;
+        @apply font-heading text-heading-l text-content-heading;
     }
 
     .marketing-stat-label {
-        @apply mt-1 text-label-medium text-on-surface-variant;
+        @apply mt-1 text-detail-s text-content-subdued;
     }
 
     .marketing-section {

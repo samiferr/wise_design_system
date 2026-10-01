@@ -168,13 +168,13 @@
             <thead><tr><th>Class</th><th>Use</th></tr></thead>
             <tbody>
                 <tr><td><code>btn</code></td><td>Base class — always paired with one color modifier.</td></tr>
-                <tr><td><code>btn-primary</code> / <code>btn-filled</code></td><td>M3 filled button — the default call to action.</td></tr>
-                <tr><td><code>btn-brand</code> / <code>btn-tonal</code></td><td>M3 filled tonal button (secondary-container).</td></tr>
-                <tr><td><code>btn-secondary</code> / <code>btn-outlined</code></td><td>M3 outlined button — "Cancel".</td></tr>
+                <tr><td><code>btn-primary</code> / <code>btn-filled</code></td><td>Accent-filled pill — the default call to action. One per view.</td></tr>
+                <tr><td><code>btn-brand</code> / <code>btn-tonal</code></td><td>Neutral-filled pill (fill-neutral-hover) — a quieter alternative.</td></tr>
+                <tr><td><code>btn-secondary</code> / <code>btn-outlined</code></td><td>Neutral outlined pill — "Cancel" and other secondary actions.</td></tr>
                 <tr><td><code>btn-danger</code></td><td>Destructive actions.</td></tr>
-                <tr><td><code>btn-ghost</code> / <code>btn-text</code></td><td>M3 text button — compact row-level actions.</td></tr>
-                <tr><td><code>btn-elevated</code></td><td>M3 elevated button (surface-container-low + level 1).</td></tr>
-                <tr><td><code>btn-icon</code></td><td>40px circular M3 icon button for a single icon.</td></tr>
+                <tr><td><code>btn-ghost</code> / <code>btn-text</code></td><td>Quiet button, no border — compact row-level actions.</td></tr>
+                <tr><td><code>btn-elevated</code></td><td>Raised button (background-layer-2 + the emphasized shadow).</td></tr>
+                <tr><td><code>btn-icon</code></td><td>Round icon button, sized to the control height (32px, 40px on touch), for a single icon.</td></tr>
                 <tr><td><code>btn-disabled</code></td><td>Inert state for an <code>&lt;a&gt;</code>.</td></tr>
                 <tr><td><code>large-button</code></td><td>250px minimum width.</td></tr>
             </tbody>
@@ -192,7 +192,7 @@
 - Always pair the base `.btn` class with exactly one color modifier: btn-primary (default call to action), btn-brand (brand-colored alternative), btn-secondary (outlined/neutral, e.g. "Cancel"), btn-danger (destructive actions). Never combine two modifiers, never use `.btn` alone.
 - Use a <button> for an in-page action (form submit, JS handler) and an <a> for navigation - both take the identical classes.
 - Disabled state: the native `disabled` attribute on a <button>; `.btn-disabled` on an <a>, since anchors have no disabled attribute.
-- Icon-only button: add `.btn-icon` (40px circular M3 icon button) and ALWAYS set aria-label (or a visually-hidden span) - an icon-only button otherwise has no accessible name.
+- Icon-only button: add `.btn-icon` (a round icon button sized to the control height) and ALWAYS set aria-label (or a visually-hidden span) - an icon-only button otherwise has no accessible name.
 - Icon + label: put the {% lucide %} icon then a <span> with the text inside the button/anchor, e.g. <a class="btn btn-primary" href="...">{% lucide "plus" size=16 %}<span>New</span></a>.
 - Row-level action in a datatable (edit/delete): use `.btn-ghost` (borderless, compact) rather than a full `.btn`, e.g. <a class="btn-ghost" href="{% url 'category_update_view' pk=item.pk %}">{% lucide "pencil" size=14 %}</a>.
 - Loading state during a form submit: disable the button and prepend a Spinner: <button class="btn btn-primary" disabled><span class="spinner spinner-sm"></span><span>Saving...</span></button>.

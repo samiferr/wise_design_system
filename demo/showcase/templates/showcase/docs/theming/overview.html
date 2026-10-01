@@ -14,17 +14,18 @@
         This is the whole mechanism. A utility class is not a literal color; it is a pointer to a
         variable:
     </p>
-    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}/* what Tailwind v4 emits for bg-primary */
-.bg-primary { background-color: var(--color-primary); }
+    <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}/* what Tailwind v4 emits for bg-accent-background */
+.bg-accent-background { background-color: var(--color-accent-background); }
 
-/* which is the Material 3 system role... */
---color-primary: var(--md-sys-color-primary);
+/* which is a Lumen semantic token, pointing at a step of the accent scale... */
+:root                   { --color-accent-background: var(--lumen-accent-900); }
+:root[data-theme=dark]  { --color-accent-background: var(--lumen-accent-800); }
 
-/* ...which points at a tone of the generated palette */
-:root                   { --md-sys-color-primary: var(--md-ref-palette-primary40); }
-:root[data-theme=dark]  { --md-sys-color-primary: var(--md-ref-palette-primary80); }{% endverbatim %}{% endfilter %}</code></pre>
+/* ...which points at a hue of the generated palette */
+:root                        { --lumen-accent-900: var(--lumen-blue-900); }
+:root[data-palette="green"]  { --lumen-accent-900: var(--lumen-green-900); }{% endverbatim %}{% endfilter %}</code></pre>
     <p class="mt-2 text-gray-700">
-        Swap the palette's tones (<code>data-palette</code>) or which tone each role reads
+        Swap the accent hue (<code>data-palette</code>) or which step each token reads
         (<code>data-theme</code>) and every button, card, menu and sheet follows instantly — including ones in application templates the design system has
         never seen.
     </p>
@@ -38,12 +39,12 @@
         <table class="doc-props w-full">
             <thead><tr><th>Attribute</th><th>Values</th><th>Changes</th></tr></thead>
             <tbody>
-                <tr><td><code>data-theme</code></td><td><code>light</code> (default), <code>dark</code></td><td>Which palette tone every M3 color role reads.</td></tr>
-                <tr><td><code>data-palette</code></td><td><code>baseline</code> (default, M3 #6750A4), <code>green</code>, <code>blue</code>, <code>amber</code></td><td>The seed color - every generated tonal palette.</td></tr>
-                <tr><td><code>data-density</code></td><td><code>comfortable</code> (default), <code>compact</code></td><td>Field, button, list-item and table heights.</td></tr>
-                <tr><td><code>data-radius</code></td><td>M3 shape scale (default), <code>soft</code>, <code>sharp</code></td><td>The whole M3 corner scale — buttons, cards, fields, dialogs…</td></tr>
-                <tr><td><code>data-shadow</code></td><td><code>flat</code> (default), <code>soft</code>, <code>elevated</code></td><td>Outlined vs. elevated cards and panels.</td></tr>
-                <tr><td><code>data-bg</code></td><td><code>tonal</code> (default), <code>warm</code>, <code>cool</code></td><td>The neutral palettes behind every surface role.</td></tr>
+                <tr><td><code>data-theme</code></td><td><code>light</code> (default), <code>dark</code></td><td>Which palette step each semantic color token reads.</td></tr>
+                <tr><td><code>data-palette</code></td><td><code>blue</code> (default), <code>indigo</code>, <code>purple</code>, <code>green</code>, <code>amber</code></td><td>The accent hue - which Lumen scale the accent tokens read.</td></tr>
+                <tr><td><code>data-density</code></td><td><code>comfortable</code> (default), <code>compact</code></td><td>Field, button, list-item and table heights (32px by default, 24px compact).</td></tr>
+                <tr><td><code>data-radius</code></td><td>Lumen corner radii (default), <code>soft</code>, <code>sharp</code></td><td>The whole corner scale — buttons, cards, fields, dialogs…</td></tr>
+                <tr><td><code>data-shadow</code></td><td><code>flat</code> (default), <code>soft</code>, <code>elevated</code></td><td>Outlined vs. raised cards and panels.</td></tr>
+                <tr><td><code>data-bg</code></td><td><code>neutral</code> (default), <code>warm</code>, <code>cool</code></td><td>The neutral scale behind every layer, fill and border.</td></tr>
             </tbody>
         </table>
     </div>
@@ -69,38 +70,39 @@
     <div class="doc-example-panel-preview">
         <div class="doc-preview flex flex-col gap-4">
         <div class="flex flex-wrap items-center gap-2">
-            <span class="w-20 text-label-medium text-on-surface-variant">Theme</span>
+            <span class="w-20 text-detail-s text-content-subdued">Theme</span>
             <div class="btn-group">
                 <button class="btn btn-secondary" onclick="wiseSetTheme('light')">Light</button>
                 <button class="btn btn-secondary" onclick="wiseSetTheme('dark')">Dark</button>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <span class="w-20 text-label-medium text-on-surface-variant">Palette</span>
+            <span class="w-20 text-detail-s text-content-subdued">Palette</span>
             <div class="btn-group">
-                <button class="btn btn-secondary" onclick="wiseSetPalette('')">Baseline</button>
+                <button class="btn btn-secondary" onclick="wiseSetPalette('')">Blue</button>
+                <button class="btn btn-secondary" onclick="wiseSetPalette('indigo')">Indigo</button>
+                <button class="btn btn-secondary" onclick="wiseSetPalette('purple')">Purple</button>
                 <button class="btn btn-secondary" onclick="wiseSetPalette('green')">Green</button>
-                <button class="btn btn-secondary" onclick="wiseSetPalette('blue')">Blue</button>
                 <button class="btn btn-secondary" onclick="wiseSetPalette('amber')">Amber</button>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <span class="w-20 text-label-medium text-on-surface-variant">Density</span>
+            <span class="w-20 text-detail-s text-content-subdued">Density</span>
             <div class="btn-group">
                 <button class="btn btn-secondary" onclick="wiseSetDensity('')">Comfortable</button>
                 <button class="btn btn-secondary" onclick="wiseSetDensity('compact')">Compact</button>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <span class="w-20 text-label-medium text-on-surface-variant">Shape</span>
+            <span class="w-20 text-detail-s text-content-subdued">Shape</span>
             <div class="btn-group">
-                <button class="btn btn-secondary" onclick="wiseSetRadius('')">Material</button>
+                <button class="btn btn-secondary" onclick="wiseSetRadius('')">Lumen</button>
                 <button class="btn btn-secondary" onclick="wiseSetRadius('soft')">Soft</button>
                 <button class="btn btn-secondary" onclick="wiseSetRadius('sharp')">Sharp</button>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <span class="w-20 text-label-medium text-on-surface-variant">Shadow</span>
+            <span class="w-20 text-detail-s text-content-subdued">Shadow</span>
             <div class="btn-group">
                 <button class="btn btn-secondary" onclick="wiseSetShadow('')">Outlined</button>
                 <button class="btn btn-secondary" onclick="wiseSetShadow('soft')">Soft</button>
@@ -108,9 +110,9 @@
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <span class="w-20 text-label-medium text-on-surface-variant">Background</span>
+            <span class="w-20 text-detail-s text-content-subdued">Background</span>
             <div class="btn-group">
-                <button class="btn btn-secondary" onclick="wiseSetBg('')">Tonal</button>
+                <button class="btn btn-secondary" onclick="wiseSetBg('')">Neutral</button>
                 <button class="btn btn-secondary" onclick="wiseSetBg('warm')">Warm</button>
                 <button class="btn btn-secondary" onclick="wiseSetBg('cool')">Cool</button>
             </div>
@@ -126,11 +128,11 @@
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}wiseSetTheme('dark')       // or 'light'
-wiseSetPalette('blue')     // '' resets to the M3 baseline palette
+wiseSetPalette('green')    // '' resets to blue, the Lumen default
 wiseSetDensity('compact')  // '' resets to comfortable
-wiseSetRadius('sharp')     // '' resets to the M3 shape scale
+wiseSetRadius('sharp')     // '' resets to the Lumen corner radii
 wiseSetShadow('elevated')  // '' resets to flat (outlined cards)
-wiseSetBg('warm')          // '' resets to tonal
+wiseSetBg('warm')          // '' resets to neutral
 wiseToggleTheme(){% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>

@@ -13,5 +13,5 @@ class RichTextInputWidget(forms.Textarea):
     template_name = 'wise_richtext/widgets/rich_html.html'
 
     class Media:
-        css = {'all': ('wise_richtext/css/quill_snow.css',)}
+        css = {'all': ('wise_richtext/css/quill_snow.css', 'wise_richtext/css/wise_richtext.css')}
         js = ('wise_richtext/js/quill.js',)

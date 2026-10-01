@@ -20,17 +20,18 @@ round-trip.
 import math
 
 # Series colors, in the order a multi-series/multi-slice chart should
-# consume them: the Material 3 key color roles, so every series is a tone
-# the palette generated and reads correctly in light and dark. Every entry
+# consume them: the accent first, then Lumen's step-900 palette colors
+# (the steps Lumen sets aside for charts and illustration - step 900 reads
+# at 3:1 or better on the page in both themes), then a neutral. Every entry
 # is a CSS custom property reference, so a palette or theme switch
 # recolors live charts with no re-render.
 SERIES_COLORS = [
-    'var(--md-sys-color-primary)',
-    'var(--md-sys-color-tertiary)',
-    'var(--md-sys-color-secondary)',
-    'var(--md-sys-color-warning)',
-    'var(--md-sys-color-error)',
-    'var(--md-sys-color-outline)',
+    'var(--color-accent-background)',
+    'var(--lumen-orange-900)',
+    'var(--lumen-green-900)',
+    'var(--lumen-purple-900)',
+    'var(--lumen-magenta-900)',
+    'var(--color-border-default)',
 ]
 
 

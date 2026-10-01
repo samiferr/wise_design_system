@@ -1,6 +1,6 @@
 # Wise Design System
 
-A Tailwind CSS v4 design system for Django projects, styled after [Material Design 3](https://m3.material.io/), extracted from the
+A Tailwind CSS v4 design system for Django projects, styled after Lumen, a calm, neutral-first design system in the Spectrum tradition, extracted from the
 [DCMS7](https://github.com/samiferr/DCMS7) application. Complex components — datatables,
 autocomplete widgets, rich text editing — are backed by Django itself and its ecosystem
 (`django-filter`, Django REST Framework), not a JS framework: the JS each widget ships is a thin
@@ -12,7 +12,7 @@ Start here: **[docs/getting-started.md](docs/getting-started.md)**.
 
 | App | What it gives you | Docs |
 |---|---|---|
-| [`wise_core`](wise_core) | Material 3 design tokens (color roles generated from one seed, type scale, shape, elevation, state layers), the component CSS layer (buttons, cards, badges, forms, datatable, ...), `base.html` + generic CRUD templates, the `{% lucide %}` icon tag, generic template tags/filters, and the `Wise*View` class-based view mixins. | [design-tokens.md](docs/design-tokens.md), [template-tags-and-filters.md](docs/template-tags-and-filters.md), [generic-views-and-mixins.md](docs/generic-views-and-mixins.md) |
+| [`wise_core`](wise_core) | Lumen design tokens (a gray + hue palette with light and dark steps, semantic color tokens, Source Sans 3 type scale, corner radii, layers and shadows), the component CSS layer (buttons, cards, badges, forms, datatable, ...), `base.html` + generic CRUD templates, the `{% lucide %}` icon tag, generic template tags/filters, and the `Wise*View` class-based view mixins. | [design-tokens.md](docs/design-tokens.md), [template-tags-and-filters.md](docs/template-tags-and-filters.md), [generic-views-and-mixins.md](docs/generic-views-and-mixins.md) |
 | [`wise_autocomplete`](wise_autocomplete) | `AutocompleteInputWidget` (DRF-backed search-as-you-type) and `AutoSuggestInputWidget` (client-side filter over a JS array). | [autocomplete-widget.md](docs/autocomplete-widget.md), [autocomplete-widget-for-ai.md](docs/autocomplete-widget-for-ai.md) |
 | [`wise_richtext`](wise_richtext) | `RichTextInputWidget`, a Quill-backed rich text editor form widget. | [rich-text-widget.md](docs/rich-text-widget.md) |
 | [`demo/`](demo) | A runnable Django project — the design system's own marketing site, docs site and demo app, built entirely from the pieces above. | see below |

@@ -3,11 +3,11 @@
 // template tag - see wise_core/charts.py).
 //
 // Canvas has no CSS cascade of its own, so a color written as
-// `var(--color-action-600)` would draw as nothing. Every string in the config
+// `var(--color-accent-background)` would draw as nothing. Every string in the config
 // is resolved against the page's live computed style before it reaches
 // Chart.js, so charts re-theme along with everything else (palette, dark
 // mode, ...) with no server round-trip. A trailing `@alpha` (e.g.
-// `"var(--color-action-600)@0.15"`, written by `charts.color_alpha()`) bakes
+// `"var(--color-accent-background)@0.15"`, written by `charts.color_alpha()`) bakes
 // in translucency - useful for an area fill under a line, where a flat
 // design token would be too strong.
 (function () {
@@ -57,6 +57,8 @@
     function createChart(canvas) {
         var raw = canvas.getAttribute('data-chart');
         if (!raw) return null;
+        // Chart.js defaults to Helvetica; use the page's own typeface.
+        Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
         return new Chart(canvas, resolveAll(JSON.parse(raw)));
     }
 

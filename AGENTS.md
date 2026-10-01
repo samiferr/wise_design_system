@@ -1,18 +1,20 @@
 # Agent notes
 
-The Wise Design System is styled after **Material Design 3**. Before writing or reviewing any UI
-(Django templates, Tailwind classes, `tokens.css`), read the Material Design 3 skill:
+The Wise Design System is styled after **Lumen**, a calm, neutral-first system in the Spectrum
+tradition (one accent hue, semantic color tokens, Source Sans 3, pill buttons and 8px fields, layers
+and borders instead of shadows). Before writing or reviewing any UI (Django templates, Tailwind
+classes, `tokens.css`), read the Lumen design skill:
 
-- [`.claude/skills/material-design-3/SKILL.md`](.claude/skills/material-design-3/SKILL.md): rules,
-  M3-component → Wise-class map, token cheat sheet, workflow
-- [`references/components.md`](.claude/skills/material-design-3/references/components.md): markup
+- [`.claude/skills/lumen-design/SKILL.md`](.claude/skills/lumen-design/SKILL.md): rules,
+  component → Wise-class map, token cheat sheet, workflow
+- [`references/components.md`](.claude/skills/lumen-design/references/components.md): markup
   for every component
-- [`references/tokens.md`](.claude/skills/material-design-3/references/tokens.md): every color role,
-  type role, shape, elevation, motion and density token
-- [`references/authoring.md`](.claude/skills/material-design-3/references/authoring.md): adding a
+- [`references/tokens.md`](.claude/skills/lumen-design/references/tokens.md): every color token,
+  type style, shape, shadow, motion and density token
+- [`references/authoring.md`](.claude/skills/lumen-design/references/authoring.md): adding a
   component or palette
-- [`references/review-checklist.md`](.claude/skills/material-design-3/references/review-checklist.md):
+- [`references/review-checklist.md`](.claude/skills/lumen-design/references/review-checklist.md):
   pre-merge checks
 
-Build: `npm install && npm run build:css` (and `npm run build:palettes` after changing a seed in
-`scripts/generate_m3_palettes.mjs`). Demo site: see the README's "Run the site".
+Build: `npm install && npm run build:css` (and `npm run build:palettes` after changing an accent in
+`scripts/generate_lumen_palettes.mjs`). Demo site: see the README's "Run the site".
