@@ -290,6 +290,17 @@
     --color-border-hover: var(--lumen-gray-700);
     --color-border-subtle: var(--lumen-gray-300);
 
+    /* A focused text field, text area or search field: its 2px border turns
+       this dark gray instead of drawing the ring. One step darker than
+       Lumen's gray-800 so the change from the resting border stays at 3:1
+       on the gray canvas. */
+    --color-border-focus: var(--lumen-gray-900);
+
+    /* The Dropdown / select button has no border at all: a light gray fill
+       (Lumen: gray-100; here gray-200, so it still shows on the gray page)
+       that deepens to fill-neutral-down on hover. */
+    --color-fill-picker: var(--lumen-gray-200);
+
     /* An invalid field keeps its 1px border and changes its color, with an
        alert icon and a message as the non-color cue. A popover has no
        border in light (its shadow separates it) and a 1px one in dark,
@@ -665,6 +676,7 @@
     --color-border-default: var(--lumen-gray-600);
     --color-border-hover: var(--lumen-gray-700);
     --color-border-popover: var(--lumen-gray-400);
+    --color-fill-picker: var(--lumen-gray-100);
 
     --color-overlay: rgba(0, 0, 0, 0.6);
 
@@ -1315,6 +1327,64 @@
         color: var(--color-content-subdued);
     }
 
+    /* ── Card header, footer and the table card ─────────────────────────
+       A table always sits in a card, and the card's header holds the
+       table's actions: the view toggle, filters, "New", export. Wrap the
+       table in `.card.card-table` (flush: no padding, so the table meets
+       the card's edges), put the actions in a `.card-header` (a title in
+       `.card-header-title` is optional), scroll the table in an
+       `overflow-x-auto` div, and put the pager in a `.card-footer`:
+
+         <div class="card card-table">
+           <div class="card-header">...actions...</div>
+           <div class="overflow-x-auto"><table class="data-table">...</table></div>
+           <div class="card-footer">...pager...</div>
+         </div>
+
+       The first button group in a header (the view toggle) stays at the
+       start; everything after it is pushed to the end. */
+    .card-table {
+        @apply p-0;
+        overflow: hidden;
+    }
+
+    .card-header {
+        @apply flex flex-wrap items-center justify-end gap-2 px-4 py-3;
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
+    }
+
+    .card-header > .btn-group:first-child {
+        margin-inline-end: auto;
+    }
+
+    .card-header-title {
+        @apply m-0 mr-auto text-title-m;
+        font-family: var(--font-brand);
+        color: var(--color-content-heading);
+    }
+
+    .card-footer {
+        @apply px-4 py-3;
+        border-top: var(--border-width-100) solid var(--color-border-subtle);
+    }
+
+    /* Inside a table card the table's own edges are the card's, so the
+       first and last cells line up with the header's 16px padding and the
+       last row needs no rule of its own. */
+    .card-table .data-table th:first-child,
+    .card-table .data-table td:first-child {
+        padding-inline-start: 1rem;
+    }
+
+    .card-table .data-table th:last-child,
+    .card-table .data-table td:last-child {
+        padding-inline-end: 1rem;
+    }
+
+    .card-table .data-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
     /* Empty state - what a list renders instead of rows, from
        wise_core/components/_no_data.html. Roomy and centered: an empty list
        is a dead end unless the way out of it (create the first record, drop
@@ -1450,8 +1520,9 @@
     }
 
     /* ── Filter side-panel form ──────────────────────────────────────────
-       Dense by design (many fields in a narrow 400px sheet), so its fields
-       use the small control height. */
+       Many fields in a narrow 400px sheet. Its fields are ordinary fields
+       (see Text fields below) at the same single height as every other
+       form control; only the label spacing is its own. */
     .filter-container {
         @apply w-full;
     }
@@ -1459,34 +1530,6 @@
     .filter-container label {
         @apply mb-1 block text-detail-m;
         color: var(--color-content-default);
-    }
-
-    .filter-container input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not(.btn),
-    .filter-container select {
-        @apply w-full px-3 text-body-s;
-        height: var(--control-height-sm);
-        background-color: var(--color-background-layer-2);
-        color: var(--color-content-default);
-        border: var(--border-width-100) solid var(--color-border-default);
-        border-radius: var(--corner-radius-500);
-    }
-
-    .filter-container input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not(.btn):hover,
-    .filter-container select:hover {
-        border-color: var(--color-border-hover);
-    }
-
-    .language-switcher select {
-        @apply w-full cursor-pointer px-3 text-detail-m;
-        height: var(--control-height-md);
-        background-color: var(--color-background-layer-2);
-        color: var(--color-content-default);
-        border: var(--border-width-100) solid var(--color-border-default);
-        border-radius: var(--corner-radius-500);
-    }
-
-    .language-switcher select:hover {
-        background-color: var(--color-fill-neutral-hover);
     }
 
     .helptext {
@@ -1501,39 +1544,64 @@
     }
 
     /* ── Text fields ─────────────────────────────────────────────────────
-       A Lumen text field: 32px tall (40px on touch), 8px corners, a 1px
-       `border-default` border on a layer-2 fill, 14px input text. Hover
-       darkens the border; keyboard focus draws the global 2px focus ring;
-       an invalid field keeps its 1px border and turns it `negative-border`
-       (set aria-invalid="true", or wrap it in .form-field-error), with the
-       message below; a disabled one takes `fill-disabled`, `border-disabled`
-       and `content-disabled` text. Labels sit above the field (.form-label) rather
-       than floating, which keeps them working with Django's plain
-       server-rendered widgets.
+       A Lumen text field. Every single-line control - text, number, date,
+       time, select, OTP box, color well, and the filter panel's fields -
+       reads the same --control-height-md (32px, 40px on touch), so a row of
+       mixed fields lines up; only `.input-sm` / `.input-lg` opt out, and a
+       text area is as tall as its rows. Corners are 8px, the border 2px
+       `border-default` on a layer-2 fill, the text 14px. Hover darkens the
+       border; on focus (mouse or keyboard) the border turns `border-focus`
+       and stays 2px - there is no separate ring. An invalid field keeps
+       its border and turns it `negative-border` (set aria-invalid="true",
+       or wrap it in .form-field-error), with the message below; a disabled
+       one takes `fill-disabled`, `border-disabled` and `content-disabled`
+       text. Labels sit above the field (.form-label) rather than floating,
+       which keeps them working with Django's plain server-rendered widgets.
+
+       A <select> is Lumen's picker instead: no border, a `fill-picker` fill
+       that deepens on hover, a chevron, and the focus ring on keyboard
+       focus. Keep a visible label on it - the fill alone is a faint cue.
 
        `.input`/`.select`/`.textarea` are the bare atomic controls; the
-       `.form-field` rules below apply the same look to whatever Django
-       renders inside a labeled field. */
+       `.form-field` and `.filter-container` rules apply the same look to
+       whatever Django renders inside them. */
     .input,
     .select,
     .textarea,
-    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"], [type="reset"], [type="hidden"], [type="file"], [type="color"], [type="range"], .btn, .switch), select, textarea) {
-        @apply w-full px-3 text-body-s;
+    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"], [type="reset"], [type="hidden"], [type="file"], [type="color"], [type="range"], .btn, .switch), select, textarea),
+    .filter-container :where(input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"], [type="reset"], [type="hidden"], [type="file"], [type="color"], [type="range"], .btn, .switch), select, textarea),
+    .language-switcher select {
+        @apply w-full text-body-s;
         height: var(--control-height-md);
         padding-block: var(--control-padding-y);
+        padding-inline: calc(0.75rem - 1px);
         background-color: var(--color-background-layer-2);
         color: var(--color-content-default);
         caret-color: var(--color-accent-content);
-        border: var(--border-width-100) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-default);
         border-radius: var(--corner-radius-500);
-        transition: border-color 130ms var(--ease-standard);
+        transition: border-color 130ms var(--ease-standard), background-color 130ms var(--ease-standard);
     }
 
     .input:hover,
     .select:hover,
     .textarea:hover,
-    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):hover {
+    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):hover,
+    .filter-container :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):hover {
         border-color: var(--color-border-hover);
+    }
+
+    /* Focus: the border darkens; no ring (and no outline, which the base
+       :focus-visible rule would otherwise draw). */
+    .input:focus,
+    .textarea:focus,
+    .select[multiple]:focus,
+    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), textarea):focus,
+    .form-field select[multiple]:focus,
+    .filter-container :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), textarea):focus,
+    .otp-input:focus {
+        outline: none;
+        border-color: var(--color-border-focus);
     }
 
     .input[aria-invalid="true"],
@@ -1545,16 +1613,20 @@
     }
 
     .input[aria-invalid="true"]:hover,
+    .input[aria-invalid="true"]:focus,
     .select[aria-invalid="true"]:hover,
     .textarea[aria-invalid="true"]:hover,
-    .form-field :where(input, select, textarea)[aria-invalid="true"]:hover {
+    .textarea[aria-invalid="true"]:focus,
+    .form-field :where(input, select, textarea)[aria-invalid="true"]:hover,
+    .form-field :where(input, textarea)[aria-invalid="true"]:focus {
         border-color: var(--color-negative-border-hover);
     }
 
     .input::placeholder,
     .textarea::placeholder,
     .form-field input::placeholder,
-    .form-field textarea::placeholder {
+    .form-field textarea::placeholder,
+    .filter-container input::placeholder {
         color: var(--color-content-subdued);
         opacity: 1;
     }
@@ -1562,7 +1634,8 @@
     .input:disabled,
     .select:disabled,
     .textarea:disabled,
-    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):disabled {
+    .form-field :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):disabled,
+    .filter-container :where(input:not([type="checkbox"], [type="radio"], [type="file"], [type="color"], .switch), select, textarea):disabled {
         background-color: var(--color-fill-disabled);
         border-color: var(--color-border-disabled);
         color: var(--color-content-disabled);
@@ -1576,19 +1649,52 @@
         color: var(--color-content-disabled);
     }
 
-    /* The drop-down arrow is drawn from two gradients in currentColor-ish
-       content-subdued, so it follows the theme with no icon asset. */
+    /* The picker (a single-choice <select>): borderless on a fill-picker
+       fill. The chevron is drawn from two gradients in content-subdued, so
+       it follows the theme with no icon asset. A multiple select is a
+       listbox and keeps the bordered field look above. */
     .select:not([multiple]),
     .form-field select:not([multiple]),
-    .filter-container select:not([multiple]) {
+    .filter-container select:not([multiple]),
+    .language-switcher select:not([multiple]) {
         appearance: none;
         -webkit-appearance: none;
-        padding-inline-end: 2rem;
+        border-width: 0;
+        padding-inline: 0.75rem 2rem;
+        background-color: var(--color-fill-picker);
         background-image: linear-gradient(45deg, transparent 50%, var(--color-content-subdued) 50%),
         linear-gradient(135deg, var(--color-content-subdued) 50%, transparent 50%);
         background-position: calc(100% - 1rem) 50%, calc(100% - 0.6875rem) 50%;
         background-size: 0.3125rem 0.3125rem, 0.3125rem 0.3125rem;
         background-repeat: no-repeat;
+        cursor: pointer;
+    }
+
+    .select:not([multiple]):hover,
+    .form-field select:not([multiple]):hover,
+    .filter-container select:not([multiple]):hover,
+    .language-switcher select:not([multiple]):hover {
+        background-color: var(--color-fill-neutral-down);
+    }
+
+    /* An invalid picker has no border to recolor, so it draws a thin inset
+       outline in negative-border instead. */
+    .select[aria-invalid="true"]:not([multiple]),
+    .form-field select[aria-invalid="true"]:not([multiple]) {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border);
+    }
+
+    .select[aria-invalid="true"]:not([multiple]):hover,
+    .form-field select[aria-invalid="true"]:not([multiple]):hover {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border-hover);
+    }
+
+    .select:not([multiple]):disabled,
+    .form-field select:not([multiple]):disabled,
+    .filter-container select:not([multiple]):disabled,
+    .language-switcher select:not([multiple]):disabled {
+        background-color: var(--color-fill-disabled);
+        box-shadow: none;
     }
 
     .input-sm, .select-sm {
@@ -1599,12 +1705,20 @@
         height: var(--control-height-lg);
     }
 
+    /* A text area is as tall as its rows, never shorter than two fields
+       (64px); the handle at the bottom right resizes it vertically. */
     .textarea,
-    .form-field textarea {
+    .form-field textarea,
+    .filter-container textarea {
+        display: block;
         height: auto;
-        min-height: 6rem;
-        padding-block: 0.375rem;
+        min-height: calc(var(--component-height-100) * 2);
+        padding-block: 0.3125rem;
         resize: vertical;
+    }
+
+    .textarea-fixed {
+        resize: none;
     }
 
     /* Checkbox and radio: Lumen's own shapes, drawn on a real input so they
@@ -1692,7 +1806,7 @@
         @apply w-14 cursor-pointer p-0;
         height: var(--control-height-md);
         background-color: var(--color-background-layer-2);
-        border: var(--border-width-100) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-default);
         border-radius: var(--corner-radius-500);
     }
 
@@ -1765,8 +1879,18 @@
         caret-color: var(--color-negative-border);
     }
 
-    .form-field.form-field-error :where(input:not([type="checkbox"], [type="radio"], [type="file"]), select, textarea):hover {
+    .form-field.form-field-error :where(input:not([type="checkbox"], [type="radio"], [type="file"]), select, textarea):hover,
+    .form-field.form-field-error :where(input:not([type="checkbox"], [type="radio"], [type="file"]), textarea):focus {
         border-color: var(--color-negative-border-hover);
+    }
+
+    /* A picker in an errored field: the inset outline stands in for the border. */
+    .form-field.form-field-error select:not([multiple]) {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border);
+    }
+
+    .form-field.form-field-error select:not([multiple]):hover {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border-hover);
     }
 
     .form-field-checkbox {
@@ -1811,16 +1935,6 @@
 
     .form-stack-compact .form-label {
         @apply text-detail-s;
-    }
-
-    .form-stack-compact .form-field input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="hidden"]):not([type="file"]):not(.btn),
-    .form-stack-compact .form-field select {
-        height: var(--control-height-sm);
-        padding-block: 0;
-    }
-
-    .form-stack-compact .form-field textarea {
-        min-height: 4rem;
     }
 
     /* ── Detail panel ────────────────────────────────────────────────────
@@ -2696,13 +2810,14 @@
     }
 
     .otp-input {
-        @apply w-10 text-center text-title-l;
-        height: var(--control-height-lg);
+        @apply w-10 p-0 text-center text-title-l;
+        height: var(--control-height-md);
         background-color: var(--color-background-layer-2);
         color: var(--color-content-heading);
         caret-color: var(--color-accent-content);
-        border: var(--border-width-100) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-default);
         border-radius: var(--corner-radius-500);
+        transition: border-color 130ms var(--ease-standard);
     }
 
     .otp-input:hover {
@@ -2723,7 +2838,7 @@
     }
 
     .input-group > * + * {
-        margin-inline-start: -1px;
+        margin-inline-start: calc(var(--border-width-200) * -1);
     }
 
     .input-group > :not(:first-child) {
@@ -2749,7 +2864,7 @@
         @apply inline-flex shrink-0 items-center px-3 text-body-s;
         background-color: var(--color-fill-neutral-hover);
         color: var(--color-content-subdued);
-        border: var(--border-width-100) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-default);
         border-radius: var(--corner-radius-500);
     }
 

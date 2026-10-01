@@ -5,7 +5,9 @@
 {% block doc_title %}Input{% endblock %}
 {% block doc_intro %}The standalone text control. Use <code>.input</code> directly for a control that needs no label or
     error treatment of its own — an inline search box, a filter row. Inside a form, let
-    <code>_form_fields.html</code> render it so it gets its label, help text and errorlist.{% endblock %}
+    <code>_form_fields.html</code> render it so it gets its label, help text and errorlist. Every
+    single-line field is the same height (32px, 40px on touch), has a 2px <code>border-default</code>, and on
+    focus - mouse or keyboard - its border turns dark (<code>border-focus</code>) instead of drawing a ring.{% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Use cases</h2>
     <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">

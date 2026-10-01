@@ -31,11 +31,18 @@ Run through this before finishing any UI change. Grep helpers are at the bottom.
 
 ## Interaction & a11y
 - [ ] Interactive elements use a component class with stepped fills, not ad-hoc hover colors.
-- [ ] Keyboard focus shows the 2px `focus-ring` outline (don't `outline: none` without a replacement).
+- [ ] Keyboard focus shows the 2px `focus-ring` outline (don't `outline: none` without a replacement); text
+      fields and text areas show a `border-focus` 2px border instead.
+- [ ] Single-line form controls share one height (no `height`/`h-*` on an input; use `.input-sm` / `-lg`
+      only on purpose); selects are the borderless picker with a visible label.
 - [ ] Icon-only buttons have `aria-label`; tabs have `role="tab"`/`aria-selected`; dialogs use
       `<dialog>`.
 - [ ] Touch targets: components step up to 40px on a coarse pointer; don't override heights.
 - [ ] Disabled uses the `disabled` attribute (or `.btn-disabled` on `<a>`), not opacity hacks.
+
+## Tables
+- [ ] Every table is inside a `card card-table`; its actions (view toggle, filter, New, export) are in the
+      `card-header`, the scroll wrapper is `overflow-x-auto`, and the pager is in `card-footer`.
 
 ## Layout & sizes
 - [ ] Spacing on the 4px grid; window margins 16px (compact) / 24px (medium+) - `.page-panel` does this.

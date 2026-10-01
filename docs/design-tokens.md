@@ -47,6 +47,8 @@ only ever use semantic tokens, so contrast holds in every palette and both theme
 | `content-heading` / `content-default` / `content-subdued` | Headings / body text and labels / help text, captions, icons |
 | `content-disabled` | Disabled text. Never for live content |
 | `border-default` / `border-hover` | A control's own border (3:1 on the page and every surface) / its hover |
+| `border-focus` | A focused text field / text area: the 2px border turns this dark gray instead of drawing the ring (gray-900; Lumen's own is gray-800 - one step darker so the change from the resting border holds 3:1 on the gray canvas) |
+| `fill-picker` | The borderless Dropdown / `<select>` button's fill (gray-200 in light, so it shows on the gray page; gray-100 in dark). Deepens to `fill-neutral-down` on hover |
 | `border-subtle` | Decorative dividers and card edges only |
 | `negative-border` / `negative-border-hover` | An invalid field's border: it stays 1px and changes color, with an icon and a message as the non-color cue |
 | `border-popover` | A menu or picker popover's outline: none in light, 1px `gray-400` in dark |

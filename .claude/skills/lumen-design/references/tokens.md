@@ -35,6 +35,8 @@ Adobe.
 | content-disabled | gray-400 | gray-400 | `text-content-disabled` |
 | border-default | gray-600 | gray-600 | `border-border-default` |
 | border-hover | gray-700 | gray-700 | `border-border-hover` |
+| border-focus | gray-900 | gray-900 | `border-border-focus` |
+| fill-picker | gray-200 | gray-100 | `bg-fill-picker` |
 | border-subtle | gray-300 | gray-300 | `border-border-subtle` |
 | border-popover | transparent | gray-400 | `border-border-popover` |
 | negative-border / -hover | red-900 / 1000 | red-900 / 1000 | `border-negative-border` |

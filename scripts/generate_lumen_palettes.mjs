@@ -21,7 +21,10 @@
  *   - the alert tints (neutral / informative / positive / notice /
  *     negative -subtle) hold 4.5:1 for heading and body text, and 3:1 for
  *     the status icon and border drawn on them
- *   - an invalid field's border (negative-border) holds 3:1
+ *   - an invalid field's border (negative-border) holds 3:1, also as the
+ *     inset outline on the borderless picker fill
+ *   - a focused field's border (border-focus) holds 3:1 on every surface and
+ *     against the resting border it replaces
  *   - a control's border and the focus ring hold 3:1 on the page and surfaces
  *   - white text holds 4.5:1 on every accent / negative / status fill, in
  *     its rest, hover and pressed steps
@@ -242,6 +245,7 @@ function checks() {
             'fill-hover': g(pick('200', '100')),
             'fill-down': g(pick('300', '200')),
             'fill-subtle': g(pick('75', '100')),
+            'fill-picker': g(pick('200', '100')),
         }
         const grounds = {...surfaces, ...fills}
         const borderDefault = g(pick('600', '600'))
@@ -259,6 +263,19 @@ function checks() {
             note(`border-default on ${name}`, theme, contrast(borderDefault, bg), 3)
             note(`border-hover on ${name}`, theme, contrast(borderHover, bg), 3)
         })
+        // A focused field's border turns border-focus (gray-900): it must hold
+        // 3:1 on every surface AND against the resting border it replaces,
+        // or the change is invisible.
+        const borderFocus = g('900')
+        Object.entries(surfaces).forEach(([name, bg]) =>
+            note(`border-focus on ${name}`, theme, contrast(borderFocus, bg), 3))
+        note('border-focus against border-default (the focus change)', theme, contrast(borderFocus, borderDefault), 3)
+
+        // The borderless picker: the invalid outline (inset 1px) sits on the
+        // picker fill, and on its deeper hover fill.
+        note('negative-border on fill-picker', theme, contrast(hue('red', '900'), fills['fill-picker']), 3)
+        note('negative-border-hover on fill-down', theme, contrast(hue('red', '1000'), fills['fill-down']), 3)
+
         // Invalid fields: the 1px negative-border (and its hover step) is a
         // control boundary like border-default.
         Object.entries(surfaces).forEach(([name, bg]) => {

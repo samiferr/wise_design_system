@@ -39,10 +39,14 @@ sizes.**
    (table header, hovered row) on `fill-neutral-subtle`. Shadows (`shadow-emphasized`, `shadow-elevated`,
    `shadow-dragged`) only for things that float: menus, toasts, dialogs. A control's own border is
    `border-default` (3:1 on the page and every surface); `border-subtle` is for decorative dividers only.
+   Text fields, text areas and search fields use a 2px border that turns `border-focus` on focus; a
+   `<select>` is a borderless picker on `fill-picker`. **Every single-line control has the same height.**
+   **A table always sits in a card** (`card card-table`), and the card's header holds the table's actions.
 6. **Interaction = stepped fills.** Hover moves a fill one shade, press two; the component classes
    already do this. Don't hand-write hover colors - add the selector to the quiet-hover `:where(...)`
    rule in `tokens.css`. Every interactive element shows a 2px `focus-ring` outline (offset 2px) on
-   keyboard focus; don't remove it.
+   keyboard focus; don't remove it. (Text fields and text areas are the one exception: their 2px border
+   turns `border-focus` instead of drawing a ring.)
 
 ## Pick the component first
 
@@ -83,7 +87,7 @@ Details and values: [references/tokens.md](references/tokens.md).
   `background-layer-2`, `background-elevated`, `fill-neutral-hover`, `fill-neutral-down`,
   `fill-neutral-subtle` (Wise extension),
   `content-heading`, `content-default`, `content-subdued`, `content-disabled`, `border-default`,
-  `border-hover`, `border-subtle`, `accent-background` (+ `-hover`, `-down`), `accent-content`,
+  `border-hover`, `border-focus`, `border-subtle`, `fill-picker`, `row-hover`, `selected-subtle`, `accent-background` (+ `-hover`, `-down`), `accent-content`,
   `on-accent`, `accent-subtle` / `on-accent-subtle` (Wise extension), `neutral-background`,
   `on-neutral`, `informative-` / `positive-` / `notice-` / `negative-background` and `-content`,
   `on-notice`, `focus-ring`. (`border-border-subtle` is the real utility name: Lumen's token is

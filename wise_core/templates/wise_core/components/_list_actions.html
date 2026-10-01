@@ -1,0 +1,33 @@
+{% load wise_icons i18n %}
+{% comment %}
+The standard actions of a list page: the card / table view toggle, the filter
+button and a "New" button (shown when the view supplies `create_url`; pass
+`create_label` to rename it).
+
+A table always sits in a card, and the card's header holds the table's
+actions. So the same actions render in one of two places, picked by
+`placement` and the page's `?view=` mode:
+
+    {# the page header: shown for the card list #}
+    {% include 'wise_core/components/_list_actions.html' with placement='page' %}
+
+    {# the card header above a data-table: shown for ?view=table #}
+    <div class="card card-table"><div class="card-header">
+        {% include 'wise_core/components/_list_actions.html' with placement='card' %}
+    </div>...
+
+Whichever one doesn't apply renders nothing, so a view toggle never appears
+twice. The first button group (the toggle) sits at the start of a card
+header and the rest at the end - see `.card-header` in tokens.css.
+{% endcomment %}
+{% with view_mode=request.GET.view|default:"cards" %}
+    {% if placement == 'card' and view_mode == 'table' or placement != 'card' and view_mode != 'table' %}
+        {% include 'wise_core/components/_view_toggle.html' %}
+        {% include 'wise_core/components/filter_button.html' %}
+        {% if create_url %}
+            <a class="btn btn-primary" href="{{ create_url }}">
+                {% lucide "plus" size=16 %}<span>{{ create_label|default:_("New") }}</span>
+            </a>
+        {% endif %}
+    {% endif %}
+{% endwith %}

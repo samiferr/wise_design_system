@@ -32,8 +32,15 @@
         <label class="doc-example-tab" for="ex13-code">Code</label>
     </div>
     <div class="doc-example-panel-preview">
-        <div class="doc-preview overflow-x-auto p-0">
-        <table class="data-table">
+        <div class="doc-preview">
+        <div class="card card-table">
+            <div class="card-header">
+                <h3 class="card-header-title">Categories</h3>
+                <button class="btn btn-secondary btn-icon" type="button" aria-label="Filter">{% lucide "filter" size=16 %}</button>
+                <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>New</span></a>
+            </div>
+            <div class="overflow-x-auto">
+            <table class="data-table">
             <thead>
                 <tr>
                     <th class="w-px">ID</th>
@@ -76,11 +83,18 @@
                 </tr>
             </tbody>
         </table>
+            </div>
+        </div>
     </div>
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_tags %}
-<div class="mt-5 overflow-x-auto border border-divider bg-panel">
+<div class="card card-table mt-5">
+    <div class="card-header">
+        {# the table's actions: view toggle, filter, New #}
+        {% include 'wise_core/components/_list_actions.html' with placement='card' create_label='New category' %}
+    </div>
+    <div class="overflow-x-auto">
     <table class="data-table">
         <thead>
             <tr>
@@ -121,13 +135,21 @@
             {% endfor %}
         </tbody>
     </table>
-</div>
-<div class="pt-4">{% include 'wise_core/components/_pagination.html' %}</div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+    {% if page_obj.paginator.count %}
+        <div class="card-footer">{% include 'wise_core/components/_pagination.html' %}</div>
+    {% endif %}
+</div>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
     <p class="mt-2 text-gray-700">
-        Always wrap the table in <code>overflow-x-auto</code>. A table is the one thing that cannot
-        reflow to a narrow screen, so it needs somewhere to scroll.
+        A table always sits in a card (<code>.card.card-table</code>), and the card's header holds the
+        table's actions - the view toggle, filters, <em>New</em>, export. The first button group in
+        the header stays at the start and the rest sit at the end. Scroll the table itself in an
+        <code>overflow-x-auto</code> div (it is the one thing that cannot reflow to a narrow screen)
+        and put the pager in <code>.card-footer</code>. The page header keeps only the title and the
+        record count while the table view is showing; the card view keeps the actions up there. See
+        <a class="text-action-600 underline" href="{% url 'docs_layout_card' %}">Card</a>.
     </p>
 
     <h2 class="mt-8">ID column</h2>
@@ -194,8 +216,15 @@
         <label class="doc-example-tab" for="ex14-code">Code</label>
     </div>
     <div class="doc-example-panel-preview">
-        <div class="doc-preview overflow-x-auto p-0">
-        <table class="data-table">
+        <div class="doc-preview">
+        <div class="card card-table">
+            <div class="card-header">
+                <h3 class="card-header-title">Categories</h3>
+                <button class="btn btn-secondary btn-icon" type="button" aria-label="Filter">{% lucide "filter" size=16 %}</button>
+                <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>New</span></a>
+            </div>
+            <div class="overflow-x-auto">
+            <table class="data-table">
             <thead>
                 <tr>
                     <th class="min-w-[10rem]"><a class="is-sorted" href="#"><span>Name</span>{% lucide "chevron-up" size=14 %}</a></th>
@@ -204,6 +233,8 @@
             </thead>
             <tbody><tr><td>Electronics</td><td>12</td></tr></tbody>
         </table>
+            </div>
+        </div>
     </div>
     </div>
     <div class="doc-example-panel-code">
@@ -268,15 +299,21 @@
         <code>selected-subtle</code>, one step stronger when hovered. Selection is never the tint alone -
         pair it with a checkbox or a check icon.
     </p>
-    <div class="doc-preview mt-4 p-0">
-        <table class="data-table">
-            <thead><tr><th>Name</th><th>Status</th></tr></thead>
-            <tbody>
-                <tr><td>Hover this row</td><td><span class="badge badge-grey">Draft</span></td></tr>
-                <tr class="selected" aria-selected="true"><td>A selected row</td><td><span class="badge badge-green">Published</span></td></tr>
-                <tr><td>Another row</td><td><span class="badge badge-orange">Review</span></td></tr>
-            </tbody>
-        </table>
+    <div class="doc-preview mt-4">
+        <div class="card card-table">
+            <div class="card-header">
+                <h3 class="card-header-title">Articles</h3>
+                <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>New</span></a>
+            </div>
+            <table class="data-table">
+                <thead><tr><th>Name</th><th>Status</th></tr></thead>
+                <tbody>
+                    <tr><td>Hover this row</td><td><span class="badge badge-grey">Draft</span></td></tr>
+                    <tr class="selected" aria-selected="true"><td>A selected row</td><td><span class="badge badge-green">Published</span></td></tr>
+                    <tr><td>Another row</td><td><span class="badge badge-orange">Review</span></td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <h2 class="mt-8">Detail panel</h2>
@@ -322,7 +359,7 @@
         </p>
         <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Data Table (WiseListView + django-filter) for a model's list page - never hand-write pagination/filtering/sorting. Rules:
 - views.py: subclass WiseListView, set model, filterset_class (a django-filter FilterSet), template_name, and paginate_by. To allow column sorting, set sortable_fields to an explicit allowlist of field names or '__'-joined relation lookups - never read the raw ?sort= query parameter straight into order_by() yourself, since that lets a visitor sort by any field or traverse relations (a slow-query and information-disclosure risk). A deterministic pk tiebreak is appended automatically so pagination can't repeat or skip rows.
-- Template: extend wise_core/generic/list_generic.html, fill list_title/list_icon/list_actions, and render the table in list_body with a real <table class="data-table">. For each sortable column's header, use {% include 'wise_core/components/_sortable_th.html' with field='name' label='Name' %} instead of a plain <th> - it reads current_sort back out of context and renders the sort link plus the correct chevron icon.
+- Template: extend wise_core/generic/list_generic.html, fill list_title/list_icon/list_actions, and render the table in list_body with a real <table class="data-table"> inside a `.card.card-table` whose `.card-header` holds the table's actions (include wise_core/components/_list_actions.html with placement='card'; put the page-header actions behind placement='page') and whose `.card-footer` holds the pager. For each sortable column's header, use {% include 'wise_core/components/_sortable_th.html' with field='name' label='Name' %} instead of a plain <th> - it reads current_sort back out of context and renders the sort link plus the correct chevron icon.
 - The card list is the default rendering of every list page: wrap list_actions and list_body in {% with view_mode=request.GET.view|default:"cards" %}, include wise_core/components/_view_toggle.html in list_actions, and branch list_body with {% if view_mode == 'table' %}<the table>{% else %}<a card per record>{% endif %}. Never make a list page table-only, and never default it to "table".
 - Include {% include 'wise_core/components/filter_button.html' %} in list_actions to add the filter drawer, and {% include 'wise_core/components/_pagination.html' %} below the table.
 - Empty rows: end the tbody with {% empty %}<tr><td colspan="N">{% include 'wise_core/components/_no_data.html' %}</td></tr> - never an inline "No records" string. Set create_url_name on the view so that block can offer the "New <model>" button; it switches itself to a "nothing matched your filters" message with a Clear filters button when filter_kwargs_count is non-zero.

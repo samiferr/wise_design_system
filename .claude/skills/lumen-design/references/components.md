@@ -130,12 +130,14 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 
 | Lumen | Wise |
 |---|---|
-| TextField | `.input` (`.input-sm`, `.input-lg`), `.select`, `.textarea`; inside `.form-field` any Django widget is styled automatically. 32px, 8px corners, `border-default` on `background-layer-2`; focus draws the 2px ring; invalid thickens the border to 2px `negative-content` |
+| TextField | `.input` (`.input-sm`, `.input-lg`), `.textarea`; inside `.form-field` (or the filter panel) any Django widget is styled automatically. **Every single-line control - text, number, date, time, select, OTP box, color well - is the same height** (`--control-height-md`: 32px, 40px on touch); only `-sm` / `-lg` opt out. 8px corners, 2px `border-default` on `background-layer-2`; on focus the border turns `border-focus` (no ring); invalid keeps the border and recolors it `negative-border` (`aria-invalid="true"` or `.form-field-error`); disabled = `fill-disabled` + `border-disabled` |
+| TextArea | `.textarea` (min 64px = two fields, vertical resize; `.textarea-fixed` = none); same border and focus as a text field |
+| Dropdown / picker | `.select` (a single-choice `<select>`): borderless, `fill-picker` fill (deeper on hover), chevron, focus ring on keyboard focus; invalid = inset 1px `negative-border`. Always keep a visible label. `select[multiple]` is a listbox and keeps the bordered look |
 | Label / help / error | `.form-label` (+ `.form-required`), `.helptext`, `.errorlist`; wrap in `.form-field.form-field-error` for the error state |
 | Form layout | `.form-stack` (one column) / `.form-stack-compact` (two), `.form-actions` footer, `.form-alert` for non-field errors; `_form_fields.html` renders all of this from a Django form |
 | Prefix/suffix | `.input-group` > `.input-group-addon` + `.input` |
-| Checkbox / radio | `.checkbox`, `.radio` (16px, 2px `border-default`; accent fill + white check / 5px accent ring when selected). Also applied to unclassed checkboxes and radios inside `.form-field` |
-| Switch | `<input type="checkbox" class="switch">` (28×16 pill, 8px handle) |
+| Checkbox / radio | `.checkbox`, `.radio` (16px / 14px, 2px `border-default`; accent fill + white check / 4px accent ring when selected). Also applied to unclassed checkboxes and radios inside `.form-field` |
+| Switch | `<input type="checkbox" class="switch">` (26×16 pill, 8px handle, 10px when on) |
 | Tag | `.tag` (24px outlined, 4px corners), `.tag-action` (selected, neutral fill), `.tag-remove` (trailing ×) |
 | Rating | `.rating` / `.rating-input` |
 | OTP | `.otp-group` > `input.otp-input` |
@@ -146,7 +148,7 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 
 | Need | Wise |
 |---|---|
-| Table | `table.data-table` (title-s headers with a 2px rule, body-s cells, subtle row dividers, `fill-neutral-hover` row hover); sortable headers via `_sortable_th.html` |
+| Table | **Always inside a card, with the table's actions in the card header**: `.card.card-table` > `.card-header` (view toggle, filter, New - `_list_actions.html`) + `div.overflow-x-auto > table.data-table` + `.card-footer` (pager). `data-table`: 12px bold subdued headers over a 2px rule, 40px body-s rows, `row-hover` / `selected-subtle` row tints; sortable headers via `_sortable_th.html` |
 | Record detail | `.detail-panel` (> `.detail-panel-header`, `table` of `th`/`td`) |
 | Avatar | `.avatar` (40px circle, neutral fill), `.avatar-sm`/`-lg`, `.avatar-square`, `.avatar-group` |
 | Charts | `<canvas class="chart-canvas" data-chart="{% chart_json cfg %}">` in a `.chart-frame`; series colors are the accent then Lumen step-900 hues (`wise_core/charts.py`) |
