@@ -45,7 +45,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">1</td>
+                    <td class="w-px whitespace-nowrap font-mono text-xs text-content-subdued">1</td>
                     <td class="w-px whitespace-nowrap">
                         <details class="dropdown">
                             <summary class="btn btn-ghost" aria-label="Row actions">{% lucide "ellipsis-vertical" size=16 %}</summary>
@@ -60,7 +60,7 @@
                     <td>12</td>
                 </tr>
                 <tr>
-                    <td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">2</td>
+                    <td class="w-px whitespace-nowrap font-mono text-xs text-content-subdued">2</td>
                     <td class="w-px whitespace-nowrap">
                         <details class="dropdown">
                             <summary class="btn btn-ghost" aria-label="Row actions">{% lucide "ellipsis-vertical" size=16 %}</summary>
@@ -93,7 +93,7 @@
         <tbody>
             {% for item in object_list %}
                 <tr>
-                    <td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">{{ item.pk }}</td>
+                    <td class="w-px whitespace-nowrap font-mono text-xs text-content-subdued">{{ item.pk }}</td>
                     <td class="w-px whitespace-nowrap">
                         <details class="dropdown">
                             <summary class="btn btn-ghost" aria-label="Row actions">
@@ -138,7 +138,7 @@
     </p>
     <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<th class="w-px">ID</th>
 ...
-<td class="w-px whitespace-nowrap font-mono text-xs text-gray-500">{{ item.pk }}</td>{% endverbatim %}{% endfilter %}</code></pre>
+<td class="w-px whitespace-nowrap font-mono text-xs text-content-subdued">{{ item.pk }}</td>{% endverbatim %}{% endfilter %}</code></pre>
     <p class="mt-2 text-gray-700">
         It's opt-in per table, not automatic — skip it for internal-only lists where the ID is never
         something a person needs to reference.

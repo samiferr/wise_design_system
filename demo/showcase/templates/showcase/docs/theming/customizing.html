@@ -20,33 +20,34 @@
 
 /* Imported AFTER the system's tokens, so these win. */
 @theme {
-    --color-brand-500: #7c3aed;
-    --color-brand-600: #6d28d9;
-    --color-brand-700: #5b21b6;
-    --color-action-500: #7c3aed;
-    --color-action-600: #6d28d9;
-    --color-action-700: #5b21b6;
+    --color-accent-background: #7c3aed;
+    --color-accent-background-hover: #6d28d9;
+    --color-accent-background-down: #5b21b6;
+    --color-accent-content: #6d28d9;
+    --color-focus-ring: #7c3aed;
 }{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">
         {% lucide "alert-triangle" size=16 cls="callout-icon" %}
         <div>
             <div class="callout-title">Check contrast when you retune a ramp</div>
-            Buttons paint their label with <code>--color-on-action</code> over
-            <code>--color-action-600</code>. If your new 600 is light, set
-            <code>--color-on-action</code> to a dark value too, or button labels will wash out.
+            Buttons paint their label with <code>--color-on-accent</code> (white) over
+            <code>--color-accent-background</code>, and links use <code>--color-accent-content</code>
+            on the page. Keep 4.5:1 for both in light and dark - or, better, add the hue to the palette
+            generator, which checks it for you. If your fill is light, set <code>--color-on-accent</code>
+            to a dark value too, or button labels will wash out.
         </div>
     </div>
 
     <h2 class="mt-8">Bringing back rounded corners</h2>
     <p class="text-gray-700">
-        The component layer never hardcodes a radius — it only reads the scale. Restore Tailwind's
-        defaults and every component rounds off at once.
+        The component layer never hardcodes a radius — it only reads the scale (the
+        <code>--corner-radius-*</code> tokens). Override the Tailwind radii, or the corner tokens
+        themselves, and every component rounds off at once.
     </p>
     <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}@theme {
-    --radius-sm: 0.125rem;
-    --radius-md: 0.375rem;
-    --radius-lg: 0.5rem;
-    --radius-xl: 0.75rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
 }{% endverbatim %}{% endfilter %}</code></pre>
 
     <h2 class="mt-8">Adding a theme of your own</h2>
@@ -55,12 +56,12 @@
         <code>wiseSetTheme('sepia')</code> switches to it — no other wiring needed.
     </p>
     <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}:root[data-theme="sepia"] {
-    --color-page: #f4ecd8;
-    --color-panel: #fbf6ea;
-    --color-panel-alt: #efe5cd;
-    --color-divider: rgba(89, 74, 48, 0.22);
-    --color-gray-900: #3b2f1c;
-    --color-gray-600: #6b5a3e;
+    --color-background-base: #f4ecd8;
+    --color-background-layer-1: #fbf6ea;
+    --color-background-layer-2: #fbf6ea;
+    --color-border-subtle: rgba(89, 74, 48, 0.22);
+    --color-content-heading: #3b2f1c;
+    --color-content-subdued: #6b5a3e;
 }{% endverbatim %}{% endfilter %}</code></pre>
     <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
         <button class="btn btn-secondary" onclick="wiseSetTheme('light')">Light</button>
@@ -86,27 +87,27 @@
     </p>
     <pre class="doc-code"><code class="language-css">{% filter force_escape %}{% verbatim %}@layer components {
     .stat-tile {
-        @apply border border-divider bg-panel p-4;
+        @apply border border-border-subtle bg-background-layer-2 p-4;
     }
     .stat-tile-value {
-        @apply font-heading text-3xl font-semibold text-action-600;
+        @apply font-heading text-heading-xl text-accent-content;
     }
     .stat-tile-label {
-        @apply text-label-medium text-on-surface-variant;
+        @apply text-detail-s text-content-subdued;
     }
 }{% endverbatim %}{% endfilter %}</code></pre>
     <div class="doc-preview mt-4 grid gap-3 sm:grid-cols-3">
-        <div class="border border-divider bg-panel p-4">
-            <div class="font-heading text-3xl font-semibold text-action-600">1,284</div>
-            <div class="text-label-medium text-on-surface-variant">Orders</div>
+        <div class="rounded-md border border-border-subtle bg-background-layer-2 p-4">
+            <div class="font-heading text-heading-xl text-accent-content">1,284</div>
+            <div class="text-detail-s text-content-subdued">Orders</div>
         </div>
-        <div class="border border-divider bg-panel p-4">
-            <div class="font-heading text-3xl font-semibold text-action-600">96%</div>
-            <div class="text-label-medium text-on-surface-variant">On time</div>
+        <div class="rounded-md border border-border-subtle bg-background-layer-2 p-4">
+            <div class="font-heading text-heading-xl text-accent-content">96%</div>
+            <div class="text-detail-s text-content-subdued">On time</div>
         </div>
-        <div class="border border-divider bg-panel p-4">
-            <div class="font-heading text-3xl font-semibold text-action-600">18</div>
-            <div class="text-label-medium text-on-surface-variant">Open issues</div>
+        <div class="rounded-md border border-border-subtle bg-background-layer-2 p-4">
+            <div class="font-heading text-heading-xl text-accent-content">18</div>
+            <div class="text-detail-s text-content-subdued">Open issues</div>
         </div>
     </div>
     <p class="mt-2 text-gray-700">Switch theme or palette — the tile above follows, because it only reads tokens.</p>

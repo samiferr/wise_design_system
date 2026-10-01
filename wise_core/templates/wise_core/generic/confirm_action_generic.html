@@ -20,7 +20,7 @@
                     <div>{% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}</div>
                 </div>
             {% endif %}
-            <p class="mt-4 bg-warning-50 p-4 text-lg text-warning-600">
+            <p class="callout callout-warning mt-4 text-body-m">
                 {% blocktrans %}Confirm "{{ action_name }}" on {{ object }}?{% endblocktrans %}
             </p>
             <div class="mt-4 text-right">

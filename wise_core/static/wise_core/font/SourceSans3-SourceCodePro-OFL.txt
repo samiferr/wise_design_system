@@ -1,4 +1,5 @@
-Copyright 2011 The Roboto Project Authors (https://github.com/googlefonts/roboto-classic) Roboto-Italic[wdth,wght].ttf: Copyright 2011 The Roboto Project Authors (https://github.com/googlefonts/roboto-classic)
+Copyright 2010-2023 Adobe (http://www.adobe.com/), with Reserved Font Name "Source". Source is a trademark of Adobe in the United States and/or other countries.
+Source Sans 3 and Source Code Pro (variable woff2 builds as packaged by Fontsource).
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

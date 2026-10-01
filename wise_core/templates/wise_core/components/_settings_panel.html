@@ -41,7 +41,7 @@ one) to opt out.
     min-height) - without this it collapses to ~1px instead of its
     content's height.
     {% endcomment %}
-    <div class="tab-bar shrink-0 border-b border-divider px-5" role="tablist" aria-label="{% trans 'Design settings' %}">
+    <div class="tab-bar shrink-0 px-5" role="tablist" aria-label="{% trans 'Design settings' %}">
         <button type="button" id="wise-settings-tabbtn-controls" class="bar-item selected" role="tab"
                 aria-selected="true" aria-controls="wise-settings-tab-controls" onclick="wiseShowSettingsTab('controls')">
             {% trans "Settings" %}
@@ -69,9 +69,10 @@ one) to opt out.
             <div>
                 <div class="form-label mb-2">{% trans "Palette" %}</div>
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('')">{% trans "Baseline" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('')">{% trans "Blue" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('indigo')">{% trans "Indigo" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('purple')">{% trans "Purple" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('green')">{% trans "Green" %}</button>
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('blue')">{% trans "Blue" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetPalette('amber')">{% trans "Amber" %}</button>
                 </div>
             </div>
@@ -87,7 +88,7 @@ one) to opt out.
             <div>
                 <div class="form-label mb-2">{% trans "Corner radius" %}</div>
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('')">{% trans "Material" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('')">{% trans "Lumen" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('soft')">{% trans "Soft" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetRadius('sharp')">{% trans "Sharp" %}</button>
                 </div>
@@ -105,7 +106,7 @@ one) to opt out.
             <div>
                 <div class="form-label mb-2">{% trans "Background" %}</div>
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-secondary" onclick="wiseSetBg('')">{% trans "Tonal" %}</button>
+                    <button type="button" class="btn btn-secondary" onclick="wiseSetBg('')">{% trans "Neutral" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetBg('warm')">{% trans "Warm" %}</button>
                     <button type="button" class="btn btn-secondary" onclick="wiseSetBg('cool')">{% trans "Cool" %}</button>
                 </div>

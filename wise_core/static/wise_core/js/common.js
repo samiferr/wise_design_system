@@ -134,25 +134,23 @@ function wiseToggleTheme() {
 
 // ── Settings panel: "Copy tokens" tab ───────────────────────────────────────
 // Reads back the *resolved* value of a curated set of custom properties
-// (the Material 3 system roles, not the full token set - that's 400+ vars, most of them irrelevant to
+// (the Lumen semantic tokens, not the full token set - that's 400+ vars, most of them irrelevant to
 // a quick copy/paste) plus whichever data-* axis attributes are actually set
 // on <html>, so a developer can lift the exact combination chosen on the
 // Settings tab out of the live page instead of re-deriving it from
 // tokens.css by hand.
 
 var WISE_EXPORT_TOKENS = [
-    '--md-source-color',
-    '--md-sys-color-primary', '--md-sys-color-on-primary',
-    '--md-sys-color-primary-container', '--md-sys-color-on-primary-container',
-    '--md-sys-color-secondary', '--md-sys-color-secondary-container', '--md-sys-color-on-secondary-container',
-    '--md-sys-color-tertiary', '--md-sys-color-tertiary-container',
-    '--md-sys-color-error', '--md-sys-color-error-container',
-    '--md-sys-color-surface', '--md-sys-color-surface-container-low', '--md-sys-color-surface-container',
-    '--md-sys-color-surface-container-high', '--md-sys-color-surface-container-highest',
-    '--md-sys-color-on-surface', '--md-sys-color-on-surface-variant',
-    '--md-sys-color-outline', '--md-sys-color-outline-variant',
-    '--md-sys-shape-corner-extra-small', '--md-sys-shape-corner-small', '--md-sys-shape-corner-medium',
-    '--md-sys-shape-corner-large', '--md-sys-shape-corner-extra-large', '--md-sys-shape-corner-full',
+    '--color-background-base', '--color-background-layer-1', '--color-background-layer-2',
+    '--color-background-elevated',
+    '--color-fill-neutral-hover', '--color-fill-neutral-down',
+    '--color-content-heading', '--color-content-default', '--color-content-subdued',
+    '--color-border-default', '--color-border-subtle',
+    '--color-accent-background', '--color-accent-background-hover', '--color-accent-content',
+    '--color-on-accent', '--color-neutral-background', '--color-on-neutral',
+    '--color-informative-background', '--color-positive-background', '--color-notice-background',
+    '--color-negative-background', '--color-focus-ring',
+    '--corner-radius-100', '--corner-radius-500', '--corner-radius-800', '--corner-radius-full',
     '--shadow-card',
     '--control-height-sm', '--control-height-md', '--control-height-button', '--list-item-height',
 ]

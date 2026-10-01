@@ -14,7 +14,9 @@ wise_richtext/
 │   └── attrs.html                               # renders arbitrary widget.attrs onto the hidden textarea
 └── static/wise_richtext/
     ├── js/quill.js                               # vendored Quill build (the same one DCMS7 ships)
-    └── css/quill_snow.css                        # Quill's "snow" theme stylesheet
+    └── css/
+        ├── quill_snow.css                        # Quill's "snow" theme stylesheet (vendored, untouched)
+        └── wise_richtext.css                     # re-points its colors, borders and font at the Lumen tokens
 ```
 
 ## How it works
@@ -39,7 +41,7 @@ class ArticleForm(forms.ModelForm):
         widgets = {"body": RichTextInputWidget()}
 ```
 
-`RichTextInputWidget` declares a `Media` class (`quill_snow.css` + `quill.js`), so
+`RichTextInputWidget` declares a `Media` class (`quill_snow.css`, `wise_richtext.css` + `quill.js`), so
 `{{ form.media }}` in your template's `<head>` (or an `{% block extra_head %}` in
 `wise_core/templates/wise_core/base.html`) is enough to load its assets — no manual `<script src>`
 needed. See `demo/showcase/templates/showcase/product/form.html` for a working example (the

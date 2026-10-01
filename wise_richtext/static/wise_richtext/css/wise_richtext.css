@@ -1,0 +1,132 @@
+/*
+ * Lumen theming for the Quill "snow" editor behind RichTextInputWidget.
+ *
+ * quill_snow.css (vendored, untouched) paints the editor in fixed light grays and #06c blue, so
+ * on its own it ignores the theme - white borders and dim toolbar icons in dark mode, a font
+ * that matches nothing. This file is loaded right after it (see widgets.py) and re-points those
+ * colors at the Lumen tokens from wise_core's tokens.css, so the editor follows data-theme,
+ * data-palette, data-radius and data-bg like every other field. The fallbacks after each comma
+ * are Quill's own values, so the file degrades to stock Quill in a project without the tokens.
+ */
+
+.ql-toolbar.ql-snow {
+    padding: 4px 8px;
+    font-family: var(--font-plain, 'Helvetica Neue', Helvetica, Arial, sans-serif);
+    background: var(--color-background-layer-1, #fff);
+    border: 1px solid var(--color-border-default, #ccc);
+    border-radius: var(--corner-radius-500, 8px) var(--corner-radius-500, 8px) 0 0;
+}
+
+.ql-container.ql-snow {
+    font-family: var(--font-plain, Helvetica, Arial, sans-serif);
+    font-size: 0.875rem;
+    color: var(--color-content-default, #444);
+    background: var(--color-background-layer-2, #fff);
+    border: 1px solid var(--color-border-default, #ccc);
+    border-radius: 0 0 var(--corner-radius-500, 8px) var(--corner-radius-500, 8px);
+}
+
+.ql-toolbar.ql-snow + .ql-container.ql-snow {
+    border-top: 0;
+}
+
+.ql-container.ql-snow:focus-within {
+    outline: var(--focus-ring-width, 2px) solid var(--color-focus-ring, #06c);
+    outline-offset: var(--focus-ring-offset, 2px);
+}
+
+.ql-editor.ql-blank::before {
+    color: var(--color-content-subdued, rgba(0, 0, 0, 0.6));
+    font-style: normal;
+}
+
+.ql-snow .ql-editor blockquote {
+    border-left-color: var(--color-border-default, #ccc);
+}
+
+.ql-snow .ql-editor code,
+.ql-snow .ql-editor .ql-code-block-container {
+    border-radius: var(--corner-radius-100, 4px);
+}
+
+.ql-snow .ql-editor code {
+    background-color: var(--color-fill-neutral-hover, #f0f0f0);
+}
+
+.ql-snow a {
+    color: var(--color-accent-content, #06c);
+}
+
+/* Toolbar icons: content-default at rest, the accent on hover, focus and when active. */
+.ql-snow .ql-stroke,
+.ql-snow .ql-stroke-miter {
+    stroke: var(--color-content-default, #444);
+}
+
+.ql-snow .ql-fill,
+.ql-snow .ql-stroke.ql-fill {
+    fill: var(--color-content-default, #444);
+}
+
+.ql-snow .ql-picker {
+    color: var(--color-content-default, #444);
+}
+
+.ql-snow.ql-toolbar :is(button:hover, button:focus, button.ql-active, .ql-picker-label:hover,
+.ql-picker-label.ql-active, .ql-picker-item:hover, .ql-picker-item.ql-selected) {
+    color: var(--color-accent-content, #06c);
+}
+
+.ql-snow.ql-toolbar :is(button:hover, button:focus, button.ql-active, .ql-picker-label:hover,
+.ql-picker-label.ql-active, .ql-picker-item:hover, .ql-picker-item.ql-selected) :is(.ql-fill, .ql-stroke.ql-fill) {
+    fill: var(--color-accent-content, #06c);
+}
+
+.ql-snow.ql-toolbar :is(button:hover, button:focus, button.ql-active, .ql-picker-label:hover,
+.ql-picker-label.ql-active, .ql-picker-item:hover, .ql-picker-item.ql-selected) :is(.ql-stroke, .ql-stroke-miter) {
+    stroke: var(--color-accent-content, #06c);
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-label {
+    color: var(--color-content-subdued, #ccc);
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-label .ql-fill {
+    fill: var(--color-content-subdued, #ccc);
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-label .ql-stroke {
+    stroke: var(--color-content-subdued, #ccc);
+}
+
+/* Pickers and the link tooltip are popovers: background-elevated, a subtle edge, the elevated shadow. */
+.ql-snow .ql-picker-options,
+.ql-snow .ql-tooltip {
+    color: var(--color-content-default, #444);
+    background-color: var(--color-background-elevated, #fff);
+}
+
+.ql-toolbar.ql-snow .ql-picker-options,
+.ql-snow .ql-tooltip {
+    border: 1px solid var(--color-border-subtle, #ccc);
+    border-radius: var(--corner-radius-700, 10px);
+    box-shadow: var(--shadow-elevated, rgba(0, 0, 0, 0.2) 0 2px 8px);
+}
+
+.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label,
+.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+    border-color: var(--color-border-subtle, #ccc);
+}
+
+.ql-snow .ql-tooltip input[type=text] {
+    height: 1.75rem;
+    color: var(--color-content-default, #444);
+    background-color: var(--color-background-layer-2, #fff);
+    border: 1px solid var(--color-border-default, #ccc);
+    border-radius: var(--corner-radius-500, 8px);
+}
+
+.ql-toolbar.ql-snow .ql-color-picker .ql-picker-item.ql-selected,
+.ql-toolbar.ql-snow .ql-color-picker .ql-picker-item:hover {
+    border-color: var(--color-content-heading, #000);
+}

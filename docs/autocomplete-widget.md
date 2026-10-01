@@ -43,7 +43,7 @@ This widget is **not** a drop-in, dependency-free component. It brings its DCMS7
   contract" below). `AutoSuggestInputWidget` has no backend dependency at all — it filters an
   in-memory JS array (see "AutoSuggestInputWidget" below).
 - **Tailwind CSS v4**, with the widget's own component classes and DCMS7's custom color tokens
-  (`--color-action-500/600`, `--color-divider`, `--color-surface`, `--shadow-blueprint-lg`, all aliases onto Material 3 roles/levels).
+  (`--color-action-500/600`, `--color-divider`, `--color-surface`, `--shadow-blueprint-lg`, all aliases onto Lumen tokens).
   The widget markup uses these as plain Tailwind utility classes inline (`border-divider`,
   `bg-surface`, `focus:border-action-500`, `bg-action-600`, …) — they are not optional cosmetics,
   the widget will render unstyled/broken without them. See the comment header in

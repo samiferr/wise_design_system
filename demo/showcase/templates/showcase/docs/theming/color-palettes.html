@@ -4,22 +4,26 @@
 {% block doc_section %}Theming &amp; Utilities{% endblock %}
 {% block doc_title %}Color Palettes{% endblock %}
 {% block doc_intro %}
-    Material 3 color, generated from one seed. Google's own color library turns the seed into six
-    tonal palettes (primary, secondary, tertiary, neutral, neutral-variant, error - plus harmonized
-    success and warning), and the <em>color roles</em> below pick tones out of them. Components only
-    ever use roles, which is why a palette or theme switch is always legible.
+    Lumen color is one neutral scale and eleven hue scales, each in numbered steps with a light and a
+    dark value - so a step flips with the theme on its own. <em>Semantic tokens</em> pick steps out of
+    them, and components only ever use semantic tokens (<code>content-default</code>,
+    <code>accent-background</code>, <code>negative-content</code>, ...), which is why a palette or theme
+    switch is always legible. The accent is one hue: blue by default, switchable to indigo, purple, green
+    or amber.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Switch palette</h2>
-    <p class="text-on-surface-variant">
-        Each palette is a different seed; every role below regenerates from it. Baseline is the M3
-        default, <code>#6750A4</code>.
+    <p class="text-content-subdued">
+        A palette re-points the accent scale at another Lumen hue; every accent token below follows. Every
+        Lumen hue is built to the same contrast ladder, so white text on the accent fill and the accent as
+        link text hold 4.5:1 whichever one you pick, in both themes.
     </p>
     <div class="doc-preview mt-4 flex flex-wrap items-center gap-2">
         <div class="btn-group" role="group" aria-label="Palette">
-            <button class="btn" onclick="wiseSetPalette('')">Baseline</button>
+            <button class="btn" onclick="wiseSetPalette('')">Blue</button>
+            <button class="btn" onclick="wiseSetPalette('indigo')">Indigo</button>
+            <button class="btn" onclick="wiseSetPalette('purple')">Purple</button>
             <button class="btn" onclick="wiseSetPalette('green')">Green</button>
-            <button class="btn" onclick="wiseSetPalette('blue')">Blue</button>
             <button class="btn" onclick="wiseSetPalette('amber')">Amber</button>
         </div>
         <div class="btn-group" role="group" aria-label="Theme">
@@ -28,102 +32,123 @@
         </div>
     </div>
 
-    <h2 class="mt-8">Accent roles</h2>
-    <p class="text-on-surface-variant">
-        Always pair a role with its <code>on-</code> role. <strong>Primary</strong> is for the most
-        prominent actions, <strong>secondary</strong> for less prominent ones (tonal buttons, selected
-        navigation, filter chips), <strong>tertiary</strong> for contrasting accents, and
-        <strong>error</strong> for destructive and error states only.
+    <h2 class="mt-8">Layers &amp; content</h2>
+    <p class="text-content-subdued">
+        The page is <code>background-base</code>; raised panels are <code>background-layer-1</code>; cards
+        and fields are <code>background-layer-2</code>; floating surfaces are
+        <code>background-elevated</code>. Set text in <code>content-default</code>, headings in
+        <code>content-heading</code> and secondary text in <code>content-subdued</code>.
+        <code>content-disabled</code> is never used for live content. A control's own border is
+        <code>border-default</code> (3:1 on the page) - <code>border-subtle</code> is for decorative
+        dividers and card edges only.
     </p>
     <div class="doc-preview mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-        <div class="swatch !h-20 bg-primary text-on-primary">primary</div>
-        <div class="swatch !h-20 bg-secondary text-on-secondary">secondary</div>
-        <div class="swatch !h-20 bg-tertiary text-on-tertiary">tertiary</div>
-        <div class="swatch !h-20 bg-error text-on-error">error</div>
-        <div class="swatch !h-20 bg-primary-container text-on-primary-container">primary-container</div>
-        <div class="swatch !h-20 bg-secondary-container text-on-secondary-container">secondary-container</div>
-        <div class="swatch !h-20 bg-tertiary-container text-on-tertiary-container">tertiary-container</div>
-        <div class="swatch !h-20 bg-error-container text-on-error-container">error-container</div>
+        <div class="swatch !h-16 bg-background-base text-content-default">background-base</div>
+        <div class="swatch !h-16 bg-background-layer-1 text-content-default">background-layer-1</div>
+        <div class="swatch !h-16 bg-background-layer-2 text-content-default">background-layer-2</div>
+        <div class="swatch !h-16 bg-background-elevated text-content-default">background-elevated</div>
+        <div class="swatch !h-16 bg-fill-neutral-hover text-content-default">fill-neutral-hover</div>
+        <div class="swatch !h-16 bg-fill-neutral-down text-content-default">fill-neutral-down</div>
+        <div class="swatch !h-16 bg-background-base text-content-heading">content-heading</div>
+        <div class="swatch !h-16 bg-background-base text-content-subdued">content-subdued</div>
+        <div class="swatch !h-16 border-2 border-border-default bg-background-base text-content-default">border-default</div>
+        <div class="swatch !h-16 border-2 border-border-hover bg-background-base text-content-default">border-hover</div>
+        <div class="swatch !h-16 border-2 border-border-subtle bg-background-base text-content-default">border-subtle</div>
+        <div class="swatch !h-16 bg-background-base text-content-disabled">content-disabled</div>
     </div>
 
-    <h2 class="mt-8">Status roles</h2>
-    <p class="text-on-surface-variant">
-        M3 "custom colors": a fixed green and amber, harmonized toward the seed so they sit in the same
-        family, with the same four-role shape as error.
+    <h2 class="mt-8">Accent</h2>
+    <p class="text-content-subdued">
+        Always pair a fill with its own <code>on-</code> token. <strong>accent-background</strong> fills the
+        single main action and selected checkboxes, radios and switches; hover steps it one shade
+        (<code>accent-background-hover</code>), press two (<code>accent-background-down</code>).
+        <strong>accent-content</strong> colors links and selected text on a layer. In dark mode the filled
+        accent steps one shade lighter. <strong>neutral-background</strong> is the solid neutral: pressed
+        action buttons, tooltips, toasts.
+    </p>
+    <div class="doc-preview mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="swatch !h-20 bg-accent-background text-on-accent">accent-background</div>
+        <div class="swatch !h-20 bg-accent-background-hover text-on-accent">accent-background-hover</div>
+        <div class="swatch !h-20 bg-accent-background-down text-on-accent">accent-background-down</div>
+        <div class="swatch !h-20 bg-neutral-background text-on-neutral">neutral-background</div>
+        <div class="swatch !h-20 bg-accent-subtle text-on-accent-subtle">accent-subtle</div>
+        <div class="swatch !h-20 bg-background-base text-accent-content">accent-content</div>
+    </div>
+
+    <h2 class="mt-8">Status</h2>
+    <p class="text-content-subdued">
+        Four semantic families - <strong>informative</strong>, <strong>positive</strong>,
+        <strong>notice</strong> and <strong>negative</strong> - each paired with an icon and a word, never
+        color alone. The <code>-background</code> token fills a badge or button (text is
+        <code>on-accent</code>, or <code>on-notice</code> on the orange fill); the <code>-content</code>
+        token colors text and icons on a layer.
     </p>
     <div class="doc-preview mt-4 grid gap-2 sm:grid-cols-4">
-        <div class="swatch !h-16 bg-success text-on-success">success</div>
-        <div class="swatch !h-16 bg-success-container text-on-success-container">success-container</div>
-        <div class="swatch !h-16 bg-warning text-on-warning">warning</div>
-        <div class="swatch !h-16 bg-warning-container text-on-warning-container">warning-container</div>
+        <div class="swatch !h-16 bg-informative-background text-on-accent">informative</div>
+        <div class="swatch !h-16 bg-positive-background text-on-accent">positive</div>
+        <div class="swatch !h-16 bg-notice-background text-on-notice">notice</div>
+        <div class="swatch !h-16 bg-negative-background text-on-accent">negative</div>
+        <div class="swatch !h-16 bg-background-base text-informative-content">informative-content</div>
+        <div class="swatch !h-16 bg-background-base text-positive-content">positive-content</div>
+        <div class="swatch !h-16 bg-background-base text-notice-content">notice-content</div>
+        <div class="swatch !h-16 bg-background-base text-negative-content">negative-content</div>
     </div>
 
-    <h2 class="mt-8">Surface roles</h2>
-    <div class="doc-preview mt-4 grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
-        <div class="swatch !h-16 bg-surface-dim text-on-surface">surface-dim</div>
-        <div class="swatch !h-16 bg-surface text-on-surface">surface</div>
-        <div class="swatch !h-16 bg-surface-bright text-on-surface">surface-bright</div>
-        <div class="swatch !h-16 bg-surface-container-lowest text-on-surface">container-lowest</div>
-        <div class="swatch !h-16 bg-surface-container-low text-on-surface">container-low</div>
-        <div class="swatch !h-16 bg-surface-container text-on-surface">container</div>
-        <div class="swatch !h-16 bg-surface-container-high text-on-surface">container-high</div>
-        <div class="swatch !h-16 bg-surface-container-highest text-on-surface">container-highest</div>
-        <div class="swatch !h-16 bg-inverse-surface text-inverse-on-surface">inverse-surface</div>
-        <div class="swatch !h-16 bg-on-surface text-surface">on-surface</div>
-        <div class="swatch !h-16 bg-on-surface-variant text-surface">on-surface-variant</div>
-        <div class="swatch !h-16 bg-inverse-primary text-on-primary-container">inverse-primary</div>
-        <div class="swatch !h-16 bg-outline text-surface">outline</div>
-        <div class="swatch !h-16 bg-outline-variant text-on-surface">outline-variant</div>
-    </div>
-
-    <h2 class="mt-8">Tonal palettes</h2>
-    <p class="text-on-surface-variant">
-        The reference tier underneath: <code>--md-ref-palette-&lt;palette&gt;&lt;tone&gt;</code>,
-        generated into <code>md3-palettes.css</code> by <code>npm run build:palettes</code>. Roles
-        point at these - templates shouldn't.
+    <h2 class="mt-8">Palette steps</h2>
+    <p class="text-content-subdued">
+        The reference tier underneath: <code>--lumen-&lt;hue&gt;-&lt;step&gt;</code>, generated into
+        <code>lumen-palettes.css</code> by <code>npm run build:palettes</code>. Semantic tokens point at
+        these - templates shouldn't, except for charts and illustration. The scales are gray, blue, red,
+        orange, yellow, green, celery, cyan, indigo, purple, fuchsia and magenta. The accent scale
+        <code>--lumen-accent-&lt;step&gt;</code> is whichever hue the palette switch selected.
     </p>
-    <div class="doc-preview mt-4 space-y-2">
-        <div class="grid grid-cols-7 gap-1 sm:grid-cols-13">
-            <div class="swatch" style="background:var(--md-ref-palette-primary0);color:#fff">0</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary10);color:#fff">10</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary20);color:#fff">20</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary30);color:#fff">30</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary40);color:#fff">40</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary50);color:#fff">50</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary60)">60</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary70)">70</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary80)">80</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary90)">90</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary95)">95</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary99)">99</div>
-            <div class="swatch" style="background:var(--md-ref-palette-primary100)">100</div>
+    <div class="doc-preview mt-4 space-y-3">
+        <div class="grid grid-cols-8 gap-1 sm:grid-cols-16">
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-100)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">100</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-200)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">200</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-300)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">300</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-400)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">400</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-500)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">500</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-600)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">600</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-700)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">700</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-800)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">800</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-900)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">900</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-1000)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">1000</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-1100)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">1100</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-1200)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">1200</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-1300)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">1300</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-1400)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">1400</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-1500)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">1500</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-accent-1600)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">1600</div></div>
         </div>
-        <p class="text-body-small text-on-surface-variant">primary - light roles use 40/90/100/30, dark roles 80/30/20/90.</p>
-        <div class="grid grid-cols-7 gap-1 sm:grid-cols-13">
-            <div class="swatch" style="background:var(--md-ref-palette-neutral0);color:#fff">0</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral10);color:#fff">10</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral20);color:#fff">20</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral30);color:#fff">30</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral40);color:#fff">40</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral50);color:#fff">50</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral60)">60</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral70)">70</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral80)">80</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral90)">90</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral95)">95</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral99)">99</div>
-            <div class="swatch" style="background:var(--md-ref-palette-neutral100)">100</div>
+        <p class="text-body-xs text-content-subdued">accent (blue by default) - 16 steps. Fills use 900 in light and 800 in dark; accent text uses 900.</p>
+        <div class="grid grid-cols-8 gap-1 sm:grid-cols-13">
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-25)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">25</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-50)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">50</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-75)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">75</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-100)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">100</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-200)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">200</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-300)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">300</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-400)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">400</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-500)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">500</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-600)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">600</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-700)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">700</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-800)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">800</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-900)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">900</div></div>
+            <div><div class="h-10 border border-divider" style="background:var(--lumen-gray-1000)"></div><div class="mt-1 text-center text-detail-xs text-content-subdued">1000</div></div>
         </div>
-        <p class="text-body-small text-on-surface-variant">neutral - every surface role, tinted by the seed hue (see <code>data-bg</code>).</p>
+        <p class="text-body-xs text-content-subdued">gray - the neutral scale. Layers use 25-100, borders 300-600, text 700-900.</p>
     </div>
 
     <div class="callout callout-info mt-6">
         {% lucide "info" size=16 cls="callout-icon" %}
         <div>
             <div class="callout-title">Rebranding</div>
-            Add your seed to <code>PALETTES</code> in <code>scripts/generate_m3_palettes.mjs</code> and run
-            <code>npm run build:palettes &amp;&amp; npm run build:css</code>. Contrast between every role
-            and its <code>on-</code> role is guaranteed by the tone mapping, whatever seed you pick.
+            Add a hue to <code>ACCENTS</code> in <code>scripts/generate_lumen_palettes.mjs</code> (it must
+            exist in <code>lumen-scales.json</code>) and run
+            <code>npm run build:palettes &amp;&amp; npm run build:css</code>. The script checks the contrast
+            of every token pair across both themes, every palette and every background, and refuses to
+            write anything that fails.
         </div>
     </div>
 
@@ -132,17 +157,17 @@
         <table class="doc-props w-full">
             <thead><tr><th>Utility</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td><code>bg-primary text-on-primary</code></td><td>Filled buttons, the most important action, active indicators.</td></tr>
-                <tr><td><code>bg-primary-container text-on-primary-container</code></td><td>FAB, highlighted info, selected accents.</td></tr>
-                <tr><td><code>bg-secondary-container text-on-secondary-container</code></td><td>Tonal buttons, selected nav item, selected chip or segment.</td></tr>
-                <tr><td><code>bg-tertiary-container text-on-tertiary-container</code></td><td>Contrasting accents that balance primary.</td></tr>
-                <tr><td><code>bg-error</code> / <code>bg-error-container</code></td><td><strong>Destructive and error only.</strong></td></tr>
-                <tr><td><code>bg-success-container</code> / <code>bg-warning-container</code></td><td>Status: done / needs attention.</td></tr>
-                <tr><td><code>bg-surface</code>, <code>bg-surface-container-*</code></td><td>Page, then cards/sheets (low), menus (container), dialogs (high), fields (highest).</td></tr>
-                <tr><td><code>text-on-surface</code> / <code>text-on-surface-variant</code></td><td>Body text / secondary text and icons.</td></tr>
-                <tr><td><code>border-outline</code> / <code>border-outline-variant</code></td><td>Field and outlined-button borders / dividers and card outlines.</td></tr>
-                <tr><td><code>bg-inverse-surface text-inverse-on-surface</code></td><td>Snackbars, tooltips.</td></tr>
-                <tr><td>Legacy: <code>brand-*</code>, <code>action-*</code>, <code>accent-*</code>, <code>warning-*</code>, <code>page</code>, <code>panel</code>, <code>divider</code>, <code>gray-*</code></td><td>Still defined, as aliases onto the roles above - prefer the role names in new markup.</td></tr>
+                <tr><td><code>bg-accent-background text-on-accent</code></td><td>The single main action, selected checkbox / radio / switch, active indicators.</td></tr>
+                <tr><td><code>text-accent-content</code></td><td>Links and selected text.</td></tr>
+                <tr><td><code>bg-neutral-background text-on-neutral</code></td><td>Neutral badges, pressed action buttons, tooltips, toasts.</td></tr>
+                <tr><td><code>bg-fill-neutral-hover</code> / <code>bg-fill-neutral-down</code></td><td>Hover and pressed fills for quiet controls, list rows and tabs; neutral buttons.</td></tr>
+                <tr><td><code>bg-negative-background</code> / <code>text-negative-content</code></td><td><strong>Destructive and error only.</strong></td></tr>
+                <tr><td><code>bg-positive-background</code> / <code>bg-notice-background</code> / <code>bg-informative-background</code></td><td>Status badges: done / needs attention / information.</td></tr>
+                <tr><td><code>bg-background-base</code>, <code>bg-background-layer-1</code>, <code>bg-background-layer-2</code>, <code>bg-background-elevated</code></td><td>Page, then raised panels, then cards and fields, then popovers and dialogs.</td></tr>
+                <tr><td><code>text-content-heading</code> / <code>text-content-default</code> / <code>text-content-subdued</code></td><td>Headings / body text / secondary text and icons.</td></tr>
+                <tr><td><code>border-border-default</code> / <code>border-border-subtle</code></td><td>Field and outlined-button borders / dividers and card edges.</td></tr>
+                <tr><td>Material 3 names: <code>primary</code>, <code>surface-container-*</code>, <code>on-surface</code>, <code>outline</code>, ...</td><td>Still defined, as aliases onto the tokens above - prefer the Lumen names in new markup.</td></tr>
+                <tr><td>Legacy: <code>brand-*</code>, <code>action-*</code>, <code>accent-*</code>, <code>warning-*</code>, <code>page</code>, <code>panel</code>, <code>divider</code>, <code>gray-*</code></td><td>Also still defined, as aliases (<code>gray-*</code> is Lumen's gray scale itself).</td></tr>
             </tbody>
         </table>
     </div>
