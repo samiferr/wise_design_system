@@ -2059,6 +2059,13 @@
         background-color: color-mix(in srgb, currentColor 24%, transparent);
     }
 
+    /* Their focus ring is drawn over the colored surface they sit on, where
+       the accent could vanish (graphite on a neutral toast), so it takes the
+       surface's own text color - always readable on that fill. */
+    :where(.tag-remove, .toast-close):focus-visible {
+        outline-color: currentColor;
+    }
+
     /* ── Top app bar ─────────────────────────────────────────────────────
        The mobile-only strip; desktop chrome lives entirely in the sidebar.
        A layer-1 bar with a subtle bottom edge and a title-l title. */
