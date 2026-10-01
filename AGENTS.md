@@ -10,7 +10,7 @@ classes, `tokens.css`), read the Lumen design skill:
 - [`references/components.md`](.claude/skills/lumen-design/references/components.md): markup
   for every component
 - [`references/tokens.md`](.claude/skills/lumen-design/references/tokens.md): every color token,
-  type style, shape, shadow, motion and density token
+  type style, shape, shadow, motion and size token
 - [`references/authoring.md`](.claude/skills/lumen-design/references/authoring.md): adding a
   component or palette
 - [`references/review-checklist.md`](.claude/skills/lumen-design/references/review-checklist.md):

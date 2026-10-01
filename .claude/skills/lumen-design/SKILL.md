@@ -20,7 +20,7 @@ sizes.**
    `bg-notice-background text-on-notice`). No `text-white`, no `bg-[#...]`, no `dark:` variants:
    tokens already flip in dark mode. Palette steps like `--lumen-blue-900` are for charts and
    illustration only.
-2. **One accent, one main action.** The accent hue (blue by default; `data-palette` swaps it) fills
+2. **One accent, one main action.** The accent color (blue by default; `data-palette` swaps it) fills
    the single main action per view (`btn-primary`) and colors links (`text-accent-content`). Everything
    else is neutral: `btn-brand` (neutral fill), `btn-secondary` (outline), `btn-ghost` (quiet).
 3. **Type = the Lumen scale.** `text-heading-*` (800), `text-title-*` (700), `text-body-*` (400),
@@ -100,7 +100,7 @@ Details and values: [references/tokens.md](references/tokens.md).
 - **Which fill?** main action `accent-background`; neutral button / hover `fill-neutral-hover`;
   pressed / selected action `neutral-background`; destructive `negative-background`; status
   `positive-` / `notice-` / `informative-background`.
-- **Density:** read `--control-height-md` (fields), `--control-height-button`, `--list-item-height`,
+- **Control heights:** read `--control-height-md` (fields), `--control-height-button`, `--list-item-height`,
   `--menu-item-height`. Never hardcode component heights. Spacing is the 4px grid: Lumen's
   `spacing-75/100/200/300/400/600` are Tailwind `1/2/3/4/6/10`.
 - **Legacy and Material 3 names** (`brand-*`, `action-*`, `accent-*`, `page`, `panel`, `divider`,
@@ -113,16 +113,20 @@ Details and values: [references/tokens.md](references/tokens.md).
 
 ## Theming axes (runtime, on `<html>`)
 
-`data-theme` light|dark · `data-palette` (blue)|indigo|purple|green|amber · `data-density`
-comfortable|compact · `data-radius` (Lumen)|soft|sharp · `data-shadow` flat|soft|elevated. There is
-deliberately no background axis. JS setters: `wiseSetTheme()` etc. in `wise_core/static/wise_core/js/common.js`.
+`data-theme` light|dark · `data-palette` (blue)|red|graphite|green (the accent color) · `data-radius`
+(Lumen)|soft|sharp (rounding) · `data-shadow` flat|soft|elevated (card shadow). These four are the whole
+settings panel. There is deliberately no background axis and no density axis (controls are 32px, 40px
+on touch). JS setters: `wiseSetTheme()` etc. in `wise_core/static/wise_core/js/common.js`.
 Anything you build must look right under **every** combination, which it will as long as it only reads
 tokens.
 
 ## Rebranding / new accent
 
-The palette is generated, not hand-picked. Lumen's hues live in `scripts/lumen-scales.json`; the
-accent options are `ACCENTS` in `scripts/generate_lumen_palettes.mjs`. Add a hue there, then
+The palette is generated, not hand-picked. Lumen's hues live in `scripts/lumen-scales.json`; each accent
+option is **one OKLCH color** in `ACCENT_COLORS` in `scripts/generate_lumen_palettes.mjs` (blue
+`oklch(54.6% 0.1724 254.2deg)`, red `oklch(58.29% 0.1941 25.59deg)`, graphite
+`oklch(27.39% 0.0055 286.03deg)`, green `oklch(64.32% 0.1338 164.7deg)`), grown into a 16-step scale for
+both themes. Add an option there (and in `ACCENTS` and the settings panel), then
 `npm run build:palettes && npm run build:css`. The script checks the contrast of every token pair in
 both themes, every palette and every background, and refuses to write if one fails. Never hand-edit
 `lumen-palettes.css`. To override the accent in one project without the generator, redefine
@@ -136,7 +140,7 @@ both themes, every palette and every background, and refuses to write if one fai
    `p-*`, `grid`) are fine; the spacing grid is 4px (use even Tailwind steps: `gap-2`, `p-4`, `p-6`).
 3. If you edited `tokens.css`, `input.css` or any template, run `npm run build:css` (Tailwind only
    emits utilities it finds in templates).
-4. Verify in **light and dark**, and ideally one other palette and `data-density="compact"`. The demo
+4. Verify in **light and dark**, and ideally one other accent and `data-radius="sharp"`. The demo
    site: `cd demo && python manage.py runserver` → `/docs/` (component catalog), `/demo/` (login
    `demo` / `wise-demo-2026`).
 5. Run the checklist in [references/review-checklist.md](references/review-checklist.md) before

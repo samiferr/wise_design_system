@@ -41,16 +41,21 @@ only ever use semantic tokens, so contrast holds in every palette and both theme
 | `background-layer-2` | Cards, tables and field fills (white in light) |
 | `background-elevated` | Popovers, menus, dialogs, tooltips that float above the page (white in light) |
 | `fill-neutral-hover` / `fill-neutral-down` | Hover and pressed fill for quiet buttons, list rows, tabs; the neutral button |
-| `fill-neutral-subtle` | *Wise extension.* The faintest fill, for a quiet region inside a surface: a hovered table row, a table header, a calendar's outside days |
+| `fill-neutral-subtle` | *Wise extension.* The faintest fill, for a quiet region inside a surface: a filled card, an autocomplete header, a calendar's outside days |
+| `row-hover` / `selected-subtle` / `selected-subtle-hover` | Translucent row tints (7% content-heading; 10% / 15% accent) for a hovered, a selected and a selected-and-hovered table, list or tree row. Selection is never the tint alone |
+| `fill-disabled` / `border-disabled` | A disabled field: its fill and outline, with `content-disabled` text |
 | `content-heading` / `content-default` / `content-subdued` | Headings / body text and labels / help text, captions, icons |
 | `content-disabled` | Disabled text. Never for live content |
 | `border-default` / `border-hover` | A control's own border (3:1 on the page and every surface) / its hover |
 | `border-subtle` | Decorative dividers and card edges only |
+| `negative-border` / `negative-border-hover` | An invalid field's border: it stays 1px and changes color, with an icon and a message as the non-color cue |
+| `border-popover` | A menu or picker popover's outline: none in light, 1px `gray-400` in dark |
 | `accent-background` (+ `-hover`, `-down`) / `on-accent` | The single main action, selected checkbox / radio / switch; text on it |
 | `accent-content` | Links and selected text. Step 1000 of the accent, so it holds 4.5:1 on the gray page, on white, and inside a hovered row |
 | `accent-subtle` / `on-accent-subtle` | *Wise extension.* A quiet accent tint for a highlighted region (calendar event, autocomplete row) |
 | `neutral-background` / `on-neutral` | The solid neutral: neutral badges, pressed action buttons, tooltips, toasts |
 | `informative-` / `positive-` / `notice-` / `negative-` `background` and `-content` | Status. Fills take `on-accent` text (`on-notice` on the orange fill). Always with a word and an icon |
+| `neutral-` / `informative-` / `positive-` / `notice-` / `negative-` `subtle` | The tinted background of an inline alert (`.callout`); its icon and 2px border use the `-content` color, its text stays `content-heading` / `content-default` |
 | `focus-ring` | The 2px keyboard focus outline |
 
 ```html
@@ -64,9 +69,15 @@ only ever use semantic tokens, so contrast holds in every palette and both theme
 Always pair a fill with its own `on-` token, and never hardcode `text-white`: in dark mode the filled
 accent steps one shade lighter, and the notice (orange) fill's label turns black.
 
-The accent is one hue: blue by default, switchable to indigo, purple, green or amber with
-`data-palette`. Every Lumen hue is built to the same contrast ladder, so white text on the accent fill
-and the accent as link text hold 4.5:1 whichever one you pick.
+The accent is one color: blue by default, switchable to red, graphite or green with `data-palette`.
+Each option is one OKLCH color (below) grown into a full scale for both themes, and every option is
+checked, so white text on the accent fill and the accent as link text hold 4.5:1 whichever one you pick.
+
+Also new in Lumen's form-input review: `fill-disabled` / `border-disabled` (a disabled field),
+`negative-border` / `-hover` (an invalid field keeps its 1px border and changes its color),
+`border-popover` (none in light, 1px in dark), `*-subtle` tints for inline alerts, and the translucent
+row tints `row-hover` (7% content-heading), `selected-subtle` (10% accent) and `selected-subtle-hover`
+(15%).
 
 ### Contrast on the gray canvas
 
@@ -106,10 +117,23 @@ no longer exist; read the `--color-*` tokens instead.
 
 ### Rebranding
 
-The accent options are `ACCENTS` in
-[`scripts/generate_lumen_palettes.mjs`](../scripts/generate_lumen_palettes.mjs); each is a name for
-`data-palette` and a hue from [`scripts/lumen-scales.json`](../scripts/lumen-scales.json). Add one (or
-change the `null` entry, which is the default) and run:
+The accent options are `ACCENT_COLORS` in
+[`scripts/generate_lumen_palettes.mjs`](../scripts/generate_lumen_palettes.mjs). Each is an id (the
+`data-palette` value), a label, **one OKLCH color** - the fill of the main action in light - and `ref`,
+the Lumen hue from [`scripts/lumen-scales.json`](../scripts/lumen-scales.json) whose lightness and
+chroma ladder the 16-step scale follows:
+
+| Option | `data-palette` | OKLCH color | Applied fill (light) |
+|---|---|---|---|
+| Blue (default) | unset or `blue` | `oklch(54.6% 0.1724 254.2deg)` | `#066fd1` |
+| Red | `red` | `oklch(58.29% 0.1941 25.59deg)` | `#d63939` |
+| Graphite | `graphite` | `oklch(27.39% 0.0055 286.03deg)` | `#27272a` |
+| Green | `green` | `oklch(64.32% 0.1338 164.7deg)` | `#088761` |
+
+White text on the given green is only 3.1:1, so the generator darkens a color (same hue and chroma) just
+enough to reach 4.5:1; the other three are used exactly as given. Graphite is a neutral accent: links
+in it differ from body text by their underline, not their color. To add an option, add an entry to
+`ACCENT_COLORS` and `ACCENTS`, a button in `_settings_panel.html`, and run:
 
 ```bash
 npm run build:palettes && npm run build:css
@@ -181,7 +205,8 @@ There are no overlay layers: hover steps a fill one shade and press two. A fille
 `accent-background` → `-hover` → `-down` (negative likewise); outlined, quiet and list-row controls
 fill with `fill-neutral-hover` then `fill-neutral-down`. The quiet-hover rule is one `:where(...)` block
 in `tokens.css`; add your own component's selector to it rather than writing hover colors by hand.
-Disabled: `content-disabled` text on `fill-neutral-hover` (no fill for outlined and quiet controls).
+Disabled: a button is `content-disabled` text on `fill-neutral-hover` (no fill for quiet buttons); a field,
+checkbox, radio or switch uses `fill-disabled` / `border-disabled`.
 
 Focus: a 2px `focus-ring` outline offset 2px (`--focus-ring-width/-offset/-color`) on every
 `:focus-visible`, text fields included.
@@ -193,31 +218,31 @@ Hover, press and color changes take 130ms (`--default-transition-duration`, Tail
 `--ease-enter`; `--ease-exit` is for leaving. Animate color, opacity and transform only, and respect
 `prefers-reduced-motion`.
 
-## Density
+## Control heights
 
 Lumen's component heights are 20, 24, 32 (the default), 40 and 48px (`--component-height-50` …
 `-300`). Components read the control tokens rather than a fixed height:
 
-| Token | Comfortable | Compact |
+| Token | Default | Coarse pointer (touch) |
 |---|---|---|
-| `--control-height-md` | 2rem (32px text field) | 1.5rem |
-| `--control-height-sm` / `-lg` | 1.5rem / 2.5rem | 1.25rem / 2rem |
-| `--control-height-button` | 2rem (32px button) | 1.5rem |
-| `--control-padding-x-button` | 1rem | 0.75rem |
-| `--list-item-height` / `--menu-item-height` | 2rem | 1.75rem |
-| `--table-padding-y` / `--table-header-padding-y` | 0.5rem / 0.5rem | 0.25rem / 0.375rem |
+| `--control-height-md` | 2rem (32px text field) | 2.5rem |
+| `--control-height-sm` / `-lg` | 1.5rem / 2.5rem | 2rem / 3rem |
+| `--control-height-button` | 2rem (32px button) | 2.5rem |
+| `--list-item-height` / `--menu-item-height` | 2rem | 2.5rem |
+| `--table-padding-y` | 0.5rem | 0.5rem |
 
-On a coarse pointer (touch) the comfortable values step up one size - 40px fields, buttons and rows -
-following Lumen's "add about 20% on touch". Compact stays compact.
+On a coarse pointer the values step up one size - 40px fields, buttons and rows - following Lumen's
+"add about 20% on touch". Density is not a setting: there is no compact mode.
 
 ## Switchable axes
 
-Five independent attributes on `<html>`, each redefining a handful of tokens at runtime (no rebuild,
-no second stylesheet). They compose freely, because each touches a different tier: palette re-points
-reference steps, theme re-points which step each semantic token reads. The background is not an axis.
+Four independent attributes on `<html>`, each redefining a handful of tokens at runtime (no rebuild,
+no second stylesheet). They compose freely, because each touches a different tier: the accent re-points
+the accent scale, theme re-points which step each semantic token reads. Nothing else is a setting - not
+the page background, not density.
 `base.html` applies whatever's in `localStorage` before first paint;
 `wise_core/static/wise_core/js/common.js` exposes one setter per axis, and
-`wise_core/components/_settings_panel.html` is a ready-made side sheet for all five (open it with
+`wise_core/components/_settings_panel.html` is a ready-made side sheet for all four (open it with
 `wiseOpenDrawer('wise-settings-drawer')`, normally via `_settings_toggle.html`). Its **Copy tokens** tab
 exports the current `data-*` line and the resolved `--color-*` / `--corner-radius-*` values (see
 `WISE_EXPORT_TOKENS` in `common.js`).
@@ -225,17 +250,15 @@ exports the current `data-*` line and the resolved `--color-*` / `--corner-radiu
 | Attribute | Values | Retunes |
 |---|---|---|
 | `data-theme` | `light` (default), `dark` | Which palette step each semantic color token reads |
-| `data-palette` | `blue` (default), `indigo`, `purple`, `green`, `amber` | The accent hue |
-| `data-density` | `comfortable` (default), `compact` | Field, button, list-item and table heights |
-| `data-radius` | Lumen radii (default), `soft`, `sharp` | The whole corner scale |
-| `data-shadow` | `flat` (default), `soft`, `elevated` | Outlined vs. raised cards and panels |
+| `data-palette` | `blue` (default), `red`, `graphite`, `green` | The accent color |
+| `data-radius` | Lumen radii (default), `soft`, `sharp` | Rounding: the whole corner scale |
+| `data-shadow` | `flat` (default), `soft`, `elevated` | Card shadow: outlined vs. raised cards and panels |
 
 ```js
 wiseSetTheme('dark')       // '' or 'light' resets to light
-wiseSetPalette('green')    // '' resets to blue, the Lumen default
-wiseSetDensity('compact')  // '' resets to comfortable
-wiseSetRadius('sharp')     // '' resets to the Lumen corner radii
-wiseSetShadow('elevated')  // '' resets to flat (outlined cards)
+wiseSetPalette('green')    // 'red' | 'graphite' | 'green'; '' resets to blue
+wiseSetRadius('sharp')     // 'soft' | 'sharp'; '' resets to the Lumen corner radii
+wiseSetShadow('elevated')  // 'soft' | 'elevated'; '' resets to flat (outlined cards)
 ```
 
 ## Component class names

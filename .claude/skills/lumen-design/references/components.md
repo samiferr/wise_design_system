@@ -13,13 +13,17 @@ tables, ...) is built from the same tokens in the same shapes.
 
 ### Buttons
 
-Fully round, `title-s` (14px, 700), 32px tall (24px compact, 40px on touch), 16px side padding
-(12px for quiet buttons), 2px border so filled and outlined buttons are the same size.
+Fully round, `title-s` (14px, 700), 32px tall (40px on touch), 16px side padding (12px for quiet
+buttons), at least 2.25 times its height wide, 2px border so filled and outlined buttons are the same
+size. Disabled is always `content-disabled` on `fill-neutral-hover`, whatever the variant.
 
 ```django
 <button class="btn btn-primary">Save</button>                 {# accent fill: the one main action #}
 <button class="btn btn-brand">Save draft</button>             {# neutral fill (fill-neutral-hover) #}
 <button class="btn btn-secondary">Cancel</button>             {# neutral outline #}
+<button class="btn btn-neutral">Continue</button>             {# solid neutral (Lumen's primary): neutral-background #}
+<button class="btn btn-outline-accent">Details</button>       {# accent outline; also btn-outline-neutral, btn-outline-danger #}
+<button class="btn btn-secondary" aria-pressed="true">Grid</button>  {# a toggle in its pressed state #}
 <button class="btn btn-ghost">Learn more</button>             {# quiet: lowest emphasis #}
 <button class="btn btn-elevated">Import</button>              {# raised: layer-2 + emphasized shadow #}
 <button class="btn btn-danger">Delete</button>                {# negative fill #}

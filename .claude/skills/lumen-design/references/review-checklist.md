@@ -14,7 +14,7 @@ Run through this before finishing any UI change. Grep helpers are at the bottom.
 - [ ] Cards, panels, fields and popovers are white surfaces (`background-layer-1/2`, `-elevated`) on the
       fixed gray page; nothing overrides `background-base`, and nothing assumes the page is white.
 - [ ] Accent and status text uses the `-content` tokens (never an `*-background` token as text color).
-- [ ] Looks right in `data-theme="dark"` and at least one other `data-palette`.
+- [ ] Looks right in `data-theme="dark"` and at least one other `data-palette` (red, graphite or green).
 
 ## Type
 - [ ] Only `text-{heading,title,body,detail,code}-*` (or the heading elements' defaults). No
@@ -37,9 +37,10 @@ Run through this before finishing any UI change. Grep helpers are at the bottom.
 - [ ] Touch targets: components step up to 40px on a coarse pointer; don't override heights.
 - [ ] Disabled uses the `disabled` attribute (or `.btn-disabled` on `<a>`), not opacity hacks.
 
-## Layout & density
+## Layout & sizes
 - [ ] Spacing on the 4px grid; window margins 16px (compact) / 24px (medium+) - `.page-panel` does this.
-- [ ] Heights come from density tokens; the view survives `data-density="compact"` (24px controls).
+- [ ] Heights come from the `--control-height-*` / `--component-height-*` tokens (they step up on touch);
+      nothing hardcodes a control height.
 
 ## Build
 - [ ] `npm run build:css` ran after template/CSS changes; `lumen-palettes.css` untouched unless

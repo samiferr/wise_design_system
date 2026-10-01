@@ -7,8 +7,9 @@
    --color-accent-background, ...) point at these steps; components never
    read them directly - they exist for charts and illustration.
 
-   --lumen-accent-<step> is the accent scale: blue by default, re-pointed by
-   data-palette.
+   --lumen-accent-<step> is the accent scale: blue by default, replaced by
+   data-palette (red, graphite, green). Each accent is grown from one OKLCH
+   color in ACCENT_COLORS (scripts/generate_lumen_palettes.mjs).
 
    Palette, spacing, radius, type-size and component-height values are
    adapted from Adobe's open-source Spectrum design tokens (Apache
@@ -401,122 +402,200 @@
     --lumen-magenta-1600: #ffffff;
 }
 
+/* One swatch per accent option - its rest fill in light - so a picker can show every option whatever the current accent is. */
+:root {
+    --lumen-swatch-blue: #066fd1;
+    --lumen-swatch-red: #d63939;
+    --lumen-swatch-graphite: #27272a;
+    --lumen-swatch-green: #088761;
+}
+
 /* default - blue */
 :root {
-    --lumen-accent-100: var(--lumen-blue-100);
-    --lumen-accent-200: var(--lumen-blue-200);
-    --lumen-accent-300: var(--lumen-blue-300);
-    --lumen-accent-400: var(--lumen-blue-400);
-    --lumen-accent-500: var(--lumen-blue-500);
-    --lumen-accent-600: var(--lumen-blue-600);
-    --lumen-accent-700: var(--lumen-blue-700);
-    --lumen-accent-800: var(--lumen-blue-800);
-    --lumen-accent-900: var(--lumen-blue-900);
-    --lumen-accent-1000: var(--lumen-blue-1000);
-    --lumen-accent-1100: var(--lumen-blue-1100);
-    --lumen-accent-1200: var(--lumen-blue-1200);
-    --lumen-accent-1300: var(--lumen-blue-1300);
-    --lumen-accent-1400: var(--lumen-blue-1400);
-    --lumen-accent-1500: var(--lumen-blue-1500);
-    --lumen-accent-1600: var(--lumen-blue-1600);
+    --lumen-accent-100: #f6f9fd;
+    --lumen-accent-200: #e7effa;
+    --lumen-accent-300: #cfe0f5;
+    --lumen-accent-400: #b1cdef;
+    --lumen-accent-500: #91b8e7;
+    --lumen-accent-600: #6ca0e0;
+    --lumen-accent-700: #4d8fdd;
+    --lumen-accent-800: #2e7ed8;
+    --lumen-accent-900: #066fd1;
+    --lumen-accent-1000: #055eb3;
+    --lumen-accent-1100: #01519c;
+    --lumen-accent-1200: #004282;
+    --lumen-accent-1300: #023569;
+    --lumen-accent-1400: #002853;
+    --lumen-accent-1500: #051c38;
+    --lumen-accent-1600: #040d1a;
+}
+:root[data-theme="dark"] {
+    --lumen-accent-100: #041933;
+    --lumen-accent-200: #012042;
+    --lumen-accent-300: #002a58;
+    --lumen-accent-400: #023a73;
+    --lumen-accent-500: #024c93;
+    --lumen-accent-600: #045db1;
+    --lumen-accent-700: #0a6ccb;
+    --lumen-accent-800: #1b77d7;
+    --lumen-accent-900: #448bde;
+    --lumen-accent-1000: #629ce3;
+    --lumen-accent-1100: #7fade7;
+    --lumen-accent-1200: #9fc1ec;
+    --lumen-accent-1300: #bdd4f2;
+    --lumen-accent-1400: #d9e7f8;
+    --lumen-accent-1500: #eff5fc;
+    --lumen-accent-1600: #ffffff;
 }
 
 /* data-palette="blue" - blue */
 :root[data-palette="blue"] {
-    --lumen-accent-100: var(--lumen-blue-100);
-    --lumen-accent-200: var(--lumen-blue-200);
-    --lumen-accent-300: var(--lumen-blue-300);
-    --lumen-accent-400: var(--lumen-blue-400);
-    --lumen-accent-500: var(--lumen-blue-500);
-    --lumen-accent-600: var(--lumen-blue-600);
-    --lumen-accent-700: var(--lumen-blue-700);
-    --lumen-accent-800: var(--lumen-blue-800);
-    --lumen-accent-900: var(--lumen-blue-900);
-    --lumen-accent-1000: var(--lumen-blue-1000);
-    --lumen-accent-1100: var(--lumen-blue-1100);
-    --lumen-accent-1200: var(--lumen-blue-1200);
-    --lumen-accent-1300: var(--lumen-blue-1300);
-    --lumen-accent-1400: var(--lumen-blue-1400);
-    --lumen-accent-1500: var(--lumen-blue-1500);
-    --lumen-accent-1600: var(--lumen-blue-1600);
+    --lumen-accent-100: #f6f9fd;
+    --lumen-accent-200: #e7effa;
+    --lumen-accent-300: #cfe0f5;
+    --lumen-accent-400: #b1cdef;
+    --lumen-accent-500: #91b8e7;
+    --lumen-accent-600: #6ca0e0;
+    --lumen-accent-700: #4d8fdd;
+    --lumen-accent-800: #2e7ed8;
+    --lumen-accent-900: #066fd1;
+    --lumen-accent-1000: #055eb3;
+    --lumen-accent-1100: #01519c;
+    --lumen-accent-1200: #004282;
+    --lumen-accent-1300: #023569;
+    --lumen-accent-1400: #002853;
+    --lumen-accent-1500: #051c38;
+    --lumen-accent-1600: #040d1a;
+}
+:root[data-theme="dark"][data-palette="blue"] {
+    --lumen-accent-100: #041933;
+    --lumen-accent-200: #012042;
+    --lumen-accent-300: #002a58;
+    --lumen-accent-400: #023a73;
+    --lumen-accent-500: #024c93;
+    --lumen-accent-600: #045db1;
+    --lumen-accent-700: #0a6ccb;
+    --lumen-accent-800: #1b77d7;
+    --lumen-accent-900: #448bde;
+    --lumen-accent-1000: #629ce3;
+    --lumen-accent-1100: #7fade7;
+    --lumen-accent-1200: #9fc1ec;
+    --lumen-accent-1300: #bdd4f2;
+    --lumen-accent-1400: #d9e7f8;
+    --lumen-accent-1500: #eff5fc;
+    --lumen-accent-1600: #ffffff;
 }
 
-/* data-palette="indigo" - indigo */
-:root[data-palette="indigo"] {
-    --lumen-accent-100: var(--lumen-indigo-100);
-    --lumen-accent-200: var(--lumen-indigo-200);
-    --lumen-accent-300: var(--lumen-indigo-300);
-    --lumen-accent-400: var(--lumen-indigo-400);
-    --lumen-accent-500: var(--lumen-indigo-500);
-    --lumen-accent-600: var(--lumen-indigo-600);
-    --lumen-accent-700: var(--lumen-indigo-700);
-    --lumen-accent-800: var(--lumen-indigo-800);
-    --lumen-accent-900: var(--lumen-indigo-900);
-    --lumen-accent-1000: var(--lumen-indigo-1000);
-    --lumen-accent-1100: var(--lumen-indigo-1100);
-    --lumen-accent-1200: var(--lumen-indigo-1200);
-    --lumen-accent-1300: var(--lumen-indigo-1300);
-    --lumen-accent-1400: var(--lumen-indigo-1400);
-    --lumen-accent-1500: var(--lumen-indigo-1500);
-    --lumen-accent-1600: var(--lumen-indigo-1600);
+/* data-palette="red" - red */
+:root[data-palette="red"] {
+    --lumen-accent-100: #fff6f5;
+    --lumen-accent-200: #ffebe9;
+    --lumen-accent-300: #fed7d2;
+    --lumen-accent-400: #febeb7;
+    --lumen-accent-500: #fd9f97;
+    --lumen-accent-600: #fd7971;
+    --lumen-accent-700: #fd5652;
+    --lumen-accent-800: #ee3f40;
+    --lumen-accent-900: #d63939;
+    --lumen-accent-1000: #b32b2c;
+    --lumen-accent-1100: #9b2626;
+    --lumen-accent-1200: #801f1f;
+    --lumen-accent-1300: #671817;
+    --lumen-accent-1400: #4f1211;
+    --lumen-accent-1500: #3a0c0b;
+    --lumen-accent-1600: #1d0504;
+}
+:root[data-theme="dark"][data-palette="red"] {
+    --lumen-accent-100: #350a0a;
+    --lumen-accent-200: #430e0d;
+    --lumen-accent-300: #561212;
+    --lumen-accent-400: #711a1a;
+    --lumen-accent-500: #912222;
+    --lumen-accent-600: #ae2a2b;
+    --lumen-accent-700: #ca3233;
+    --lumen-accent-800: #db3939;
+    --lumen-accent-900: #f84746;
+    --lumen-accent-1000: #fb6a62;
+    --lumen-accent-1100: #fc887f;
+    --lumen-accent-1200: #fca8a0;
+    --lumen-accent-1300: #fdc5bf;
+    --lumen-accent-1400: #fedfdb;
+    --lumen-accent-1500: #fff2f1;
+    --lumen-accent-1600: #ffffff;
 }
 
-/* data-palette="purple" - purple */
-:root[data-palette="purple"] {
-    --lumen-accent-100: var(--lumen-purple-100);
-    --lumen-accent-200: var(--lumen-purple-200);
-    --lumen-accent-300: var(--lumen-purple-300);
-    --lumen-accent-400: var(--lumen-purple-400);
-    --lumen-accent-500: var(--lumen-purple-500);
-    --lumen-accent-600: var(--lumen-purple-600);
-    --lumen-accent-700: var(--lumen-purple-700);
-    --lumen-accent-800: var(--lumen-purple-800);
-    --lumen-accent-900: var(--lumen-purple-900);
-    --lumen-accent-1000: var(--lumen-purple-1000);
-    --lumen-accent-1100: var(--lumen-purple-1100);
-    --lumen-accent-1200: var(--lumen-purple-1200);
-    --lumen-accent-1300: var(--lumen-purple-1300);
-    --lumen-accent-1400: var(--lumen-purple-1400);
-    --lumen-accent-1500: var(--lumen-purple-1500);
-    --lumen-accent-1600: var(--lumen-purple-1600);
+/* data-palette="graphite" - graphite */
+:root[data-palette="graphite"] {
+    --lumen-accent-100: #f9f9f9;
+    --lumen-accent-200: #e8e8e8;
+    --lumen-accent-300: #cececf;
+    --lumen-accent-400: #adadaf;
+    --lumen-accent-500: #8c8c8d;
+    --lumen-accent-600: #68686a;
+    --lumen-accent-700: #4f4f52;
+    --lumen-accent-800: #39393c;
+    --lumen-accent-900: #27272a;
+    --lumen-accent-1000: #232326;
+    --lumen-accent-1100: #1f1f22;
+    --lumen-accent-1200: #1b1b1e;
+    --lumen-accent-1300: #18181a;
+    --lumen-accent-1400: #141416;
+    --lumen-accent-1500: #111112;
+    --lumen-accent-1600: #0d0d0d;
+}
+:root[data-theme="dark"][data-palette="graphite"] {
+    --lumen-accent-100: #181819;
+    --lumen-accent-200: #1f1f21;
+    --lumen-accent-300: #2a2a2c;
+    --lumen-accent-400: #3a3a3d;
+    --lumen-accent-500: #4c4c4f;
+    --lumen-accent-600: #5d5d61;
+    --lumen-accent-700: #6c6c70;
+    --lumen-accent-800: #76767a;
+    --lumen-accent-900: #88888b;
+    --lumen-accent-1000: #99999b;
+    --lumen-accent-1100: #aaaaac;
+    --lumen-accent-1200: #bebebf;
+    --lumen-accent-1300: #d2d2d3;
+    --lumen-accent-1400: #e5e5e6;
+    --lumen-accent-1500: #f4f4f4;
+    --lumen-accent-1600: #ffffff;
 }
 
 /* data-palette="green" - green */
 :root[data-palette="green"] {
-    --lumen-accent-100: var(--lumen-green-100);
-    --lumen-accent-200: var(--lumen-green-200);
-    --lumen-accent-300: var(--lumen-green-300);
-    --lumen-accent-400: var(--lumen-green-400);
-    --lumen-accent-500: var(--lumen-green-500);
-    --lumen-accent-600: var(--lumen-green-600);
-    --lumen-accent-700: var(--lumen-green-700);
-    --lumen-accent-800: var(--lumen-green-800);
-    --lumen-accent-900: var(--lumen-green-900);
-    --lumen-accent-1000: var(--lumen-green-1000);
-    --lumen-accent-1100: var(--lumen-green-1100);
-    --lumen-accent-1200: var(--lumen-green-1200);
-    --lumen-accent-1300: var(--lumen-green-1300);
-    --lumen-accent-1400: var(--lumen-green-1400);
-    --lumen-accent-1500: var(--lumen-green-1500);
-    --lumen-accent-1600: var(--lumen-green-1600);
+    --lumen-accent-100: #eafdf4;
+    --lumen-accent-200: #d2f8e6;
+    --lumen-accent-300: #a3f1ce;
+    --lumen-accent-400: #50e7b0;
+    --lumen-accent-500: #12d399;
+    --lumen-accent-600: #12b987;
+    --lumen-accent-700: #01a778;
+    --lumen-accent-800: #0d966c;
+    --lumen-accent-900: #088761;
+    --lumen-accent-1000: #076c4d;
+    --lumen-accent-1100: #046044;
+    --lumen-accent-1200: #004f37;
+    --lumen-accent-1300: #013f2b;
+    --lumen-accent-1400: #022f20;
+    --lumen-accent-1500: #022216;
+    --lumen-accent-1600: #010f08;
 }
-
-/* data-palette="amber" - yellow */
-:root[data-palette="amber"] {
-    --lumen-accent-100: var(--lumen-yellow-100);
-    --lumen-accent-200: var(--lumen-yellow-200);
-    --lumen-accent-300: var(--lumen-yellow-300);
-    --lumen-accent-400: var(--lumen-yellow-400);
-    --lumen-accent-500: var(--lumen-yellow-500);
-    --lumen-accent-600: var(--lumen-yellow-600);
-    --lumen-accent-700: var(--lumen-yellow-700);
-    --lumen-accent-800: var(--lumen-yellow-800);
-    --lumen-accent-900: var(--lumen-yellow-900);
-    --lumen-accent-1000: var(--lumen-yellow-1000);
-    --lumen-accent-1100: var(--lumen-yellow-1100);
-    --lumen-accent-1200: var(--lumen-yellow-1200);
-    --lumen-accent-1300: var(--lumen-yellow-1300);
-    --lumen-accent-1400: var(--lumen-yellow-1400);
-    --lumen-accent-1500: var(--lumen-yellow-1500);
-    --lumen-accent-1600: var(--lumen-yellow-1600);
+:root[data-theme="dark"][data-palette="green"] {
+    --lumen-accent-100: #021e13;
+    --lumen-accent-200: #022619;
+    --lumen-accent-300: #013323;
+    --lumen-accent-400: #00442f;
+    --lumen-accent-500: #04573d;
+    --lumen-accent-600: #01694b;
+    --lumen-accent-700: #0c7b58;
+    --lumen-accent-800: #058760;
+    --lumen-accent-900: #099b70;
+    --lumen-accent-1000: #03ad7d;
+    --lumen-accent-1100: #12bf8b;
+    --lumen-accent-1200: #19d79d;
+    --lumen-accent-1300: #69e9b7;
+    --lumen-accent-1400: #b5f2d6;
+    --lumen-accent-1500: #e2fbef;
+    --lumen-accent-1600: #ffffff;
 }

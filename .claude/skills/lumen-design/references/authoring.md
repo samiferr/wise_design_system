@@ -8,7 +8,7 @@ are public API: add, don't rename.
 1. **Find the nearest Lumen shape.** Lumen specifies Button, ActionButton, TextField, Checkbox,
    Switch, RadioGroup, Tabs, StatusLight, Badge, ProgressBar, InlineAlert and Divider; anything else
    (menus, dialogs, tables) is built from the same tokens in the same shapes. Decide: which layer it
-   sits on, its fill / content / border tokens, its corner radius, its height from the density
+   sits on, its fill / content / border tokens, its corner radius, its height from the control-height
    tokens, its type style, and whether it floats (shadow) or sits (border).
 2. **Write it from system tokens only:**
 
@@ -18,7 +18,7 @@ are public API: add, don't rename.
    non-obvious about the markup it expects. */
 .nav-row {
     @apply inline-flex items-center gap-2 px-3 text-detail-m;       /* layout + type style */
-    min-height: var(--list-item-height);                            /* density token */
+    min-height: var(--list-item-height);                            /* control-height token */
     color: var(--color-content-default);                            /* content token */
     border-radius: var(--corner-radius-500);                        /* shape token */
 }
@@ -53,12 +53,14 @@ are public API: add, don't rename.
    `--color-action-*`, `--color-panel`, `--color-gray-*`) inside `tokens.css`. Use the Lumen tokens.
 9. Build (`npm run build:css`), add a docs page or example under
    `demo/showcase/templates/showcase/docs/<section>/` if the component is new, and check light, dark,
-   compact density, `data-radius="sharp"` and one other palette.
+   `data-radius="sharp"` and one other accent (red, graphite or green).
 
 ## Colors / palettes
 
-- Add or change an accent hue: `ACCENTS` in `scripts/generate_lumen_palettes.mjs` (the hue must exist in
-  `scripts/lumen-scales.json`), then `npm run build:palettes`. Add a matching button to the settings
+- Add or change an accent option: `ACCENT_COLORS` in `scripts/generate_lumen_palettes.mjs` - an id, a
+  label, one OKLCH color (the main-action fill in light) and `ref`, the Lumen hue in
+  `scripts/lumen-scales.json` whose lightness ladder the scale follows - plus an entry in `ACCENTS`, then
+  `npm run build:palettes`. A color whose white label would fall under 4.5:1 is darkened automatically. Add a matching button to the settings
   panel (`_settings_panel.html`) and the docs palette switcher. The script fails if any token pair
   drops below its contrast target (4.5:1 text, 3:1 control borders and focus ring).
 - Change which step a token uses: the `@theme static` block (light) and the

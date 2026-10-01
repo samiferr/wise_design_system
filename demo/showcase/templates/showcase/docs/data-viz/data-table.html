@@ -261,14 +261,22 @@
         a dead "Page 1 / 1".
     </p>
 
-    <h2 class="mt-8">Density</h2>
+    <h2 class="mt-8">Row states</h2>
     <p class="text-gray-700">
-        Row padding reads <code>--table-padding-y</code>, so <code>data-density="compact"</code>
-        tightens every table at once.
+        Rows are 40px with 12px cell padding. A hovered row takes the translucent <code>row-hover</code>
+        tint; a row marked <code>.selected</code> (or <code>aria-selected="true"</code>) takes
+        <code>selected-subtle</code>, one step stronger when hovered. Selection is never the tint alone -
+        pair it with a checkbox or a check icon.
     </p>
-    <div class="doc-preview mt-4 flex gap-2">
-        <button class="btn btn-secondary" onclick="wiseSetDensity('compact')">Compact</button>
-        <button class="btn btn-secondary" onclick="wiseSetDensity('')">Comfortable</button>
+    <div class="doc-preview mt-4 p-0">
+        <table class="data-table">
+            <thead><tr><th>Name</th><th>Status</th></tr></thead>
+            <tbody>
+                <tr><td>Hover this row</td><td><span class="badge badge-grey">Draft</span></td></tr>
+                <tr class="selected" aria-selected="true"><td>A selected row</td><td><span class="badge badge-green">Published</span></td></tr>
+                <tr><td>Another row</td><td><span class="badge badge-orange">Review</span></td></tr>
+            </tbody>
+        </table>
     </div>
 
     <h2 class="mt-8">Detail panel</h2>

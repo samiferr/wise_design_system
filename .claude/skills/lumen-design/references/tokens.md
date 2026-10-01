@@ -4,7 +4,8 @@ Three tiers:
 
 1. **Reference**: `--lumen-<hue>-<step>` for gray, blue, red, orange, yellow, green, celery, cyan,
    indigo, purple, fuchsia and magenta (16 steps, 100–1600; gray has 13, 25–1000), plus
-   `--lumen-accent-<step>` (the accent hue). Every step has a light and a dark value, so a step flips
+   `--lumen-accent-<step>` (the accent option: blue, red, graphite or green, each grown from one OKLCH
+   color) and `--lumen-swatch-<option>` (each option's fill). Every step has a light and a dark value, so a step flips
    with the theme. Generated into `wise_core/static/wise_core/css/lumen-palettes.css` by
    `scripts/generate_lumen_palettes.mjs` from `scripts/lumen-scales.json`. Components and templates
    never use them (charts and illustration may).
@@ -32,9 +33,15 @@ Adobe.
 | content-default | gray-800 | gray-800 | `text-content-default` |
 | content-subdued | gray-700 | gray-700 | `text-content-subdued` |
 | content-disabled | gray-400 | gray-400 | `text-content-disabled` |
-| border-default | gray-600 | gray-500 | `border-border-default` |
-| border-hover | gray-700 | gray-600 | `border-border-hover` |
+| border-default | gray-600 | gray-600 | `border-border-default` |
+| border-hover | gray-700 | gray-700 | `border-border-hover` |
 | border-subtle | gray-300 | gray-300 | `border-border-subtle` |
+| border-popover | transparent | gray-400 | `border-border-popover` |
+| negative-border / -hover | red-900 / 1000 | red-900 / 1000 | `border-negative-border` |
+| fill-disabled / border-disabled | gray-100 / gray-300 | gray-100 / gray-300 | `bg-fill-disabled` |
+| row-hover | 7% gray-900 | 7% gray-900 | `bg-row-hover` |
+| selected-subtle / -hover | 10% / 15% accent-900 | 10% / 15% accent-900 | `bg-selected-subtle` |
+| neutral- / informative- / positive- / notice- / negative-`subtle` | gray-75, blue / green / orange / red-200 | same step names | `bg-negative-subtle` |
 | accent-background | accent-900 | accent-800 | `bg-accent-background` |
 | accent-background-hover | accent-1000 | accent-700 | `bg-accent-background-hover` |
 | accent-background-down | accent-1100 | accent-600 | `bg-accent-background-down` |
@@ -122,17 +129,19 @@ Disabled: `--wise-disabled-content` (content-disabled) on `--wise-disabled-conta
 (dialog, drawer: 200ms), `--ease-exit` `(0.4,0,1,1)`. Animate color, opacity and transform only;
 honour `prefers-reduced-motion`.
 
-## Density
+## Control heights
 
-| Token | Default | Coarse pointer | `data-density="compact"` |
-|---|---|---|---|
-| `--control-height-sm / -md / -lg` | 24 / 32 / 40px | 32 / 40 / 48px | 20 / 24 / 32px |
-| `--control-height-button` | 32px | 40px | 24px |
-| `--control-padding-x-button` | 16px | 16px | 12px |
-| `--control-padding-y` | 4px | 4px | 0 |
-| `--list-item-height` | 32px | 40px | 28px |
-| `--menu-item-height` | 32px | 40px | 28px |
-| `--table-padding-y / --table-header-padding-y` | 8 / 8px | same | 4 / 6px |
+| Token | Default | Coarse pointer |
+|---|---|---|
+| `--control-height-sm / -md / -lg` | 24 / 32 / 40px | 32 / 40 / 48px |
+| `--control-height-button` | 32px | 40px |
+| `--control-padding-x-button` | 16px | 16px |
+| `--control-padding-y` | 4px | 4px |
+| `--list-item-height` | 32px | 40px |
+| `--menu-item-height` | 32px | 40px |
+| `--table-padding-y` | 8px | 8px |
+
+There is no compact density mode: density is not a setting.
 
 Lumen's own heights: `--component-height-50..500` = 20 / 24 / 32 / 40 / 48 / 56 / 64px.
 

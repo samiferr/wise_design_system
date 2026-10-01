@@ -10,7 +10,7 @@
     <code>--shadow-*</code>, <code>--component-height-*</code>, ...) and the Tailwind utilities built on
     them. Colors live on <a class="text-accent-content underline" href="{% url 'docs_theming_color_palettes' %}">Color
     Palettes</a>; this page covers the rest: type, shape, layers and shadow, hover and press, motion
-    and density.
+    and control heights.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Typography</h2>
@@ -205,8 +205,8 @@
     <div class="callout callout-info mt-4">
         {% lucide "info" size=16 cls="callout-icon" %}
         <div>
-            <div class="callout-title">Five axes, one panel</div>
-            Theme, palette, density, shape and card shadow all switch this way - one
+            <div class="callout-title">Four axes, one panel</div>
+            Theme, accent color, rounding and card shadow all switch this way - one
             attribute on <code>&lt;html&gt;</code>, persisted to <code>localStorage</code>. The demo
             app's sidebar (and this site's own header) opens the same settings panel these buttons
             drive individually - see <code>wise_core/components/_settings_panel.html</code>.
@@ -231,36 +231,30 @@
         </table>
     </div>
 
-    <h2 class="mt-8">Density</h2>
+    <h2 class="mt-8">Control heights</h2>
     <p class="text-content-subdued">
-        Components read these rather than hardcoding a height, which is what lets
-        <code>data-density</code> retune the whole UI in one place. Lumen's heights are 20, 24, 32 (the
-        default), 40 and 48px (<code>--component-height-50</code> … <code>-300</code>). Comfortable is the
-        32px default, bumped up one size on a touch pointer; compact steps down to 24px.
+        Components read these rather than hardcoding a height, which is what lets one pointer media
+        query retune the whole UI. Lumen's heights are 20, 24, 32 (the default), 40 and 48px
+        (<code>--component-height-50</code> … <code>-300</code>). Controls are 32px by default and step up one
+        size on a touch pointer (Lumen's "add about 20% on touch"). Density is not a setting.
     </p>
     <div class="doc-preview mt-4 flex flex-wrap items-end gap-3">
         <input class="input input-sm max-w-[8rem]" placeholder="sm">
         <input class="input max-w-[8rem]" placeholder="md">
         <input class="input input-lg max-w-[8rem]" placeholder="lg">
-        <div class="btn-group" role="group" aria-label="Density">
-            <button class="btn" onclick="wiseSetDensity('')">Comfortable</button>
-            <button class="btn" onclick="wiseSetDensity('compact')">Compact</button>
-        </div>
     </div>
     <div class="mt-4 overflow-x-auto border border-divider bg-panel">
         <table class="doc-props w-full">
-            <thead><tr><th>Token</th><th>Comfortable</th><th>Compact</th></tr></thead>
+            <thead><tr><th>Token</th><th>Default</th><th>Coarse pointer</th></tr></thead>
             <tbody>
-                <tr><td><code>--control-height-sm</code></td><td>1.5rem (24px)</td><td>1.25rem</td></tr>
-                <tr><td><code>--control-height-md</code></td><td>2rem (32px, text field)</td><td>1.5rem</td></tr>
-                <tr><td><code>--control-height-lg</code></td><td>2.5rem (40px)</td><td>2rem</td></tr>
-                <tr><td><code>--control-height-button</code></td><td>2rem (32px, button)</td><td>1.5rem</td></tr>
-                <tr><td><code>--control-padding-x-button</code></td><td>1rem</td><td>0.75rem</td></tr>
-                <tr><td><code>--list-item-height</code></td><td>2rem (nav item)</td><td>1.75rem</td></tr>
-                <tr><td><code>--menu-item-height</code></td><td>2rem (menu item)</td><td>1.75rem</td></tr>
-                <tr><td><code>--table-padding-y</code></td><td>0.5rem</td><td>0.25rem</td></tr>
+                <tr><td><code>--control-height-sm</code></td><td>1.5rem (24px)</td><td>2rem</td></tr>
+                <tr><td><code>--control-height-md</code></td><td>2rem (32px, text field)</td><td>2.5rem</td></tr>
+                <tr><td><code>--control-height-lg</code></td><td>2.5rem (40px)</td><td>3rem</td></tr>
+                <tr><td><code>--control-height-button</code></td><td>2rem (32px, button)</td><td>2.5rem</td></tr>
+                <tr><td><code>--list-item-height</code></td><td>2rem (nav item)</td><td>2.5rem</td></tr>
+                <tr><td><code>--menu-item-height</code></td><td>2rem (menu item)</td><td>2.5rem</td></tr>
+                <tr><td><code>--table-padding-y</code></td><td>0.5rem</td><td>0.5rem</td></tr>
             </tbody>
         </table>
     </div>
-    <p class="mt-3 text-content-subdued">On a coarse pointer (touch) the comfortable values step up one size - 40px fields and buttons - following Lumen's "add about 20% on touch".</p>
 {% endblock %}
