@@ -1959,6 +1959,7 @@
 
     .detail-panel th {
         @apply w-40 py-3 pr-4 text-left align-top text-title-s sm:w-52;
+        height: var(--component-height-300);
         color: var(--color-content-subdued);
     }
 
@@ -1976,6 +1977,24 @@
        `selected-subtle` on a row marked `.selected` or aria-selected. */
     .data-table {
         @apply w-full border-collapse text-body-s;
+    }
+
+    /* Lumen's row heights: header 32px, body rows 40px (`.data-table-compact`
+       32px, `.data-table-spacious` 48px), set as a minimum so a wrapped cell
+       grows its row; the 4px of block padding only breathes around wrapped
+       text and a 32px row-action button still fits a 40px row. Line height
+       is Lumen's 1.3. */
+    .data-table td,
+    .data-table th {
+        line-height: 1.3;
+    }
+
+    .data-table-compact td {
+        height: var(--component-height-100);
+    }
+
+    .data-table-spacious td {
+        height: var(--component-height-300);
     }
 
     /* Columns fit their content by default. `width: 1%` is the standard
@@ -2010,7 +2029,7 @@
        (see docs/generic-views-and-mixins.md). Every sortable header shows an
        icon, even unsorted ones, so the capability reads as clickable. */
     .data-table th a {
-        @apply flex w-full items-center justify-between gap-2 no-underline;
+        @apply flex w-full items-center justify-between gap-1 no-underline;
         color: inherit;
     }
 
@@ -2030,7 +2049,7 @@
     .data-table td {
         @apply px-3;
         height: var(--component-height-200);
-        padding-block: var(--table-padding-y);
+        padding-block: 0.25rem;
         color: var(--color-content-default);
         border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
@@ -2414,7 +2433,8 @@
     }
 
     .autocomplete-table th, .autocomplete-table td {
-        @apply whitespace-nowrap px-3 py-2;
+        @apply whitespace-nowrap px-3 py-1;
+        height: var(--component-height-200);
         border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
@@ -2424,13 +2444,14 @@
 
     .autocomplete-table th {
         @apply text-left text-title-xs;
-        background-color: var(--color-fill-neutral-subtle);
-        color: var(--color-content-default);
+        height: var(--component-height-100);
+        color: var(--color-content-subdued);
+        border-bottom: var(--border-width-200) solid var(--color-border-subtle);
     }
 
     .autocomplete-table tr:hover td {
         cursor: pointer;
-        background-color: var(--color-fill-neutral-subtle);
+        background-color: var(--color-row-hover);
     }
 
     /* The `td` selector isn't redundant with `tr.selected`: Preflight sets
@@ -2439,8 +2460,8 @@
        against `td` gives it its own declaration to win with. */
     .autocomplete-table tr.selected,
     .autocomplete-table tr.selected td {
-        background-color: var(--color-accent-subtle);
-        color: var(--color-on-accent-subtle);
+        background-color: var(--color-selected-subtle);
+        color: var(--color-content-heading);
     }
 
     /* ── Pagination ──────────────────────────────────────────────────────

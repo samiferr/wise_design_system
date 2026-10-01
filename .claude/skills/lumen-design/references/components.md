@@ -148,7 +148,7 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 
 | Need | Wise |
 |---|---|
-| Table | **Always inside a card**: `<div class="card card-table mt-4 overflow-x-auto">` > `table.data-table`, with no card header (the page's actions stay in the page header) and the pager in a `.card-footer`. `data-table`: 12px bold subdued headers over a 2px rule, 40px body-s rows, `row-hover` / `selected-subtle` row tints; sortable headers via `_sortable_th.html` |
+| Table | **Always inside a card**: `<div class="card card-table mt-4 overflow-x-auto">` > `table.data-table`, with no card header (the page's actions stay in the page header) and the pager in a `.card-footer`. `data-table`: 12px bold subdued headers (32px tall) over a 2px rule, 40px body-s rows (`.data-table-compact` 32px, `.data-table-spacious` 48px; Lumen's heights, as minimums), 12px cell padding, `row-hover` / `selected-subtle` row tints; sortable headers via `_sortable_th.html` |
 | Record detail | `.detail-panel` (> `.detail-panel-header`, `table` of `th`/`td`) |
 | Avatar | `.avatar` (40px circle, neutral fill), `.avatar-sm`/`-lg`, `.avatar-square`, `.avatar-group` |
 | Charts | `<canvas class="chart-canvas" data-chart="{% chart_json cfg %}">` in a `.chart-frame`; series colors are the accent then Lumen step-900 hues (`wise_core/charts.py`) |
