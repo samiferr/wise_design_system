@@ -46,7 +46,7 @@ class Product(models.Model):
 
     <h2 class="mt-8">Rendering the stored HTML</h2>
     <div class="callout callout-danger mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "negative" size=18 cls="callout-icon" %}
         <div>
             <div class="callout-title">Never render it with |safe unsanitized</div>
             The field contains HTML supplied by whoever filled the form. Piping it straight through

@@ -26,10 +26,10 @@
     <div data-doc-tab="overview">
     <h2 class="mt-8">Appearance</h2>
     <div class="doc-preview mt-4 flex flex-col gap-2" style="max-width:20rem">
-        <div class="toast toast-success">{% lucide "check" size=15 cls="toast-icon" %}<div><div class="toast-title">Saved</div>Category "Electronics" created.</div></div>
-        <div class="toast toast-error">{% lucide "circle-x" size=15 cls="toast-icon" %}<div><div class="toast-title">Failed</div>Enter a valid email address.</div></div>
-        <div class="toast toast-warning">{% lucide "alert-triangle" size=15 cls="toast-icon" %}<div>Two products had no category and were skipped.</div></div>
-        <div class="toast">{% lucide "info" size=15 cls="toast-icon" %}<div>Export queued — you'll get an email when it's ready.</div><button class="toast-close" aria-label="Dismiss">{% lucide "x" size=14 %}</button></div>
+        <div class="toast toast-success">{% status_glyph "positive" size=18 cls="toast-icon" %}<div><div class="toast-title">Saved</div>Category "Electronics" created.</div></div>
+        <div class="toast toast-error">{% status_glyph "negative" size=18 cls="toast-icon" %}<div><div class="toast-title">Failed</div>Enter a valid email address.</div></div>
+        <div class="toast toast-warning">{% status_glyph "notice" size=18 cls="toast-icon" %}<div>Two products had no category and were skipped.</div></div>
+        <div class="toast">{% status_glyph "info" size=18 cls="toast-icon" %}<div>Export queued — you'll get an email when it's ready.</div><button class="toast-close" aria-label="Dismiss">{% lucide "x" size=14 %}</button></div>
     </div>
 
     <h2 class="mt-8">The Django way</h2>
@@ -85,7 +85,7 @@ function showToast(text, variant) {
 
     <h2 class="mt-8">Auto-dismiss and accessibility</h2>
     <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "notice" size=18 cls="callout-icon" %}
         <div>
             <div class="callout-title">Don't put irreplaceable information in a toast</div>
             It disappears after six seconds and cannot be recalled. Validation errors belong on the

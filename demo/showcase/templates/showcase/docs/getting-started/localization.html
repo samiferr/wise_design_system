@@ -40,7 +40,7 @@ django-admin compilemessages{% endverbatim %}{% endfilter %}</code></pre>
     </p>
     <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "notice" size=18 cls="callout-icon" %}
         <div>
             <div class="callout-title">Watch for physical offsets in your own markup</div>
             A utility like <code>ml-2</code> or <code>left-0</code> will not flip. Prefer the logical

@@ -34,9 +34,9 @@
         <div class="doc-preview">
         <nav class="breadcrumb" aria-label="Breadcrumb">
             <a class="breadcrumb-item" href="#">Categories</a>
-            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+            <span class="breadcrumb-separator">{% lucide "chevron-right" size=14 %}</span>
             <a class="breadcrumb-item" href="#">Electronics</a>
-            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+            <span class="breadcrumb-separator">{% lucide "chevron-right" size=14 %}</span>
             <span class="breadcrumb-item" aria-current="page">USB-C hub</span>
         </nav>
     </div>
@@ -44,9 +44,9 @@
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<nav class="breadcrumb" aria-label="Breadcrumb">
     <a class="breadcrumb-item" href="{% url 'category_list_view' %}">Categories</a>
-    <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+    <span class="breadcrumb-separator">{% lucide "chevron-right" size=14 %}</span>
     <a class="breadcrumb-item" href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
-    <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+    <span class="breadcrumb-separator">{% lucide "chevron-right" size=14 %}</span>
     <span class="breadcrumb-item" aria-current="page">{{ product.name }}</span>
 </nav>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
@@ -61,9 +61,9 @@
     <div class="doc-preview mt-4">
         <nav class="breadcrumb" aria-label="Breadcrumb">
             <a class="breadcrumb-item" href="#">{% lucide "house" size=14 %}<span class="sr-only">Home</span></a>
-            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+            <span class="breadcrumb-separator">{% lucide "chevron-right" size=14 %}</span>
             <a class="breadcrumb-item" href="#">Products</a>
-            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+            <span class="breadcrumb-separator">{% lucide "chevron-right" size=14 %}</span>
             <span class="breadcrumb-item" aria-current="page">USB-C hub</span>
         </nav>
     </div>
@@ -85,7 +85,7 @@ def get_context_data(self, **kwargs):
     <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<nav class="breadcrumb" aria-label="Breadcrumb">
     {% for crumb in crumbs %}
         {% if not forloop.first %}
-            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+            <span class="breadcrumb-separator">{% lucide "chevron-right" size=14 %}</span>
         {% endif %}
         {% if crumb.url %}
             <a class="breadcrumb-item" href="{{ crumb.url }}">{{ crumb.label }}</a>
@@ -97,7 +97,7 @@ def get_context_data(self, **kwargs):
 
     <h2 class="mt-8">Breadcrumb or back link?</h2>
     <div class="callout callout-info mt-4">
-        {% lucide "info" size=16 cls="callout-icon" %}
+        {% status_glyph "info" size=18 cls="callout-icon" %}
         <div>
             At two levels deep, the plain Back link in <code>.top-actions-header</code> — what the
             generic detail template already renders — is usually enough. Breadcrumbs earn their space

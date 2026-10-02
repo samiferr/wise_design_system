@@ -214,6 +214,152 @@ function wiseShowSettingsTab(tab) {
     if (showTokens) wiseRefreshTokenExport()
 }
 
+// ── Dropdown (picker) ──────────────────────────────────────────────────────
+// Behavior for `.picker` (see tokens.css and wise_core.widgets.DropdownSelect):
+// click or Up/Down on the button opens the listbox; Up/Down/Home/End move the
+// active option, Enter or Space chooses, Escape closes and returns focus to
+// the button, Tab closes. Choosing writes the hidden input's value and fires a
+// bubbling `change` event on it.
+
+function wisePickerParts(picker) {
+    return {
+        button: picker.querySelector('.picker-button'),
+        list: picker.querySelector('.picker-popover'),
+        input: picker.querySelector('input[type="hidden"]'),
+        options: Array.prototype.slice.call(picker.querySelectorAll('.picker-option')),
+    }
+}
+
+function wisePickerEnabled(parts) {
+    return parts.options.filter(function (o) { return o.getAttribute('aria-disabled') !== 'true' })
+}
+
+function wisePickerActivate(parts, option) {
+    parts.options.forEach(function (o) { o.classList.toggle('is-active', o === option) })
+    if (option) {
+        parts.list.setAttribute('aria-activedescendant', option.id)
+        option.scrollIntoView({block: 'nearest'})
+    }
+}
+
+function wisePickerClose(picker, refocus) {
+    var parts = wisePickerParts(picker)
+    if (parts.list.hidden) return
+    parts.list.hidden = true
+    parts.button.setAttribute('aria-expanded', 'false')
+    if (refocus) parts.button.focus()
+}
+
+function wisePickerOpen(picker, last) {
+    var parts = wisePickerParts(picker)
+    if (parts.button.disabled || !parts.list.hidden) return
+    document.querySelectorAll('.picker').forEach(function (p) { if (p !== picker) wisePickerClose(p, false) })
+    parts.list.hidden = false
+    parts.button.setAttribute('aria-expanded', 'true')
+    var enabled = wisePickerEnabled(parts)
+    var selected = parts.options.filter(function (o) { return o.getAttribute('aria-selected') === 'true' })[0]
+    wisePickerActivate(parts, selected || (last ? enabled[enabled.length - 1] : enabled[0]))
+    parts.list.focus()
+}
+
+function wisePickerChoose(picker, option) {
+    if (!option || option.getAttribute('aria-disabled') === 'true') return
+    var parts = wisePickerParts(picker)
+    parts.options.forEach(function (o) { o.setAttribute('aria-selected', String(o === option)) })
+    var value = parts.button.querySelector('.picker-value')
+    value.textContent = option.getAttribute('data-label') || option.querySelector('.picker-option-label').textContent
+    value.classList.toggle('is-placeholder', option.getAttribute('data-value') === '')
+    if (parts.input) {
+        parts.input.value = option.getAttribute('data-value')
+        parts.input.dispatchEvent(new Event('change', {bubbles: true}))
+    }
+    wisePickerClose(picker, true)
+}
+
+// Name the button by its <label> plus the chosen value, once, on load.
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.picker-button:not([aria-labelledby]):not([aria-label])').forEach(function (button) {
+        var label = button.id ? document.querySelector('label[for="' + button.id + '"]') : null
+        var value = button.querySelector('.picker-value')
+        if (!label || !value) return
+        label.id = label.id || button.id + '_label'
+        value.id = value.id || button.id + '_value'
+        button.setAttribute('aria-labelledby', label.id + ' ' + value.id)
+    })
+})
+
+document.addEventListener('click', function (e) {
+    var target = e.target.closest ? e.target : e.target.parentElement
+    var picker = target && target.closest('.picker')
+    if (!picker) {
+        document.querySelectorAll('.picker').forEach(function (p) { wisePickerClose(p, false) })
+        return
+    }
+    var option = target.closest('.picker-option')
+    if (option) { wisePickerChoose(picker, option); return }
+    if (target.closest('.picker-button')) {
+        var parts = wisePickerParts(picker)
+        if (parts.list.hidden) wisePickerOpen(picker, false)
+        else wisePickerClose(picker, true)
+    }
+})
+
+document.addEventListener('mousemove', function (e) {
+    var option = e.target.closest && e.target.closest('.picker-option')
+    if (!option || option.getAttribute('aria-disabled') === 'true') return
+    wisePickerActivate(wisePickerParts(option.closest('.picker')), option)
+})
+
+document.addEventListener('keydown', function (e) {
+    var target = e.target
+    var picker = target.closest && target.closest('.picker')
+    if (!picker) return
+    var parts = wisePickerParts(picker)
+    if (target === parts.button) {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault()
+            wisePickerOpen(picker, e.key === 'ArrowUp')
+        }
+        return
+    }
+    if (target !== parts.list) return
+    var enabled = wisePickerEnabled(parts)
+    var current = parts.options.filter(function (o) { return o.classList.contains('is-active') })[0]
+    var index = enabled.indexOf(current)
+    var move = function (i) { e.preventDefault(); wisePickerActivate(parts, enabled[Math.max(0, Math.min(enabled.length - 1, i))]) }
+    if (e.key === 'ArrowDown') move(index + 1)
+    else if (e.key === 'ArrowUp') move(index < 0 ? enabled.length - 1 : index - 1)
+    else if (e.key === 'Home') move(0)
+    else if (e.key === 'End') move(enabled.length - 1)
+    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); wisePickerChoose(picker, current) }
+    else if (e.key === 'Escape') { e.preventDefault(); wisePickerClose(picker, true) }
+    else if (e.key === 'Tab') wisePickerClose(picker, false)
+})
+
+// ── Search field ───────────────────────────────────────────────────────────
+// The clear button of `.search-field` (and Escape in its input) empties the
+// input, tells listeners (`input` event), and keeps the focus in the field.
+
+function wiseClearSearch(input) {
+    input.value = ''
+    input.dispatchEvent(new Event('input', {bubbles: true}))
+    input.focus()
+}
+
+document.addEventListener('click', function (e) {
+    var button = e.target.closest ? e.target.closest('.search-field-clear') : null
+    if (!button) return
+    var input = button.parentElement.querySelector('input')
+    if (input) wiseClearSearch(input)
+})
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && e.target.matches && e.target.matches('.search-field > input') && e.target.value) {
+        e.preventDefault()
+        wiseClearSearch(e.target)
+    }
+})
+
 // ── Copy button ────────────────────────────────────────────────────────────
 // One delegated listener, so buttons rendered later (in a drawer, a dialog, an
 // HTMX swap) work with no re-binding.

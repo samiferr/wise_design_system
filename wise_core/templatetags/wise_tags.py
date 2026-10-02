@@ -1,7 +1,10 @@
 import logging
 
 from django import template
+from django.template.base import token_kwargs
+from django.template.loader import get_template
 from django.urls import reverse
+from django.utils.safestring import SafeData, mark_safe
 
 logger = logging.getLogger(__name__)
 
@@ -209,3 +212,68 @@ def get_url_for_model(model_name, action, *args, **kwargs):
     `{% get_url_for_model "invoice" "detail" pk=object.pk %}`.
     """
     return reverse('{}_{}'.format(model_name, action), kwargs=kwargs, args=args)
+
+
+# ── Empty state ─────────────────────────────────────────────────────────
+# Lumen's EmptyState: a message with a simple illustration for when there is
+# nothing to show. `_no_data.html` is the list-aware wrapper around it.
+
+_EMPTY_ILLUSTRATIONS = ('empty', 'search')
+
+
+class EmptyStateNode(template.Node):
+    def __init__(self, nodelist, options):
+        self.nodelist = nodelist
+        self.options = options
+
+    def render(self, context):
+        values = {name: option.resolve(context) for name, option in self.options.items()}
+        illustration = values['illustration'] if 'illustration' in values else 'empty'
+        art = None
+        if illustration in (None, '', False, 'none'):
+            illustration = None
+        elif illustration not in _EMPTY_ILLUSTRATIONS:
+            # your own node: markup that is already safe (a literal in a template is)
+            if isinstance(illustration, SafeData) and illustration.lstrip().startswith('<'):
+                art = illustration
+            illustration = None if art else 'empty'
+        try:
+            level = min(max(int(values.get('heading_level') or 2), 1), 6)
+        except (TypeError, ValueError):
+            level = 2
+        return get_template('wise_core/components/_empty_state.html').render({
+            'title': values.get('title', ''),
+            'description': values.get('description', ''),
+            'illustration': illustration,
+            'art': art,
+            'heading_level': level,
+            'actions': mark_safe(self.nodelist.render(context).strip()),
+        })
+
+
+@register.tag
+def empty_state(parser, token):
+    """
+    Lumen's EmptyState - what a list, table or page shows when there is
+    nothing to show: a simple illustration, a short title, one sentence and
+    (as the tag's body) the next step, usually one button.
+
+        {% empty_state title="No projects yet" description="Projects you create will appear here." %}
+            <a class="btn btn-primary" href="{% url 'project_create' %}">Create project</a>
+        {% endempty_state %}
+
+    `title` (required), `description`, `illustration` - "empty" (the default),
+    "search", None / "none" for no picture, or your own markup (a SafeString) -
+    and `heading_level` (2 by default). Use it when nothing exists yet or a
+    search or filter matched nothing, never for an error (use a callout).
+    """
+    bits = token.split_contents()[1:]
+    options = token_kwargs(bits, parser)
+    if bits or 'title' not in options:
+        raise template.TemplateSyntaxError(
+            "'empty_state' takes keyword arguments (title is required): "
+            "title=, description=, illustration=, heading_level="
+        )
+    nodelist = parser.parse(('endempty_state',))
+    parser.delete_first_token()
+    return EmptyStateNode(nodelist, options)

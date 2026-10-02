@@ -17,7 +17,7 @@
         <span type="button" class="btn btn-icon btn-ghost absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2"
               onclick="document.getElementById('id_{{ widget.name }}_fake').click();document.getElementById('id_{{ widget.name }}_fake').focus();"
         >
-            {% lucide "chevron-down" size=16 %}
+            {% lucide "chevron-down" size=16 stroke_width="2.6" %}
         </span>
 
 
@@ -36,13 +36,13 @@
                 {# `w-7 h-7` shrinks `.btn-icon`'s default 36px box to 28px - less #}
                 {# padding around a 14px icon in this already-compact header. #}
                 <div class="btn btn-icon btn-secondary w-7 h-7" id="id_{{ widget.name }}_previous">
-                    {% lucide "chevron-left" size=14 %}
+                    {% lucide "chevron-left" size=14 stroke_width="2.6" %}
                 </div>
                 <span class="text-xs font-medium text-content-subdued" id="id_{{ widget.name }}_pageNumber">
                     Page 1
                 </span>
                 <div class="btn btn-icon btn-secondary w-7 h-7" id="id_{{ widget.name }}_next">
-                    {% lucide "chevron-right" size=14 %}
+                    {% lucide "chevron-right" size=14 stroke_width="2.6" %}
                 </div>
                 <div class="ml-auto">
                     <a id="id_{{ widget.name }}_create" target="_blank"

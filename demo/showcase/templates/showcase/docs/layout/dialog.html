@@ -32,7 +32,7 @@
     <dialog class="dialog" id="demo_dialog">
         <div class="dialog-header">
             <h3 class="dialog-title">Edit category</h3>
-            <button class="btn btn-icon btn-ghost" onclick="wiseCloseDialog('demo_dialog')" aria-label="Close">{% lucide "x" size=18 %}</button>
+            <button class="btn btn-icon btn-ghost" onclick="wiseCloseDialog('demo_dialog')" aria-label="Close">{% lucide "x" size=20 %}</button>
         </div>
         <div class="dialog-body">
             <div class="form-stack-compact">
@@ -50,7 +50,7 @@
         <div class="dialog-header"><h3 class="dialog-title">Delete category?</h3></div>
         <div class="dialog-body">
             <div class="callout callout-danger">
-                {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+                {% status_glyph "negative" size=18 cls="callout-icon" %}
                 <div>This also deletes its 12 products. This cannot be undone.</div>
             </div>
         </div>
@@ -67,7 +67,7 @@
     <div class="dialog-header">
         <h3 class="dialog-title">Edit category</h3>
         <button class="btn btn-icon btn-ghost" onclick="wiseCloseDialog('edit_dialog')" aria-label="Close">
-            {% lucide "x" size=18 %}
+            {% lucide "x" size=20 %}
         </button>
     </div>
     <div class="dialog-body">…</div>
@@ -108,7 +108,7 @@
     {% if form.errors %}wiseOpenDialog('edit_dialog'){% endif %}
 </script>{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "notice" size=18 cls="callout-icon" %}
         <div>
             <div class="callout-title">Use showModal(), not the open attribute</div>
             <code>&lt;dialog open&gt;</code> renders inline with no backdrop, no focus trap and no

@@ -244,7 +244,7 @@
     <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_tags %}
 <th>{% include 'wise_core/components/_sortable_th.html' with field='name' label='Name' %}</th>{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "notice" size=18 cls="callout-icon" %}
         <div>
             <div class="callout-title">Allowlist the sortable fields</div>
             Passing <code>request.GET["sort"]</code> straight into <code>order_by()</code> lets a

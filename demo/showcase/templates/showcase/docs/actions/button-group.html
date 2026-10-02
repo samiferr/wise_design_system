@@ -90,15 +90,15 @@
     <div class="doc-example-panel-preview">
         <div class="doc-preview flex flex-wrap items-center gap-4">
         <div class="btn-group">
-            <button class="btn btn-icon btn-secondary selected" aria-label="List view">{% lucide "menu" size=15 %}</button>
-            <button class="btn btn-icon btn-secondary" aria-label="Grid view">{% lucide "layout-dashboard" size=15 %}</button>
+            <button class="btn btn-icon btn-secondary selected" aria-label="List view">{% lucide "menu" size=16 %}</button>
+            <button class="btn btn-icon btn-secondary" aria-label="Grid view">{% lucide "layout-dashboard" size=16 %}</button>
         </div>
     </div>
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="btn-group">
-    <button class="btn btn-icon btn-secondary selected" aria-label="List view">{% lucide "menu" size=15 %}</button>
-    <button class="btn btn-icon btn-secondary" aria-label="Grid view">{% lucide "layout-dashboard" size=15 %}</button>
+    <button class="btn btn-icon btn-secondary selected" aria-label="List view">{% lucide "menu" size=16 %}</button>
+    <button class="btn btn-icon btn-secondary" aria-label="Grid view">{% lucide "layout-dashboard" size=16 %}</button>
 </div>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
@@ -114,7 +114,7 @@
         </table>
     </div>
     <div class="callout callout-info mt-6">
-        {% lucide "info" size=16 cls="callout-icon" %}
+        {% status_glyph "info" size=18 cls="callout-icon" %}
         <div>
             Buttons in a group keep their own variant classes, so a group can mix
             <code>.btn-secondary</code> with a single <code>.btn-primary</code> for the default

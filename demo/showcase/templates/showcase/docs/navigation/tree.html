@@ -39,7 +39,7 @@
                 <details class="tree-item" {% if forloop.first %}open{% endif %}>
                     <summary class="tree-item-label">
                         {% lucide "chevron-right" size=14 cls="tree-item-chevron" %}
-                        {% lucide root.icon size=15 cls="shrink-0" %}
+                        {% lucide root.icon size=16 cls="shrink-0" %}
                         <span class="truncate">{{ root.name }}</span>
                     </summary>
                     <div class="tree-item-children">
@@ -58,7 +58,7 @@
         <details class="tree-item" {% if root.contains_current %}open{% endif %}>
             <summary class="tree-item-label">
                 {% lucide "chevron-right" size=14 cls="tree-item-chevron" %}
-                {% lucide root.icon size=15 cls="shrink-0" %}
+                {% lucide root.icon size=16 cls="shrink-0" %}
                 <span class="truncate">{{ root.name }}</span>
             </summary>
             <div class="tree-item-children">
@@ -89,7 +89,7 @@
 # In the view - two queries for the whole two-level tree:
 Department.objects.filter(parent=None).prefetch_related("children"){% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-info mt-4">
-        {% lucide "info" size=16 cls="callout-icon" %}
+        {% status_glyph "info" size=18 cls="callout-icon" %}
         <div>
             <div class="callout-title">Depth costs queries</div>
             <code>prefetch_related("children")</code> covers one level. For a deep or unbounded tree,
@@ -115,11 +115,11 @@ Department.objects.filter(parent=None).prefetch_related("children"){% endverbati
         <div class="doc-preview max-w-xs">
         <nav class="tree">
             <details class="tree-item" open>
-                <summary class="tree-item-label">{% lucide "chevron-right" size=14 cls="tree-item-chevron" %}{% lucide "building-2" size=15 %}<span>Engineering</span></summary>
+                <summary class="tree-item-label">{% lucide "chevron-right" size=14 cls="tree-item-chevron" %}{% lucide "building-2" size=16 %}<span>Engineering</span></summary>
                 <div class="tree-item-children">
                     <a class="tree-leaf" href="#">Platform</a>
                     <details class="tree-item" open>
-                        <summary class="tree-item-label">{% lucide "chevron-right" size=14 cls="tree-item-chevron" %}{% lucide "clipboard-list" size=15 %}<span>Frontend</span></summary>
+                        <summary class="tree-item-label">{% lucide "chevron-right" size=14 cls="tree-item-chevron" %}{% lucide "clipboard-list" size=16 %}<span>Frontend</span></summary>
                         <div class="tree-item-children">
                             <a class="tree-leaf selected" href="#">Design system</a>
                             <a class="tree-leaf" href="#">Web app</a>

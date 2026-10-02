@@ -33,7 +33,7 @@
     <div class="doc-example-panel-preview">
         <div class="doc-preview flex flex-col gap-2">
         <div class="rating">
-            {% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star is-on" %}{% lucide "star" size=18 cls="rating-star" %}
+            {% lucide "star" size=20 cls="rating-star is-on" %}{% lucide "star" size=20 cls="rating-star is-on" %}{% lucide "star" size=20 cls="rating-star is-on" %}{% lucide "star" size=20 cls="rating-star is-on" %}{% lucide "star" size=20 cls="rating-star" %}
             <span class="ml-1.5 text-xs text-content-subdued">4 / 5</span>
         </div>
     </div>
@@ -42,9 +42,9 @@
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="rating">
     {% for i in "12345"|make_list %}
         {% if forloop.counter <= object.rating %}
-            {% lucide "star" size=18 cls="rating-star is-on" %}
+            {% lucide "star" size=20 cls="rating-star is-on" %}
         {% else %}
-            {% lucide "star" size=18 cls="rating-star" %}
+            {% lucide "star" size=20 cls="rating-star" %}
         {% endif %}
     {% endfor %}
     <span class="ml-1.5 text-xs text-content-subdued">{{ object.rating }} / 5</span>
@@ -105,7 +105,7 @@ class Meta:
     @apply text-warning-500;
 }{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-info mt-4">
-        {% lucide "info" size=16 cls="callout-icon" %}
+        {% status_glyph "info" size=18 cls="callout-icon" %}
         <div>
             Because they are radios, the group is keyboard-navigable with arrow keys and the value
             posts like any other choice field. The inputs are <code>.sr-only</code>, not

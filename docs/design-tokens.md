@@ -48,7 +48,8 @@ only ever use semantic tokens, so contrast holds in every palette and both theme
 | `content-disabled` | Disabled text. Never for live content |
 | `border-default` / `border-hover` | A control's own border (3:1 on the page and every surface) / its hover |
 | `border-focus` | A focused text field / text area: the 2px border turns this dark gray instead of drawing the ring (gray-900; Lumen's own is gray-800 - one step darker so the change from the resting border holds 3:1 on the gray canvas) |
-| `fill-picker` | The borderless Dropdown / `<select>` button's fill (gray-200 in light, so it shows on the gray page; gray-100 in dark). Deepens to `fill-neutral-down` on hover |
+| `border-field` | The border of every text field, text area, listbox, OTP box, color well and the rich text editor: gray-300 (**#dadada** in light; dark is #393939). A soft edge by design (about 1.4:1 on white, below the 3:1 of `border-default`), so focus is a dark `border-focus` and every field keeps a visible label. Checkboxes, radios and switches keep `border-default` |
+| `fill-picker` / `fill-picker-hover` | The borderless select's fill: gray-300 (#dadada), deepening to gray-400 on hover |
 | `border-subtle` | Decorative dividers and card edges only |
 | `negative-border` / `negative-border-hover` | An invalid field's border: it stays 1px and changes color, with an icon and a message as the non-color cue |
 | `border-popover` | A menu or picker popover's outline: none in light, 1px `gray-400` in dark |
@@ -235,6 +236,25 @@ Lumen's component heights are 20, 24, 32 (the default), 40 and 48px (`--componen
 
 On a coarse pointer the values step up one size - 40px fields, buttons and rows - following Lumen's
 "add about 20% on touch". Density is not a setting: there is no compact mode.
+
+## Icons and status glyphs
+
+The `{% lucide %}` tag draws Lucide like Lumen's `Icon`: single ink in `currentColor`, a 2.4 stroke on
+the 24-unit grid (2px at 20px, scaling with the size) and five sizes tied to the control the icon sits
+in - `xs` 14, `s` 16 (small buttons, field adornments), `m` 20 (the default; medium buttons,
+navigation), `l` 22, `xl` 26. A glyph inside a small control is heavier (2.6 for chevrons and sort
+arrows, 3 for a chip's remove cross), set in `tokens.css`. The four status glyphs - info, positive,
+notice, negative - are filled (`{% status_glyph %}`), colored by the status family's `-content` token,
+and always sit beside a word. See [template-tags-and-filters.md](template-tags-and-filters.md).
+
+## Empty state
+
+Lumen's EmptyState is a 420px centered column with no box of its own: a 120 x 96 illustration
+(`empty` for nothing-yet, `search` for nothing-found; drawn from `border-default`, `background-layer-2`,
+`fill-neutral-down` and the accent, so it follows theme and accent), a `heading-m` title, one 14px
+`content-subdued` sentence and one next step. Render it with `{% empty_state %}`; lists use
+`wise_core/components/_no_data.html`, which picks the illustration and wording from the list view's
+context.
 
 ## Switchable axes
 

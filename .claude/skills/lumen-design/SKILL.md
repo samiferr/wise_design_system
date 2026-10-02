@@ -38,9 +38,9 @@ sizes.**
    they step up from near-black. Cards use a `border-subtle` edge. Put quiet regions inside a surface
    (table header, hovered row) on `fill-neutral-subtle`. Shadows (`shadow-emphasized`, `shadow-elevated`,
    `shadow-dragged`) only for things that float: menus, toasts, dialogs. A control's own border is
-   `border-default` (3:1 on the page and every surface); `border-subtle` is for decorative dividers only.
+   `border-default` (3:1 on the page and every surface); `border-subtle` is for decorative dividers only. (Text-input borders are the exception: `border-field`, #dadada.)
    Text fields, text areas and search fields use a 2px border that turns `border-focus` on focus; a
-   `<select>` is a borderless picker on `fill-picker`. **Every single-line control has the same height.**
+   `<select>` is a borderless picker. All of their borders are `border-field` (#dadada in light - a soft edge; focus is the dark `border-focus`). **Every single-line control has the same height.**
    **A table always sits in a card** - `<div class="card card-table mt-4 overflow-x-auto">` around the
    `table.data-table`, no card header - with the pager (Lumen's Pagination) in a `card-footer`.
 6. **Interaction = stepped fills.** Hover moves a fill one shade, press two; the component classes
@@ -66,8 +66,12 @@ Before writing markup, find the existing class. Full table with markup in
 | Tag | `tag` (`tag tag-action` = selected) |
 | Badge (status pill) | `badge badge-green|orange|red|action|brand|tertiary|grey`, `badge-count` |
 | Status light | `status-light status-light-positive|notice|negative|informative|purple|cyan` |
-| Inline alert | `callout callout-info|success|warning|danger` (+ `.callout-icon`, `.callout-title`) |
-| Menu | `details.dropdown` > `summary` + `.dropdown-panel` > `.dropdown-item` |
+| Inline alert | `callout callout-info|success|warning|danger` (+ `.callout-icon` = a `{% status_glyph %}`, `.callout-title`) |
+| Icon | `{% lucide "name" size="m" %}`: 2.4 stroke (2px at 20px), sizes xs 14 / s 16 / m 20 / l 22 / xl 26, matched to the control |
+| Status glyph | `{% status_glyph "info|positive|notice|negative" size=18 %}`: filled, colored by the status `-content` token, beside a word |
+| Empty state | `{% empty_state title=… description=… illustration="empty"|"search" %}next step{% endempty_state %}`; in a list `_no_data.html` |
+| Menu (actions) | `details.dropdown` > `summary` + `.dropdown-panel` > `.dropdown-item` |
+| Dropdown (choose a value) | `.picker` (`DropdownSelect` widget): borderless `fill-picker` button + white listbox popover |
 | Dialog | `dialog.dialog` > `.dialog-header/.dialog-title/.dialog-body/.dialog-footer` |
 | Side sheet | `.drawer` (+ `.drawer-left`) with `.drawer-backdrop` |
 | Toast | `.toast` (+ `-success/-error/-warning/-info`) in `.toast-stack` (Django messages: `.flash-messages`, automatic) |
@@ -88,7 +92,7 @@ Details and values: [references/tokens.md](references/tokens.md).
   `background-layer-2`, `background-elevated`, `fill-neutral-hover`, `fill-neutral-down`,
   `fill-neutral-subtle` (Wise extension),
   `content-heading`, `content-default`, `content-subdued`, `content-disabled`, `border-default`,
-  `border-hover`, `border-focus`, `border-subtle`, `fill-picker`, `row-hover`, `selected-subtle`, `accent-background` (+ `-hover`, `-down`), `accent-content`,
+  `border-hover`, `border-focus`, `border-subtle`, `border-field`, `fill-picker`, `row-hover`, `selected-subtle`, `accent-background` (+ `-hover`, `-down`), `accent-content`,
   `on-accent`, `accent-subtle` / `on-accent-subtle` (Wise extension), `neutral-background`,
   `on-neutral`, `informative-` / `positive-` / `notice-` / `negative-background` and `-content`,
   `on-notice`, `focus-ring`. (`border-border-subtle` is the real utility name: Lumen's token is
@@ -159,7 +163,9 @@ both themes, every palette and every background, and refuses to write if one fai
 - No shadows to raise static content; use a layer step or a `border-subtle` edge. No custom
   `box-shadow` values.
 - No more than one `btn-primary` per view; don't use the accent for decoration.
-- Status is never color alone: pair `positive`/`notice`/`negative`/`informative` with a word and an icon.
+- Status is never color alone: pair `positive`/`notice`/`negative`/`informative` with a word and a filled `{% status_glyph %}`.
+- Don't scale icons with CSS or pass odd sizes (13, 15, 18, 24): use xs 14, s 16, m 20, l 22, xl 26. Don't mix another icon set.
+- Don't use an empty state for an error (use a callout), and don't hand-write `.empty-state` markup: use `{% empty_state %}`.
 - No `opacity-50` for disabled; use the `disabled` attribute (components handle the disabled colors).
 - No hover color hacks (`hover:bg-gray-100`): add the selector to the quiet-hover rule instead.
 - Don't rename or remove component classes: they are the public API.

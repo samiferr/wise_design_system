@@ -8,7 +8,7 @@ Run through this before finishing any UI change. Grep helpers are at the bottom.
 - [ ] Every fill is paired with its own `on-` token (`on-accent`, `on-neutral`, `on-notice`).
 - [ ] One accent fill (`btn-primary`) per view region; the rest are neutral fill, outline or quiet.
 - [ ] Negative only for destructive/error; positive/notice/informative only for status.
-- [ ] Status carries a word and an icon, never color alone.
+- [ ] Status carries a word and a filled `{% status_glyph %}` (info, positive, notice, negative), never color alone.
 - [ ] Text is `content-heading` / `content-default` / `content-subdued` (never `content-disabled`
       for live content); a control's border is `border-default`, not `border-subtle`.
 - [ ] Cards, panels, fields and popovers are white surfaces (`background-layer-1/2`, `-elevated`) on the
@@ -35,6 +35,10 @@ Run through this before finishing any UI change. Grep helpers are at the bottom.
       fields and text areas show a `border-focus` 2px border instead.
 - [ ] Single-line form controls share one height (no `height`/`h-*` on an input; use `.input-sm` / `-lg`
       only on purpose); selects are the borderless picker with a visible label.
+- [ ] Icons use a Lumen size (`xs` 14, `s` 16, `m` 20, `l` 22, `xl` 26) matched to the control, the default 2.4 stroke
+      (only chevrons / sort arrows / chip crosses are heavier), and no CSS scaling.
+- [ ] A list, table or page with nothing to show uses `{% empty_state %}` / `_no_data.html`: first-run says what the space
+      is for, no-results says what was searched; one next step; a title under eight words; never for an error.
 - [ ] Icon-only buttons have `aria-label`; tabs have `role="tab"`/`aria-selected`; dialogs use
       `<dialog>`.
 - [ ] Touch targets: components step up to 40px on a coarse pointer; don't override heights.

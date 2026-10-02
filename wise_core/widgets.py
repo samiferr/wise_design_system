@@ -24,6 +24,27 @@ class SwitchInput(forms.CheckboxInput):
         super().__init__({'class': 'switch', **(attrs or {})}, check_test)
 
 
+class DropdownSelect(forms.Select):
+    """
+    Lumen's Dropdown for a choice field: a borderless button that opens a
+    listbox popover (see `.picker` in tokens.css; the behavior is `wisePicker*`
+    in common.js). It posts through a hidden input, so it validates like any
+    `forms.Select` - use it where a native `<select>` is too plain and the
+    list is five to about fifteen options. Prefer the native select for long
+    lists and on mobile, where the platform picker is better.
+    """
+
+    template_name = 'wise_core/widgets/dropdown.html'
+
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        widget = context['widget']
+        widget['button_id'] = widget['attrs'].get('id') or f'id_{name}'
+        selected = [o for _group, options, _i in widget['optgroups'] for o in options if o['selected']]
+        widget['selected_option'] = selected[0] if selected else None
+        return context
+
+
 class ColorInput(forms.TextInput):
     """`<input type="color">` - the browser supplies the picker itself."""
 

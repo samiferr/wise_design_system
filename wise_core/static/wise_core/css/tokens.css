@@ -296,10 +296,19 @@
        on the gray canvas. */
     --color-border-focus: var(--lumen-gray-900);
 
-    /* The Dropdown / select button has no border at all: a light gray fill
-       (Lumen: gray-100; here gray-200, so it still shows on the gray page)
-       that deepens to fill-neutral-down on hover. */
-    --color-fill-picker: var(--lumen-gray-200);
+    /* The border of every text field, text area, select (listbox), OTP box,
+       color well, input group and the rich text editor: gray-300, #dadada in
+       light (it steps with the theme, so dark gets #393939). A deliberate
+       choice: it is a soft edge, about 1.4:1 on a white surface, below the 3:1
+       a control boundary would hold - so focus is a dark border-focus, the
+       hover border is border-hover, and every field keeps a visible label.
+       Checkboxes, radios and switches keep border-default. */
+    --color-border-field: var(--lumen-gray-300);
+
+    /* The borderless select's fill: the same #dadada, deepening to
+       fill-picker-hover (gray-400) on hover. */
+    --color-fill-picker: var(--lumen-gray-300);
+    --color-fill-picker-hover: var(--lumen-gray-400);
 
     /* An invalid field keeps its 1px border and changes its color, with an
        alert icon and a message as the non-color cue. A popover has no
@@ -676,7 +685,6 @@
     --color-border-default: var(--lumen-gray-600);
     --color-border-hover: var(--lumen-gray-700);
     --color-border-popover: var(--lumen-gray-400);
-    --color-fill-picker: var(--lumen-gray-100);
 
     --color-overlay: rgba(0, 0, 0, 0.6);
 
@@ -892,6 +900,30 @@
 }
 
 @layer components {
+    /* ── Icons ───────────────────────────────────────────────────────────
+       The `lucide` template tag draws Lucide's 24-unit outline icons like
+       Lumen's Icon: single ink in `currentColor`, round caps and joins, a
+       2.4 stroke (2px at 20px, scaling with the size) and five sizes tied
+       to the control an icon sits in - 14, 16 (small button), 20 (medium),
+       22 (large) and 26 (extra large). An icon never shrinks in a flex row.
+       A glyph inside a small control is drawn heavier than that default
+       (chevrons, sort arrows and pager arrows 2.6; a chip's remove cross
+       3), set here rather than at every call site. The filled status
+       glyphs from `status_glyph` take the status family's content color. */
+    .lucide,
+    .status-glyph {
+        @apply shrink-0;
+    }
+
+    :where(.picker-chevron, .accordion-chevron, .tree-item-chevron, .pagination-link svg,
+           .data-table th a svg) {
+        stroke-width: 2.6;
+    }
+
+    :where(.tag-remove svg, .toast-close svg) {
+        stroke-width: 3;
+    }
+
     /* ── Buttons ─────────────────────────────────────────────────────────
        Always pair `.btn` with one variant, e.g. class="btn btn-primary".
        Lumen's buttons are fully round, 700-weight title-s labels with a 2px
@@ -1365,34 +1397,59 @@
         border-bottom: 0;
     }
 
-    /* Empty state - what a list renders instead of rows, from
-       wise_core/components/_no_data.html. Roomy and centered: an empty list
-       is a dead end unless the way out of it (create the first record, drop
-       the filters) is the most visible thing in the frame. A layer-1 block
-       rather than a card, so it can't be mistaken for a record the visitor
-       could open. */
+    /* Empty state - Lumen's EmptyState: a message with a simple illustration
+       for when there is nothing to show (`{% empty_state %}`, and
+       wise_core/components/_no_data.html for a list). Centered in a 420px
+       column on whatever surface it sits on - a table card, a bare page -
+       with no box of its own: a 120 x 96 illustration (`empty` or `search`),
+       a heading-m title, one 14px sentence and one next step. The picture is
+       drawn from tokens (a border-default panel on layer-2, neutral-down
+       bars, the accent for the dot and the magnifier), so it follows the
+       theme and the accent color. It is decorative: the title says what
+       happened. */
     .empty-state {
-        @apply flex flex-col items-center gap-2 px-6 py-10 text-center;
-        background-color: var(--color-background-layer-1);
-        border-radius: var(--corner-radius-800);
+        @apply mx-auto flex max-w-[26.25rem] flex-col items-center gap-2 px-4 py-8 text-center;
     }
 
-    .empty-state-icon {
-        @apply mb-1 flex h-14 w-14 items-center justify-center;
-        background-color: var(--color-fill-neutral-hover);
-        color: var(--color-content-heading);
-        border-radius: var(--corner-radius-800);
+    .empty-state-art {
+        @apply mb-3 shrink-0;
+    }
+
+    .empty-state-art .art-panel {
+        fill: var(--color-background-layer-2);
+        stroke: var(--color-border-default);
+        stroke-width: 2;
+    }
+
+    .empty-state-art .art-bar {
+        fill: var(--color-fill-neutral-down);
+    }
+
+    .empty-state-art .art-dot {
+        fill: var(--color-accent-background);
+    }
+
+    .empty-state-art .art-lens {
+        fill: var(--color-background-layer-2);
+        stroke: var(--color-accent-content);
+        stroke-width: 4;
+    }
+
+    .empty-state-art .art-handle {
+        fill: none;
+        stroke: var(--color-accent-content);
+        stroke-width: 4;
+        stroke-linecap: round;
     }
 
     .empty-state-title {
-        @apply text-heading-m;
+        @apply m-0 text-heading-m;
         font-family: var(--font-brand);
         color: var(--color-content-heading);
     }
 
-    /* Capped at a readable measure rather than the full table width. */
     .empty-state-text {
-        @apply max-w-[46ch] text-body-s;
+        @apply m-0 text-body-s;
         color: var(--color-content-subdued);
     }
 
@@ -1529,7 +1586,7 @@
        reads the same --control-height-md (32px, 40px on touch), so a row of
        mixed fields lines up; only `.input-sm` / `.input-lg` opt out, and a
        text area is as tall as its rows. Corners are 8px, the border 2px
-       `border-default` on a layer-2 fill, the text 14px. Hover darkens the
+       `border-field` (#dadada) on a layer-2 fill, the text 14px. Hover darkens the
        border; on focus (mouse or keyboard) the border turns `border-focus`
        and stays 2px - there is no separate ring. An invalid field keeps
        its border and turns it `negative-border` (set aria-invalid="true",
@@ -1538,8 +1595,8 @@
        text. Labels sit above the field (.form-label) rather than floating,
        which keeps them working with Django's plain server-rendered widgets.
 
-       A <select> is Lumen's picker instead: no border, a `fill-picker` fill
-       that deepens on hover, a chevron, and the focus ring on keyboard
+       Every field's border is `border-field` (#dadada in light). A <select>
+       is Lumen's picker instead: no border, a #dadada `fill-picker`, deeper on hover, a chevron, and the focus ring on keyboard
        focus. Keep a visible label on it - the fill alone is a faint cue.
 
        `.input`/`.select`/`.textarea` are the bare atomic controls; the
@@ -1558,7 +1615,7 @@
         background-color: var(--color-background-layer-2);
         color: var(--color-content-default);
         caret-color: var(--color-accent-content);
-        border: var(--border-width-200) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-field);
         border-radius: var(--corner-radius-500);
         transition: border-color 130ms var(--ease-standard), background-color 130ms var(--ease-standard);
     }
@@ -1629,7 +1686,7 @@
         color: var(--color-content-disabled);
     }
 
-    /* The picker (a single-choice <select>): borderless on a fill-picker
+    /* The picker (a single-choice <select>): borderless on the fill-picker
        fill. The chevron is drawn from two gradients in content-subdued, so
        it follows the theme with no icon asset. A multiple select is a
        listbox and keeps the bordered field look above. */
@@ -1654,7 +1711,7 @@
     .form-field select:not([multiple]):hover,
     .filter-container select:not([multiple]):hover,
     .language-switcher select:not([multiple]):hover {
-        background-color: var(--color-fill-neutral-down);
+        background-color: var(--color-fill-picker-hover);
     }
 
     /* An invalid picker has no border to recolor, so it draws a thin inset
@@ -1683,6 +1740,102 @@
 
     .input-lg, .select-lg {
         height: var(--control-height-lg);
+    }
+
+    /* ── Search field ────────────────────────────────────────────────────
+       Lumen's SearchField: a text field with just a search icon inside it -
+       no prefix box, no button. The icon sits 12px from the start edge in
+       `content-subdued` (`content-disabled` when disabled) and the text
+       starts at 36px; once there is text, a round clear button (24px) shows
+       at the end, and Escape clears too. The field is at least 128px wide
+       and takes the same border, hover, focus and invalid states as every
+       text field. Sizes: `.search-field-sm` (24px, 12px text) and
+       `.search-field-lg` (40px, 16px text).
+
+         <div class="search-field">
+           <span class="search-field-icon" aria-hidden="true">{% lucide "search" size=20 %}</span>
+           <input class="input" type="search" placeholder="Search" aria-label="Search">
+           <button type="button" class="search-field-clear" aria-label="Clear search">...x icon...</button>
+         </div>
+
+       Always give the input a placeholder: the clear button is shown by
+       :not(:placeholder-shown). */
+    .search-field {
+        @apply relative flex w-full items-center;
+        --search-h: var(--control-height-md);
+        min-width: calc(var(--component-height-100) * 4);
+    }
+
+    .search-field > .input {
+        padding-inline: 2.25rem;
+    }
+
+    .search-field-sm {
+        --search-h: var(--control-height-sm);
+    }
+
+    .search-field-sm > .input {
+        @apply text-body-xs;
+        height: var(--search-h);
+        padding-inline: 1.875rem;
+    }
+
+    .search-field-lg {
+        --search-h: var(--control-height-lg);
+    }
+
+    .search-field-lg > .input {
+        @apply text-body-m;
+        height: var(--search-h);
+        padding-inline: 2.5rem;
+    }
+
+    .search-field-icon {
+        @apply pointer-events-none absolute inline-flex;
+        inset-inline-start: 0.75rem;
+        color: var(--color-content-subdued);
+    }
+
+    .search-field-sm .search-field-icon {
+        inset-inline-start: 0.5rem;
+    }
+
+    .search-field-lg .search-field-icon {
+        inset-inline-start: 0.875rem;
+    }
+
+    .search-field:has(> .input:disabled) .search-field-icon {
+        color: var(--color-content-disabled);
+    }
+
+    .search-field-clear {
+        @apply absolute inline-grid cursor-pointer place-items-center border-0 bg-transparent p-0;
+        inset-inline-end: 0.25rem;
+        width: calc(var(--search-h) - 0.5rem);
+        height: calc(var(--search-h) - 0.5rem);
+        color: var(--color-content-default);
+        border-radius: var(--corner-radius-full);
+    }
+
+    .search-field-clear:hover {
+        background-color: var(--color-fill-neutral-hover);
+    }
+
+    .search-field-clear:active {
+        background-color: var(--color-fill-neutral-down);
+    }
+
+    .search-field > .input:placeholder-shown ~ .search-field-clear,
+    .search-field > .input:disabled ~ .search-field-clear {
+        display: none;
+    }
+
+    /* The browser's own clear (x) and magnifier would double up. */
+    .input[type="search"]::-webkit-search-cancel-button,
+    .input[type="search"]::-webkit-search-decoration {
+        -webkit-appearance: none;
+        appearance: none;
+        display: none;
     }
 
     /* A text area is as tall as its rows, never shorter than two fields
@@ -1786,7 +1939,7 @@
         @apply w-14 cursor-pointer p-0;
         height: var(--control-height-md);
         background-color: var(--color-background-layer-2);
-        border: var(--border-width-200) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-field);
         border-radius: var(--corner-radius-500);
     }
 
@@ -2642,6 +2795,170 @@
         color: #accffd;
     }
 
+    /* ── Dropdown (picker) ───────────────────────────────────────────────
+       Lumen's Dropdown: choose one value from a list. A borderless button on
+       the #dadada `fill-picker` fill (deeper on hover and while open, the
+       focus ring on keyboard focus, an inset red outline when invalid) opens
+       a popover listbox - white (`background-elevated`), 8px padding, 8px
+       below the button, scrolling past 240px. The chosen option is bold with
+       a check; the active one (arrow keys, hover) fills with
+       `fill-neutral-hover`. Not to be confused with `.dropdown`, the menu of
+       *actions* (Lumen's Menu).
+
+         <div class="picker" data-picker>
+           <button type="button" class="picker-button" id="x" aria-haspopup="listbox" aria-expanded="false">
+             <span class="picker-value">Choose</span> (chevron)
+           </button>
+           <ul class="picker-popover" role="listbox" tabindex="-1" hidden>
+             <li class="picker-option" role="option" data-value="a" aria-selected="false">...</li>
+           </ul>
+           <input type="hidden" name="field" value="">
+         </div>
+
+       wise_core.widgets.DropdownSelect renders exactly this for a form
+       field; common.js (wisePicker*) does the behavior. */
+    .picker {
+        @apply relative w-full;
+    }
+
+    .picker-button {
+        @apply flex w-full cursor-pointer items-center justify-between gap-2 px-3 text-left text-body-s;
+        height: var(--control-height-md);
+        background-color: var(--color-fill-picker);
+        color: var(--color-content-default);
+        border: 0;
+        border-radius: var(--corner-radius-500);
+        transition: background-color 130ms var(--ease-standard);
+    }
+
+    .picker-button:hover,
+    .picker-button[aria-expanded="true"] {
+        background-color: var(--color-fill-picker-hover);
+    }
+
+    .picker-button[aria-invalid="true"],
+    .form-field-error .picker-button {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border);
+    }
+
+    .picker-button[aria-invalid="true"]:hover,
+    .form-field-error .picker-button:hover {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border-hover);
+    }
+
+    .picker-button:disabled {
+        @apply cursor-not-allowed;
+        background-color: var(--color-fill-disabled);
+        box-shadow: none;
+        color: var(--color-content-disabled);
+    }
+
+    .picker-value {
+        @apply truncate;
+    }
+
+    .picker-value.is-placeholder {
+        color: var(--color-content-subdued);
+    }
+
+    /* On the deeper hover / open fill the placeholder takes the default text
+       color, so it keeps 4.5:1 in both themes. */
+    .picker-button:hover .picker-value.is-placeholder,
+    .picker-button[aria-expanded="true"] .picker-value.is-placeholder {
+        color: var(--color-content-default);
+    }
+
+    .picker-button:disabled .picker-value.is-placeholder {
+        color: var(--color-content-disabled);
+    }
+
+    .picker-chevron {
+        @apply shrink-0;
+        transition: transform 130ms var(--ease-standard);
+    }
+
+    .picker-button[aria-expanded="true"] .picker-chevron {
+        transform: rotate(180deg);
+    }
+
+    .picker-popover {
+        @apply absolute m-0 w-max min-w-full max-w-[20rem] list-none overflow-y-auto p-2;
+        top: calc(100% + 0.5rem);
+        inset-inline-start: 0;
+        max-height: 15rem;
+        z-index: var(--z-dropdown);
+        background-color: var(--color-background-elevated);
+        color: var(--color-content-default);
+        border: var(--border-width-100) solid var(--color-border-popover);
+        border-radius: var(--corner-radius-500);
+        box-shadow: var(--shadow-elevated);
+        outline: none;
+    }
+
+    .picker-popover[hidden] {
+        display: none;
+    }
+
+    .picker-group {
+        @apply px-2 py-1 text-title-xs;
+        color: var(--color-content-subdued);
+    }
+
+    .picker-option {
+        @apply flex cursor-pointer items-center justify-between gap-3 px-2 py-1 text-body-s;
+        min-height: var(--menu-item-height);
+        color: var(--color-content-default);
+        border-radius: var(--corner-radius-300);
+    }
+
+    .picker-option.is-active {
+        background-color: var(--color-fill-neutral-hover);
+    }
+
+    .picker-popover:focus-visible .picker-option.is-active {
+        outline: var(--focus-ring-width) solid var(--color-focus-ring);
+        outline-offset: calc(var(--focus-ring-width) * -1);
+    }
+
+    .picker-option-text {
+        @apply flex flex-col;
+    }
+
+    .picker-option[aria-selected="true"] .picker-option-label {
+        font-weight: 700;
+    }
+
+    .picker-option-desc {
+        @apply text-body-xs;
+        color: var(--color-content-subdued);
+    }
+
+    .picker-option[aria-disabled="true"] {
+        @apply cursor-not-allowed;
+        color: var(--color-content-disabled);
+    }
+
+    .picker-option[aria-disabled="true"] .picker-option-desc {
+        color: var(--color-content-disabled);
+    }
+
+    .picker-check {
+        @apply invisible shrink-0;
+        color: var(--color-accent-content);
+    }
+
+    .picker-option[aria-selected="true"] .picker-check {
+        @apply visible;
+    }
+
+    /* The native <select>'s list: the closed control is #dadada, the options
+       it opens are white (elevated), not the control's gray. */
+    select option,
+    select optgroup {
+        background-color: var(--color-background-elevated);
+        color: var(--color-content-default);
+    }
+
     /* ── Dropdown → menu ─────────────────────────────────────────────────
        Built on a <details> wrapper, so opening/closing needs no JS of its
        own; common.js only adds click-away/Escape handling and - because
@@ -2837,7 +3154,7 @@
         background-color: var(--color-background-layer-2);
         color: var(--color-content-heading);
         caret-color: var(--color-accent-content);
-        border: var(--border-width-200) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-field);
         border-radius: var(--corner-radius-500);
         transition: border-color 130ms var(--ease-standard);
     }
@@ -2886,7 +3203,7 @@
         @apply inline-flex shrink-0 items-center px-3 text-body-s;
         background-color: var(--color-fill-neutral-hover);
         color: var(--color-content-subdued);
-        border: var(--border-width-200) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-field);
         border-radius: var(--corner-radius-500);
     }
 

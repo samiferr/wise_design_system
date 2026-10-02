@@ -13,7 +13,7 @@
     padding: 4px 8px;
     font-family: var(--font-plain, 'Helvetica Neue', Helvetica, Arial, sans-serif);
     background: var(--color-background-layer-1, #fff);
-    border: 2px solid var(--color-border-default, #ccc);
+    border: 2px solid var(--color-border-field, #dadada);
     border-radius: var(--corner-radius-500, 8px) var(--corner-radius-500, 8px) 0 0;
 }
 
@@ -22,7 +22,7 @@
     font-size: 0.875rem;
     color: var(--color-content-default, #444);
     background: var(--color-background-layer-2, #fff);
-    border: 2px solid var(--color-border-default, #ccc);
+    border: 2px solid var(--color-border-field, #dadada);
     border-radius: 0 0 var(--corner-radius-500, 8px) var(--corner-radius-500, 8px);
 }
 

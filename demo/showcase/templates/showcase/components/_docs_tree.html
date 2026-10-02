@@ -11,13 +11,13 @@ DocPageView supplies.
 {% endcomment %}
 <nav class="tree" aria-label="Documentation">
     <a class="tree-leaf {% if not current_section_slug %}selected{% endif %}" href="{% url 'docs' %}">
-        {% lucide "house" size=15 %}<span>Overview</span>
+        {% lucide "house" size=16 %}<span>Overview</span>
     </a>
     {% for section in docs_nav %}
         <details class="tree-item" {% if section.slug == current_section_slug %}open{% endif %}>
             <summary class="tree-item-label">
                 {% lucide "chevron-right" size=14 cls="tree-item-chevron" %}
-                {% lucide section.icon size=15 cls="shrink-0" %}
+                {% lucide section.icon size=16 cls="shrink-0" %}
                 <span class="truncate">{{ section.title }}</span>
             </summary>
             <div class="tree-item-children">

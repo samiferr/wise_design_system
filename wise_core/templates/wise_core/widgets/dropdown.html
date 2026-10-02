@@ -1,0 +1,26 @@
+{% load wise_icons %}
+{% comment %}
+Template for wise_core.widgets.DropdownSelect - Lumen's Dropdown. A button
+(named by its <label for=...> plus the chosen value, see common.js), a
+listbox popover of options, and a hidden input that carries the value.
+{% endcomment %}
+<div class="picker" data-picker>
+    <button type="button" class="picker-button" id="{{ widget.button_id }}" aria-haspopup="listbox" aria-expanded="false"
+            {% if widget.attrs.disabled %}disabled{% endif %}>
+        <span class="picker-value{% if not widget.selected_option or widget.selected_option.value == '' %} is-placeholder{% endif %}">{% if widget.selected_option %}{{ widget.selected_option.label }}{% endif %}</span>
+        {% lucide "chevron-down" size=16 cls="picker-chevron" %}
+    </button>
+    <ul class="picker-popover" role="listbox" tabindex="-1" hidden>
+        {% for group_name, group_choices, group_index in widget.optgroups %}
+            {% if group_name %}<li class="picker-group" role="presentation">{{ group_name }}</li>{% endif %}
+            {% for option in group_choices %}
+                <li class="picker-option" role="option" id="{{ widget.button_id }}_option_{{ group_index }}_{{ forloop.counter0 }}"
+                    data-value="{{ option.value|stringformat:'s' }}" data-label="{{ option.label }}" aria-selected="{{ option.selected|yesno:'true,false' }}">
+                    <span class="picker-option-text"><span class="picker-option-label">{{ option.label }}</span></span>
+                    <svg class="picker-check" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 8.5 3 3 6-7"/></svg>
+                </li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+    <input type="hidden" name="{{ widget.name }}" value="{% if widget.selected_option %}{{ widget.selected_option.value|stringformat:'s' }}{% endif %}">
+</div>
