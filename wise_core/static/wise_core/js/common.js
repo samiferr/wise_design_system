@@ -214,6 +214,30 @@ function wiseShowSettingsTab(tab) {
     if (showTokens) wiseRefreshTokenExport()
 }
 
+// ── Search field ───────────────────────────────────────────────────────────
+// The clear button of `.search-field` (and Escape in its input) empties the
+// input, tells listeners (`input` event), and keeps the focus in the field.
+
+function wiseClearSearch(input) {
+    input.value = ''
+    input.dispatchEvent(new Event('input', {bubbles: true}))
+    input.focus()
+}
+
+document.addEventListener('click', function (e) {
+    var button = e.target.closest ? e.target.closest('.search-field-clear') : null
+    if (!button) return
+    var input = button.parentElement.querySelector('input')
+    if (input) wiseClearSearch(input)
+})
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && e.target.matches && e.target.matches('.search-field > input') && e.target.value) {
+        e.preventDefault()
+        wiseClearSearch(e.target)
+    }
+})
+
 // ── Copy button ────────────────────────────────────────────────────────────
 // One delegated listener, so buttons rendered later (in a drawer, a dialog, an
 // HTMX swap) work with no re-binding.

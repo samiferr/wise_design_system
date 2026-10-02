@@ -73,6 +73,56 @@
 </div>
     <p class="mt-2 text-gray-700">Heights come from <code>--control-height-*</code>, so all three step up one size on a touch pointer.</p>
 
+    <h2 class="mt-8">Search field</h2>
+    <p class="text-gray-700">
+        Lumen's search field: a text field with just the search icon inside it - no prefix box and no
+        button. Once there is text, a round clear button appears at the end (Escape clears too). Always give
+        the input a <code>placeholder</code> (the clear button is shown by <code>:not(:placeholder-shown)</code>)
+        and an <code>aria-label</code> or a visible label. <code>.search-field-sm</code> is 24px and
+        <code>.search-field-lg</code> 40px.
+    </p>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex51s" id="ex51s-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex51s" id="ex51s-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex51s-preview">Preview</label>
+        <label class="doc-example-tab" for="ex51s-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex max-w-sm flex-col gap-3">
+            <div class="search-field search-field-sm">
+                <span class="search-field-icon" aria-hidden="true">{% lucide "search" size=16 %}</span>
+                <input class="input" type="search" placeholder="Search" aria-label="Search" value="Small">
+                <button type="button" class="search-field-clear" aria-label="Clear search"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="m2.5 2.5 7 7M9.5 2.5l-7 7"/></svg></button>
+            </div>
+            <div class="search-field">
+                <span class="search-field-icon" aria-hidden="true">{% lucide "search" size=20 %}</span>
+                <input class="input" type="search" placeholder="Search" aria-label="Search">
+                <button type="button" class="search-field-clear" aria-label="Clear search"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="m2.5 2.5 7 7M9.5 2.5l-7 7"/></svg></button>
+            </div>
+            <div class="search-field search-field-lg">
+                <span class="search-field-icon" aria-hidden="true">{% lucide "search" size=22 %}</span>
+                <input class="input" type="search" placeholder="Search" aria-label="Search" value="Large">
+                <button type="button" class="search-field-clear" aria-label="Clear search"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="m2.5 2.5 7 7M9.5 2.5l-7 7"/></svg></button>
+            </div>
+            <div class="search-field">
+                <span class="search-field-icon" aria-hidden="true">{% lucide "search" size=20 %}</span>
+                <input class="input" type="search" placeholder="Search" aria-label="Search" disabled>
+            </div>
+        </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="search-field">
+    <span class="search-field-icon" aria-hidden="true">{% lucide "search" size=20 %}</span>
+    <input class="input" type="search" name="q" placeholder="Search" aria-label="Search">
+    <button type="button" class="search-field-clear" aria-label="Clear search">
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none"
+             stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="m2.5 2.5 7 7M9.5 2.5l-7 7"/></svg>
+    </button>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+
     <h2 class="mt-8">With a prefix or suffix</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex51" id="ex51-preview" value="preview" checked>
@@ -83,10 +133,6 @@
     </div>
     <div class="doc-example-panel-preview">
         <div class="doc-preview flex flex-col gap-3 max-w-sm">
-        <div class="input-group">
-            <span class="input-group-addon">{% lucide "search" size=15 %}</span>
-            <input class="input" placeholder="Search products">
-        </div>
         <div class="input-group">
             <span class="input-group-addon">€</span>
             <input class="input" type="number" value="49.00">

@@ -135,7 +135,8 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 | Dropdown / picker | `.select` (a single-choice `<select>`): borderless, `fill-picker` fill #dadada (deeper on hover, `fill-picker-hover`), chevron, focus ring on keyboard focus; invalid = inset 1px `negative-border`. Always keep a visible label. `select[multiple]` is a listbox and keeps the bordered look |
 | Label / help / error | `.form-label` (+ `.form-required`), `.helptext`, `.errorlist`; wrap in `.form-field.form-field-error` for the error state |
 | Form layout | `.form-stack` (one column) / `.form-stack-compact` (two), `.form-actions` footer, `.form-alert` for non-field errors; `_form_fields.html` renders all of this from a Django form |
-| Prefix/suffix | `.input-group` > `.input-group-addon` + `.input` |
+| Prefix/suffix | `.input-group` > `.input-group-addon` + `.input` (not for search) |
+| SearchField | `.search-field` > `.search-field-icon` (search icon only, 12px from the edge - **no prefix box or button**) + `input.input[type=search][placeholder]` + optional `.search-field-clear`; `.search-field-sm` / `-lg`. Same border and focus as a text field; Escape and the clear button empty it (`common.js`) |
 | Checkbox / radio | `.checkbox`, `.radio` (16px / 14px, 2px `border-default`; accent fill + white check / 4px accent ring when selected). Also applied to unclassed checkboxes and radios inside `.form-field` |
 | Switch | `<input type="checkbox" class="switch">` (26×16 pill, 8px handle, 10px when on) |
 | Tag | `.tag` (24px outlined, 4px corners), `.tag-action` (selected, neutral fill), `.tag-remove` (trailing ×) |

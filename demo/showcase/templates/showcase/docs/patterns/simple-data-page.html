@@ -15,9 +15,9 @@
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <h2 class="flex items-center gap-2">{% lucide "tag" size=24 cls="text-brand-600" %}Categories</h2>
                 <div class="flex items-center gap-2">
-                    <div class="input-group max-w-[14rem]">
-                        <span class="input-group-addon">{% lucide "search" size=15 %}</span>
-                        <input class="input" placeholder="Search">
+                    <div class="search-field w-56">
+                        <span class="search-field-icon" aria-hidden="true">{% lucide "search" size=20 %}</span>
+                        <input class="input" type="search" placeholder="Search" aria-label="Search">
                     </div>
                     <div class="btn btn-secondary btn-icon relative">{% lucide "filter" size=16 %}<span class="badge badge-red absolute -left-2 -top-1 shadow">2</span></div>
                     <a class="btn btn-primary" href="#">{% lucide "plus" size=16 %}<span>New</span></a>
