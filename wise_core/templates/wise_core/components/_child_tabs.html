@@ -13,7 +13,7 @@ counts read off its related managers. Included by every
             <a class="bar-item{% if tab.selected %} selected{% endif %}" href="{{ tab.url }}"
                role="tab" aria-selected="{% if tab.selected %}true{% else %}false{% endif %}"
                {% if tab.selected %}aria-current="page"{% endif %}>
-                {% if tab.icon %}{% lucide tab.icon size=15 %}{% endif %}
+                {% if tab.icon %}{% lucide tab.icon size=16 %}{% endif %}
                 <span>{{ tab.label }}</span>
                 {% if tab.count is not None %}<span class="tab-count">{{ tab.count }}</span>{% endif %}
             </a>

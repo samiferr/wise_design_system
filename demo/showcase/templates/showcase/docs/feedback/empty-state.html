@@ -1,13 +1,14 @@
 {% extends 'showcase/docs/_base.html' %}
-{% load wise_icons %}
+{% load wise_icons wise_tags %}
 {% block doc_title_tag %}Empty State{% endblock %}
 {% block doc_section %}Feedback{% endblock %}
 {% block doc_title %}Empty State{% endblock %}
 {% block doc_intro %}
-    What a list renders instead of rows. An empty table is the one screen a visitor can reach with
-    nothing to read and nothing to click, so it carries the way out: a line saying why it is empty
-    and the button that fixes it — <em>New record</em> when there is nothing yet,
-    <em>Clear filters</em> when the records exist but the filters hid them.
+    A message with a simple illustration for when there is nothing to show — what a list renders
+    instead of rows. An empty table is the one screen a visitor can reach with nothing to read and
+    nothing to click, so it carries the way out: a line saying why it is empty and the button that
+    fixes it — <em>New record</em> when there is nothing yet, <em>Clear filters</em> when the records
+    exist but the filters hid them.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Use cases</h2>
@@ -15,6 +16,7 @@
         <li>The <code>{% templatetag openblock %} empty {% templatetag closeblock %}</code> branch of any list — inside a <code>&lt;td colspan="N"&gt;</code> for a data table, on its own in a card list.</li>
         <li>A child tab with no records under this parent yet (a category with no products), where the create button has to carry the parent along.</li>
         <li>A filtered list that matched nothing — a different message, and a way back to the unfiltered list rather than a create button.</li>
+        <li>Any page or panel with nothing to show, through the <code>{% templatetag openblock %} empty_state {% templatetag closeblock %}</code> tag — a first-run dashboard, an empty inbox, a search that found nothing.</li>
         <li>Not a loading state: a list still fetching shows a <a class="text-action-600 underline" href="{% url 'docs_feedback_spinner' %}">spinner</a>, because "nothing here" and "nothing <em>yet</em>" mean opposite things to whoever is waiting.</li>
         <li>Not an error state: a failed request is a <a class="text-action-600 underline" href="{% url 'docs_feedback_callout' %}">callout</a> or a <a class="text-action-600 underline" href="{% url 'docs_feedback_toast' %}">toast</a> — telling someone their data doesn't exist when the query merely failed is worse than saying nothing.</li>
     </ul>
@@ -77,7 +79,7 @@ class ProductListView(WiseListView):
     </div>
 </div>
     <div class="callout callout-info mt-4">
-        {% lucide "info" size=16 cls="callout-icon" %}
+        {% status_glyph "info" size=18 cls="callout-icon" %}
         <div>
             <div class="callout-title">Why the two states differ</div>
             "Create the first product" under an active filter invites a duplicate: the record the
@@ -118,14 +120,14 @@ context['create_url'] = self.get_create_url() if self.can_add() else None{% endv
     </div>
     <div class="doc-example-panel-preview">
         <div class="doc-preview">
-            {% include 'wise_core/components/_no_data.html' with icon="receipt" title="No invoices for March" text="Invoices appear here the moment the first one is issued for this period." create_url="#" create_label="Issue an invoice" %}
+            {% include 'wise_core/components/_no_data.html' with illustration="search" title="No invoices for March" text="Invoices appear here the moment the first one is issued for this period." create_url="#" create_label="Issue an invoice" %}
         </div>
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% trans "No invoices for March" as empty_title %}
 {% trans "Invoices appear here the moment the first one is issued." as empty_text %}
 {% trans "Issue an invoice" as empty_action %}
-{% include 'wise_core/components/_no_data.html' with icon="receipt" title=empty_title text=empty_text create_label=empty_action %}{% endverbatim %}{% endfilter %}</code></pre>
+{% include 'wise_core/components/_no_data.html' with title=empty_title text=empty_text create_label=empty_action %}{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
     <p class="mt-2 text-gray-700">
@@ -134,9 +136,66 @@ context['create_url'] = self.get_create_url() if self.can_add() else None{% endv
         translated page. See <a class="text-action-600 underline" href="{% url 'docs_getting_started_localization' %}">Localization</a>.
     </p>
 
+    <h2 class="mt-8">Anywhere else: the tag</h2>
+    <p class="text-gray-700">
+        <code>_no_data.html</code> reads a list view's context. For everything else — a page, a panel,
+        a search box that found nothing — use Lumen's EmptyState directly. The tag's body is the next
+        step, usually one button.
+    </p>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex-es-tag" id="ex-es-tag-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex-es-tag" id="ex-es-tag-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex-es-tag-preview">Preview</label>
+        <label class="doc-example-tab" for="ex-es-tag-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview grid gap-4 md:grid-cols-2">
+            <div class="card">
+                {% empty_state title="No projects yet" description="Projects you create will appear here." %}
+                    <a class="btn btn-primary" href="#">Create project</a>
+                {% endempty_state %}
+            </div>
+            <div class="card">
+                {% empty_state illustration="search" title="No results for “invoice”" description="Check the spelling or try a broader search." %}
+                    <a class="btn btn-secondary" href="#">Clear search</a>
+                {% endempty_state %}
+            </div>
+        </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_tags %}
+
+{# first run: what the space is for and how to start #}
+{% empty_state title="No projects yet" description="Projects you create will appear here." %}
+    <a class="btn btn-primary" href="{% url 'project_create' %}">Create project</a>
+{% endempty_state %}
+
+{# no results: what was searched and how to widen it #}
+{% empty_state illustration="search" title="No results for “invoice”" description="Check the spelling or try a broader search." %}
+    <a class="btn btn-secondary" href="?">Clear search</a>
+{% endempty_state %}
+
+{# no picture, or a deeper heading #}
+{% empty_state illustration=None title="Nothing to review" heading_level=3 %}{% endempty_state %}{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+    <div class="callout callout-info mt-4">
+        {% status_glyph "info" size=18 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Two illustrations, no more</div>
+            <code>empty</code> (a stacked panel with a dot) is for nothing-yet and <code>search</code>
+            (a panel under a magnifier) for nothing-found. They are drawn from tokens, so the accent
+            color, theme and dark mode all apply. For your own picture pass markup you already made
+            safe as <code>illustration</code>; <code>None</code> or <code>"none"</code> drops it.
+            Not for errors: a failed request is a callout.
+        </div>
+    </div>
+
     <h2 class="mt-8">Writing the copy</h2>
     <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
-        <li>Name the thing that's missing ("No products yet"), not the container ("This table is empty"). The visitor knows they're looking at a table.</li>
+        <li>First run: tell people what the space is for and how to start. No results: say what was searched and how to widen it.</li>
+        <li>Keep the title under eight words. Name the thing that's missing ("No products yet"), not the container ("This table is empty"). The visitor knows they're looking at a table.</li>
         <li>One sentence under the title, at most. It says what would put something here — not how the feature works.</li>
         <li>One primary action. A second button turns a dead end into a decision, and the whole point of this block is that there is nothing to decide.</li>
         <li>No apology, no exclamation mark. An empty list is the normal first state of every list ever created.</li>
@@ -148,13 +207,14 @@ context['create_url'] = self.get_create_url() if self.can_add() else None{% endv
             <thead><tr><th>Name</th><th>Use</th></tr></thead>
             <tbody>
                 <tr><td><code>_no_data.html</code></td><td>The partial. Include it in the <code>{% templatetag openblock %} empty {% templatetag closeblock %}</code> branch of any list.</td></tr>
-                <tr><td><code>empty-state</code></td><td>The centered, dashed-edge container.</td></tr>
-                <tr><td><code>empty-state-icon</code></td><td>The 48px icon chip.</td></tr>
-                <tr><td><code>empty-state-title</code></td><td>The heading line.</td></tr>
-                <tr><td><code>empty-state-text</code></td><td>The one-sentence explanation, capped at a readable measure.</td></tr>
+                <tr><td><code>{% templatetag openblock %} empty_state {% templatetag closeblock %}</code></td><td>The Lumen EmptyState tag: <code>title</code> (required), <code>description</code>, <code>illustration</code> (<code>"empty"</code> default, <code>"search"</code>, <code>None</code>, or your own markup), <code>heading_level</code> (default 2). Its body is the action.</td></tr>
+                <tr><td><code>empty-state</code></td><td>The centered 420px column: no box, so it sits on whatever surface it is in.</td></tr>
+                <tr><td><code>empty-state-art</code></td><td>The 120 &times; 96 illustration (<code>art-panel</code>, <code>art-bar</code>, <code>art-dot</code>, <code>art-lens</code>, <code>art-handle</code>).</td></tr>
+                <tr><td><code>empty-state-title</code></td><td>The heading, <code>heading-m</code> (22px, 800).</td></tr>
+                <tr><td><code>empty-state-text</code></td><td>The one-sentence explanation, 14px in <code>content-subdued</code>.</td></tr>
                 <tr><td><code>empty-state-actions</code></td><td>The button row.</td></tr>
                 <tr><td><code>create_url</code> / <code>create_label</code></td><td>The button's target and label. <code>create_url</code> comes from <code>WiseListView.create_url_name</code>, permission-checked.</td></tr>
-                <tr><td><code>title</code> / <code>text</code> / <code>icon</code></td><td>Per-list overrides, all optional.</td></tr>
+                <tr><td><code>title</code> / <code>text</code> / <code>illustration</code> / <code>heading_level</code></td><td>Per-list overrides of <code>_no_data.html</code>, all optional. <code>illustration</code> is <code>empty</code> (nothing yet), <code>search</code> (filtered) or <code>none</code>.</td></tr>
                 <tr><td><code>filter_kwargs_count</code></td><td>Read from the list view's context; switches the block to its filtered wording.</td></tr>
             </tbody>
         </table>
@@ -178,8 +238,9 @@ context['create_url'] = self.get_create_url() if self.can_add() else None{% endv
 - Pass nothing by default: the partial reads create_url, model_verbose_name, model_verbose_name_plural and filter_kwargs_count out of WiseListView's context and picks its own wording.
 - To get the "New <model>" button, set create_url_name on the list view (the URL name of its create page) - do NOT hand-write a {% url %} plus a {% if perms.app.add_model %} in the template. WiseListView resolves create_url only for a user holding the model's add permission, and WiseParentDetailChildListView reverses it with the parent's pk.
 - The filtered-empty state is automatic and must stay different from the nothing-yet state: when filter_kwargs_count is non-zero the block says nothing matched and offers "Clear filters" (request.path), never a create button, because creating a record that is merely filtered out of view is how duplicates get made.
-- Override copy per list with title/text/icon/create_label, and always via {% trans "..." as name %} so the override stays translatable. Every string the partial ships is already wrapped in {% trans %}/{% blocktrans %}.
-- Markup: .empty-state > .empty-state-icon + .empty-state-title + .empty-state-text + .empty-state-actions. Do not restyle it per page, and do not add a second primary button.
+- Override copy per list with title/text/illustration/create_label (illustration: empty, search or none; heading_level defaults to 2), and always via {% trans "..." as name %} so the override stays translatable. Every string the partial ships is already wrapped in {% trans %}/{% blocktrans %}.
+- Outside a list use the Lumen EmptyState tag, not hand-written markup: {% empty_state title="No projects yet" description="Projects you create will appear here." %}<a class="btn btn-primary" href="...">Create project</a>{% endempty_state %} ({% load wise_tags %}). illustration is "empty" (nothing yet, the default), "search" (nothing found) or None; heading_level defaults to 2. First run: say what the space is for and how to start; no results: say what was searched and how to widen it. Keep the title under eight words.
+- Markup behind it: .empty-state > svg.empty-state-art + .empty-state-title + .empty-state-text + .empty-state-actions. Do not restyle it per page, do not add a second primary button, and never use it for an error (use a callout).
 - Do not pair it with a pager: _pagination.html renders nothing when the list is empty.{% endverbatim %}{% endfilter %}</code></pre>
 
         <h2 class="mt-8">GitHub source</h2>

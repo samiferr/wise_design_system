@@ -32,14 +32,14 @@
     </div>
     <div class="doc-example-panel-preview">
         <div class="doc-preview flex flex-wrap items-center gap-6 py-10">
-        <span class="tooltip" data-tooltip="Edit this record"><button class="btn btn-icon btn-secondary" aria-label="Edit">{% lucide "pencil" size=15 %}</button></span>
-        <span class="tooltip" data-tooltip="Delete permanently"><button class="btn btn-icon btn-secondary" aria-label="Delete">{% lucide "trash-2" size=15 %}</button></span>
+        <span class="tooltip" data-tooltip="Edit this record"><button class="btn btn-icon btn-secondary" aria-label="Edit">{% lucide "pencil" size=16 %}</button></span>
+        <span class="tooltip" data-tooltip="Delete permanently"><button class="btn btn-icon btn-secondary" aria-label="Delete">{% lucide "trash-2" size=16 %}</button></span>
         <span class="tooltip tooltip-bottom" data-tooltip="Appears below instead"><button class="btn btn-secondary">Below</button></span>
     </div>
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<span class="tooltip" data-tooltip="Edit this record">
-    <button class="btn btn-icon btn-secondary" aria-label="Edit">{% lucide "pencil" size=15 %}</button>
+    <button class="btn btn-icon btn-secondary" aria-label="Edit">{% lucide "pencil" size=16 %}</button>
 </span>
 
 <!-- flip it below the trigger when there's no room above -->
@@ -49,7 +49,7 @@
 
     <h2 class="mt-8">A tooltip is not a label</h2>
     <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "notice" size=18 cls="callout-icon" %}
         <div>
             <div class="callout-title">It is decoration, not an accessible name</div>
             <code>data-tooltip</code> renders through a CSS <code>::after</code>, which assistive

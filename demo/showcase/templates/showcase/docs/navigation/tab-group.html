@@ -61,15 +61,15 @@
     <div class="doc-example-panel-preview">
         <div class="doc-preview p-0">
         <div class="tab-bar border-b border-divider px-4">
-            <a class="bar-item selected inline-flex items-center gap-1.5" href="#">{% lucide "layout-dashboard" size=15 %}Overview</a>
-            <a class="bar-item inline-flex items-center gap-1.5" href="#">{% lucide "clipboard-list" size=15 %}Products <span class="badge badge-grey">12</span></a>
-            <a class="bar-item inline-flex items-center gap-1.5" href="#">{% lucide "clock" size=15 %}History</a>
+            <a class="bar-item selected inline-flex items-center gap-1.5" href="#">{% lucide "layout-dashboard" size=16 %}Overview</a>
+            <a class="bar-item inline-flex items-center gap-1.5" href="#">{% lucide "clipboard-list" size=16 %}Products <span class="badge badge-grey">12</span></a>
+            <a class="bar-item inline-flex items-center gap-1.5" href="#">{% lucide "clock" size=16 %}History</a>
         </div>
     </div>
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<a class="bar-item inline-flex items-center gap-1.5" href="{% url 'category_products' pk=object.pk %}">
-    {% lucide "clipboard-list" size=15 %}Products
+    {% lucide "clipboard-list" size=16 %}Products
     <span class="badge badge-grey">{{ object.products.count }}</span>
 </a>{% endverbatim %}{% endfilter %}</code></pre>
     </div>
@@ -108,7 +108,7 @@ path('categories/<int:pk>/products/', CategoryProductsView.as_view(), name='cate
 
     <h2 class="mt-8">Why not client-side panels?</h2>
     <div class="callout callout-info mt-4">
-        {% lucide "info" size=16 cls="callout-icon" %}
+        {% status_glyph "info" size=18 cls="callout-icon" %}
         <div>
             Hiding panels with CSS means every tab's data is queried and rendered on every page load,
             even the ones nobody opens — and the URL no longer says which tab you are on, so a
@@ -159,7 +159,7 @@ path('categories/<int:pk>/products/', CategoryProductsView.as_view(), name='cate
 - Backing views: one class-based view per tab, sharing a common base mixin/queryset lookup, each with its own template and its own get_context_data - so a tab that queries extra data (e.g. a related list) only pays for that query when it's the active tab.
 - `.tab-bar` scrolls horizontally rather than wrapping for a long set of tabs - do not add flex-wrap.
 - Never hide multiple tab panels with CSS/JS and one shared URL - that means every tab's data loads on every page view even when nobody opens it, and a bookmark or refresh always lands on the first tab instead of preserving which one the user was on.
-- An icon + count works inline in a tab: {% lucide "clipboard-list" size=15 %}<span>Products</span><span class="tab-count">{{ object.products.count }}</span> - `.bar-item` already lays them out, and `.tab-count` is the count badge.
+- An icon + count works inline in a tab: {% lucide "clipboard-list" size=16 %}<span>Products</span><span class="tab-count">{{ object.products.count }}</span> - `.bar-item` already lays them out, and `.tab-count` is the count badge.
 - For the common case - one record's child models, one tab each - do not hand-write the bar at all: declare it as `ChildTab`s on the view and include `wise_core/components/_child_tabs.html`, which handles permissions, URLs, counts and the selected state. See the Tabbed Parent / Child pattern.{% endverbatim %}{% endfilter %}</code></pre>
 
         <h2 class="mt-8">GitHub source</h2>

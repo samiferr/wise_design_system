@@ -6,8 +6,8 @@
 {% block doc_intro %}
     Vendored <a class="text-action-600 underline" href="https://lucide.dev" target="_blank" rel="noopener">Lucide</a>
     icons, inlined as SVG by a template tag rather than loaded as <code>&lt;img&gt;</code> or an icon
-    font. Inline SVG inherits <code>currentColor</code>, scales with a size argument, and needs no
-    extra request.
+    font. Drawn like Lumen's icons: single ink in <code>currentColor</code>, a 2.4 stroke (2px at
+    20px) and five sizes tied to the control an icon sits in. Inline SVG needs no extra request.
 {% endblock %}
 {% block doc_body %}
     <h2 class="mt-8">Use cases</h2>
@@ -34,24 +34,82 @@
     </div>
     <div class="doc-example-panel-preview">
         <div class="doc-preview flex flex-wrap items-center gap-4">
-        {% lucide "search" size=16 %}
-        {% lucide "search" size=24 %}
-        {% lucide "search" size=32 %}
-        {% lucide "search" size=24 cls="text-action-600" %}
-        {% lucide "search" size=24 cls="text-accent-500" %}
-        {% lucide "search" size=24 stroke_width="2.5" %}
+        {% lucide "search" size="xs" %}
+        {% lucide "search" size="s" %}
+        {% lucide "search" %}
+        {% lucide "search" size="l" %}
+        {% lucide "search" size="xl" %}
+        {% lucide "search" size="l" cls="text-action-600" %}
+        {% lucide "search" size="l" cls="text-accent-500" %}
+        {% lucide "search" size="l" label="Search" %}
     </div>
     </div>
     <div class="doc-example-panel-code">
         <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_icons %}
 
-{% lucide "search" %}                          {# 18px default #}
-{% lucide "search" size=24 %}
-{% lucide "search" size=24 cls="text-action-600" %}
-{% lucide "search" size=24 stroke_width="2.5" %}
+{% lucide "search" %}                          {# 20px (m), the default #}
+{% lucide "search" size="s" %}                 {# a step: xs 14, s 16, m 20, l 22, xl 26 #}
+{% lucide "search" size=16 %}                  {# or pixels #}
+{% lucide "search" size="l" cls="text-action-600" %}
+{% lucide "search" size="l" label="Search" %}  {# an image with a name; without label it is hidden from screen readers #}
+
+{# Lumen's names work too: add, remove, close, home, delete, edit, more... #}
+{% lucide "close" size="s" %}
 
 {# the icon name can be a variable - this is how nav_menu.html works #}
-{% lucide item.icon size=20 %}{% endverbatim %}{% endfilter %}</code></pre>
+{% lucide item.icon size="m" %}{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+
+    <h2 class="mt-8">Sizes and stroke</h2>
+    <p class="text-gray-700">
+        Match the icon to the control it sits in and never scale it with CSS &mdash; choose a size.
+        The stroke is 2.4 on Lucide's 24-unit grid, so it is 2px at 20px and scales with the size.
+        Only a glyph inside a small control is drawn heavier (<code>stroke_width="2.6"</code> for a
+        chevron or sort arrow; <code>tokens.css</code> already does it for the built-in ones).
+    </p>
+    <div class="card card-table mt-4 overflow-x-auto">
+        <table class="doc-props w-full">
+            <thead><tr><th>Step</th><th>Size</th><th>Stroke</th><th>Sits in</th></tr></thead>
+            <tbody>
+                <tr><td><code>xs</code></td><td><span class="inline-flex items-center gap-2">{% lucide "star" size="xs" %} 14px</span></td><td>1.4px</td><td>Dense inline text, table sort arrows, pager chevrons in a compact bar</td></tr>
+                <tr><td><code>s</code></td><td><span class="inline-flex items-center gap-2">{% lucide "star" size="s" %} 16px</span></td><td>1.6px</td><td>Small buttons, field adornments, menu items, tabs</td></tr>
+                <tr><td><code>m</code> (default)</td><td><span class="inline-flex items-center gap-2">{% lucide "star" size="m" %} 20px</span></td><td>2px</td><td>Medium buttons, navigation, page headers</td></tr>
+                <tr><td><code>l</code></td><td><span class="inline-flex items-center gap-2">{% lucide "star" size="l" %} 22px</span></td><td>2.2px</td><td>Large buttons, section titles</td></tr>
+                <tr><td><code>xl</code></td><td><span class="inline-flex items-center gap-2">{% lucide "star" size="xl" %} 26px</span></td><td>2.6px</td><td>Extra-large buttons, list headers</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-8">Status glyphs</h2>
+    <p class="text-gray-700">
+        Lucide has no filled set, so Lumen's four status glyphs are drawn here: a filled disc (a
+        triangle for <em>notice</em>) with the glyph cut out. <code>status_glyph</code> renders them in
+        <code>currentColor</code>; callouts, toasts and form alerts already do. They always sit next to
+        a word &mdash; status is never an icon alone.
+    </p>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex-glyph" id="ex-glyph-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex-glyph" id="ex-glyph-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex-glyph-preview">Preview</label>
+        <label class="doc-example-tab" for="ex-glyph-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview flex flex-wrap items-center gap-x-6 gap-y-3">
+        <span class="inline-flex items-center gap-2 text-informative-content">{% status_glyph "info" size=18 %}<span class="text-content-default">Info</span></span>
+        <span class="inline-flex items-center gap-2 text-positive-content">{% status_glyph "positive" size=18 %}<span class="text-content-default">Positive</span></span>
+        <span class="inline-flex items-center gap-2 text-notice-content">{% status_glyph "notice" size=18 %}<span class="text-content-default">Notice</span></span>
+        <span class="inline-flex items-center gap-2 text-negative-content">{% status_glyph "negative" size=18 %}<span class="text-content-default">Negative</span></span>
+    </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% status_glyph "info" size=18 %}       {# also: informative, neutral #}
+{% status_glyph "positive" size=18 %}   {# also: success #}
+{% status_glyph "notice" size=18 %}     {# also: warning #}
+{% status_glyph "negative" size=18 %}   {# also: error, danger #}
+
+<span class="text-negative-content">{% status_glyph "negative" size=14 %}</span> Enter a complete email address.{% endverbatim %}{% endfilter %}</code></pre>
     </div>
 </div>
 
@@ -61,20 +119,37 @@
         contains it — including through a theme switch, with no icon-specific styling.
     </p>
     <div class="doc-preview mt-4 flex flex-wrap items-center gap-4">
-        <span class="inline-flex items-center gap-1.5 text-content-subdued">{% lucide "clock" size=15 %} muted</span>
-        <span class="inline-flex items-center gap-1.5 text-action-600">{% lucide "check" size=15 %} action</span>
-        <span class="inline-flex items-center gap-1.5 text-accent-500">{% lucide "alert-triangle" size=15 %} danger</span>
+        <span class="inline-flex items-center gap-1.5 text-content-subdued">{% lucide "clock" size=16 %} muted</span>
+        <span class="inline-flex items-center gap-1.5 text-action-600">{% lucide "check" size=16 %} action</span>
+        <span class="inline-flex items-center gap-1.5 text-negative-content">{% lucide "alert-triangle" size=16 %} danger</span>
         <button class="btn btn-primary">{% lucide "plus" size=16 %}<span>On a button</span></button>
+    </div>
+
+    <h2 class="mt-8">Lumen's names</h2>
+    <p class="text-gray-700">
+        Lumen names {{ lumen_names|length }} of its icons differently from Lucide. Either name draws the
+        same icon, so a Lumen layout drops in unchanged; every other Lumen name is the Lucide name.
+    </p>
+    <div class="card card-table mt-4 overflow-x-auto">
+        <table class="doc-props w-full">
+            <thead><tr><th>Lumen name</th><th>Lucide icon</th><th>Icon</th></tr></thead>
+            <tbody>
+                {% for lumen, lucide_name in lumen_names %}
+                    <tr><td><code>{{ lumen }}</code></td><td><code>{{ lucide_name }}</code></td><td>{% lucide lumen size="m" %}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     <h2 class="mt-8">Adding an icon</h2>
     <p class="text-gray-700">
         Drop the SVG into <code>wise_core/static/wise_core/icons/lucide/</code>, named
-        <code>&lt;name&gt;.svg</code>. The tag reads it from disk and caches it, so no registry needs
+        <code>&lt;name&gt;.svg</code>, and keep the Lucide licence notice in that folder (ISC; some
+        shapes derive from Feather, MIT). The tag reads it from disk and caches it, so no registry needs
         updating.
     </p>
     <div class="callout callout-info mt-4">
-        {% lucide "info" size=16 cls="callout-icon" %}
+        {% status_glyph "info" size=18 cls="callout-icon" %}
         <div>
             An unknown name renders an HTML comment rather than raising — a missing icon never breaks
             a page. If an icon is silently absent, check the filename against the gallery below.
@@ -88,11 +163,11 @@
             <button class="copy-button flex flex-col items-center gap-1.5 border border-divider bg-panel px-2 py-3 text-center"
                     data-copy="{% templatetag openblock %} lucide &quot;{{ name }}&quot; size=16 {% templatetag closeblock %}"
                     title="Copy the tag for {{ name }}">
-                <span class="copy-button-idle flex flex-col items-center gap-1.5">
+                <span class="copy-button-idle flex-col">
                     {% lucide name size=20 %}
                     <span class="text-[10px] leading-tight text-content-subdued">{{ name }}</span>
                 </span>
-                <span class="copy-button-done flex flex-col items-center gap-1.5">
+                <span class="copy-button-done flex-col">
                     {% lucide "check" size=20 %}
                     <span class="text-[10px] leading-tight">copied</span>
                 </span>
@@ -105,10 +180,12 @@
         <table class="doc-props w-full">
             <thead><tr><th>Argument</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td><code>name</code></td><td>Icon filename without <code>.svg</code>. Can be a variable.</td></tr>
-                <tr><td><code>size</code></td><td>Width and height in px. Default 18.</td></tr>
+                <tr><td><code>name</code></td><td>Icon filename without <code>.svg</code>, or a Lumen name (<code>add</code>, <code>close</code>, <code>home</code>&hellip;). Can be a variable.</td></tr>
+                <tr><td><code>size</code></td><td>A step &mdash; <code>"xs"</code> 14, <code>"s"</code> 16, <code>"m"</code> 20, <code>"l"</code> 22, <code>"xl"</code> 26 &mdash; or a number of px. Default <code>"m"</code>.</td></tr>
                 <tr><td><code>cls</code></td><td>Extra classes on the <code>&lt;svg&gt;</code>.</td></tr>
-                <tr><td><code>stroke_width</code></td><td>Default <code>"1.5"</code>.</td></tr>
+                <tr><td><code>stroke_width</code></td><td>In Lucide's 24-unit grid. Default <code>"2.4"</code> (2px at 20px). Only raise it for a glyph in a small control.</td></tr>
+                <tr><td><code>label</code></td><td>Gives the icon an accessible name (<code>role="img"</code>). Without it the icon is <code>aria-hidden</code>.</td></tr>
+                <tr><td><code>status_glyph</code></td><td>A second tag: <code>{% templatetag openblock %} status_glyph "positive" size=18 {% templatetag closeblock %}</code>, the filled info / positive / notice / negative glyph.</td></tr>
             </tbody>
         </table>
     </div>
@@ -122,9 +199,12 @@
         </p>
         <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's {% lucide %} template tag for every icon - never an <img>, an icon font, or a hand-copied inline <svg>. Rules:
 - Load it once per template: {% load wise_icons %}.
-- Basic usage: {% lucide "trash-2" size=16 %} - the name matches a Lucide icon slug (see lucide.dev) with vendored SVGs inlined server-side, so it needs no extra HTTP request and no icon font.
+- Basic usage: {% lucide "trash-2" size="s" %} - the name matches a Lucide icon slug (see lucide.dev) with vendored SVGs inlined server-side, so it needs no extra HTTP request and no icon font.
 - It renders inline SVG, which inherits `currentColor` - so an icon automatically matches its surrounding text/button color; do not hardcode a fill or stroke color on it.
-- Pass `cls="..."` for extra classes (e.g. cls="callout-icon" to align it with a callout's first line) and `stroke_width="..."` to override the default 1.5.
+- Size with a Lumen step - size="xs" (14), "s" (16), "m" (20, the default), "l" (22), "xl" (26) - or px, matched to the control: 16 in small buttons, 20 in medium, 22 in large, 26 in extra large. Never scale an icon with CSS. The stroke is 2.4 (2px at 20px); pass `stroke_width="2.6"` only for a glyph inside a small control.
+- Pass `cls="..."` for extra classes (e.g. cls="mt-0.5" to align it with a first line) and `label="..."` when the icon stands alone and needs an accessible name; without it the icon is aria-hidden.
+- Lumen's names (add, remove, close, home, delete, edit, more, grid, chat, sliders, alert, error, success, help, unlock, refresh) are accepted as aliases of the matching Lucide icons.
+- For a status (info, positive, notice, negative) use the filled glyph - {% status_glyph "positive" size=18 %} - next to a word, never an outline icon and never color alone.
 - On an icon-only button or link, the icon itself has no accessible name - always add aria-label (or a visually-hidden span) on the containing element, never on the icon tag itself.
 - If the icon you need doesn't already exist in wise_core/static/wise_core/icons/lucide/, add the matching SVG from lucide.dev rather than inventing custom artwork, to keep the icon set visually consistent.{% endverbatim %}{% endfilter %}</code></pre>
 

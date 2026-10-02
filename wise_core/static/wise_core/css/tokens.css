@@ -900,6 +900,30 @@
 }
 
 @layer components {
+    /* ── Icons ───────────────────────────────────────────────────────────
+       The `lucide` template tag draws Lucide's 24-unit outline icons like
+       Lumen's Icon: single ink in `currentColor`, round caps and joins, a
+       2.4 stroke (2px at 20px, scaling with the size) and five sizes tied
+       to the control an icon sits in - 14, 16 (small button), 20 (medium),
+       22 (large) and 26 (extra large). An icon never shrinks in a flex row.
+       A glyph inside a small control is drawn heavier than that default
+       (chevrons, sort arrows and pager arrows 2.6; a chip's remove cross
+       3), set here rather than at every call site. The filled status
+       glyphs from `status_glyph` take the status family's content color. */
+    .lucide,
+    .status-glyph {
+        @apply shrink-0;
+    }
+
+    :where(.picker-chevron, .accordion-chevron, .tree-item-chevron, .pagination-link svg,
+           .data-table th a svg) {
+        stroke-width: 2.6;
+    }
+
+    :where(.tag-remove svg, .toast-close svg) {
+        stroke-width: 3;
+    }
+
     /* ── Buttons ─────────────────────────────────────────────────────────
        Always pair `.btn` with one variant, e.g. class="btn btn-primary".
        Lumen's buttons are fully round, 700-weight title-s labels with a 2px
@@ -1373,34 +1397,59 @@
         border-bottom: 0;
     }
 
-    /* Empty state - what a list renders instead of rows, from
-       wise_core/components/_no_data.html. Roomy and centered: an empty list
-       is a dead end unless the way out of it (create the first record, drop
-       the filters) is the most visible thing in the frame. A layer-1 block
-       rather than a card, so it can't be mistaken for a record the visitor
-       could open. */
+    /* Empty state - Lumen's EmptyState: a message with a simple illustration
+       for when there is nothing to show (`{% empty_state %}`, and
+       wise_core/components/_no_data.html for a list). Centered in a 420px
+       column on whatever surface it sits on - a table card, a bare page -
+       with no box of its own: a 120 x 96 illustration (`empty` or `search`),
+       a heading-m title, one 14px sentence and one next step. The picture is
+       drawn from tokens (a border-default panel on layer-2, neutral-down
+       bars, the accent for the dot and the magnifier), so it follows the
+       theme and the accent color. It is decorative: the title says what
+       happened. */
     .empty-state {
-        @apply flex flex-col items-center gap-2 px-6 py-10 text-center;
-        background-color: var(--color-background-layer-1);
-        border-radius: var(--corner-radius-800);
+        @apply mx-auto flex max-w-[26.25rem] flex-col items-center gap-2 px-4 py-8 text-center;
     }
 
-    .empty-state-icon {
-        @apply mb-1 flex h-14 w-14 items-center justify-center;
-        background-color: var(--color-fill-neutral-hover);
-        color: var(--color-content-heading);
-        border-radius: var(--corner-radius-800);
+    .empty-state-art {
+        @apply mb-3 shrink-0;
+    }
+
+    .empty-state-art .art-panel {
+        fill: var(--color-background-layer-2);
+        stroke: var(--color-border-default);
+        stroke-width: 2;
+    }
+
+    .empty-state-art .art-bar {
+        fill: var(--color-fill-neutral-down);
+    }
+
+    .empty-state-art .art-dot {
+        fill: var(--color-accent-background);
+    }
+
+    .empty-state-art .art-lens {
+        fill: var(--color-background-layer-2);
+        stroke: var(--color-accent-content);
+        stroke-width: 4;
+    }
+
+    .empty-state-art .art-handle {
+        fill: none;
+        stroke: var(--color-accent-content);
+        stroke-width: 4;
+        stroke-linecap: round;
     }
 
     .empty-state-title {
-        @apply text-heading-m;
+        @apply m-0 text-heading-m;
         font-family: var(--font-brand);
         color: var(--color-content-heading);
     }
 
-    /* Capped at a readable measure rather than the full table width. */
     .empty-state-text {
-        @apply max-w-[46ch] text-body-s;
+        @apply m-0 text-body-s;
         color: var(--color-content-subdued);
     }
 

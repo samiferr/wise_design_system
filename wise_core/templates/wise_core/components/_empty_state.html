@@ -1,0 +1,11 @@
+{% comment %}
+Markup behind `{% empty_state %}` (wise_tags) - Lumen's EmptyState. Render it
+with the tag rather than including this directly: the tag resolves the
+illustration, clamps `heading_level` and renders the body as `actions`.
+{% endcomment %}
+<div class="empty-state">
+    {% if art %}{{ art }}{% elif illustration %}{% include 'wise_core/components/_empty_illustration.html' with name=illustration %}{% endif %}
+    <h{{ heading_level }} class="empty-state-title">{{ title }}</h{{ heading_level }}>
+    {% if description %}<p class="empty-state-text">{{ description }}</p>{% endif %}
+    {% if actions %}<div class="empty-state-actions">{{ actions }}</div>{% endif %}
+</div>

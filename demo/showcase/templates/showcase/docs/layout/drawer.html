@@ -26,14 +26,14 @@
     <div data-doc-tab="overview">
     <h2 class="mt-8">Try it</h2>
     <div class="doc-preview mt-4 flex flex-wrap gap-3">
-        <button class="btn btn-secondary" onclick="wiseOpenDrawer('demo_drawer')">{% lucide "filter" size=15 %}<span>Open drawer</span></button>
+        <button class="btn btn-secondary" onclick="wiseOpenDrawer('demo_drawer')">{% lucide "filter" size=16 %}<span>Open drawer</span></button>
     </div>
 
     <div class="drawer-backdrop hidden" id="demo_drawer_backdrop" onclick="wiseCloseDrawer('demo_drawer')"></div>
     <div class="drawer hidden" id="demo_drawer" role="dialog" aria-label="Details">
         <div class="drawer-header">
             <h3 class="dialog-title">Details</h3>
-            <button class="btn btn-icon btn-ghost" onclick="wiseCloseDrawer('demo_drawer')" aria-label="Close">{% lucide "x" size=18 %}</button>
+            <button class="btn btn-icon btn-ghost" onclick="wiseCloseDrawer('demo_drawer')" aria-label="Close">{% lucide "x" size=20 %}</button>
         </div>
         <div class="drawer-body">
             <table class="detail-panel">
@@ -65,7 +65,7 @@
     <div class="drawer-header">
         <h3 class="dialog-title">Details</h3>
         <button class="btn btn-icon btn-ghost" onclick="wiseCloseDrawer('details_drawer')" aria-label="Close">
-            {% lucide "x" size=18 %}
+            {% lucide "x" size=20 %}
         </button>
     </div>
     <div class="drawer-body">…</div>
@@ -103,7 +103,7 @@
 
     <h2 class="mt-8">Accessibility</h2>
     <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "notice" size=18 cls="callout-icon" %}
         <div>
             Unlike <code>&lt;dialog&gt;</code>, a drawer gets no focus trapping for free. Give it
             <code>role="dialog"</code> and an <code>aria-label</code>, move focus into it on open, and

@@ -66,7 +66,10 @@ Before writing markup, find the existing class. Full table with markup in
 | Tag | `tag` (`tag tag-action` = selected) |
 | Badge (status pill) | `badge badge-green|orange|red|action|brand|tertiary|grey`, `badge-count` |
 | Status light | `status-light status-light-positive|notice|negative|informative|purple|cyan` |
-| Inline alert | `callout callout-info|success|warning|danger` (+ `.callout-icon`, `.callout-title`) |
+| Inline alert | `callout callout-info|success|warning|danger` (+ `.callout-icon` = a `{% status_glyph %}`, `.callout-title`) |
+| Icon | `{% lucide "name" size="m" %}`: 2.4 stroke (2px at 20px), sizes xs 14 / s 16 / m 20 / l 22 / xl 26, matched to the control |
+| Status glyph | `{% status_glyph "info|positive|notice|negative" size=18 %}`: filled, colored by the status `-content` token, beside a word |
+| Empty state | `{% empty_state title=… description=… illustration="empty"|"search" %}next step{% endempty_state %}`; in a list `_no_data.html` |
 | Menu (actions) | `details.dropdown` > `summary` + `.dropdown-panel` > `.dropdown-item` |
 | Dropdown (choose a value) | `.picker` (`DropdownSelect` widget): borderless `fill-picker` button + white listbox popover |
 | Dialog | `dialog.dialog` > `.dialog-header/.dialog-title/.dialog-body/.dialog-footer` |
@@ -160,7 +163,9 @@ both themes, every palette and every background, and refuses to write if one fai
 - No shadows to raise static content; use a layer step or a `border-subtle` edge. No custom
   `box-shadow` values.
 - No more than one `btn-primary` per view; don't use the accent for decoration.
-- Status is never color alone: pair `positive`/`notice`/`negative`/`informative` with a word and an icon.
+- Status is never color alone: pair `positive`/`notice`/`negative`/`informative` with a word and a filled `{% status_glyph %}`.
+- Don't scale icons with CSS or pass odd sizes (13, 15, 18, 24): use xs 14, s 16, m 20, l 22, xl 26. Don't mix another icon set.
+- Don't use an empty state for an error (use a callout), and don't hand-write `.empty-state` markup: use `{% empty_state %}`.
 - No `opacity-50` for disabled; use the `disabled` attribute (components handle the disabled colors).
 - No hover color hacks (`hover:bg-gray-100`): add the selector to the quiet-hover rule instead.
 - Don't rename or remove component classes: they are the public API.

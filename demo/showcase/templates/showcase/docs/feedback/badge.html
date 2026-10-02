@@ -90,7 +90,7 @@
 </div>
     <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<span class="badge {{ order.status_badge }}">{{ order.get_status_display }}</span>{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-info mt-4">
-        {% lucide "info" size=16 cls="callout-icon" %}
+        {% status_glyph "info" size=18 cls="callout-icon" %}
         <div>
             Map the status to a class on the model, not in the template. A template that builds the
             class by string concatenation (<code>badge-{{ status }}</code>) produces classes Tailwind

@@ -65,8 +65,11 @@ class ProductListView(WiseListView):
 * With filters applied (`filter_kwargs_count`), the block switches to "nothing matched" wording and
   offers *Clear filters* (`request.path`) instead of the create button — inviting someone to create
   a record that already exists but is filtered out of view is how duplicates get made.
-* Override any of the copy per list with `title`/`text`/`icon`/`create_label`, assigned through
-  `{% trans "…" as name %}` so the override stays translatable.
+* The block is Lumen's EmptyState (`{% empty_state %}`): the `empty` illustration when nothing exists
+  yet, the `search` one when filters hid the records. Override any of the copy per list with
+  `title`/`text`/`illustration`/`create_label` (and `heading_level`, 2 by default), assigned through
+  `{% trans "…" as name %}` so the override stays translatable. `illustration` replaces the old
+  `icon` argument: it is `empty`, `search` or `none`.
 
 `_pagination.html` renders nothing when the list is empty, so the message never sits above a dead
 "Page 1 / 1" pager.

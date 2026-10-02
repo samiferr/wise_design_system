@@ -71,7 +71,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 router = routers.DefaultRouter()
 router.register("categories", CategoryViewSet, basename="category-api"){% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "notice" size=18 cls="callout-icon" %}
         <div>
             <div class="callout-title">The endpoint is a real API surface</div>
             It is queryable by anyone who can load the form. Apply the same permission and queryset

@@ -10,7 +10,7 @@ same `.form-stack`.
 {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
 {% if form.non_field_errors %}
     <div class="form-alert">
-        {% lucide "alert-triangle" size=16 cls="mt-0.5 shrink-0" %}
+        {% status_glyph "negative" size=18 cls="mt-0.5" %}
         <div>
             {% for error in form.non_field_errors %}
                 <div>{{ error }}</div>

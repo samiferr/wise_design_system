@@ -59,7 +59,7 @@
 
     <h2 class="mt-8">The form must be multipart</h2>
     <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "notice" size=18 cls="callout-icon" %}
         <div>
             <div class="callout-title">The most common upload bug</div>
             Without <code>enctype="multipart/form-data"</code> the file silently never arrives —
@@ -109,7 +109,7 @@ def clean_datasheet(self):
         silently wipe the attachment.
     </p>
     <div class="doc-preview mt-4 flex flex-wrap items-center gap-3">
-        <span class="tag">{% lucide "file-text" size=13 %}datasheet-v2.pdf<button class="tag-remove" aria-label="Remove">{% lucide "x" size=12 %}</button></span>
+        <span class="tag">{% lucide "file-text" size=14 %}datasheet-v2.pdf<button class="tag-remove" aria-label="Remove">{% lucide "x" size=12 %}</button></span>
     </div>
 
     <h2 class="mt-8">Reference</h2>

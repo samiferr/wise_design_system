@@ -27,7 +27,7 @@
     <h2 class="mt-8">Basic</h2>
     <div class="doc-preview mt-4 flex flex-wrap items-start gap-3" style="min-height: 12rem;">
         <details class="dropdown">
-            <summary class="btn btn-secondary">{% lucide "settings" size=15 %}<span>Actions</span>{% lucide "chevron-down" size=14 %}</summary>
+            <summary class="btn btn-secondary">{% lucide "settings" size=16 %}<span>Actions</span>{% lucide "chevron-down" size=14 %}</summary>
             <div class="dropdown-panel">
                 <a class="dropdown-item" href="#">{% lucide "eye" size=14 %}View</a>
                 <a class="dropdown-item" href="#">{% lucide "pencil" size=14 %}Edit</a>
@@ -39,7 +39,7 @@
     </div>
     <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<details class="dropdown">
     <summary class="btn btn-secondary">
-        {% lucide "settings" size=15 %}<span>Actions</span>{% lucide "chevron-down" size=14 %}
+        {% lucide "settings" size=16 %}<span>Actions</span>{% lucide "chevron-down" size=14 %}
     </summary>
     <div class="dropdown-panel">
         <a class="dropdown-item" href="{{ object.get_absolute_url }}">{% lucide "eye" size=14 %}View</a>
@@ -121,7 +121,7 @@
         <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Dropdown for an anchored menu of actions. Rules:
 - Built entirely on the native <details>/<summary> element - opens, closes, and is keyboard-operable with zero required JS:
   <details class="dropdown">
-      <summary class="btn btn-secondary">{% lucide "settings" size=15 %}<span>Actions</span>{% lucide "chevron-down" size=14 %}</summary>
+      <summary class="btn btn-secondary">{% lucide "settings" size=16 %}<span>Actions</span>{% lucide "chevron-down" size=14 %}</summary>
       <div class="dropdown-panel">
           <a class="dropdown-item" href="{{ object.get_absolute_url }}">{% lucide "eye" size=14 %}View</a>
           <a class="dropdown-item" href="{% url 'product_update_view' pk=object.pk %}">{% lucide "pencil" size=14 %}Edit</a>

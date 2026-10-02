@@ -24,10 +24,11 @@ def _load_icon(name):
 
 
 @register.simple_tag
-def lucide(name, size=18, cls='', stroke_width='1.5', **kwargs):
+def lucide(name, size=20, cls='', stroke_width='2.4', **kwargs):
     """
     Render a vendored Lucide icon inline (not <img>) so it sizes itself via its own
     width/height/viewBox and inherits color from Tailwind text-* utilities via currentColor.
+    Drawn like wise_core's tag: Lumen's 2.4 stroke (2px at 20px) and a 20px default.
     """
     # Handle 'class' keyword argument which is common in Django templates
     if 'class' in kwargs:

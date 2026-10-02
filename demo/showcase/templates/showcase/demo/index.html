@@ -23,7 +23,7 @@
 
         {% if not request.user.is_authenticated %}
             <div class="callout callout-info mt-6">
-                {% lucide "info" size=16 cls="callout-icon" %}
+                {% status_glyph "info" size=18 cls="callout-icon" %}
                 <div>
                     <div class="callout-title">Sign in to browse</div>
                     <a class="underline" href="{% url 'login' %}?next={% url 'demo' %}">Sign in</a> as

@@ -87,7 +87,7 @@ form.cleaned_data["verification_code"]   # "123456"{% endverbatim %}{% endfilter
             return self.form_invalid(form)
         return super().form_valid(form){% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "notice" size=18 cls="callout-icon" %}
         <div>
             Rate-limit verification attempts server-side. A six-digit code is only a million
             possibilities — without a limit it is brute-forceable in minutes.

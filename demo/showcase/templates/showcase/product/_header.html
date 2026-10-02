@@ -29,7 +29,7 @@ own page and on every child page under it.
     </div>
 </div>
 <div class="record-header">
-    {% lucide "pill" size=28 cls="shrink-0 text-brand-600" %}
+    {% lucide "pill" size=26 cls="shrink-0 text-brand-600" %}
     <div class="min-w-0">
         <h2 class="truncate">{{ parent_object.name }}</h2>
         <div class="record-meta">
@@ -40,9 +40,9 @@ own page and on every child page under it.
                 <span class="rating" aria-label="Rated {{ parent_object.rating }} out of 5">
                     {% for i in "12345"|make_list %}
                         {% if forloop.counter <= parent_object.rating %}
-                            {% lucide "star" size=13 cls="rating-star is-on" %}
+                            {% lucide "star" size=14 cls="rating-star is-on" %}
                         {% else %}
-                            {% lucide "star" size=13 cls="rating-star" %}
+                            {% lucide "star" size=14 cls="rating-star" %}
                         {% endif %}
                     {% endfor %}
                 </span>

@@ -43,7 +43,7 @@ not need to touch the layout blocks below.
                     <nav class="breadcrumb" aria-label="Breadcrumb">
                         <a class="breadcrumb-item" href="{% url 'docs' %}">Docs</a>
                         {% if current_section_slug %}
-                            <span class="breadcrumb-separator">{% lucide "chevron-right" size=13 %}</span>
+                            <span class="breadcrumb-separator">{% lucide "chevron-right" size=14 %}</span>
                             <span class="breadcrumb-item">{% block doc_section %}{% endblock %}</span>
                         {% endif %}
                     </nav>
@@ -57,7 +57,7 @@ not need to touch the layout blocks below.
                     <nav class="doc-pager" aria-label="Pagination">
                         {% if previous_page %}
                             <a class="doc-pager-link" href="{% url previous_page.url_name %}">
-                                {% lucide "arrow-left" size=15 %}
+                                {% lucide "arrow-left" size=16 %}
                                 <span>
                                     <span class="doc-pager-kicker">Previous</span>
                                     {{ previous_page.title }}
@@ -70,7 +70,7 @@ not need to touch the layout blocks below.
                                     <span class="doc-pager-kicker">Next</span>
                                     {{ next_page.title }}
                                 </span>
-                                {% lucide "arrow-right" size=15 %}
+                                {% lucide "arrow-right" size=16 %}
                             </a>
                         {% endif %}
                     </nav>

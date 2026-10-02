@@ -237,6 +237,25 @@ Lumen's component heights are 20, 24, 32 (the default), 40 and 48px (`--componen
 On a coarse pointer the values step up one size - 40px fields, buttons and rows - following Lumen's
 "add about 20% on touch". Density is not a setting: there is no compact mode.
 
+## Icons and status glyphs
+
+The `{% lucide %}` tag draws Lucide like Lumen's `Icon`: single ink in `currentColor`, a 2.4 stroke on
+the 24-unit grid (2px at 20px, scaling with the size) and five sizes tied to the control the icon sits
+in - `xs` 14, `s` 16 (small buttons, field adornments), `m` 20 (the default; medium buttons,
+navigation), `l` 22, `xl` 26. A glyph inside a small control is heavier (2.6 for chevrons and sort
+arrows, 3 for a chip's remove cross), set in `tokens.css`. The four status glyphs - info, positive,
+notice, negative - are filled (`{% status_glyph %}`), colored by the status family's `-content` token,
+and always sit beside a word. See [template-tags-and-filters.md](template-tags-and-filters.md).
+
+## Empty state
+
+Lumen's EmptyState is a 420px centered column with no box of its own: a 120 x 96 illustration
+(`empty` for nothing-yet, `search` for nothing-found; drawn from `border-default`, `background-layer-2`,
+`fill-neutral-down` and the accent, so it follows theme and accent), a `heading-m` title, one 14px
+`content-subdued` sentence and one next step. Render it with `{% empty_state %}`; lists use
+`wise_core/components/_no_data.html`, which picks the illustration and wording from the list view's
+context.
+
 ## Switchable axes
 
 Four independent attributes on `<html>`, each redefining a handful of tokens at runtime (no rebuild,

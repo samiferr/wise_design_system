@@ -6,15 +6,38 @@ labels — were dropped; everything kept here is generic to any Django model).
 
 ## `wise_icons` — `{% load wise_icons %}`
 
-### `{% lucide name size=18 cls="" stroke_width="1.5" %}`
+### `{% lucide name size="m" cls="" stroke_width="2.4" label="" %}`
 
 Renders a vendored [Lucide](https://lucide.dev) icon **inline as SVG** (not `<img>`), so it sizes
 itself from its own `viewBox` and inherits color from Tailwind `text-*` utilities via `currentColor`.
+It is drawn like Lumen's `Icon`: a 2.4 stroke on Lucide's 24-unit grid (2px at 20px, scaling with the
+size) and five sizes tied to the control the icon sits in.
 
 ```django
-{% lucide "search" size=16 cls="text-gray-500" %}
-{% lucide "trash-2" size=14 class="text-accent-600" %}  {# 'class' also works, for parity with HTML #}
+{% lucide "search" %}                                      {# 20px (m), the default #}
+{% lucide "search" size="s" cls="text-gray-500" %}         {# a step: xs 14, s 16, m 20, l 22, xl 26 #}
+{% lucide "trash-2" size=16 class="text-accent-600" %}     {# or px; 'class' also works, for parity with HTML #}
+{% lucide "search" size="l" label="Search" %}              {# role="img" with that name #}
 ```
+
+| `size` | px | sits in |
+| --- | --- | --- |
+| `xs` | 14 | dense inline text, sort arrows |
+| `s` | 16 | small buttons, field adornments, menu items |
+| `m` | 20 (default) | medium buttons, navigation |
+| `l` | 22 | large buttons |
+| `xl` | 26 | extra-large buttons |
+
+Never scale an icon with CSS. `stroke_width` is only for a glyph inside a small control (2.6 for a
+chevron or sort arrow, which `tokens.css` already applies to the built-in ones). Without `label` the
+icon is `aria-hidden`; on an icon-only control put `aria-label` on the button.
+
+Lumen's own names are accepted as aliases (`add` → `plus`, `remove` → `minus`, `close` → `x`,
+`home` → `house`, `delete` → `trash-2`, `edit` → `pencil`, `sort` → `arrow-up-down`,
+`more` → `ellipsis`, `grid` → `layout-grid`, `chat` → `message-square`, `sliders` →
+`sliders-horizontal`, `alert` → `alert-triangle`, `error` → `circle-alert`, `success` →
+`circle-check`, `help` → `circle-question-mark`, `unlock` → `lock-open`, `refresh` →
+`refresh-cw`); every other Lumen name is the Lucide name. All 56 Lumen icons are vendored.
 
 Icons are read from `wise_core/static/wise_core/icons/lucide/<name>.svg` and cached in-process
 (`functools.lru_cache`) after first load. An unknown name renders an HTML comment
@@ -22,10 +45,49 @@ Icons are read from `wise_core/static/wise_core/icons/lucide/<name>.svg` and cac
 browser's dev tools if an icon silently doesn't show up. Run `/icons/` on the demo site for the full
 vendored set.
 
+### `{% status_glyph status size=18 cls="" %}`
+
+Lumen's four filled status glyphs — a disc (a triangle for `notice`) with the Lucide glyph cut out,
+since Lucide has no filled set. `status` is `info`, `positive`, `notice` or `negative` (aliases:
+`informative`/`neutral`, `success`, `warning`, `error`/`danger`). Colored by `currentColor`, so
+callouts, toasts and form alerts get the status family's content color from their own classes.
+Decorative (`aria-hidden`): the message next to it names the status.
+
+```django
+{% status_glyph "positive" size=18 cls="callout-icon" %}
+```
+
+Each glyph carries its own `<mask id="wise-glyph-N">` so it still renders once the first copy sits in
+a hidden dialog or drawer.
+
 ## `wise_tags` — `{% load wise_tags %}`
 
 Generic lookups for templates that render fields by name from Python-side config (a datatable
 column list, a detail-panel row list) rather than hardcoding field access per template.
+
+### `{% empty_state title="…" description="…" illustration="empty" heading_level=2 %}…{% endempty_state %}`
+
+Lumen's EmptyState: a message with a simple illustration for when there is nothing to show. The tag's
+body is the next step (usually one button); `title` is required.
+
+```django
+{% load wise_tags %}
+{% empty_state title="No projects yet" description="Projects you create will appear here." %}
+    <a class="btn btn-primary" href="{% url 'project_create' %}">Create project</a>
+{% endempty_state %}
+
+{% empty_state illustration="search" title="No results for “invoice”" description="Check the spelling or try a broader search." %}
+    <a class="btn btn-secondary" href="?">Clear search</a>
+{% endempty_state %}
+```
+
+`illustration` is `"empty"` (the default; nothing exists yet), `"search"` (a search or filter matched
+nothing), `None` / `"none"` for no picture, or your own markup (a string that is already safe and starts
+with `<`). `heading_level` is 2 unless the empty state sits under a deeper heading. First-run copy says
+what the space is for and how to start; no-results copy says what was searched and how to widen it;
+keep the title under eight words. It is not for errors - use a callout. The markup is
+`wise_core/components/_empty_state.html` (+ `_empty_illustration.html`); `_no_data.html` wraps the tag
+for list views.
 
 ### `{{ object|get_value:"field_name" }}` (filter)
 

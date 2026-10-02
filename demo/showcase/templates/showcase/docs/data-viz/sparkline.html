@@ -59,7 +59,7 @@
             <div class="chart-frame mt-2" style="height:2rem">
                 <canvas class="chart-canvas" data-chart="{% chart_json revenue_sparkline %}"></canvas>
             </div>
-            <div class="card-meta mt-2">{% lucide "activity" size=13 %} last 6 months</div>
+            <div class="card-meta mt-2">{% lucide "activity" size=14 %} last 6 months</div>
         </div>
         <div class="card">
             <div class="card-kicker">Orders</div>
@@ -67,7 +67,7 @@
             <div class="chart-frame mt-2" style="height:2rem">
                 <canvas class="chart-canvas" data-chart="{% chart_json orders_sparkline %}"></canvas>
             </div>
-            <div class="card-meta mt-2">{% lucide "activity" size=13 %} last 6 months</div>
+            <div class="card-meta mt-2">{% lucide "activity" size=14 %} last 6 months</div>
         </div>
     </div>
     <pre class="doc-code mt-4"><code class="language-python">{% filter force_escape %}{% verbatim %}context["orders_sparkline"] = charts.sparkline_chart(orders, color="var(--color-warning-400)"){% endverbatim %}{% endfilter %}</code></pre>
@@ -108,7 +108,7 @@
 
     <h2 class="mt-8">Keep it honest</h2>
     <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "notice" size=18 cls="callout-icon" %}
         <div>
             Each sparkline is scaled to its own range, so two of them side by side are <em>not</em>
             comparable — a line that climbs steeply may be moving by three units. Always show the

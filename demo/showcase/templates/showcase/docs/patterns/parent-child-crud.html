@@ -130,7 +130,7 @@ class ProductVariantCreateView(WiseParentDetailChildCreateView):
     form_class = ProductVariantForm                    # which has no `product` field
     template_name = 'shop/product/variant/form.html'{% endverbatim %}{% endfilter %}</code></pre>
     <div class="callout callout-warning mt-4">
-        {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+        {% status_glyph "notice" size=18 cls="callout-icon" %}
         <div>
             <div class="callout-title">The parent is never a form field</div>
             <code>WiseParentDetailChildCreateView</code> sets <code>parent_field</code> from the URL
@@ -193,16 +193,16 @@ class ProductVariantCreateView(WiseParentDetailChildCreateView):
                 </div>
             </div>
             <div class="record-header">
-                {% lucide "pill" size=28 cls="shrink-0 text-brand-600" %}
+                {% lucide "pill" size=26 cls="shrink-0 text-brand-600" %}
                 <div class="min-w-0">
                     <h2 class="truncate">USB-C hub</h2>
                     <div class="record-meta"><span class="badge badge-grey">Electronics</span></div>
                 </div>
             </div>
             <div class="tab-bar border-b border-divider">
-                <a class="bar-item" href="#">{% lucide "info" size=15 %}<span>Overview</span></a>
-                <a class="bar-item selected" href="#">{% lucide "tag" size=15 %}<span>Variants</span><span class="tab-count">2</span></a>
-                <a class="bar-item" href="#">{% lucide "star" size=15 %}<span>Reviews</span><span class="tab-count">2</span></a>
+                <a class="bar-item" href="#">{% lucide "info" size=16 %}<span>Overview</span></a>
+                <a class="bar-item selected" href="#">{% lucide "tag" size=16 %}<span>Variants</span><span class="tab-count">2</span></a>
+                <a class="bar-item" href="#">{% lucide "star" size=16 %}<span>Reviews</span><span class="tab-count">2</span></a>
             </div>
             <div class="mt-5 flex items-end justify-between gap-4">
                 <div>
@@ -251,7 +251,7 @@ class ProductVariantCreateView(WiseParentDetailChildCreateView):
 {% endblock %}{% endverbatim %}{% endfilter %}</code></pre>
     <div class="doc-preview mt-4 max-w-md">
         <div class="callout callout-danger">
-            {% lucide "alert-triangle" size=16 cls="callout-icon" %}
+            {% status_glyph "negative" size=18 cls="callout-icon" %}
             <div><div class="callout-title">This also deletes 2 variants and 2 reviews</div>They cannot be recovered.</div>
         </div>
     </div>

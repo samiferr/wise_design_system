@@ -17,6 +17,7 @@ from wise_core.mixins import (
     WiseParentDetailView,
     WiseUpdateView,
 )
+from wise_core.templatetags.wise_icons import LUMEN_NAMES
 
 from . import navigation
 from .filters import (
@@ -50,7 +51,10 @@ class HomeView(TemplateView):
 
 def _icons_context():
     icon_dir = settings.REPO_ROOT / 'wise_core' / 'static' / 'wise_core' / 'icons' / 'lucide'
-    return {'icon_names': sorted(p.stem for p in icon_dir.glob('*.svg'))}
+    return {
+        'icon_names': sorted(p.stem for p in icon_dir.glob('*.svg')),
+        'lumen_names': sorted(LUMEN_NAMES.items()),
+    }
 
 
 def _kitchen_sink_context():
