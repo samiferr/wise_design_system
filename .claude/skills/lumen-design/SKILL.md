@@ -40,7 +40,7 @@ sizes.**
    `shadow-dragged`) only for things that float: menus, toasts, dialogs. A control's own border is
    `border-default` (3:1 on the page and every surface); `border-subtle` is for decorative dividers only.
    Text fields, text areas and search fields use a 2px border that turns `border-focus` on focus; a
-   `<select>` is a borderless picker on `fill-picker`. **Every single-line control has the same height.**
+   `<select>` is a borderless picker. All of them are filled `fill-field` (#dadada in light). **Every single-line control has the same height.**
    **A table always sits in a card** - `<div class="card card-table mt-4 overflow-x-auto">` around the
    `table.data-table`, no card header - with the pager (Lumen's Pagination) in a `card-footer`.
 6. **Interaction = stepped fills.** Hover moves a fill one shade, press two; the component classes
@@ -88,7 +88,7 @@ Details and values: [references/tokens.md](references/tokens.md).
   `background-layer-2`, `background-elevated`, `fill-neutral-hover`, `fill-neutral-down`,
   `fill-neutral-subtle` (Wise extension),
   `content-heading`, `content-default`, `content-subdued`, `content-disabled`, `border-default`,
-  `border-hover`, `border-focus`, `border-subtle`, `fill-picker`, `row-hover`, `selected-subtle`, `accent-background` (+ `-hover`, `-down`), `accent-content`,
+  `border-hover`, `border-focus`, `border-subtle`, `fill-field`, `row-hover`, `selected-subtle`, `accent-background` (+ `-hover`, `-down`), `accent-content`,
   `on-accent`, `accent-subtle` / `on-accent-subtle` (Wise extension), `neutral-background`,
   `on-neutral`, `informative-` / `positive-` / `notice-` / `negative-background` and `-content`,
   `on-notice`, `focus-ring`. (`border-border-subtle` is the real utility name: Lumen's token is

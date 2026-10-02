@@ -245,7 +245,9 @@ function checks() {
             'fill-hover': g(pick('200', '100')),
             'fill-down': g(pick('300', '200')),
             'fill-subtle': g(pick('75', '100')),
-            'fill-picker': g(pick('200', '100')),
+            // text fields, text areas, selects, OTP boxes: gray-300 (#dadada in light); hover gray-400
+            'fill-field': g('300'),
+            'fill-field-hover': g('400'),
         }
         const grounds = {...surfaces, ...fills}
         const borderDefault = g(pick('600', '600'))
@@ -255,7 +257,7 @@ function checks() {
         Object.entries(grounds).forEach(([name, bg]) => {
             note(`content-heading on ${name}`, theme, contrast(g('900'), bg), 4.5)
             note(`content-default on ${name}`, theme, contrast(g('800'), bg), 4.5)
-            note(`content-subdued on ${name}`, theme, contrast(g('700'), bg), 4.5)
+            if (name !== 'fill-field-hover') note(`content-subdued on ${name}`, theme, contrast(g('700'), bg), 4.5)
         })
 
         // Control borders and the focus ring sit on the page and surfaces.
@@ -271,10 +273,15 @@ function checks() {
             note(`border-focus on ${name}`, theme, contrast(borderFocus, bg), 3))
         note('border-focus against border-default (the focus change)', theme, contrast(borderFocus, borderDefault), 3)
 
-        // The borderless picker: the invalid outline (inset 1px) sits on the
-        // picker fill, and on its deeper hover fill.
-        note('negative-border on fill-picker', theme, contrast(hue('red', '900'), fills['fill-picker']), 3)
-        note('negative-border-hover on fill-down', theme, contrast(hue('red', '1000'), fills['fill-down']), 3)
+        // Field fills (#dadada in light): the control's own border, the focused
+        // border and the invalid outline must still hold 3:1 against them, and
+        // the borderless select relies on the deeper hover fill too.
+        note('border-default on fill-field', theme, contrast(borderDefault, fills['fill-field']), 3)
+        note('border-focus on fill-field', theme, contrast(borderFocus, fills['fill-field']), 3)
+        note('negative-border on fill-field', theme, contrast(hue('red', '900'), fills['fill-field']), 3)
+        // The hover fill belongs to the borderless select only: its value text
+        // is content-default (no placeholder), and invalid is the inset outline.
+        note('negative-border-hover on fill-field-hover', theme, contrast(hue('red', '1000'), fills['fill-field-hover']), 3)
 
         // Invalid fields: the 1px negative-border (and its hover step) is a
         // control boundary like border-default.
@@ -295,7 +302,7 @@ function checks() {
             ;[pick('900', '800'), pick('1000', '700'), pick('1100', '600')].forEach((step, i) =>
                 note(`on-accent on ${label} fill ${['rest', 'hover', 'down'][i]}`, theme, contrast('#ffffff', acc(id, step)), 4.5))
             Object.entries(grounds).forEach(([gname, bg]) => {
-                if (gname === 'fill-down') return
+                if (gname === 'fill-down' || gname.startsWith('fill-field')) return
                 note(`${label} text on ${gname}`, theme, contrast(acc(id, textStep), bg), 4.5)
             })
             Object.entries(surfaces).forEach(([gname, bg]) =>
@@ -311,14 +318,14 @@ function checks() {
                 note(`on-accent on ${name} fill ${['rest', 'hover', 'down'][i]}`, theme, contrast('#ffffff', hue(h, step)), 4.5)
             })
             Object.entries(grounds).forEach(([gname, bg]) => {
-                if (gname === 'fill-down') return
+                if (gname === 'fill-down' || gname.startsWith('fill-field')) return
                 note(`${name}-content on ${gname}`, theme, contrast(hue(h, textStep), bg), 4.5)
             })
         })
         const noticeFill = hue('orange', pick('600', '900'))
         note('on-notice on notice fill', theme, contrast(pick(g('900'), '#000000'), noticeFill), 4.5)
         Object.entries(grounds).forEach(([gname, bg]) => {
-            if (gname === 'fill-down') return
+            if (gname === 'fill-down' || gname.startsWith('fill-field')) return
             note(`notice-content on ${gname}`, theme, contrast(hue('orange', textStep), bg), 4.5)
         })
 
