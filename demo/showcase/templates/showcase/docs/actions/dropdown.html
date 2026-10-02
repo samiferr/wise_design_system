@@ -1,10 +1,11 @@
 {% extends 'showcase/docs/_base.html' %}
 {% load wise_icons %}
-{% block doc_title_tag %}Dropdown{% endblock %}
+{% block doc_title_tag %}Menu{% endblock %}
 {% block doc_section %}Actions{% endblock %}
-{% block doc_title %}Dropdown{% endblock %}
+{% block doc_title %}Menu{% endblock %}
 {% block doc_intro %}
-    A menu of actions anchored to a trigger. Built on <code>&lt;details&gt;</code> so it opens,
+    Lumen's Menu: a menu of actions anchored to a trigger (to choose a value, see the
+    <a class="text-action-600 underline" href="{% url 'docs_forms_dropdown' %}">Dropdown</a>). Built on <code>&lt;details&gt;</code> so it opens,
     closes and traps nothing — no JavaScript required, and it degrades to an always-visible list if
     CSS fails to load.
 {% endblock %}

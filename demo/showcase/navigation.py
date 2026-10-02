@@ -45,7 +45,7 @@ DOCS_NAV = [
             {'title': 'Button', 'slug': 'button'},
             {'title': 'Button Group', 'slug': 'button-group'},
             {'title': 'Copy Button', 'slug': 'copy-button'},
-            {'title': 'Dropdown', 'slug': 'dropdown'},
+            {'title': 'Menu', 'slug': 'dropdown'},
         ],
     },
     {
@@ -57,6 +57,7 @@ DOCS_NAV = [
             {'title': 'Textarea', 'slug': 'textarea'},
             {'title': 'Number Input', 'slug': 'number-input'},
             {'title': 'Select', 'slug': 'select'},
+            {'title': 'Dropdown', 'slug': 'dropdown'},
             {'title': 'Checkbox', 'slug': 'checkbox'},
             {'title': 'Radio', 'slug': 'radio'},
             {'title': 'Switch', 'slug': 'switch'},

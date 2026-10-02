@@ -2746,6 +2746,170 @@
         color: #accffd;
     }
 
+    /* ── Dropdown (picker) ───────────────────────────────────────────────
+       Lumen's Dropdown: choose one value from a list. A borderless button on
+       the #dadada `fill-picker` fill (deeper on hover and while open, the
+       focus ring on keyboard focus, an inset red outline when invalid) opens
+       a popover listbox - white (`background-elevated`), 8px padding, 8px
+       below the button, scrolling past 240px. The chosen option is bold with
+       a check; the active one (arrow keys, hover) fills with
+       `fill-neutral-hover`. Not to be confused with `.dropdown`, the menu of
+       *actions* (Lumen's Menu).
+
+         <div class="picker" data-picker>
+           <button type="button" class="picker-button" id="x" aria-haspopup="listbox" aria-expanded="false">
+             <span class="picker-value">Choose</span> (chevron)
+           </button>
+           <ul class="picker-popover" role="listbox" tabindex="-1" hidden>
+             <li class="picker-option" role="option" data-value="a" aria-selected="false">...</li>
+           </ul>
+           <input type="hidden" name="field" value="">
+         </div>
+
+       wise_core.widgets.DropdownSelect renders exactly this for a form
+       field; common.js (wisePicker*) does the behavior. */
+    .picker {
+        @apply relative w-full;
+    }
+
+    .picker-button {
+        @apply flex w-full cursor-pointer items-center justify-between gap-2 px-3 text-left text-body-s;
+        height: var(--control-height-md);
+        background-color: var(--color-fill-picker);
+        color: var(--color-content-default);
+        border: 0;
+        border-radius: var(--corner-radius-500);
+        transition: background-color 130ms var(--ease-standard);
+    }
+
+    .picker-button:hover,
+    .picker-button[aria-expanded="true"] {
+        background-color: var(--color-fill-picker-hover);
+    }
+
+    .picker-button[aria-invalid="true"],
+    .form-field-error .picker-button {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border);
+    }
+
+    .picker-button[aria-invalid="true"]:hover,
+    .form-field-error .picker-button:hover {
+        box-shadow: inset 0 0 0 var(--border-width-100) var(--color-negative-border-hover);
+    }
+
+    .picker-button:disabled {
+        @apply cursor-not-allowed;
+        background-color: var(--color-fill-disabled);
+        box-shadow: none;
+        color: var(--color-content-disabled);
+    }
+
+    .picker-value {
+        @apply truncate;
+    }
+
+    .picker-value.is-placeholder {
+        color: var(--color-content-subdued);
+    }
+
+    /* On the deeper hover / open fill the placeholder takes the default text
+       color, so it keeps 4.5:1 in both themes. */
+    .picker-button:hover .picker-value.is-placeholder,
+    .picker-button[aria-expanded="true"] .picker-value.is-placeholder {
+        color: var(--color-content-default);
+    }
+
+    .picker-button:disabled .picker-value.is-placeholder {
+        color: var(--color-content-disabled);
+    }
+
+    .picker-chevron {
+        @apply shrink-0;
+        transition: transform 130ms var(--ease-standard);
+    }
+
+    .picker-button[aria-expanded="true"] .picker-chevron {
+        transform: rotate(180deg);
+    }
+
+    .picker-popover {
+        @apply absolute m-0 w-max min-w-full max-w-[20rem] list-none overflow-y-auto p-2;
+        top: calc(100% + 0.5rem);
+        inset-inline-start: 0;
+        max-height: 15rem;
+        z-index: var(--z-dropdown);
+        background-color: var(--color-background-elevated);
+        color: var(--color-content-default);
+        border: var(--border-width-100) solid var(--color-border-popover);
+        border-radius: var(--corner-radius-500);
+        box-shadow: var(--shadow-elevated);
+        outline: none;
+    }
+
+    .picker-popover[hidden] {
+        display: none;
+    }
+
+    .picker-group {
+        @apply px-2 py-1 text-title-xs;
+        color: var(--color-content-subdued);
+    }
+
+    .picker-option {
+        @apply flex cursor-pointer items-center justify-between gap-3 px-2 py-1 text-body-s;
+        min-height: var(--menu-item-height);
+        color: var(--color-content-default);
+        border-radius: var(--corner-radius-300);
+    }
+
+    .picker-option.is-active {
+        background-color: var(--color-fill-neutral-hover);
+    }
+
+    .picker-popover:focus-visible .picker-option.is-active {
+        outline: var(--focus-ring-width) solid var(--color-focus-ring);
+        outline-offset: calc(var(--focus-ring-width) * -1);
+    }
+
+    .picker-option-text {
+        @apply flex flex-col;
+    }
+
+    .picker-option[aria-selected="true"] .picker-option-label {
+        font-weight: 700;
+    }
+
+    .picker-option-desc {
+        @apply text-body-xs;
+        color: var(--color-content-subdued);
+    }
+
+    .picker-option[aria-disabled="true"] {
+        @apply cursor-not-allowed;
+        color: var(--color-content-disabled);
+    }
+
+    .picker-option[aria-disabled="true"] .picker-option-desc {
+        color: var(--color-content-disabled);
+    }
+
+    .picker-check {
+        @apply invisible shrink-0;
+        color: var(--color-accent-content);
+    }
+
+    .picker-option[aria-selected="true"] .picker-check {
+        @apply visible;
+    }
+
+    /* The native <select>'s list: the closed control is #dadada, the options
+       it opens are white (elevated), not the control's gray. */
+    select option,
+    select optgroup {
+        background-color: var(--color-background-elevated);
+        color: var(--color-content-default);
+    }
+
     /* ── Dropdown → menu ─────────────────────────────────────────────────
        Built on a <details> wrapper, so opening/closing needs no JS of its
        own; common.js only adds click-away/Escape handling and - because

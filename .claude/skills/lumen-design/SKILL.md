@@ -67,7 +67,8 @@ Before writing markup, find the existing class. Full table with markup in
 | Badge (status pill) | `badge badge-green|orange|red|action|brand|tertiary|grey`, `badge-count` |
 | Status light | `status-light status-light-positive|notice|negative|informative|purple|cyan` |
 | Inline alert | `callout callout-info|success|warning|danger` (+ `.callout-icon`, `.callout-title`) |
-| Menu | `details.dropdown` > `summary` + `.dropdown-panel` > `.dropdown-item` |
+| Menu (actions) | `details.dropdown` > `summary` + `.dropdown-panel` > `.dropdown-item` |
+| Dropdown (choose a value) | `.picker` (`DropdownSelect` widget): borderless `fill-picker` button + white listbox popover |
 | Dialog | `dialog.dialog` > `.dialog-header/.dialog-title/.dialog-body/.dialog-footer` |
 | Side sheet | `.drawer` (+ `.drawer-left`) with `.drawer-backdrop` |
 | Toast | `.toast` (+ `-success/-error/-warning/-info`) in `.toast-stack` (Django messages: `.flash-messages`, automatic) |
