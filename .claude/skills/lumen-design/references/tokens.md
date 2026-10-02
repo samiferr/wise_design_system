@@ -36,7 +36,8 @@ Adobe.
 | border-default | gray-600 | gray-600 | `border-border-default` |
 | border-hover | gray-700 | gray-700 | `border-border-hover` |
 | border-focus | gray-900 | gray-900 | `border-border-focus` |
-| fill-field / fill-field-hover | gray-300 (#dadada) / 400 | gray-300 / 400 | `bg-fill-field` (every text field, text area, select, OTP box) |
+| border-field | gray-300 (#dadada) | gray-300 | `border-border-field` (every text field, text area, listbox, OTP box; soft by design) |
+| fill-picker / -hover | gray-300 (#dadada) / 400 | gray-300 / 400 | `bg-fill-picker` (the borderless select) |
 | border-subtle | gray-300 | gray-300 | `border-border-subtle` |
 | border-popover | transparent | gray-400 | `border-border-popover` |
 | negative-border / -hover | red-900 / 1000 | red-900 / 1000 | `border-negative-border` |

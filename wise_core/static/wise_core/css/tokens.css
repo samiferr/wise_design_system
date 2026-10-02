@@ -296,13 +296,19 @@
        on the gray canvas. */
     --color-border-focus: var(--lumen-gray-900);
 
-    /* The fill of every text field, text area, select, OTP box and the rich
-       text editor: gray-300, #dadada in light (it steps with the theme, so
-       dark gets #393939, never a bright box). A select has no border at all
-       and relies on this fill; it deepens to fill-field-hover (gray-400) on
-       hover. */
-    --color-fill-field: var(--lumen-gray-300);
-    --color-fill-field-hover: var(--lumen-gray-400);
+    /* The border of every text field, text area, select (listbox), OTP box,
+       color well, input group and the rich text editor: gray-300, #dadada in
+       light (it steps with the theme, so dark gets #393939). A deliberate
+       choice: it is a soft edge, about 1.4:1 on a white surface, below the 3:1
+       a control boundary would hold - so focus is a dark border-focus, the
+       hover border is border-hover, and every field keeps a visible label.
+       Checkboxes, radios and switches keep border-default. */
+    --color-border-field: var(--lumen-gray-300);
+
+    /* The borderless select's fill: the same #dadada, deepening to
+       fill-picker-hover (gray-400) on hover. */
+    --color-fill-picker: var(--lumen-gray-300);
+    --color-fill-picker-hover: var(--lumen-gray-400);
 
     /* An invalid field keeps its 1px border and changes its color, with an
        alert icon and a message as the non-color cue. A popover has no
@@ -1531,7 +1537,7 @@
        reads the same --control-height-md (32px, 40px on touch), so a row of
        mixed fields lines up; only `.input-sm` / `.input-lg` opt out, and a
        text area is as tall as its rows. Corners are 8px, the border 2px
-       `border-default` on a layer-2 fill, the text 14px. Hover darkens the
+       `border-field` (#dadada) on a layer-2 fill, the text 14px. Hover darkens the
        border; on focus (mouse or keyboard) the border turns `border-focus`
        and stays 2px - there is no separate ring. An invalid field keeps
        its border and turns it `negative-border` (set aria-invalid="true",
@@ -1540,8 +1546,8 @@
        text. Labels sit above the field (.form-label) rather than floating,
        which keeps them working with Django's plain server-rendered widgets.
 
-       Every field is filled with `fill-field` (#dadada in light). A <select>
-       is Lumen's picker instead: no border, that same fill, deeper on hover, a chevron, and the focus ring on keyboard
+       Every field's border is `border-field` (#dadada in light). A <select>
+       is Lumen's picker instead: no border, a #dadada `fill-picker`, deeper on hover, a chevron, and the focus ring on keyboard
        focus. Keep a visible label on it - the fill alone is a faint cue.
 
        `.input`/`.select`/`.textarea` are the bare atomic controls; the
@@ -1557,10 +1563,10 @@
         height: var(--control-height-md);
         padding-block: var(--control-padding-y);
         padding-inline: calc(0.75rem - 1px);
-        background-color: var(--color-fill-field);
+        background-color: var(--color-background-layer-2);
         color: var(--color-content-default);
         caret-color: var(--color-accent-content);
-        border: var(--border-width-200) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-field);
         border-radius: var(--corner-radius-500);
         transition: border-color 130ms var(--ease-standard), background-color 130ms var(--ease-standard);
     }
@@ -1631,7 +1637,7 @@
         color: var(--color-content-disabled);
     }
 
-    /* The picker (a single-choice <select>): borderless on the fill-field
+    /* The picker (a single-choice <select>): borderless on the fill-picker
        fill. The chevron is drawn from two gradients in content-subdued, so
        it follows the theme with no icon asset. A multiple select is a
        listbox and keeps the bordered field look above. */
@@ -1643,7 +1649,7 @@
         -webkit-appearance: none;
         border-width: 0;
         padding-inline: 0.75rem 2rem;
-        background-color: var(--color-fill-field);
+        background-color: var(--color-fill-picker);
         background-image: linear-gradient(45deg, transparent 50%, var(--color-content-subdued) 50%),
         linear-gradient(135deg, var(--color-content-subdued) 50%, transparent 50%);
         background-position: calc(100% - 1rem) 50%, calc(100% - 0.6875rem) 50%;
@@ -1656,7 +1662,7 @@
     .form-field select:not([multiple]):hover,
     .filter-container select:not([multiple]):hover,
     .language-switcher select:not([multiple]):hover {
-        background-color: var(--color-fill-field-hover);
+        background-color: var(--color-fill-picker-hover);
     }
 
     /* An invalid picker has no border to recolor, so it draws a thin inset
@@ -1787,8 +1793,8 @@
     .color-input {
         @apply w-14 cursor-pointer p-0;
         height: var(--control-height-md);
-        background-color: var(--color-fill-field);
-        border: var(--border-width-200) solid var(--color-border-default);
+        background-color: var(--color-background-layer-2);
+        border: var(--border-width-200) solid var(--color-border-field);
         border-radius: var(--corner-radius-500);
     }
 
@@ -2836,10 +2842,10 @@
     .otp-input {
         @apply w-10 p-0 text-center text-title-l;
         height: var(--control-height-md);
-        background-color: var(--color-fill-field);
+        background-color: var(--color-background-layer-2);
         color: var(--color-content-heading);
         caret-color: var(--color-accent-content);
-        border: var(--border-width-200) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-field);
         border-radius: var(--corner-radius-500);
         transition: border-color 130ms var(--ease-standard);
     }
@@ -2888,7 +2894,7 @@
         @apply inline-flex shrink-0 items-center px-3 text-body-s;
         background-color: var(--color-fill-neutral-hover);
         color: var(--color-content-subdued);
-        border: var(--border-width-200) solid var(--color-border-default);
+        border: var(--border-width-200) solid var(--color-border-field);
         border-radius: var(--corner-radius-500);
     }
 
