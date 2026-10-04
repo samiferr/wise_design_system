@@ -189,7 +189,7 @@
                 <tr><td><code>btn-elevated</code></td><td>Raised button (background-layer-2 + the emphasized shadow).</td></tr>
                 <tr><td><code>btn-icon</code></td><td>Round icon button, sized to the control height (32px, 40px on touch), for a single icon.</td></tr>
                 <tr><td><code>btn-disabled</code></td><td>Inert state for an <code>&lt;a&gt;</code>.</td></tr>
-                <tr><td><code>large-button</code></td><td>250px minimum width.</td></tr>
+                <tr><td><code>large-button</code></td><td>A form's prominent action: 250px wide where there is room, never wider than its container. Beside other buttons (Cancel) it stays on their row, growing into the space left up to 250px.</td></tr>
             </tbody>
         </table>
     </div>
@@ -209,7 +209,7 @@
 - Icon + label: put the {% lucide %} icon then a <span> with the text inside the button/anchor, e.g. <a class="btn btn-primary" href="...">{% lucide "plus" size=16 %}<span>New</span></a>.
 - Row-level action in a datatable (edit/delete): use `.btn-ghost` (borderless, compact) rather than a full `.btn`, e.g. <a class="btn-ghost" href="{% url 'category_update_view' pk=item.pk %}">{% lucide "pencil" size=14 %}</a>.
 - Loading state during a form submit: disable the button and prepend a Spinner: <button class="btn btn-primary" disabled><span class="spinner spinner-sm"></span><span>Saving...</span></button>.
-- Full-width/prominent button: add `large-button` (250px minimum width) alongside the color modifier.{% endverbatim %}{% endfilter %}</code></pre>
+- Prominent form action: add `large-button` alongside the color modifier - 250px where there is room; beside Cancel it shares the row and takes the space left (up to 250px), so the two never wrap onto separate lines on a phone.{% endverbatim %}{% endfilter %}</code></pre>
 
         <h2 class="mt-8">GitHub source</h2>
         <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">

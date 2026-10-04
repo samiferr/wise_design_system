@@ -2841,8 +2841,22 @@
         color: var(--color-content-subdued);
     }
 
+    /* A form's prominent action ("Save", "Delete", "Apply", "Sign in"):
+       250px wide where there is room, never wider than its container.
+       Beside other buttons (a form's Cancel) it keeps their row rather than
+       wrapping under them: it starts from its label's width and grows to
+       250px with the space the row has left - the full 250px on a wide
+       screen, whatever remains beside Cancel on a phone - and never shrinks
+       below its label. (A fixed 250px minimum pushed it onto a line of its
+       own on every phone.) */
     .large-button {
-        min-width: 250px;
+        min-width: min(15.625rem, 100%);
+    }
+
+    .large-button:not(:only-child) {
+        flex: 1 1 auto;
+        min-width: max-content;
+        max-width: 15.625rem;
     }
 
     .section-title {
