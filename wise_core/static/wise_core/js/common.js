@@ -456,6 +456,23 @@ function wisePositionDropdownPanel(details) {
         panel.style.left = 'auto'
         panel.style.right = (window.innerWidth - rect.right) + 'px'
     }
+    // Keep it on screen: a left-aligned menu on a trigger near the right edge
+    // (a row-actions menu in the corner of a card row, on a phone) opens
+    // leftwards instead, and one that would run past the bottom opens above
+    // its trigger when there is room there.
+    var margin = 8
+    var box = panel.getBoundingClientRect()
+    if (box.right > window.innerWidth - margin) {
+        panel.style.left = 'auto'
+        panel.style.right = Math.max(margin, window.innerWidth - rect.right) + 'px'
+    } else if (box.left < margin) {
+        panel.style.left = margin + 'px'
+        panel.style.right = 'auto'
+    }
+    box = panel.getBoundingClientRect()
+    if (box.bottom > window.innerHeight - margin && rect.top - box.height - margin > 0) {
+        panel.style.top = (rect.top - box.height - margin) + 'px'
+    }
 }
 
 function wiseResetDropdownPanel(details) {
@@ -504,3 +521,36 @@ function wiseCloseDrawer(id) {
     var backdrop = document.getElementById(id + '_backdrop')
     if (backdrop) backdrop.classList.add('hidden')
 }
+
+// ── Data table card rows ─────────────────────────────────────────────────────
+// `.data-table-cards` shows each row as a card on a phone, every cell as
+// "label  value" (see tokens.css). The label is the cell's `data-label`; give
+// every body cell without one the text of its column's header, following
+// colspans. Call wiseLabelTableCells(root) after inserting a table yourself.
+
+function wiseLabelTableCells(root) {
+    (root || document).querySelectorAll('table.data-table-cards').forEach(function (table) {
+        var headerRow = table.tHead && table.tHead.rows[table.tHead.rows.length - 1]
+        if (!headerRow) return
+        var labels = []
+        Array.prototype.forEach.call(headerRow.cells, function (th) {
+            var text = (th.getAttribute('data-label') !== null ? th.getAttribute('data-label') : th.innerText || th.textContent || '').replace(/\s+/g, ' ').trim()
+            for (var i = 0; i < (th.colSpan || 1); i++) labels.push(text)
+        })
+        Array.prototype.forEach.call(table.tBodies, function (tbody) {
+            Array.prototype.forEach.call(tbody.rows, function (row) {
+                var column = 0
+                Array.prototype.forEach.call(row.cells, function (cell) {
+                    if (!cell.hasAttribute('data-label') && (cell.colSpan || 1) === 1) {
+                        cell.setAttribute('data-label', labels[column] || '')
+                    }
+                    column += cell.colSpan || 1
+                })
+            })
+        })
+    })
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    wiseLabelTableCells(document)
+})

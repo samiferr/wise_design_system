@@ -82,6 +82,33 @@
         </div>
     </div>
 
+    <h2 class="mt-8">Or: one table that turns into cards on a phone</h2>
+    <p class="mt-2 text-content-subdued">
+        When a page should simply follow the screen - a table on a desk, cards on a phone, nothing to
+        toggle - add <code class="doc-code-inline">data-table-cards</code> to the table instead. Below the
+        <code class="doc-code-inline">sm</code> breakpoint each row becomes a card and each cell a
+        "label value" line, from the same markup. <code class="doc-code-inline">common.js</code> labels every
+        body cell with its column header (a cell's own <code class="doc-code-inline">data-label</code> wins; an
+        empty one shows the value alone), a row-actions menu moves to the card's top right corner, and
+        sortable headers stay as a row of sort links above the cards. The surrounding card steps back so
+        the row cards sit on the page. Call <code class="doc-code-inline">wiseLabelTableCells(root)</code>
+        after inserting such a table with JavaScript.
+    </p>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="card card-table mt-4 overflow-x-auto">
+    <table class="data-table data-table-cards">
+        <thead><tr><th></th><th>Name</th><th>Status</th></tr></thead>
+        <tbody>
+            {% for item in object_list %}
+                <tr>
+                    <td>{# row-actions details.dropdown #}</td>
+                    <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
+                    <td><span class="badge badge-green">Active</span></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+
     <h2 class="mt-8">What's not handled</h2>
     <p class="text-gray-700">
         This is a small, self-contained pattern, not a new view mixin: it doesn't persist the choice
