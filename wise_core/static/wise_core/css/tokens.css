@@ -1124,6 +1124,14 @@
         color: var(--color-content-default);
     }
 
+    /* A small icon button: 24px (32px on touch), for compact toolbars such
+       as the autocomplete pager. */
+    .btn-icon.btn-sm {
+        width: var(--control-height-sm);
+        height: var(--control-height-sm);
+        min-width: 0;
+    }
+
     .btn-icon.btn-secondary,
     .btn-icon.btn-outlined {
         border-color: var(--color-border-default);
@@ -1258,6 +1266,70 @@
 
     .fab-extended {
         padding-inline: 1rem 1.25rem;
+    }
+
+    /* A page's main action (a list's "New") that turns into a floating
+       action button on a compact screen: a regular button from the `sm`
+       breakpoint up, and below it a 56px accent circle fixed to the bottom
+       right corner, clear of the device's safe area. Its label stays for
+       assistive technology (visually hidden), and the page and the toast
+       stack make room for it. Below the menus, so an open menu covers it.
+
+           <a class="btn btn-primary btn-fab" href="...">
+               {% lucide "plus" size="s" %}<span>New</span>
+           </a>
+    */
+    @media (max-width: 639.98px) {
+        .btn.btn-fab {
+            position: fixed;
+            right: max(1rem, env(safe-area-inset-right));
+            bottom: calc(1rem + env(safe-area-inset-bottom));
+            z-index: calc(var(--z-dropdown) - 1);
+            width: var(--component-height-400);
+            min-width: 0;
+            height: var(--component-height-400);
+            padding: 0;
+            border: 0;
+            border-radius: var(--corner-radius-full);
+            background-color: var(--color-accent-background);
+            color: var(--color-on-accent);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .btn.btn-fab:hover {
+            background-color: var(--color-accent-background-hover);
+            box-shadow: var(--shadow-dragged);
+        }
+
+        .btn.btn-fab:active {
+            background-color: var(--color-accent-background-down);
+        }
+
+        /* The icon at Lumen's l step, the size a 56px control takes. */
+        .btn-fab > svg {
+            width: 1.375rem;
+            height: 1.375rem;
+        }
+
+        .btn-fab > span {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .page-panel:has(.btn-fab) {
+            padding-bottom: calc(var(--component-height-400) + 2rem);
+        }
+
+        body:has(.btn-fab) .toast-stack {
+            bottom: calc(var(--component-height-400) + 2rem);
+        }
     }
 
     /* ── Layout panels ───────────────────────────────────────────────────
@@ -2094,29 +2166,46 @@
         @apply m-0;
     }
 
+    /* The actions wrap rather than run off a narrow panel, and never grow
+       wider than it. With more than a couple of actions, keep the main one
+       as a button and put the rest in an overflow menu
+       (`.detail-panel-overflow`, a `details.dropdown` behind a
+       vertical-dots icon button). */
     .detail-panel-actions {
-        @apply flex items-center gap-2;
+        @apply flex flex-wrap items-center justify-end gap-2;
+        max-width: 100%;
     }
 
-    .detail-panel table {
+    .detail-panel-overflow > .dropdown-panel {
+        min-width: 12rem;
+    }
+
+    /* The label/value list. Scoped with :where(:not(...)) so it reaches the
+       panel's own rows only, never a table nested inside one - an
+       autocomplete dropdown in a form card, a data table in a detail
+       block - which keeps its own component styling (a nested
+       `.detail-panel td` used to win over `.autocomplete-table`'s font size
+       and paddings). :where() keeps the specificity of the plain selectors,
+       so project overrides of `.detail-panel td` still apply. */
+    .detail-panel table:where(:not(.autocomplete-table, .data-table, .autocomplete-card-table)) {
         @apply w-full border-collapse;
     }
 
-    .detail-panel tr {
+    .detail-panel tr:where(:not(.autocomplete-table tr, .data-table tr, .autocomplete-card-table tr)) {
         border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
-    .detail-panel tr:last-child {
+    .detail-panel tr:where(:not(.autocomplete-table tr, .data-table tr, .autocomplete-card-table tr)):last-child {
         border-bottom: 0;
     }
 
-    .detail-panel th {
+    .detail-panel th:where(:not(.autocomplete-table th, .data-table th, .autocomplete-card-table th)) {
         @apply w-40 py-3 pr-4 text-left align-top text-title-s sm:w-52;
         height: var(--component-height-300);
         color: var(--color-content-subdued);
     }
 
-    .detail-panel td {
+    .detail-panel td:where(:not(.autocomplete-table td, .data-table td, .autocomplete-card-table td)) {
         @apply px-3 py-3 text-body-m;
         color: var(--color-content-default);
     }
@@ -2138,8 +2227,11 @@
        text and a 32px row-action button still fits a 40px row. Line height
        is Lumen's 1.3. */
     .data-table td,
-    .data-table th {
+    .data-table th,
+    .autocomplete-table td,
+    .autocomplete-table th {
         line-height: 1.3;
+        vertical-align: middle;
     }
 
     .data-table-compact td {
@@ -2170,9 +2262,11 @@
         white-space: normal;
     }
 
-    .data-table th {
+    .data-table th,
+    .autocomplete-table th {
         @apply px-3 text-left text-title-xs;
         height: var(--component-height-100);
+        padding-block: 0;
         color: var(--color-content-subdued);
         border-bottom: var(--border-width-200) solid var(--color-border-subtle);
     }
@@ -2199,25 +2293,35 @@
         color: var(--color-accent-content);
     }
 
-    .data-table td {
+    /* The cell carries the type itself (not only the <table>), so a
+       container's own `td` rule can never restyle the rows. The
+       autocomplete dropdown's table shares every rule here: both read the
+       same everywhere. */
+    .data-table td,
+    .autocomplete-table td {
         @apply px-3;
         height: var(--component-height-200);
         padding-block: 0.25rem;
+        font-size: var(--text-body-s);
+        font-weight: var(--text-body-s--font-weight);
         color: var(--color-content-default);
         border-bottom: var(--border-width-100) solid var(--color-border-subtle);
     }
 
-    .data-table tr:hover td {
+    .data-table tr:hover td,
+    .autocomplete-table tr:hover td {
         background-color: var(--color-row-hover);
     }
 
     .data-table tr.selected td,
-    .data-table tr[aria-selected="true"] td {
+    .data-table tr[aria-selected="true"] td,
+    .autocomplete-table tr.selected td {
         background-color: var(--color-selected-subtle);
     }
 
     .data-table tr.selected:hover td,
-    .data-table tr[aria-selected="true"]:hover td {
+    .data-table tr[aria-selected="true"]:hover td,
+    .autocomplete-table tr.selected:hover td {
         background-color: var(--color-selected-subtle-hover);
     }
 
@@ -2580,41 +2684,114 @@
         }
     }
 
+    /* The results table: a data table in a popover. Its cells share the
+       `.data-table` rules above (type, heights, paddings, dividers, hover
+       and selected tints); only what a dropdown needs differs - one line
+       per cell, a header that stays put while the rows scroll, a pointer,
+       and no divider under the last row. The JS marks the last column
+       `w-full` and the others `w-px`, the data table's own column fit. */
     .autocomplete-table {
         @apply w-full table-auto border-collapse text-body-s;
         background-color: var(--color-background-elevated);
     }
 
-    .autocomplete-table th, .autocomplete-table td {
-        @apply whitespace-nowrap px-3 py-1;
-        height: var(--component-height-200);
-        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
+    .autocomplete-table th,
+    .autocomplete-table td {
+        white-space: nowrap;
+    }
+
+    .autocomplete-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: var(--color-background-elevated);
     }
 
     .autocomplete-table tr:last-child td {
         border-bottom: 0;
     }
 
-    .autocomplete-table th {
-        @apply text-left text-title-xs;
-        height: var(--component-height-100);
-        color: var(--color-content-subdued);
-        border-bottom: var(--border-width-200) solid var(--color-border-subtle);
-    }
-
-    .autocomplete-table tr:hover td {
+    .autocomplete-table tbody tr,
+    .autocomplete-table > tr {
         cursor: pointer;
-        background-color: var(--color-row-hover);
     }
 
     /* The `td` selector isn't redundant with `tr.selected`: Preflight sets
        a color directly on every `td`, which beats anything a `tr.selected`
-       ancestor would pass down through inheritance. Repeating the rule
-       against `td` gives it its own declaration to win with. */
+       ancestor would pass down through inheritance. */
     .autocomplete-table tr.selected,
     .autocomplete-table tr.selected td {
+        color: var(--color-content-heading);
+    }
+
+    /* "No match found" - a single quiet row. */
+    .autocomplete-table td.autocomplete-empty,
+    .autocomplete-empty {
+        cursor: default;
+        color: var(--color-content-subdued);
+    }
+
+    .autocomplete-table tr:has(> .autocomplete-empty):hover td {
+        background-color: transparent;
+    }
+
+    /* The panel's header: the pager (previous / page / next) and the
+       "New" link, on the faint neutral fill a quiet region inside a white
+       surface takes. */
+    .autocomplete-header {
+        @apply flex items-center gap-2 px-2 py-1.5;
+        background-color: var(--color-fill-neutral-subtle);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
+    }
+
+    .autocomplete-page {
+        @apply text-detail-s tabular-nums;
+        color: var(--color-content-subdued);
+    }
+
+    /* A pager button with no page that way (the widget toggles `.disabled`). */
+    .autocomplete-header .disabled {
+        @apply pointer-events-none;
+        color: var(--wise-disabled-content);
+        border-color: var(--color-border-disabled);
+    }
+
+    /* On a narrow screen the rows become cards: one label/value list per
+       result, with the same row tints as the table. */
+    .autocomplete-cards > * + * {
+        border-top: var(--border-width-100) solid var(--color-border-subtle);
+    }
+
+    .autocomplete-card {
+        @apply cursor-pointer px-3 py-2;
+    }
+
+    .autocomplete-card:hover {
+        background-color: var(--color-row-hover);
+    }
+
+    .autocomplete-card.selected {
         background-color: var(--color-selected-subtle);
         color: var(--color-content-heading);
+    }
+
+    .autocomplete-card-table {
+        @apply w-full border-collapse;
+    }
+
+    .autocomplete-card-table th {
+        @apply pr-3 text-left align-top text-detail-s;
+        width: 1%;
+        white-space: nowrap;
+        padding-block: 0.125rem;
+        color: var(--color-content-subdued);
+    }
+
+    .autocomplete-card-table td {
+        @apply align-top text-body-s;
+        padding-block: 0.125rem;
+        line-height: 1.3;
+        color: inherit;
     }
 
     /* ── Pagination ──────────────────────────────────────────────────────

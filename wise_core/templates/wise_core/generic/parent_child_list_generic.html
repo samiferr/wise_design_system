@@ -15,9 +15,9 @@ a child list that only needs a table can leave every block but `card_item`
                 {% block list_icon %}{% endblock %}
                 <h3>{% block list_title %}{{ selected_tab.label }}{% endblock %}</h3>
             </div>
-            <p class="mt-1 text-sm text-content-subdued">{% block list_count %}{{ paginator.count }} {% trans "record(s)" %}{% endblock %}</p>
+            <p class="mt-1 text-body-s text-content-subdued">{% block list_count %}{{ paginator.count }} {% trans "record(s)" %}{% endblock %}</p>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex max-w-full flex-wrap items-center gap-2">
             {% block list_actions %}{% endblock %}
         </div>
     </div>

@@ -56,6 +56,8 @@ accessible name.
 ```django
 <button class="fab" aria-label="Compose">{% lucide "pencil" size=22 %}</button>
 <button class="fab fab-extended">{% lucide "plus" size=22 %}<span>New order</span></button>
+<!-- A list page's main action: a button from `sm` up, a FAB on a phone -->
+<a class="btn btn-primary btn-fab" href="...">{% lucide "plus" size=16 %}<span>New</span></a>
 ```
 
 A 56px accent pill with the `elevated` shadow. Place it fixed bottom-right (`fixed bottom-6 right-6`)
@@ -145,14 +147,14 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 | Rating | `.rating` / `.rating-input` |
 | OTP | `.otp-group` > `input.otp-input` |
 | Date/time/color/file | native inputs inside `.form-field`; `.color-input`; the file button renders as a neutral-fill button |
-| Autocomplete / rich text | `wise_autocomplete` and `wise_richtext` widgets (popover surface `.autocomplete-panel`; Quill themed by `wise_richtext.css`) |
+| Autocomplete / rich text | `wise_autocomplete` and `wise_richtext` widgets (popover surface `.autocomplete-panel` with an `.autocomplete-header`, results in `.autocomplete-table` = the `.data-table` rules; Quill themed by `wise_richtext.css`) |
 
 ## Data display
 
 | Need | Wise |
 |---|---|
 | Table | **Always inside a card**: `<div class="card card-table mt-4 overflow-x-auto">` > `table.data-table`, with no card header (the page's actions stay in the page header) and the pager in a `.card-footer`. `data-table`: 12px bold subdued headers (32px tall) over a 2px rule, 40px body-s rows (`.data-table-compact` 32px, `.data-table-spacious` 48px; Lumen's heights, as minimums), 12px cell padding, `row-hover` / `selected-subtle` row tints; sortable headers via `_sortable_th.html` |
-| Record detail | `.detail-panel` (> `.detail-panel-header`, `table` of `th`/`td`) |
+| Record detail | `.detail-panel` (> `.detail-panel-header` > `.detail-panel-actions`, `table` of `th`/`td`); several actions: the main one as a button, the rest in `details.dropdown.detail-panel-overflow` behind an `ellipsis-vertical` `btn-icon` |
 | Avatar | `.avatar` (40px circle, neutral fill), `.avatar-sm`/`-lg`, `.avatar-square`, `.avatar-group` |
 | Charts | `<canvas class="chart-canvas" data-chart="{% chart_json cfg %}">` in a `.chart-frame`; series colors are the accent then Lumen step-900 hues (`wise_core/charts.py`) |
 | Donut | `.donut-chart` (`style="--value: 64"`) |

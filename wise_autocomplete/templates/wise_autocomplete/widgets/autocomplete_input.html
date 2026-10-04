@@ -32,29 +32,25 @@
         <div id="{{ widget.name }}_progress_bar" class="absolute left-0 top-0 h-[3px] w-0 rounded bg-accent-background transition-all"></div>
         <div class="autocomplete-panel hidden"
              id='{{ widget.name }}_autocomplete_container'>
-            <header class="flex items-center gap-2 border-b border-divider bg-gray-50 p-2">
-                {# `w-7 h-7` shrinks `.btn-icon`'s default 36px box to 28px - less #}
-                {# padding around a 14px icon in this already-compact header. #}
-                <div class="btn btn-icon btn-secondary w-7 h-7" id="id_{{ widget.name }}_previous">
+            <header class="autocomplete-header">
+                <div class="btn-icon btn-secondary btn-sm" id="id_{{ widget.name }}_previous" role="button"
+                     aria-label="{% trans 'Previous page' %}">
                     {% lucide "chevron-left" size=14 stroke_width="2.6" %}
                 </div>
-                <span class="text-xs font-medium text-content-subdued" id="id_{{ widget.name }}_pageNumber">
-                    Page 1
-                </span>
-                <div class="btn btn-icon btn-secondary w-7 h-7" id="id_{{ widget.name }}_next">
+                <span class="autocomplete-page" id="id_{{ widget.name }}_pageNumber">{% trans "Page" %} 1</span>
+                <div class="btn-icon btn-secondary btn-sm" id="id_{{ widget.name }}_next" role="button"
+                     aria-label="{% trans 'Next page' %}">
                     {% lucide "chevron-right" size=14 stroke_width="2.6" %}
                 </div>
                 <div class="ml-auto">
                     <a id="id_{{ widget.name }}_create" target="_blank"
                        tabindex="-2" onmousedown="this.click()"
-                       class="btn btn-secondary py-1 text-xs"
-                    >{% lucide "plus" size=16 %}
-                        <span class="hidden sm:inline">{% trans "New" %}</span></a></div>
-
+                       class="btn btn-secondary btn-sm"
+                    >{% lucide "plus" size=14 %}<span>{% trans "New" %}</span></a></div>
             </header>
             <div class="max-h-72 overflow-auto">
                 <table id="{{ widget.name }}_autocomplete_table" class="autocomplete-table"></table>
-                <div id="{{ widget.name }}_autocomplete_cards" class="divide-y divide-gray-100"></div>
+                <div id="{{ widget.name }}_autocomplete_cards" class="autocomplete-cards"></div>
             </div>
         </div>
 
@@ -92,6 +88,8 @@
                 this.header = []
                 {% trans "No match found" as empty_msg %}
                 this.empty_msg = '{{ empty_msg|escapejs }}'
+                {% trans "Page" as page_label %}
+                this.page_label = '{{ page_label|escapejs }}'
                 this.text_field = this.original_input.dataset.text_field
                 this.is_loading = false
                 this.current_index = 1
@@ -215,7 +213,7 @@
                                 const visible_headers = self.get_visible_headers()
                                 visible_headers.forEach((header, index) => {
                                     let new_th = document.createElement('TH')
-                                    new_th.innerHTML = self.headers[header].label
+                                    new_th.textContent = self.headers[header].label
                                     if (index === visible_headers.length - 1) {
                                         new_th.classList.add('w-full')
                                     } else {
@@ -248,7 +246,8 @@
                             {# if empty data #}
                             let new_tr = document.createElement('TR')
                             let new_td = document.createElement('TD')
-                            new_td.innerHTML = self.empty_msg
+                            new_td.classList.add('autocomplete-empty')
+                            new_td.textContent = self.empty_msg
                             new_tr.appendChild(new_td)
                             self.remove_autocomplete_list()
                             self.datatable.appendChild(new_tr)
@@ -273,8 +272,7 @@
                     const new_tr = document.createElement('TR')
                     visible_headers.forEach((header, index) => {
                         const new_td = document.createElement('TD')
-                        new_td.innerHTML = results[i][header]
-                        new_td.classList.add('font-normal')
+                        new_td.textContent = results[i][header] ?? ""
                         if (index === visible_headers.length - 1) {
                             new_td.classList.add('w-full')
                         } else {
@@ -316,15 +314,16 @@
                     {# populate Lines #}
 
                     const new_contaner = document.createElement('DIV')
-                    new_contaner.classList.add('rounded-md', 'p-2', 'border-b', 'border-gray-100', 'cursor-pointer', 'hover:bg-gray-100')
+                    new_contaner.classList.add('autocomplete-card')
                     const new_table = document.createElement('TABLE')
-                    for (const header in self.headers) {
+                    new_table.classList.add('autocomplete-card-table')
+                    for (const header of self.get_visible_headers()) {
                         const new_tr = document.createElement('TR')
                         const new_th = document.createElement('TH')
                         const new_td = document.createElement('TD')
 
-                        new_th.innerHTML = self.headers[header].label
-                        new_td.innerHTML = results[i][header]
+                        new_th.textContent = self.headers[header].label
+                        new_td.textContent = results[i][header] ?? ""
 
                         new_contaner.appendChild(new_table)
                         new_table.appendChild(new_tr)
@@ -400,7 +399,7 @@
             }
 
             update_page_number() {
-                document.getElementById("id_{{ widget.name }}_pageNumber").innerText = 'Page ' + this.current_page
+                document.getElementById("id_{{ widget.name }}_pageNumber").innerText = this.page_label + ' ' + this.current_page
                 let next_elm = document.getElementById('id_{{ widget.name }}_next')
                 let previous_elm = document.getElementById('id_{{ widget.name }}_previous')
                 if (this.next_page_link === null) {

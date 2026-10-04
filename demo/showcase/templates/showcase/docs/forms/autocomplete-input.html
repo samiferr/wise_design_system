@@ -110,13 +110,15 @@ router.register("categories", CategoryViewSet, basename="category-api"){% endver
                 <tr><td><code>data-headers</code></td><td><code>"on"</code> to show column headers in the results panel.</td></tr>
                 <tr><td><code>data-parent</code></td><td>Id of a parent field's input, to scope results.</td></tr>
                 <tr><td><code>autocomplete-panel</code></td><td>The results dropdown.</td></tr>
-                <tr><td><code>autocomplete-table</code></td><td>The results table inside it.</td></tr>
+                <tr><td><code>autocomplete-header</code></td><td>The panel's pager and "New" link, on the faint neutral fill.</td></tr>
+                <tr><td><code>autocomplete-table</code></td><td>The results table inside it. It shares every <code>.data-table</code> rule (type, row heights, paddings, dividers, hover and selected tints), so the dropdown reads like a list page's table wherever it sits.</td></tr>
+                <tr><td><code>autocomplete-card</code></td><td>One result on a narrow screen, a label/value list (<code>autocomplete-card-table</code>).</td></tr>
             </tbody>
         </table>
     </div>
-    <p class="mt-4 text-gray-700">
+    <p class="mt-4 text-content-subdued">
         See it on a real form in the
-        <a class="text-action-600 underline" href="{% url 'product_list_view' %}">Products</a> playground.
+        <a class="text-accent-content underline" href="{% url 'product_list_view' %}">Products</a> playground.
     </p>
 
     </div>

@@ -35,7 +35,7 @@
              id='{{ widget.name }}_autocomplete_container'>
             <div class="max-h-72 overflow-auto">
                 <table id="{{ widget.name }}_autocomplete_table" class="autocomplete-table"></table>
-                <div id="{{ widget.name }}_autocomplete_cards" class="divide-y divide-gray-100"></div>
+                <div id="{{ widget.name }}_autocomplete_cards" class="autocomplete-cards"></div>
             </div>
         </div>
 
@@ -55,6 +55,12 @@
         }
         let _container = document.getElementById('{{ widget.name }}_autocomplete_container')
         let _create_object_link = document.getElementById('id_{{ widget.name }}_create')
+
+        function escape_html(text) {
+            const div = document.createElement('div')
+            div.textContent = text
+            return div.innerHTML
+        }
 
         class Autosuggest {
             constructor(original_input, fake_input, progress_bar, datatable, dataContainer, create_object_link) {
@@ -190,12 +196,17 @@
 
                     const new_td = document.createElement('TD')
                     /*make the matching letters bold:*/
-                    let val = self.q
-                    let response = results[i]
-                    let regex = new RegExp(val, 'gi')
-                    response = response.replace(regex, function (str) {
-                        return "<span class='font-bold bg-accent-subtle text-on-accent-subtle'>" + str + "</span>"
-                    })
+                    // The suggestion is escaped before it is marked up, and the
+                    // typed text is matched literally - a "(" or "[" typed in the
+                    // field used to throw out of `new RegExp` and empty the list.
+                    let response = escape_html(String(results[i]))
+                    let val = escape_html(self.q)
+                    if (val !== '') {
+                        let regex = new RegExp(val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi')
+                        response = response.replace(regex, function (str) {
+                            return "<span class='font-bold bg-accent-subtle text-on-accent-subtle'>" + str + "</span>"
+                        })
+                    }
 
                     new_td.innerHTML = response;
 
@@ -235,11 +246,11 @@
                     {# populate Lines #}
 
                     const new_container = document.createElement('DIV')
-                    new_container.classList.add('rounded-md', 'p-2', 'border-b', 'border-gray-100', 'cursor-pointer', 'hover:bg-gray-100')
+                    new_container.classList.add('autocomplete-card')
 
 
                     const new_p = document.createElement('div')
-                    new_p.innerHTML = results[i]
+                    new_p.textContent = results[i]
                     new_container.appendChild(new_p)
                     {# Assign Object #}
                     new_container.dataset.object = results[i]

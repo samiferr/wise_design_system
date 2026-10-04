@@ -42,12 +42,11 @@ This widget is **not** a drop-in, dependency-free component. It brings its DCMS7
 - **Django REST Framework** — `AutocompleteInputWidget` talks to a DRF `ViewSet` (see "Backend
   contract" below). `AutoSuggestInputWidget` has no backend dependency at all — it filters an
   in-memory JS array (see "AutoSuggestInputWidget" below).
-- **Tailwind CSS v4**, with the widget's own component classes and DCMS7's custom color tokens
-  (`--color-action-500/600`, `--color-divider`, `--color-surface`, `--shadow-blueprint-lg`, all aliases onto Lumen tokens).
-  The widget markup uses these as plain Tailwind utility classes inline (`border-divider`,
-  `bg-surface`, `focus:border-action-500`, `bg-action-600`, …) — they are not optional cosmetics,
-  the widget will render unstyled/broken without them. See the comment header in
-  `static/wise_autocomplete/css/autocomplete.css` for the exact token values DCMS7 uses.
+- **Tailwind CSS v4** and the Lumen design tokens. With wise_core installed, its `tokens.css`
+  already styles the widget (`.autocomplete-panel`, `.autocomplete-header`, `.autocomplete-table`,
+  which shares every `.data-table` rule, and the narrow-screen `.autocomplete-card`s) - nothing more
+  to import. Without wise_core, import `static/wise_autocomplete/css/autocomplete.css` and define the
+  Lumen custom properties its header lists.
 - The `{% lucide %}` template tag (vendored here as `wise_autocomplete_icons`), which inlines one of
   four vendored SVG icons (`chevron-down`, `chevron-left`, `chevron-right`, `plus`).
 
@@ -66,10 +65,9 @@ all of that on by using this widget, not just the widget itself.
    `Media` class listing this file, so `{{ form.media }}` in your template's `<head>` is enough —
    or add `<script src="{% static 'wise_autocomplete/js/axios.min.js' %}"></script>` to your base
    template directly, the same way DCMS7's `templates/base.html` loads it globally.
-4. Pull `static/wise_autocomplete/css/autocomplete.css` into your Tailwind entry file with
-   `@import`, **and** make sure your `@theme` defines the color tokens listed above (or already has
-   your own equivalents — adjust the widget's utility classes if your token names differ, since
-   they're hardcoded in the templates).
+4. With wise_core, skip this step: `tokens.css` carries the widget's styles. Without it, pull
+   `static/wise_autocomplete/css/autocomplete.css` into your Tailwind entry file with `@import` and
+   define the Lumen custom properties listed in its header.
 5. Add a DRF `ViewSet` + router route for anything you want `AutocompleteInputWidget` to search — see
    "Backend contract" below.
 

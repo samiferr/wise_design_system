@@ -1,36 +1,39 @@
 /*
- * Styles for wise_autocomplete's AutocompleteInputWidget / AutoSuggestInputWidget.
+ * Styles for wise_autocomplete's AutocompleteInputWidget / AutoSuggestInputWidget, for a project
+ * that uses the widgets WITHOUT wise_core.
  *
- * Extracted verbatim from DCMS7's core/static/core/css/input.css (the `.btn-icon`, autocomplete
- * panel/table, progress-bar and `.disabled` rules). This is a Tailwind v4 partial, not standalone
- * CSS: `@apply` only works when this file is pulled into a Tailwind build via `@import`, and the
- * classes below assume the host project's Tailwind `@theme` defines these custom color tokens
- * (DCMS7's values shown for reference):
+ * A project that imports wise_core's tokens.css must NOT import this file: tokens.css already
+ * carries these rules (the results table shares the `.data-table` rules there, so both tables
+ * read the same), and importing both would only duplicate them.
  *
- *   --color-action-500: #16a34a;
- *   --color-action-600: #15803d;
- *   --color-divider:    rgba(29, 31, 32, 0.16);
- *   --color-surface:    #e9e9ea;
- *   --shadow-blueprint-lg: 0 12px 32px rgba(43, 43, 45, 0.22);
+ * This is a Tailwind v4 partial, not standalone CSS: `@apply` only works when this file is pulled
+ * into a Tailwind build via `@import`. It reads the Lumen custom properties below, which the host
+ * project defines (wise_core's tokens.css shows every value):
  *
- * See docs/autocomplete-widget.md for the full integration checklist. If your project already
- * has its own `.btn-icon` / `.disabled` component classes (as DCMS7 does), skip importing this
- * file and just make sure the autocomplete-specific rules below exist somewhere in your build.
+ *   --color-background-elevated, --color-fill-neutral-subtle, --color-border-subtle,
+ *   --color-content-default, --color-content-heading, --color-content-subdued,
+ *   --color-content-disabled, --color-row-hover, --color-selected-subtle,
+ *   --color-selected-subtle-hover, --color-accent-background, --shadow-elevated,
+ *   --corner-radius-700, --corner-radius-full, --component-height-100, --component-height-200,
+ *   --border-width-100, --border-width-200, --text-body-s, --text-detail-s, --text-title-xs
+ *
+ * See docs/autocomplete-widget.md for the full integration checklist.
  */
 
 @layer components {
-    .btn-icon {
-        @apply w-9 h-9 p-0 border-divider;
-    }
-
-    /* Autocomplete widget - starts hidden via a literal `hidden` class on the element (toggled by JS) */
-    .autocomplete-panel, .autocomplete-container {
-        @apply absolute z-10 w-full min-w-max border border-divider bg-white p-0
-        shadow-[var(--shadow-blueprint-lg)];
+    /* The results → a popover surface. Starts hidden via a literal `hidden` class (toggled by JS). */
+    .autocomplete-panel {
+        @apply absolute z-10 w-full min-w-max overflow-hidden p-0;
+        background-color: var(--color-background-elevated);
+        border: var(--border-width-100) solid var(--color-border-subtle);
+        border-radius: var(--corner-radius-700);
+        box-shadow: var(--shadow-elevated);
     }
 
     .progress-bar {
         width: 10%;
+        background-color: var(--color-accent-background);
+        border-radius: var(--corner-radius-full);
         animation: progress-bar-loading 1s ease-in-out infinite;
     }
 
@@ -46,48 +49,135 @@
         }
     }
 
+    /* The header: pager + "New" link on a faint neutral fill. */
+    .autocomplete-header {
+        @apply flex items-center gap-2 px-2 py-1.5;
+        background-color: var(--color-fill-neutral-subtle);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
+    }
+
+    .autocomplete-page {
+        @apply tabular-nums;
+        font-size: var(--text-detail-s);
+        font-weight: 500;
+        color: var(--color-content-subdued);
+    }
+
+    .autocomplete-header .disabled {
+        @apply pointer-events-none;
+        color: var(--color-content-disabled);
+    }
+
+    /* The results table - the same values as wise_core's `.data-table`. */
     .autocomplete-table {
-        @apply w-full border-collapse bg-white text-sm table-auto;
+        @apply w-full table-auto border-collapse;
+        font-size: var(--text-body-s);
+        background-color: var(--color-background-elevated);
     }
 
-    .autocomplete-table th, .autocomplete-table td {
-        @apply whitespace-nowrap border-b border-r border-divider px-3 py-2 last:border-r-0;
-    }
-
-    .autocomplete-table tr:last-child td {
-        @apply border-b-0;
+    .autocomplete-table th,
+    .autocomplete-table td {
+        @apply px-3 text-left;
+        white-space: nowrap;
+        line-height: 1.3;
+        vertical-align: middle;
     }
 
     .autocomplete-table th {
-        @apply bg-gray-100 text-xs font-semibold uppercase tracking-wide text-gray-600;
+        height: var(--component-height-100);
+        padding-block: 0;
+        font-size: var(--text-title-xs);
+        font-weight: 700;
+        color: var(--color-content-subdued);
+        border-bottom: var(--border-width-200) solid var(--color-border-subtle);
     }
 
-    .autocomplete-table tr:hover {
-        @apply cursor-pointer bg-gray-900/5;
+    .autocomplete-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: var(--color-background-elevated);
     }
 
-    /* The `td` selector isn't redundant with `tr.selected` above: Tailwind
-       v4's Preflight sets `color` directly on every `td` (`base` layer),
-       which - since it's a rule that actually matches the `td` itself -
-       wins over whatever color a `tr.selected` ancestor would otherwise
-       pass down through inheritance. Without repeating the rule against
-       `td`, `text-white` here never reaches the visible text at all; the
-       row just keeps Preflight's ordinary body text color regardless of
-       what this rule says. If your project supports a dark theme or a
-       palette where action-600 isn't reliably dark, swap `text-white` for
-       whatever your own light/dark-aware "readable on an action-colored
-       background" token resolves to instead - see wise_core's
-       `--color-on-action` (`wise_core/static/wise_core/css/tokens.css`)
-       for the pattern; hardcoding white here breaks contrast the same way
-       hardcoding it *did* break it in that file before this file's own fix. */
+    .autocomplete-table td {
+        height: var(--component-height-200);
+        padding-block: 0.25rem;
+        font-size: var(--text-body-s);
+        font-weight: 400;
+        color: var(--color-content-default);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
+    }
+
+    .autocomplete-table tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .autocomplete-table tbody tr,
+    .autocomplete-table > tr {
+        cursor: pointer;
+    }
+
+    .autocomplete-table tr:hover td {
+        background-color: var(--color-row-hover);
+    }
+
     .autocomplete-table tr.selected,
     .autocomplete-table tr.selected td {
-        @apply bg-action-600 text-white;
+        background-color: var(--color-selected-subtle);
+        color: var(--color-content-heading);
     }
-}
 
-@layer utilities {
-    .disabled {
-        @apply pointer-events-none opacity-30;
+    .autocomplete-table tr.selected:hover td {
+        background-color: var(--color-selected-subtle-hover);
+    }
+
+    .autocomplete-table td.autocomplete-empty,
+    .autocomplete-empty {
+        cursor: default;
+        color: var(--color-content-subdued);
+    }
+
+    .autocomplete-table tr:has(> .autocomplete-empty):hover td {
+        background-color: transparent;
+    }
+
+    /* Narrow screens: one card per result. */
+    .autocomplete-cards > * + * {
+        border-top: var(--border-width-100) solid var(--color-border-subtle);
+    }
+
+    .autocomplete-card {
+        @apply cursor-pointer px-3 py-2;
+    }
+
+    .autocomplete-card:hover {
+        background-color: var(--color-row-hover);
+    }
+
+    .autocomplete-card.selected {
+        background-color: var(--color-selected-subtle);
+        color: var(--color-content-heading);
+    }
+
+    .autocomplete-card-table {
+        @apply w-full border-collapse;
+    }
+
+    .autocomplete-card-table th {
+        @apply pr-3 text-left align-top;
+        width: 1%;
+        white-space: nowrap;
+        padding-block: 0.125rem;
+        font-size: var(--text-detail-s);
+        font-weight: 500;
+        color: var(--color-content-subdued);
+    }
+
+    .autocomplete-card-table td {
+        @apply align-top;
+        padding-block: 0.125rem;
+        font-size: var(--text-body-s);
+        line-height: 1.3;
+        color: inherit;
     }
 }

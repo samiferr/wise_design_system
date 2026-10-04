@@ -126,6 +126,19 @@
     </div>
 </div>
 
+    <h2 class="mt-8">Main action as a floating button on phones</h2>
+    <p class="mt-2 text-content-subdued">
+        Add <code class="doc-code-inline">btn-fab</code> to a list page's main action (its "New" button).
+        From the <code class="doc-code-inline">sm</code> breakpoint up it is the ordinary button; on a compact
+        screen it becomes a 56px floating action button fixed to the bottom right corner, its label visually
+        hidden but still read by assistive technology. The page and the toast stack leave room for it. One per page.
+    </p>
+    <div class="doc-code-wrap">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<a class="btn btn-primary btn-fab" href="{% url 'category_create_view' %}">
+    {% lucide "plus" size=16 %}<span>New</span>
+</a>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+
     <h2 class="mt-8">Loading state</h2>
     <div class="doc-example">
     <input class="doc-example-radio" type="radio" name="ex8" id="ex8-preview" value="preview" checked>
