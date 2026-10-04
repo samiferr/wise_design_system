@@ -11,7 +11,7 @@
                 </div>
                 <p class="mt-1 text-body-s text-content-subdued">{% block list_count %}{{ paginator.count }} {% trans "record(s)" %}{% endblock %}</p>
             </div>
-            <div class="flex max-w-full flex-wrap items-center gap-2">
+            <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                 {% block list_actions %}
                     {% include 'wise_core/components/filter_button.html' %}
                 {% endblock %}

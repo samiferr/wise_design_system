@@ -17,7 +17,7 @@ a child list that only needs a table can leave every block but `card_item`
             </div>
             <p class="mt-1 text-body-s text-content-subdued">{% block list_count %}{{ paginator.count }} {% trans "record(s)" %}{% endblock %}</p>
         </div>
-        <div class="flex max-w-full flex-wrap items-center gap-2">
+        <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto">
             {% block list_actions %}{% endblock %}
         </div>
     </div>
