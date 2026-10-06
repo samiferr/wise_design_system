@@ -4222,6 +4222,142 @@
         background-color: var(--color-accent-background);
     }
 
+    /* ── Image gallery ───────────────────────────────────────────────────
+       A record's photos (a product's, say): one large image the visitor
+       swipes through - a scroll-snap stage, like the carousel - and, from
+       640px up, a strip of clickable thumbnails beneath it (or, with
+       `.gallery-rail`, a vertical rail beside it from 1024px). On a phone
+       the strip gives way to the carousel's page-indicator dots, which are
+       an indicator only: swiping is the control there. Thumbnails are
+       anchors to the slides' #ids, so they work without JavaScript;
+       common.js keeps the selected thumbnail and dot in step with the
+       stage. The shape comes from `--gallery-ratio` (set inline by
+       `_image_gallery.html`), so the page doesn't jump as photos arrive.
+       Rendered from `WiseImageGalleryMixin`; don't hand-write it. */
+    .gallery {
+        @apply flex min-w-0 flex-col gap-3;
+    }
+
+    .gallery-stage {
+        @apply relative flex overflow-x-auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+        background-color: var(--color-background-layer-2);
+        border: var(--border-width-100) solid var(--color-border-subtle);
+        border-radius: var(--corner-radius-800);
+    }
+
+    .gallery-stage::-webkit-scrollbar {
+        display: none;
+    }
+
+    .gallery-slide {
+        @apply relative m-0 w-full shrink-0 overflow-hidden;
+        aspect-ratio: var(--gallery-ratio, 1 / 1);
+        scroll-snap-align: center;
+        scroll-snap-stop: always;
+    }
+
+    .gallery-slide > img,
+    .gallery-slide > svg {
+        @apply absolute inset-0 block h-full w-full max-w-none;
+        object-fit: contain;
+        user-select: none;
+    }
+
+    .gallery-cover .gallery-slide > img {
+        object-fit: cover;
+    }
+
+    /* No images yet: the stage keeps its shape and says so. */
+    .gallery-placeholder {
+        @apply flex w-full flex-col items-center justify-center gap-2 text-body-s;
+        aspect-ratio: var(--gallery-ratio, 1 / 1);
+        color: var(--color-content-subdued);
+        background-color: var(--color-fill-neutral-subtle);
+    }
+
+    /* The padding leaves room for the focus ring inside the scrolling strip. */
+    .gallery-thumbs {
+        @apply -m-1 flex gap-2 overflow-x-auto p-1 scrollbar-thin;
+    }
+
+    .gallery-thumb {
+        @apply relative block w-16 shrink-0 overflow-hidden no-underline;
+        aspect-ratio: var(--gallery-ratio, 1 / 1);
+        background-color: var(--color-background-layer-2);
+        border: var(--border-width-200) solid var(--color-border-subtle);
+        border-radius: var(--corner-radius-500);
+        transition: border-color 130ms var(--ease-standard);
+    }
+
+    .gallery-thumb:hover {
+        border-color: var(--color-border-hover);
+    }
+
+    .gallery-thumb.selected {
+        border-color: var(--color-accent-background);
+    }
+
+    .gallery-thumb > img {
+        @apply absolute inset-0 block h-full w-full max-w-none;
+        object-fit: cover;
+    }
+
+    /* Phones only - the dots are `.carousel-dot`s, so the current one
+       stretches into a pill as the visitor swipes. */
+    .gallery-dots {
+        @apply hidden items-center justify-center gap-2;
+    }
+
+    @media (max-width: 639.98px) {
+        .gallery-thumbs {
+            display: none;
+        }
+
+        .gallery-dots {
+            display: flex;
+        }
+    }
+
+    /* `.gallery-rail`: the thumbnails stand in a column at the stage's
+       inline start on large screens. The rail is given no height of its
+       own (height 0, min-height 100%), so the stage alone sizes the row
+       and a long rail scrolls instead of stretching it. */
+    @media (min-width: 1024px) {
+        .gallery-rail {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            align-items: start;
+        }
+
+        .gallery-rail > .gallery-stage {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .gallery-rail > .gallery-thumbs {
+            @apply flex-col overflow-x-hidden overflow-y-auto;
+            grid-column: 1;
+            grid-row: 1;
+            height: 0;
+            min-height: 100%;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .gallery-stage {
+            scroll-behavior: auto;
+        }
+
+        .gallery-thumb,
+        .gallery-dots > .carousel-dot {
+            transition: none;
+        }
+    }
+
     /* ── QR code / barcode ───────────────────────────────────────────────
        Container for a server-generated SVG (see wise_core/qrcode.py). */
     .qr-code {

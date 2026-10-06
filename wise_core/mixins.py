@@ -21,6 +21,11 @@ the parent's own overview tab and a `WiseParentDetailChild*View` per child
 model, all sharing one `child_tabs` list of `ChildTab`s so the same bar
 renders on every page in the group (see the `parent_*_generic.html`
 templates).
+
+A record with photos - a product, a listing, a property - gets its images
+as a gallery via `WiseImageGalleryMixin`: one swipeable image with clickable
+thumbnails on tablet and desktop and indicator dots on a phone, rendered by
+`wise_core/components/_image_gallery.html`.
 """
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -33,6 +38,8 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django.views.generic.base import ContextMixin
 from django.views.generic.detail import BaseDetailView, SingleObjectTemplateResponseMixin
+
+from .gallery import build_image_gallery
 
 try:
     from django_filters.views import FilterView
@@ -589,6 +596,129 @@ class WiseParentDetailChildDetailView(ParentObjectMixin, ChildTabsMixin, WiseDet
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(self.get_parent_context_data())
+        return context
+
+
+class WiseImageGalleryMixin(ContextMixin):
+    """
+    Puts a record's images into the context as `gallery`, ready for
+    `wise_core/components/_image_gallery.html`: one large image the visitor
+    swipes through, a strip of clickable thumbnails beneath it on tablet and
+    desktop, and page-indicator dots in their place on a phone::
+
+        class ProductDetailView(WiseImageGalleryMixin, WiseDetailView):
+            model = Product
+            gallery_images = 'images'          # product.images.all()
+            gallery_image_field = 'image'      # ProductImage.image
+            gallery_alt_field = 'alt_text'     # ProductImage.alt_text
+            gallery_ordering = ('position', 'pk')
+
+        {% include 'wise_core/components/_image_gallery.html' %}
+
+    The images hang off `get_gallery_object()` - the detail view's `object`
+    by default - so this works under any single-object view, including the
+    parent/child ones. Which image shows first comes from the query string
+    (`?image=3`, 1-based), so a link can point at one photo; a missing or
+    out-of-range value falls back to the first.
+
+    Attributes:
+
+    `gallery_images`
+        Where the images live on the record: the name of a related manager
+        (`'images'` -> `record.images.all()`), of a plain attribute or
+        property returning an iterable, or a callable taking the record.
+    `gallery_image_field`, `gallery_thumbnail_field`, `gallery_alt_field`
+        The field (or callable) each image's full-size file, thumbnail and
+        alt text are read from. No thumbnail field reuses the full-size
+        image; no alt text falls back to `str(record)`.
+    `gallery_ordering`
+        Applied to a related manager's queryset with `order_by()`, so the
+        gallery order doesn't depend on the image model's `Meta.ordering`.
+    `gallery_query_param`
+        The query parameter carrying the image to show first. None turns it off.
+    `gallery_aspect_ratio`, `gallery_fit`, `gallery_thumbnail_position`
+        The stage's shape (`'1 / 1'`), how a photo fills it (`'contain'` or
+        `'cover'`) and where the thumbnails sit on large screens (`'bottom'`
+        or `'start'`, a vertical rail). See `wise_core.gallery`.
+    `gallery_label`
+        The gallery's accessible name.
+    `gallery_context_name`
+        The context variable to fill - change it to show two galleries on
+        one page, then `{% include ... with gallery=other_gallery %}`.
+    """
+    gallery_images = 'images'
+    gallery_image_field = 'image'
+    gallery_thumbnail_field = None
+    gallery_alt_field = None
+    gallery_ordering = None
+    gallery_query_param = 'image'
+    gallery_aspect_ratio = '1 / 1'
+    gallery_fit = 'contain'
+    gallery_thumbnail_position = 'bottom'
+    gallery_label = _('Images')
+    gallery_context_name = 'gallery'
+
+    def get_gallery_object(self):
+        """The record whose images the gallery shows."""
+        record = getattr(self, 'object', None)
+        if record is None:
+            raise ImproperlyConfigured(
+                '%s has no `object` to read gallery images from; '
+                'override get_gallery_object().' % self.__class__.__name__
+            )
+        return record
+
+    def get_gallery_images(self, record):
+        """The record's images, in gallery order."""
+        source = self.gallery_images
+        if source is None:
+            raise ImproperlyConfigured(
+                '%s needs `gallery_images` (or get_gallery_images()) to find its images.'
+                % self.__class__.__name__
+            )
+        images = source(record) if callable(source) else getattr(record, source)
+        if hasattr(images, 'all'):
+            # A related manager or queryset.
+            images = images.all()
+            if self.gallery_ordering:
+                images = images.order_by(*self.gallery_ordering)
+        return images or ()
+
+    def get_gallery_selected(self):
+        """The 1-based image to show first, as the visitor asked for it (unvalidated)."""
+        if not self.gallery_query_param:
+            return 1
+        return self.request.GET.get(self.gallery_query_param, 1)
+
+    def get_gallery_id(self, record):
+        """A DOM id unique to this record, e.g. `product-3-gallery`."""
+        opts = getattr(record, '_meta', None)
+        name = opts.model_name if opts else record.__class__.__name__.lower()
+        return '{}-{}-gallery'.format(name, getattr(record, 'pk', '') or '')
+
+    def get_gallery_default_alt(self, record):
+        """Alt text for an image that has none of its own."""
+        return str(record)
+
+    def get_gallery(self):
+        record = self.get_gallery_object()
+        return build_image_gallery(
+            self.get_gallery_images(record),
+            gallery_id=self.get_gallery_id(record),
+            label=self.gallery_label,
+            image_field=self.gallery_image_field,
+            thumbnail_field=self.gallery_thumbnail_field,
+            alt_field=self.gallery_alt_field,
+            default_alt=self.get_gallery_default_alt(record),
+            selected=self.get_gallery_selected(),
+            aspect_ratio=self.gallery_aspect_ratio,
+            fit=self.gallery_fit,
+            thumbnail_position=self.gallery_thumbnail_position,
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context[self.gallery_context_name] = self.get_gallery()
         return context
 
 

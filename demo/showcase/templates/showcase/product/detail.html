@@ -3,10 +3,19 @@
 {% comment %}
 A product's Overview tab. The header and the tab bar come from
 parent_detail_generic.html - all this template says is what the record's
-own fields look like.
+own fields look like, and where its photos go (`gallery`, from
+WiseImageGalleryMixin on ProductDetailView).
 {% endcomment %}
 
 {% block parent_header %}{% include 'showcase/product/_header.html' %}{% endblock %}
+
+{% block parent_body %}
+    {# The photos beside the fields on a wide screen, above them on a narrow one. #}
+    <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
+        {% include 'wise_core/components/_image_gallery.html' %}
+        <div class="min-w-0">{{ block.super }}</div>
+    </div>
+{% endblock %}
 
 {% block detail_rows %}
     <tr>

@@ -1,0 +1,194 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons %}
+{% block doc_title_tag %}Image Gallery{% endblock %}
+{% block doc_section %}Media{% endblock %}
+{% block doc_title %}Image Gallery{% endblock %}
+{% block doc_intro %}
+    A record's photos - a product's, a listing's - as one large image the visitor swipes through.
+    From 640px up a strip of clickable thumbnails sits beneath it; on a phone the strip gives way to
+    small indicator dots, the current one stretched into a pill. The view builds it:
+    <code>WiseImageGalleryMixin</code> reads the images off the record and the template only
+    includes one partial.
+{% endblock %}
+{% block doc_body %}
+    <h2 class="mt-8">Use cases</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-content-subdued">
+        <li>A product page's photos: several angles of one thing, browsed in place.</li>
+        <li>Any detail page whose record has a set of images - a property, a vehicle, an inspection report.</li>
+        <li>Not for unrelated slides or a marketing rotation - use the <a class="text-accent-content underline" href="{% url 'docs_media_carousel' %}">Carousel</a> - and not for a single image, which is just an <a class="text-accent-content underline" href="{% url 'docs_media_image' %}">Image</a>.</li>
+    </ul>
+
+    <div class="tab-bar border-b border-border-subtle mt-8" role="tablist" aria-label="Image gallery documentation views">
+        <button type="button" class="bar-item selected" role="tab" aria-selected="true" onclick="docShowPageTab(this, 'overview')">Overview</button>
+        <button type="button" class="bar-item" role="tab" aria-selected="false" onclick="docShowPageTab(this, 'ai-prompt')">AI Prompt</button>
+    </div>
+
+    <div data-doc-tab="overview">
+    <h2 class="mt-8">Basic</h2>
+    <p class="text-content-subdued">
+        Click a thumbnail, or focus the image and use the arrow keys. Narrow the window below 640px
+        and the thumbnails turn into dots; swipe the image to move.
+    </p>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="exg1" id="exg1-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="exg1" id="exg1-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="exg1-preview">Preview</label>
+        <label class="doc-example-tab" for="exg1-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
+            <div class="max-w-md">
+                {% include 'wise_core/components/_image_gallery.html' with gallery=doc_gallery %}
+            </div>
+        </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# models.py
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='products/')
+    alt_text = models.CharField(max_length=150, blank=True)
+    position = models.PositiveSmallIntegerField(default=0)
+
+# views.py
+from wise_core.mixins import WiseDetailView, WiseImageGalleryMixin
+
+class ProductDetailView(WiseImageGalleryMixin, WiseDetailView):
+    model = Product
+    gallery_images = 'images'               # product.images.all()
+    gallery_alt_field = 'alt_text'          # falls back to str(product)
+    gallery_ordering = ('position', 'pk')
+    gallery_label = 'Product images'{% endverbatim %}{% endfilter %}</code></pre>
+        <pre class="doc-code mt-3"><code class="language-django">{% filter force_escape %}{% verbatim %}{# product/detail.html #}
+{% include 'wise_core/components/_image_gallery.html' %}{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+    <p class="mt-2 text-content-subdued">
+        The <a class="text-accent-content underline" href="{% url 'demo' %}">demo app</a>'s product pages use
+        exactly this: open a product's Overview tab.
+    </p>
+
+    <h2 class="mt-8">Thumbnail rail</h2>
+    <p class="text-content-subdued">
+        <code>gallery_thumbnail_position = 'start'</code> stands the thumbnails in a column beside
+        the image from 1024px up (still a strip beneath it on a tablet, still dots on a phone). This
+        one is also <code>gallery_aspect_ratio = (4, 3)</code> and opens on its second photo, as
+        <code>?image=2</code> would.
+    </p>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="exg2" id="exg2-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="exg2" id="exg2-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="exg2-preview">Preview</label>
+        <label class="doc-example-tab" for="exg2-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
+            <div class="max-w-xl">
+                {% include 'wise_core/components/_image_gallery.html' with gallery=doc_gallery_rail %}
+            </div>
+        </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class ProductDetailView(WiseImageGalleryMixin, WiseDetailView):
+    model = Product
+    gallery_thumbnail_position = 'start'
+    gallery_aspect_ratio = (4, 3){% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+
+    <h2 class="mt-8">No images yet</h2>
+    <p class="text-content-subdued">
+        A record without photos keeps the stage's shape and says so, so the page lays out the same
+        either way. With one photo there is nothing to choose between: no thumbnails, no dots.
+    </p>
+    <div class="doc-preview mt-4">
+        <div class="max-w-60">
+            {% include 'wise_core/components/_image_gallery.html' with gallery=doc_gallery_empty %}
+        </div>
+    </div>
+
+    <h2 class="mt-8">Without a view</h2>
+    <p class="text-content-subdued">
+        The mixin wraps <code>wise_core.gallery.build_image_gallery()</code>. Call it yourself when
+        the images don't hang off a view's object - it takes model instances, dicts or plain URL
+        strings, which is how the previews on this page are built.
+    </p>
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}from wise_core.gallery import build_image_gallery
+
+context['variant_gallery'] = build_image_gallery(
+    variant.photos.all(), gallery_id=f'variant-{variant.pk}-gallery',
+    label='Variant photos', alt_field='caption', default_alt=str(variant),
+)
+{# template #}
+{% include 'wise_core/components/_image_gallery.html' with gallery=variant_gallery %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Behaviour</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-content-subdued">
+        <li>The stage is CSS scroll-snap, so it swipes natively on touch with no library.</li>
+        <li>Thumbnails are anchors to each slide's id: with JavaScript off they still jump to their image. <code>common.js</code> makes the jump scroll only the stage, and keeps the selected thumbnail and dot in step while the visitor swipes.</li>
+        <li>The stage is focusable: arrow keys move one image (mirrored in right-to-left pages), Home and End go to the first and last.</li>
+        <li>The dots are an indicator, not a control (8px is too small to tap); swiping is the control on a phone. They are hidden from assistive technology, which hears each slide's "2 of 5" instead.</li>
+        <li>The stage's shape is fixed by <code>gallery_aspect_ratio</code> before any photo loads, and photos after the first load lazily.</li>
+    </ul>
+
+    <h2 class="mt-8">Reference</h2>
+    <h3 class="mt-4">WiseImageGalleryMixin</h3>
+    <div class="card card-table mt-4 overflow-x-auto">
+        <table class="doc-props w-full">
+            <thead><tr><th>Attribute</th><th>Default</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>gallery_images</code></td><td><code>'images'</code></td><td>Related manager, attribute or callable on the record holding its images.</td></tr>
+                <tr><td><code>gallery_image_field</code></td><td><code>'image'</code></td><td>Field (or callable) with each image's file or URL. Images without one are skipped.</td></tr>
+                <tr><td><code>gallery_thumbnail_field</code></td><td><code>None</code></td><td>A smaller rendition for the strip; falls back to the full image.</td></tr>
+                <tr><td><code>gallery_alt_field</code></td><td><code>None</code></td><td>Alt text per image; falls back to <code>get_gallery_default_alt()</code>, <code>str(record)</code>.</td></tr>
+                <tr><td><code>gallery_ordering</code></td><td><code>None</code></td><td><code>order_by()</code> applied to a related manager's images.</td></tr>
+                <tr><td><code>gallery_query_param</code></td><td><code>'image'</code></td><td>The 1-based image to open on (<code>?image=3</code>); out-of-range values open the first. <code>None</code> turns it off.</td></tr>
+                <tr><td><code>gallery_aspect_ratio</code></td><td><code>'1 / 1'</code></td><td>The stage's and thumbnails' shape: <code>'4 / 3'</code> or <code>(16, 9)</code>.</td></tr>
+                <tr><td><code>gallery_fit</code></td><td><code>'contain'</code></td><td><code>'contain'</code> shows the whole photo; <code>'cover'</code> fills the stage and crops.</td></tr>
+                <tr><td><code>gallery_thumbnail_position</code></td><td><code>'bottom'</code></td><td><code>'start'</code> for a vertical rail on large screens.</td></tr>
+                <tr><td><code>gallery_label</code></td><td><code>'Images'</code></td><td>The gallery's accessible name.</td></tr>
+                <tr><td><code>gallery_context_name</code></td><td><code>'gallery'</code></td><td>The context variable it fills.</td></tr>
+                <tr><td><code>get_gallery_object()</code></td><td><code>self.object</code></td><td>Override to show another record's images.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="mt-6">Classes</h3>
+    <div class="card card-table mt-4 overflow-x-auto">
+        <table class="doc-props w-full">
+            <thead><tr><th>Class</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>gallery</code> (+ <code>gallery-rail</code>, <code>gallery-cover</code>)</td><td>Wrapper; carries <code>--gallery-ratio</code>.</td></tr>
+                <tr><td><code>gallery-stage</code></td><td>The swipeable, snapping image track.</td></tr>
+                <tr><td><code>gallery-slide</code></td><td>One image.</td></tr>
+                <tr><td><code>gallery-thumbs</code> / <code>gallery-thumb</code> (<code>.selected</code>)</td><td>The thumbnail strip, 640px and up.</td></tr>
+                <tr><td><code>gallery-dots</code> &gt; <code>carousel-dot</code> (<code>.selected</code>)</td><td>The indicator dots, below 640px.</td></tr>
+                <tr><td><code>gallery-placeholder</code></td><td>The no-images stage.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    </div>
+
+    <div data-doc-tab="ai-prompt" class="hidden">
+        <h2 class="mt-2">AI Prompt</h2>
+        <p class="text-content-subdued">
+            Paste this into an AI coding assistant to get an image gallery that matches this design system instead of inventing new markup.
+        </p>
+        <pre class="doc-code"><code class="language-text">{% filter force_escape %}{% verbatim %}Use the Wise Design System's Image Gallery to show a record's photos (a product's images, say). Rules:
+- Build it in the view, not the template: add wise_core.mixins.WiseImageGalleryMixin before the detail view class (e.g. class ProductDetailView(WiseImageGalleryMixin, WiseDetailView)) and configure it with attributes: gallery_images (related manager name on the object, default 'images'), gallery_image_field ('image'), gallery_alt_field (e.g. 'alt_text'), gallery_thumbnail_field (optional), gallery_ordering (e.g. ('position', 'pk')), gallery_aspect_ratio ('1 / 1' or (4, 3)), gallery_fit ('contain' | 'cover'), gallery_thumbnail_position ('bottom' | 'start'), gallery_label (accessible name).
+- Render it with exactly one include: {% include 'wise_core/components/_image_gallery.html' %} (or `with gallery=other` for a second gallery built with wise_core.gallery.build_image_gallery()). Never hand-write .gallery markup.
+- Behaviour comes for free: thumbnails on 640px and up, indicator dots on phones, swipe via CSS scroll-snap, arrow keys on the focused stage, ?image=N opens the Nth image, an empty record shows a placeholder.
+- Don't add arrows, autoplay, or a JS carousel library; don't style the thumbnails' selected state yourself (it is the accent border already).{% endverbatim %}{% endfilter %}</code></pre>
+
+        <h2 class="mt-8">GitHub source</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-content-subdued">
+            <li><a class="text-accent-content underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/mixins.py">wise_core/mixins.py — WiseImageGalleryMixin</a></li>
+            <li><a class="text-accent-content underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/gallery.py">wise_core/gallery.py — build_image_gallery()</a></li>
+            <li><a class="text-accent-content underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/templates/wise_core/components/_image_gallery.html">_image_gallery.html</a></li>
+            <li><a class="text-accent-content underline" href="https://github.com/samiferr/wise_design_system/blob/main/wise_core/static/wise_core/css/tokens.css">tokens.css — .gallery and friends</a></li>
+        </ul>
+    </div>
+{% endblock %}

@@ -554,3 +554,140 @@ function wiseLabelTableCells(root) {
 document.addEventListener('DOMContentLoaded', function () {
     wiseLabelTableCells(document)
 })
+
+// ── Image gallery ─────────────────────────────────────────────────────
+// `_image_gallery.html`: the thumbnails are anchors to the slides' ids, so
+// they work without this. It makes the jump scroll only the stage (not the
+// page), keeps the selected thumbnail and dot in step as the visitor swipes,
+// and moves between images with the arrow keys, Home and End.
+function wiseGalleryParts(gallery) {
+    const stage = gallery.querySelector('.gallery-stage')
+    return {
+        stage: stage,
+        slides: stage ? Array.from(stage.querySelectorAll('.gallery-slide')) : [],
+        thumbs: Array.from(gallery.querySelectorAll('.gallery-thumb')),
+        dots: Array.from(gallery.querySelectorAll('.gallery-dots > .carousel-dot')),
+    }
+}
+
+// The slide nearest the stage's centre. Measured from the slides' boxes
+// rather than scrollLeft, so it reads the same in right-to-left pages.
+function wiseGalleryCurrent(parts) {
+    const box = parts.stage.getBoundingClientRect()
+    const centre = box.left + box.width / 2
+    let best = 0
+    let bestDistance = Infinity
+    parts.slides.forEach(function (slide, index) {
+        const rect = slide.getBoundingClientRect()
+        const distance = Math.abs(rect.left + rect.width / 2 - centre)
+        if (distance < bestDistance) {
+            best = index
+            bestDistance = distance
+        }
+    })
+    return best
+}
+
+function wiseGalleryMark(parts, index) {
+    parts.thumbs.forEach(function (thumb, i) {
+        thumb.classList.toggle('selected', i === index)
+        if (i === index) thumb.setAttribute('aria-current', 'true')
+        else thumb.removeAttribute('aria-current')
+    })
+    parts.dots.forEach(function (dot, i) {
+        dot.classList.toggle('selected', i === index)
+    })
+    // Keep the selected thumbnail in view in a long strip, without moving the page.
+    const thumb = parts.thumbs[index]
+    const strip = thumb && thumb.parentElement
+    if (strip && strip.scrollWidth > strip.clientWidth) {
+        const stripBox = strip.getBoundingClientRect()
+        const thumbBox = thumb.getBoundingClientRect()
+        if (thumbBox.left < stripBox.left || thumbBox.right > stripBox.right) {
+            strip.scrollBy({left: thumbBox.left - stripBox.left - (stripBox.width - thumbBox.width) / 2})
+        }
+    }
+    if (strip && strip.scrollHeight > strip.clientHeight) {
+        const stripBox = strip.getBoundingClientRect()
+        const thumbBox = thumb.getBoundingClientRect()
+        if (thumbBox.top < stripBox.top || thumbBox.bottom > stripBox.bottom) {
+            strip.scrollBy({top: thumbBox.top - stripBox.top - (stripBox.height - thumbBox.height) / 2})
+        }
+    }
+}
+
+function wiseGalleryGo(gallery, index, instant) {
+    const parts = wiseGalleryParts(gallery)
+    if (!parts.slides.length) return
+    index = Math.max(0, Math.min(parts.slides.length - 1, index))
+    const box = parts.stage.getBoundingClientRect()
+    const rect = parts.slides[index].getBoundingClientRect()
+    // Hold the highlight on the target while a long smooth jump passes the
+    // images in between; the scroll handler lets go once it arrives.
+    if (!instant && index !== wiseGalleryCurrent(parts)) gallery.dataset.galleryTarget = index
+    parts.stage.scrollTo({
+        left: parts.stage.scrollLeft + rect.left - box.left,
+        behavior: instant ? 'instant' : undefined,
+    })
+    wiseGalleryMark(parts, index)
+}
+
+function wiseInitGallery(gallery) {
+    if (gallery.dataset.galleryReady) return
+    gallery.dataset.galleryReady = '1'
+    const parts = wiseGalleryParts(gallery)
+    if (parts.slides.length < 2) return
+    const selected = parseInt(gallery.dataset.gallerySelected, 10) || 1
+    if (selected > 1) wiseGalleryGo(gallery, selected - 1, true)
+    let frame = null
+    parts.stage.addEventListener('scroll', function () {
+        if (frame) return
+        frame = requestAnimationFrame(function () {
+            frame = null
+            const current = wiseGalleryCurrent(parts)
+            const target = gallery.dataset.galleryTarget
+            if (target !== undefined) {
+                if (current !== parseInt(target, 10)) return
+                delete gallery.dataset.galleryTarget
+            }
+            wiseGalleryMark(parts, current)
+        })
+    }, {passive: true})
+    // The visitor taking over mid-jump (a swipe, the wheel) drops the hold.
+    ;['pointerdown', 'wheel', 'scrollend'].forEach(function (type) {
+        parts.stage.addEventListener(type, function () {
+            if (gallery.dataset.galleryTarget === undefined) return
+            delete gallery.dataset.galleryTarget
+            if (type === 'scrollend') wiseGalleryMark(parts, wiseGalleryCurrent(parts))
+        }, {passive: true})
+    })
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-gallery]').forEach(wiseInitGallery)
+})
+
+document.addEventListener('click', function (e) {
+    const thumb = e.target.closest('[data-gallery] .gallery-thumb')
+    if (!thumb) return
+    e.preventDefault()
+    wiseGalleryGo(thumb.closest('[data-gallery]'), parseInt(thumb.dataset.galleryIndex, 10) || 0)
+})
+
+document.addEventListener('keydown', function (e) {
+    const stage = e.target.closest && e.target.closest('[data-gallery] .gallery-stage')
+    if (!stage || e.altKey || e.ctrlKey || e.metaKey) return
+    const gallery = stage.closest('[data-gallery]')
+    const parts = wiseGalleryParts(gallery)
+    const current = wiseGalleryCurrent(parts)
+    const rtl = getComputedStyle(stage).direction === 'rtl'
+    const next = {
+        ArrowRight: rtl ? current - 1 : current + 1,
+        ArrowLeft: rtl ? current + 1 : current - 1,
+        Home: 0,
+        End: parts.slides.length - 1,
+    }[e.key]
+    if (next === undefined) return
+    e.preventDefault()
+    wiseGalleryGo(gallery, next)
+})

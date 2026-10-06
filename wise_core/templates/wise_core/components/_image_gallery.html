@@ -1,0 +1,53 @@
+{% load i18n wise_icons %}
+{% comment %}
+An image gallery: one large, swipeable image, clickable thumbnails beneath
+it on tablet and desktop (a rail beside it on large screens with
+thumbnail_position "start"), and page-indicator dots in their place on a
+phone. Renders the `gallery` dict built by `wise_core.mixins.
+WiseImageGalleryMixin` (or `wise_core.gallery.build_image_gallery`):
+
+    {% include 'wise_core/components/_image_gallery.html' %}
+    {% include 'wise_core/components/_image_gallery.html' with gallery=variant_gallery %}
+
+Without JavaScript the thumbnails still work - they are anchors to the
+slides' ids - and the stage still swipes; common.js adds the smooth jump,
+keeps the selected thumbnail and dot in step, and the arrow keys.
+{% endcomment %}
+<div class="gallery{% if gallery.thumbnail_position == 'start' %} gallery-rail{% endif %}{% if gallery.fit == 'cover' %} gallery-cover{% endif %}"
+     id="{{ gallery.id }}" data-gallery data-gallery-selected="{{ gallery.selected_number }}"
+     style="--gallery-ratio: {{ gallery.aspect_ratio }}">
+    {% if gallery.images %}
+        <div class="gallery-stage" tabindex="0" role="region" aria-roledescription="{% trans 'carousel' %}" aria-label="{{ gallery.label }}">
+            {% for image in gallery.images %}
+                {% blocktrans asvar slide_label with number=image.number total=gallery.count %}{{ number }} of {{ total }}{% endblocktrans %}
+                <div class="gallery-slide" id="{{ image.dom_id }}" role="group" aria-roledescription="{% trans 'slide' %}" aria-label="{{ slide_label }}">
+                    <img src="{{ image.src }}" alt="{{ image.alt }}" draggable="false" decoding="async"
+                         loading="{% if image.selected or forloop.first %}eager{% else %}lazy{% endif %}">
+                </div>
+            {% endfor %}
+        </div>
+        {% if gallery.count > 1 %}
+            <div class="gallery-thumbs" role="group" aria-label="{% blocktrans with label=gallery.label %}{{ label }}: thumbnails{% endblocktrans %}">
+                {% for image in gallery.images %}
+                    {% blocktrans asvar thumb_label with number=image.number total=gallery.count %}Show image {{ number }} of {{ total }}{% endblocktrans %}
+                    <a class="gallery-thumb{% if image.selected %} selected{% endif %}" href="#{{ image.dom_id }}"
+                       data-gallery-index="{{ forloop.counter0 }}" aria-label="{{ thumb_label }}"{% if image.selected %} aria-current="true"{% endif %}>
+                        <img src="{{ image.thumbnail_src }}" alt="" draggable="false" decoding="async" loading="lazy">
+                    </a>
+                {% endfor %}
+            </div>
+            <div class="gallery-dots" aria-hidden="true">
+                {% for image in gallery.images %}
+                    <span class="carousel-dot{% if image.selected %} selected{% endif %}"></span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="gallery-stage">
+            <div class="gallery-placeholder">
+                {% lucide "image" size="xl" %}
+                <span>{{ gallery.empty_label }}</span>
+            </div>
+        </div>
+    {% endif %}
+</div>

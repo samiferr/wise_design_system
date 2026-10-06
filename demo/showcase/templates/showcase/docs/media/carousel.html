@@ -11,7 +11,7 @@
 {% block doc_body %}
     <h2 class="mt-8">Use cases</h2>
     <ul class="mt-3 list-disc space-y-1 pl-5 text-gray-700">
-        <li>A product image gallery or marketing hero rotation with more than one slide.</li>
+        <li>A marketing hero rotation, or any set of slides with more than one item. For a record's photos (a product's images), use the <a class="text-accent-content underline" href="{% url 'docs_media_image_gallery' %}">Image Gallery</a>: thumbnails on desktop, dots on a phone, built by the view.</li>
         <li>A horizontally paged set of cards/screenshots the user swipes or clicks dots to move through.</li>
         <li>Anywhere you'd otherwise reach for a JS carousel library - this needs neither a library nor autoplay logic.</li>
         <li>Not for tabular or list content that should just scroll normally - use a plain Scroller for a non-paged, snapping row instead.</li>

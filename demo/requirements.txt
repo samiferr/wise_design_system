@@ -1,6 +1,8 @@
 Django>=5.0,<6.0
 django-filter>=24.0
 djangorestframework>=3.15
+# ImageField, for the product photos behind the image gallery.
+Pillow>=10.0
 
 # Optional, used only by the Media -> QR Code & Barcode docs page. wise_core's
 # {% qr_code %}/{% barcode %} tags degrade to an HTML comment without them, so
