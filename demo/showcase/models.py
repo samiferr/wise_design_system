@@ -51,6 +51,29 @@ class Product(models.Model):
         return reverse('product_detail_view', args=[self.pk])
 
 
+
+class ProductImage(models.Model):
+    """
+    A product's photos, shown as an image gallery on its Overview tab (see
+    showcase/views.py's ProductDetailView and wise_core's
+    WiseImageGalleryMixin). `position` orders them; the first is the one a
+    visitor sees on arrival.
+    """
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='products/')
+    alt_text = models.CharField(
+        max_length=150, blank=True,
+        help_text='Describes the photo for screen readers. Falls back to the product name.',
+    )
+    position = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ['position', 'pk']
+        verbose_name = 'image'
+
+    def __str__(self):
+        return self.alt_text or self.image.name
+
 class ProductVariant(models.Model):
     """
     One of a product's sellable variations - the first of two child models

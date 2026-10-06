@@ -1,13 +1,16 @@
 from django.conf import settings
+from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
 from wise_core import charts
+from wise_core.gallery import build_image_gallery
 from wise_core.mixins import (
     ChildTab,
     WiseCreateView,
     WiseDeleteView,
     WiseDetailView,
+    WiseImageGalleryMixin,
     WiseListView,
     WiseParentDetailChildCreateView,
     WiseParentDetailChildDeleteView,
@@ -116,6 +119,30 @@ def _chart_context():
     }
 
 
+def _gallery_context():
+    """
+    The Media -> Image Gallery page's previews. A docs page has no record
+    to hang a WiseImageGalleryMixin off, so it calls the builder the mixin
+    wraps directly - with plain dicts standing in for image rows.
+    """
+    photos = [
+        {'image': static('showcase/gallery/photo-{}.svg'.format(n)), 'alt': alt}
+        for n, alt in enumerate(
+            ['Front', 'Side', 'Detail of the finish', 'In a room', 'In its box'], start=1,
+        )
+    ]
+    return {
+        'doc_gallery': build_image_gallery(
+            photos, gallery_id='doc-gallery', label='Product images', alt_field='alt',
+        ),
+        'doc_gallery_rail': build_image_gallery(
+            photos, gallery_id='doc-gallery-rail', label='Product images', alt_field='alt',
+            aspect_ratio=(4, 3), thumbnail_position='start', selected=2,
+        ),
+        'doc_gallery_empty': build_image_gallery([], gallery_id='doc-gallery-empty'),
+    }
+
+
 def _parent_child_context():
     """
     The Patterns -> Tabbed Parent / Child page previews the *real* tab bar
@@ -156,6 +183,7 @@ _CHART_PAGES = [
 
 EXTRA_CONTEXT = {
     ('media', 'icons'): _icons_context,
+    ('media', 'image-gallery'): _gallery_context,
     ('navigation', 'tree'): _tree_context,
     ('feedback', 'progress-ring'): _chart_context,
     ('patterns', 'simple-data-page'): _chart_context,
@@ -278,10 +306,16 @@ class ProductListView(WiseListView):
     create_url_name = 'product_create_view'
 
 
-class ProductDetailView(WiseParentDetailView):
+class ProductDetailView(WiseImageGalleryMixin, WiseParentDetailView):
+    """The Overview tab, with the product's photos as an image gallery:
+    `gallery` in the context, rendered by _image_gallery.html. `?image=2`
+    opens it on the second photo."""
     model = Product
     child_tabs = PRODUCT_TABS
     template_name = 'showcase/product/detail.html'
+    gallery_images = 'images'
+    gallery_alt_field = 'alt_text'
+    gallery_label = 'Product images'
 
 
 class ProductCreateView(WiseCreateView):

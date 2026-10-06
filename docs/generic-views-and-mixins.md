@@ -230,9 +230,56 @@ matching entry to the model's `Meta.permissions` for actions that aren't the def
 add/change/delete/view four. If `object.cancel(user)` raises `ValidationError`, its messages are
 shown via `django.contrib.messages` and the confirm template re-renders instead of redirecting.
 
+## Image gallery: `WiseImageGalleryMixin`
+
+A record with photos (a product, a listing, an inspection) shows them as a gallery: one large image
+the visitor swipes through, a strip of clickable thumbnails beneath it from 640px up, and indicator
+dots in their place on a phone. The view builds it; the template includes one partial:
+
+```python
+from wise_core.mixins import WiseDetailView, WiseImageGalleryMixin
+
+class ProductDetailView(WiseImageGalleryMixin, WiseDetailView):
+    model = Product
+    gallery_images = "images"             # product.images.all() - a related manager, attribute or callable
+    gallery_image_field = "image"         # ProductImage.image (ImageField/FileField, or a URL string)
+    gallery_alt_field = "alt_text"        # falls back to str(product)
+    gallery_ordering = ("position", "pk")
+    gallery_label = "Product images"      # the gallery's accessible name
+```
+
+```django
+{% include 'wise_core/components/_image_gallery.html' %}
+```
+
+The context gets `gallery`: `images` (each with `number`, `dom_id`, `src`, `thumbnail_src`, `alt`,
+`selected`), `count`, `selected` and the display options. Images with an empty file are skipped, and
+a record with none renders a placeholder of the same shape.
+
+| Attribute | Default | |
+|---|---|---|
+| `gallery_images` | `"images"` | Related manager, attribute or callable on the record. |
+| `gallery_image_field` / `gallery_thumbnail_field` / `gallery_alt_field` | `"image"` / `None` / `None` | Field or callable per image. No thumbnail field reuses the full image. |
+| `gallery_ordering` | `None` | `order_by()` for a related manager's images. |
+| `gallery_query_param` | `"image"` | `?image=3` (1-based) opens on the third image; invalid or out-of-range values open the first. `None` turns it off. |
+| `gallery_aspect_ratio` | `"1 / 1"` | The stage's shape (`"4 / 3"`, `(16, 9)`), fixed before photos load. Anything that isn't `<number> / <number>` raises `ImproperlyConfigured`, since it is written into a `style` attribute. |
+| `gallery_fit` | `"contain"` | `"cover"` fills the stage and crops. |
+| `gallery_thumbnail_position` | `"bottom"` | `"start"`: a vertical rail beside the stage from 1024px. |
+| `gallery_context_name` | `"gallery"` | Rename to show two galleries; `{% include ... with gallery=other %}`. |
+
+Override `get_gallery_object()` (default `self.object`) to show another record's images, or
+`get_gallery_images(record)` for anything a field name can't express. The mixin is a thin wrapper
+over `wise_core.gallery.build_image_gallery()`, which takes model instances, dicts or URL strings —
+call it directly where there's no view object to hang it off.
+
+The thumbnails are anchors to the slides' ids and the stage is CSS scroll-snap, so it all works
+without JavaScript; `common.js` keeps the selected thumbnail and dot in step while swiping, stops a
+thumbnail click from scrolling the page, and adds arrow keys / Home / End on the focused stage
+(mirrored for right-to-left). See the docs site's Media → Image Gallery page.
+
 ## Composing your own
 
 Everything is built from small mixins (`AutoCreatedByMixin`, `ValidationErrorFormMixin`,
-`OwnRecordsMixin`, `ParentObjectMixin`, `ConfirmActionMixin`) — reuse them directly if `WiseListView`
+`OwnRecordsMixin`, `ParentObjectMixin`, `ConfirmActionMixin`, `WiseImageGalleryMixin`) — reuse them directly if `WiseListView`
 et al. don't fit. `permission_codename(model, action)` is the one helper the permission-derivation
 logic is built on, if you need the same convention somewhere else.

@@ -128,6 +128,7 @@ DOCS_NAV = [
             {'title': 'Image', 'slug': 'image'},
             {'title': 'Video', 'slug': 'video'},
             {'title': 'Carousel', 'slug': 'carousel'},
+            {'title': 'Image Gallery', 'slug': 'image-gallery'},
             {'title': 'QR Code & Barcode', 'slug': 'qr-code'},
         ],
     },

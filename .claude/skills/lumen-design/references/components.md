@@ -116,6 +116,7 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 | Divider | `hr.divider` (1px `border-subtle`), `.divider-m` (2px), `.divider-l` (4px), `.divider-vertical`, `.divider-labeled` |
 | Accordion | `.accordion` > `details.accordion-item` > `summary` (+ `.accordion-chevron`) + `.accordion-content` |
 | Carousel | `.carousel` > `.carousel-track` > `.carousel-item`; `.carousel-nav` > `a.carousel-dot(.selected)` |
+| Image gallery (a record's photos) | Build in the view with `WiseImageGalleryMixin`, render with `{% include 'wise_core/components/_image_gallery.html' %}`; never hand-write it. → `.gallery` (`.gallery-rail`, `.gallery-cover`, `--gallery-ratio`) > `.gallery-stage` > `.gallery-slide`; `.gallery-thumbs` > `a.gallery-thumb(.selected)` (640px+); `.gallery-dots` > `.carousel-dot` (phones, indicator only); `.gallery-placeholder` | 16px stage on `background-layer-2` + `border-subtle`; 8px thumbnails, 2px `border-subtle` edge, `accent-background` when selected |
 | Toolbar | `.top-actions-header` with `.top-nav-item` actions (the CRUD back/edit/delete bar) |
 
 ## Navigation

@@ -79,6 +79,7 @@ Before writing markup, find the existing class. Full table with markup in
 | Side-nav item | `.menu-link` (`.selected`), `.tree-leaf` |
 | Progress | `.progress > .progress-value` / `.progress-ring`, `.spinner` |
 | Tooltip | `.tooltip[data-tooltip]` |
+| Image gallery (product photos) | `WiseImageGalleryMixin` on the view + `{% include 'wise_core/components/_image_gallery.html' %}` |
 | List-page layout, forms, CRUD pages | the generic templates in `wise_core/templates/wise_core/generic/`; don't rebuild them |
 
 If nothing fits, build from tokens (below) and, if it's reusable, add it to `tokens.css` following

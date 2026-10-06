@@ -1,16 +1,52 @@
 import decimal
+import io
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
+from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 
 from showcase.models import (
     Category,
     Department,
     Product,
+    ProductImage,
     ProductReview,
     ProductVariant,
 )
+
+
+# Lumen palette steps (scripts/lumen-scales.json, light theme): a pale
+# ground, a mid tone and a deep tone per hue, for the drawn product photos.
+_PHOTO_TONES = {
+    'blue': ('#f5f9ff', '#accffd', '#274dea'),       # blue-100 / 400 / 1000
+    'gray': ('#f8f8f8', '#c6c6c6', '#505050'),       # gray-50 / 400 / 700
+    'orange': ('#fff6e7', '#ffc15e', '#c24e00'),     # orange-100 / 400 / 900
+}
+
+
+def _draw_photo(hue, variant, size=800):
+    """A flat placeholder "product shot" as PNG bytes: a ground and a shape per angle."""
+    from PIL import Image, ImageDraw  # Pillow is a demo requirement (ImageField).
+
+    ground, mid, deep = _PHOTO_TONES[hue]
+    image = Image.new('RGB', (size, size), ground)
+    draw = ImageDraw.Draw(image)
+    unit = size // 8
+    draw.ellipse((unit, 6 * unit + unit // 2, 7 * unit, 7 * unit + unit // 4), fill=mid)  # shadow
+    if variant % 4 == 0:
+        draw.rounded_rectangle((2 * unit, 2 * unit, 6 * unit, 6 * unit + unit // 2), radius=unit // 2, fill=deep)
+    elif variant % 4 == 1:
+        draw.rounded_rectangle((unit, 3 * unit, 7 * unit, 5 * unit), radius=unit, fill=deep)
+        draw.ellipse((5 * unit, 3 * unit + unit // 2, 6 * unit, 4 * unit + unit // 2), fill=ground)
+    elif variant % 4 == 2:
+        draw.ellipse((2 * unit, 2 * unit, 6 * unit, 6 * unit), fill=deep)
+        draw.ellipse((3 * unit, 3 * unit, 5 * unit, 5 * unit), fill=mid)
+    else:
+        draw.polygon([(4 * unit, unit + unit // 2), (7 * unit, 6 * unit + unit // 2), (unit, 6 * unit + unit // 2)], fill=deep)
+    buffer = io.BytesIO()
+    image.save(buffer, format='PNG', optimize=True)
+    return buffer.getvalue()
 
 
 class Command(BaseCommand):
@@ -108,6 +144,30 @@ class Command(BaseCommand):
                     product=product, author=author,
                     defaults={'rating': rating, 'comment': comment},
                 )
+
+        # A few photos per product for the image gallery on its Overview
+        # tab. Drawn here rather than shipped as binaries; skipped for a
+        # product that already has photos, so re-seeding never duplicates.
+        photos = {
+            'Ballpoint pen (box of 12)': ('blue', ['Front', 'Side', 'Tip', 'Box']),
+            'USB-C hub': ('gray', ['Front', 'Ports', 'Cable', 'In use']),
+            'Standing desk': ('orange', ['Front', 'Raised', 'Controls']),
+        }
+        for product_name, (hue, views) in photos.items():
+            product = Product.objects.get(name=product_name)
+            if product.images.exists():
+                continue
+            for position, view in enumerate(views):
+                image = ProductImage(
+                    product=product, position=position,
+                    alt_text='{}, {}'.format(product_name, view.lower()),
+                )
+                image.image.save(
+                    'product-{}-{}.png'.format(product.pk, position + 1),
+                    ContentFile(_draw_photo(hue, position)),
+                    save=False,
+                )
+                image.save()
 
         # A real hierarchy for the Navigation -> Tree page to walk.
         tree = {
