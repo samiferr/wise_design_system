@@ -18,10 +18,14 @@
                 </div>
                 <form method="post">
                     {% csrf_token %}
-                    <div class="callout callout-danger">
-                        {% status_glyph "negative" size=18 cls="callout-icon" %}
-                        <div>{% block confirm_message %}{% trans "Are you sure you want to delete this record?" %}{% endblock %}</div>
-                    </div>
+                    {% if delete_blockers %}
+                        {% include 'wise_core/components/_delete_blockers.html' %}
+                    {% else %}
+                        <div class="callout callout-danger">
+                            {% status_glyph "negative" size=18 cls="callout-icon" %}
+                            <div>{% block confirm_message %}{% trans "Are you sure you want to delete this record?" %}{% endblock %}</div>
+                        </div>
+                    {% endif %}
                     {% block confirm_content %}
                         <table class="mt-4">
                             {% block confirm_rows %}{% endblock %}
@@ -30,8 +34,10 @@
                     <div class="form-actions">
                         <a href="{% block confirm_cancel_url %}javascript:history.back(){% endblock %}"
                            class="btn btn-secondary">{% trans "Cancel" %}</a>
-                        <input type="submit" class="{% block confirm_submit_class %}btn btn-danger large-button{% endblock %}"
-                               value="{% block confirm_submit_label %}{% trans "Delete" %}{% endblock %}">
+                        {% if not delete_blockers %}
+                            <input type="submit" class="{% block confirm_submit_class %}btn btn-danger large-button{% endblock %}"
+                                   value="{% block confirm_submit_label %}{% trans "Delete" %}{% endblock %}">
+                        {% endif %}
                     </div>
                 </form>
             </div>

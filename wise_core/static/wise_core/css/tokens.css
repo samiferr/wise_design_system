@@ -2326,24 +2326,30 @@
     }
 
     /* ── Data table → card rows on a phone ───────────────────────────────
-       `.data-table.data-table-cards` is a data table from the `sm`
-       breakpoint up and, below it, a list of cards - one per row, each
-       cell a "label  value" line - with no toggle and no second template:
-       the same markup, restyled. common.js gives every body cell the text
+       Every `.data-table` is a table from the `sm` breakpoint up and,
+       below it, a list of cards - one per row, each cell a "label  value"
+       line - with no toggle and no second template: the same markup,
+       restyled, automatically. common.js gives every body cell the text
        of its column header as `data-label` (set one yourself to override
-       it; an empty one - an actions or ID column - shows the value alone).
-       A cell holding a row-actions menu (`details.dropdown`) moves to the
-       card's top right corner. Sortable headers stay, as a row of sort
-       links above the cards; the other headers are only read by assistive
-       technology. The surrounding `.card` steps back (no fill, border or
-       padding) so the row cards sit on the page itself.
+       it; an empty one - an ID or a name that is the card's title - shows
+       the value alone). A cell holding a row-actions menu
+       (`details.dropdown`, see `{% row_actions %}`) moves to the card's top
+       right corner. Sortable headers stay, as a row of sort links above
+       the cards; the other headers are only read by assistive technology.
+       The surrounding `.card` steps back (no fill, border or padding) so
+       the row cards sit on the page itself.
 
            <div class="card card-table mt-4 overflow-x-auto">
-               <table class="data-table data-table-cards">...</table>
+               <table class="data-table">...</table>
            </div>
-    */
+
+       A table that has to stay a table on a phone - a wide grid of
+       numbers, read across rather than row by row - opts out with
+       `.data-table-scroll` and scrolls sideways inside its card instead.
+       `.data-table-cards` (the opt-in this used to be) is kept as a marker
+       and does nothing extra. */
     @media (max-width: 639.98px) {
-        .card:has(> .data-table-cards) {
+        .card:has(> .data-table:not(.data-table-scroll)) {
             padding: 0;
             overflow: visible;
             background-color: transparent;
@@ -2351,25 +2357,25 @@
             box-shadow: none;
         }
 
-        .data-table-cards,
-        .data-table-cards > tbody {
+        .data-table:not(.data-table-scroll),
+        .data-table:not(.data-table-scroll) > tbody {
             display: block;
             width: 100%;
         }
 
-        .data-table-cards > thead {
+        .data-table:not(.data-table-scroll) > thead {
             display: block;
             margin-bottom: 0.5rem;
         }
 
-        .data-table-cards > thead > tr {
+        .data-table:not(.data-table-scroll) > thead > tr {
             display: flex;
             flex-wrap: wrap;
             gap: 0.25rem 1rem;
         }
 
         /* Headers without a sort link: read by assistive technology only. */
-        .data-table-cards > thead th {
+        .data-table:not(.data-table-scroll) > thead th {
             position: absolute;
             width: 1px;
             height: 1px;
@@ -2381,7 +2387,7 @@
             border: 0;
         }
 
-        .data-table-cards > thead th:has(a) {
+        .data-table:not(.data-table-scroll) > thead th:has(a) {
             position: static;
             width: auto;
             height: auto;
@@ -2392,11 +2398,11 @@
             border: 0;
         }
 
-        .data-table-cards > thead th:has(a) a {
+        .data-table:not(.data-table-scroll) > thead th:has(a) a {
             min-height: var(--control-height-sm);
         }
 
-        .data-table-cards > tbody > tr {
+        .data-table:not(.data-table-scroll) > tbody > tr {
             position: relative;
             display: block;
             margin-bottom: 0.5rem;
@@ -2407,24 +2413,37 @@
             box-shadow: var(--shadow-card);
         }
 
-        .data-table-cards > tbody > tr > td {
+        .data-table:not(.data-table-scroll) > tbody > tr > td {
             display: grid;
             grid-template-columns: minmax(6rem, 38%) minmax(0, 1fr);
             gap: 0.75rem;
             align-items: baseline;
             justify-items: start;
-            width: auto;
             height: auto;
             padding: 0.25rem 0;
-            white-space: normal;
             overflow-wrap: anywhere;
             border: 0;
             background-color: transparent;
         }
 
+        /* A cell is a full-width line here whatever it set for the table:
+           `w-px` / `whitespace-nowrap` on a cell are table-column tricks
+           (a shrink-wrapped ID or actions column) and utilities outrank this
+           layer, so they would otherwise squeeze the card's lines. */
+        .data-table:not(.data-table-scroll) > tbody > tr > td {
+            width: auto !important;
+            white-space: normal !important;
+        }
+
+        /* ... and the row card, not the table card, supplies the inset the
+           first and last cells of a `.card-table` get on a wide screen. */
+        .card-table .data-table:not(.data-table-scroll) > tbody > tr > td {
+            padding-inline: 0;
+        }
+
         /* The label in the label face, whatever the value's (a monospace
            batch number, a tabular amount). */
-        .data-table-cards > tbody > tr > td::before {
+        .data-table:not(.data-table-scroll) > tbody > tr > td::before {
             content: attr(data-label);
             @apply text-title-xs;
             font-family: var(--font-plain);
@@ -2434,21 +2453,21 @@
 
         /* No label (an ID, a lone value, the empty-list message): the value
            takes the whole line. */
-        .data-table-cards > tbody > tr > td:not([data-label]),
-        .data-table-cards > tbody > tr > td[data-label=""],
-        .data-table-cards > tbody > tr > td[colspan] {
+        .data-table:not(.data-table-scroll) > tbody > tr > td:not([data-label]),
+        .data-table:not(.data-table-scroll) > tbody > tr > td[data-label=""],
+        .data-table:not(.data-table-scroll) > tbody > tr > td[colspan] {
             grid-template-columns: minmax(0, 1fr);
         }
 
-        .data-table-cards > tbody > tr > td:not([data-label])::before,
-        .data-table-cards > tbody > tr > td[data-label=""]::before,
-        .data-table-cards > tbody > tr > td[colspan]::before {
+        .data-table:not(.data-table-scroll) > tbody > tr > td:not([data-label])::before,
+        .data-table:not(.data-table-scroll) > tbody > tr > td[data-label=""]::before,
+        .data-table:not(.data-table-scroll) > tbody > tr > td[colspan]::before {
             content: none;
         }
 
         /* The row-actions menu: the card's top right corner, and room kept
            for it on the card's first lines. */
-        .data-table-cards > tbody > tr > td:has(> .dropdown) {
+        .data-table:not(.data-table-scroll) > tbody > tr > td:has(> .dropdown) {
             position: absolute;
             top: 0.375rem;
             right: 0.375rem;
@@ -2456,37 +2475,37 @@
             padding: 0;
         }
 
-        .data-table-cards > tbody > tr > td:has(> .dropdown)::before {
+        .data-table:not(.data-table-scroll) > tbody > tr > td:has(> .dropdown)::before {
             content: none;
         }
 
         /* Its trigger is a round icon button there, whatever it is in the
            table, so it never covers the card's first line. */
-        .data-table-cards > tbody > tr > td > .dropdown > summary {
+        .data-table:not(.data-table-scroll) > tbody > tr > td > .dropdown > summary {
             width: var(--control-height-button);
             min-width: 0;
             padding: 0;
         }
 
-        .data-table-cards > tbody > tr:has(> td > .dropdown) {
+        .data-table:not(.data-table-scroll) > tbody > tr:has(> td > .dropdown) {
             padding-right: calc(var(--control-height-button) + 0.75rem);
         }
 
         /* The empty-list row is not a card. */
-        .data-table-cards > tbody > tr:has(> td[colspan]) {
+        .data-table:not(.data-table-scroll) > tbody > tr:has(> td[colspan]) {
             padding: 0;
             background-color: transparent;
             border: 0;
             box-shadow: none;
         }
 
-        .data-table-cards tr:hover td,
-        .data-table-cards tr.selected td {
+        .data-table:not(.data-table-scroll) tr:hover td,
+        .data-table:not(.data-table-scroll) tr.selected td {
             background-color: transparent;
         }
 
-        .data-table-cards > tbody > tr.selected,
-        .data-table-cards > tbody > tr[aria-selected="true"] {
+        .data-table:not(.data-table-scroll) > tbody > tr.selected,
+        .data-table:not(.data-table-scroll) > tbody > tr[aria-selected="true"] {
             background-color: var(--color-selected-subtle);
         }
     }
@@ -2606,7 +2625,10 @@
        The mobile-only strip; desktop chrome lives entirely in the sidebar.
        A layer-1 bar with a subtle bottom edge and a title-l title. */
     .top-bar {
-        @apply relative z-[99];
+        @apply relative;
+        /* Sticky level: above the page, below drawers and dialogs, so an
+           open drawer covers the bar instead of hiding its own header. */
+        z-index: var(--z-sticky);
         min-height: var(--component-height-300);
         display: flex;
         align-items: center;
@@ -3784,6 +3806,112 @@
     .breadcrumb-separator {
         @apply inline-flex shrink-0 items-center;
         color: var(--color-border-default);
+    }
+
+    /* ── Steps ───────────────────────────────────────────────────────────
+       The progress of a multi-step flow (a wizard, a checkout, a scan):
+       Spectrum's Steplist. An <ol> of `.step`s, each a round marker (its
+       number, or a tick once done) and a label, joined by a line that fills
+       as the steps are finished. A step is upcoming by default,
+       `.step-current` (also `aria-current="step"`) or `.step-done`.
+
+           <ol class="steps" aria-label="Steps">
+             <li class="step step-done"><span class="step-marker">{% lucide "check" size="xs" %}</span><span class="step-label">Identity</span></li>
+             <li class="step step-current" aria-current="step"><span class="step-marker">2</span><span class="step-label">Contact</span></li>
+             <li class="step"><span class="step-marker">3</span><span class="step-label">Document</span></li>
+           </ol>
+
+       `{% include "wise_core/components/_steps.html" %}` writes it from a
+       list of steps. Below the `sm` breakpoint only the current step keeps
+       its label (the others are markers on the line, still read by assistive
+       technology), so the bar stays on one row on a phone. */
+    .steps {
+        @apply m-0 flex list-none items-center p-0;
+        gap: 0.5rem;
+    }
+
+    .step {
+        @apply relative flex min-w-0 items-center text-detail-m;
+        gap: 0.5rem;
+        color: var(--color-content-subdued);
+    }
+
+    /* The line to the next step, filling the room between two steps. */
+    .step:not(:last-child) {
+        flex: 1 1 auto;
+    }
+
+    .step:not(:last-child)::after {
+        content: "";
+        flex: 1 1 1.5rem;
+        min-width: 1rem;
+        height: var(--border-width-200);
+        margin-inline-start: 0.25rem;
+        background-color: var(--color-border-subtle);
+        border-radius: var(--corner-radius-full);
+    }
+
+    .step-done:not(:last-child)::after {
+        background-color: var(--color-positive-background);
+    }
+
+    .step-marker {
+        @apply inline-flex shrink-0 items-center justify-center text-detail-m;
+        width: var(--component-height-75);
+        height: var(--component-height-75);
+        font-variant-numeric: tabular-nums;
+        color: var(--color-content-subdued);
+        border: var(--border-width-200) solid var(--color-border-default);
+        border-radius: var(--corner-radius-full);
+    }
+
+    .step-label {
+        @apply truncate;
+    }
+
+    .step-current {
+        color: var(--color-content-heading);
+        font-weight: 700;
+    }
+
+    .step-current .step-marker {
+        color: var(--color-on-accent);
+        background-color: var(--color-accent-background);
+        border-color: var(--color-accent-background);
+    }
+
+    .step-done {
+        color: var(--color-content-default);
+    }
+
+    .step-done .step-marker {
+        color: var(--color-on-accent);
+        background-color: var(--color-positive-background);
+        border-color: var(--color-positive-background);
+    }
+
+    /* A finished step can be a link back to it. */
+    a.step-label {
+        @apply no-underline;
+        color: inherit;
+    }
+
+    a.step-label:hover {
+        color: var(--color-accent-content);
+    }
+
+    @media (max-width: 639.98px) {
+        .step:not(.step-current) .step-label {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
     }
 
     /* ── Tree ────────────────────────────────────────────────────────────

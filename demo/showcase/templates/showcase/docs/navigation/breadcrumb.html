@@ -95,6 +95,16 @@ def get_context_data(self, **kwargs):
     {% endfor %}
 </nav>{% endverbatim %}{% endfilter %}</code></pre>
 
+    <h2 class="mt-8">The whole trail, from settings</h2>
+    <p class="text-gray-700">
+        An app does not hand-build crumbs page by page: set <code>WISE_BREADCRUMBS = True</code> and
+        <code>wise_core/base.html</code> renders the trail above every page body - Home &gt; the
+        <code>WISE_NAV_SECTIONS</code> entry the page belongs to &gt; the parent record &gt; the tab &gt; the record &gt;
+        the action (New / Edit / Delete). The demo app below the sidebar's Demo section is wired this way. A page
+        outside that pattern sets <code>breadcrumb_label</code> on its view (<code>''</code> when the nav entry already
+        names it); override the <code>breadcrumbs</code> block to place the trail yourself.
+    </p>
+
     <h2 class="mt-8">Breadcrumb or back link?</h2>
     <div class="callout callout-info mt-4">
         {% status_glyph "info" size=18 cls="callout-icon" %}

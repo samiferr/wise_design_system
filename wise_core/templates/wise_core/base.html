@@ -52,9 +52,8 @@
         {% endif %}
         <main class="min-w-0 flex-1">
             <div class="relative">
-                <div id="modal_1" class="filter-panel hidden">
-                    {% block filter_panel %}{% include 'wise_core/components/_filter.html' %}{% endblock %}
-                </div>
+                {% block filter_panel %}{% include 'wise_core/components/_filter.html' %}{% endblock %}
+                {% block breadcrumbs %}{% if wise_breadcrumbs %}{% include 'wise_core/components/_breadcrumbs.html' %}{% endif %}{% endblock %}
                 {% block body %}{% endblock %}
             </div>
         </main>

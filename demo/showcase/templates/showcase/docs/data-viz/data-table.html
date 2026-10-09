@@ -164,6 +164,16 @@
         something a person needs to reference.
     </p>
 
+    <div class="callout callout-info mt-8">
+        {% status_glyph "info" size=18 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">Use <code>{% verbatim %}{% row_actions item %}{% endverbatim %}</code></div>
+            The row menu below is what the <code>row_actions</code> tag renders, permission checks included - see
+            <a class="text-action-600 underline" href="{% url 'docs_patterns_record_actions' %}">Record Actions</a>.
+            Write the markup by hand only for actions the tag cannot express.
+        </div>
+    </div>
+
     <h2 class="mt-8">Row actions</h2>
     <p class="text-gray-700">
         One trigger, not a row of icon buttons. Past two or three actions, inline
@@ -255,6 +265,16 @@
             rows across pages.
         </div>
     </div>
+
+    <h2 class="mt-8">On a phone: cards</h2>
+    <p class="text-gray-700">
+        Every <code>.data-table</code> becomes a list of cards below the <code>sm</code> breakpoint - one card per row,
+        each cell a "label value" line labelled from its column header (<code>data-label</code> overrides it,
+        <code>data-label=""</code> shows the value alone), the row-actions menu in the card's corner and sortable headers
+        as a row of sort links above. Nothing to add. A grid of numbers that must be read across opts out with
+        <code>data-table-scroll</code> and scrolls sideways instead. See
+        <a class="text-action-600 underline" href="{% url 'docs_patterns_list_page' %}">List Page</a>.
+    </p>
 
     <h2 class="mt-8">Empty state</h2>
     <div class="doc-example">

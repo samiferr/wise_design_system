@@ -1,0 +1,36 @@
+{% load i18n wise_icons %}
+{% comment %}
+Free-text search box for a `WiseListView` page: submits `q` (the view's
+`search_param`) via GET to the current URL. The FilterSet exposes a hidden
+`q` CharFilter wired to a method that ORs the searchable columns, kept out of
+the filter drawer on purpose - this bar is its dedicated input - and out of
+the applied-filter count. `_pagination.html` carries `q` across page links,
+so this is the one piece that sets it.
+
+The field is the design system's SearchField as it ships (`.search-field`:
+the search icon inside, a clear button that common.js wires up, Escape
+clears too), followed by an icon-only search button that submits it.
+
+On a phone the bar takes the whole row (the list header's actions span the
+page; this form grows to fill what the filter button leaves - the page's
+main "New" action is a floating button there, not in this row). Its basis on
+a phone, `100% - 3rem`, is exactly the room the filter button (up to 40px)
+and the gap after the form need, so search + filter always fill one row and
+any other button of the header wraps onto the next. From the `sm` breakpoint
+up the field keeps a fixed width.
+
+`list_generic.html`'s default `list_actions` includes it when the view has a
+search filter (`can_search`); include it yourself when you override that
+block. `placeholder` overrides the "Search" text.
+{% endcomment %}
+<form method="get" class="flex min-w-0 flex-1 basis-48 items-center gap-2 max-sm:basis-[calc(100%-3rem)] sm:flex-none" role="search">
+    <div class="search-field min-w-0 flex-1 sm:w-56 sm:flex-none">
+        <span class="search-field-icon" aria-hidden="true">{% lucide "search" size=20 %}</span>
+        <input class="input" type="search" name="{{ search_param|default:'q' }}" value="{{ search_query|default:'' }}"
+               placeholder="{{ placeholder|default:_('Search') }}" aria-label="{% trans 'Search' %}">
+        <button type="button" class="search-field-clear" aria-label="{% trans 'Clear search' %}">{% lucide "x" size=14 stroke_width="3" %}</button>
+    </div>
+    <button type="submit" class="btn btn-secondary btn-icon" aria-label="{% trans 'Search' %}" title="{% trans 'Search' %}">
+        {% lucide "search" size=16 %}
+    </button>
+</form>

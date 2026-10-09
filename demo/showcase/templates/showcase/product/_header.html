@@ -1,10 +1,11 @@
 {% load wise_icons %}
 {% comment %}
-The product's own chrome: where "back" goes, what can be done to the
-product itself, and its name. Overriding parent_base_generic.html's
-`parent_header` block with this one include is what keeps every page in the
-group - the overview, and each variant/review page - showing the identical
-header, without repeating the markup in nine templates.
+The product's own chrome: where "back" goes and its name. What can be done
+to the product (Edit, Delete) lives in its detail panel - see detail.html.
+Overriding parent_base_generic.html's `parent_header` block with this one
+include is what keeps every page in the group - the overview, and each
+variant/review page - showing the identical header, without repeating the
+markup in nine templates.
 
 Reads `parent_object`, which wise_core puts in the context on the parent's
 own page and on every child page under it.
@@ -14,18 +15,6 @@ own page and on every child page under it.
         <a class="top-nav-item inline-flex" href="{% url 'product_list_view' %}">
             {% lucide "arrow-left" size=20 %}<div class="text-sm">Products</div>
         </a>
-    </div>
-    <div class="flex flex-wrap items-center gap-1">
-        {% if perms.showcase.change_product %}
-            <a class="top-nav-item inline-flex" href="{% url 'product_update_view' pk=parent_object.pk %}">
-                {% lucide "pencil" size=20 %}<div class="text-sm">Edit</div>
-            </a>
-        {% endif %}
-        {% if perms.showcase.delete_product %}
-            <a class="top-nav-item inline-flex" href="{% url 'product_delete_view' pk=parent_object.pk %}">
-                {% lucide "trash-2" size=20 %}<div class="text-sm">Delete</div>
-            </a>
-        {% endif %}
     </div>
 </div>
 <div class="record-header">

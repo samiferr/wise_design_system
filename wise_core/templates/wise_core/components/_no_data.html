@@ -7,8 +7,9 @@ sentence and one next step) filled in from the list view's context
 (`wise_core.mixins.WiseListView`), and it tells the two empty lists apart,
 because they need opposite things from the visitor:
 
-  * Nothing matched the filters (`filter_kwargs_count`) -> the `search`
-    illustration, say so and offer a way back to the unfiltered list.
+  * Nothing matched the filters (`filter_kwargs_count`) or the search box
+    (`search_active`) -> the `search` illustration, say so and offer a way
+    back to the unfiltered list.
     Inviting someone to create a record they can't see because of a filter
     is how duplicates get made.
   * Nothing exists yet -> the `empty` illustration, name what's missing and
@@ -26,10 +27,14 @@ heading:
 
 See the docs site's Feedback -> Empty State page for the four states.
 {% endcomment %}
-{% if filter_kwargs_count %}
-    {% if not title %}{% trans "Nothing matches those filters" as title %}{% endif %}
+{% if filter_kwargs_count or search_active %}
+    {% if not title %}
+        {% if filter_kwargs_count %}{% trans "Nothing matches those filters" as title %}{% else %}{% trans "Nothing matches your search" as title %}{% endif %}
+    {% endif %}
     {% if not text %}
-        {% if model_verbose_name_plural %}
+        {% if not filter_kwargs_count %}
+            {% blocktrans with query=search_query asvar text %}Nothing matches "{{ query }}". Check the spelling, try a shorter search, or clear it to see the full list.{% endblocktrans %}
+        {% elif model_verbose_name_plural %}
             {% blocktrans with name=model_verbose_name_plural count counter=filter_kwargs_count asvar text %}No {{ name }} match the filter you applied. Clear it to see the full list.{% plural %}No {{ name }} match the {{ counter }} filters you applied. Clear them to see the full list.{% endblocktrans %}
         {% else %}
             {% blocktrans count counter=filter_kwargs_count asvar text %}No record matches the filter you applied. Clear it to see the full list.{% plural %}No record matches the {{ counter }} filters you applied. Clear them to see the full list.{% endblocktrans %}
@@ -37,7 +42,7 @@ See the docs site's Feedback -> Empty State page for the four states.
     {% endif %}
     {% empty_state title=title description=text illustration=illustration|default:"search" heading_level=heading_level %}
         <a class="btn btn-primary" href="{{ request.path }}">
-            {% lucide "x" size="s" %}<span>{% trans "Clear filters" %}</span>
+            {% lucide "x" size="s" %}<span>{% if filter_kwargs_count %}{% trans "Clear filters" %}{% else %}{% trans "Clear search" %}{% endif %}</span>
         </a>
     {% endempty_state %}
 {% else %}

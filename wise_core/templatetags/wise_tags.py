@@ -214,6 +214,32 @@ def get_url_for_model(model_name, action, *args, **kwargs):
     return reverse('{}_{}'.format(model_name, action), kwargs=kwargs, args=args)
 
 
+@register.filter
+def field_rows(form):
+    """
+    A form's visible fields as rows, for `_form_fields.html`: one field per
+    row, except the groups a form names in `field_rows` - a tuple of
+    field-name tuples, e.g. `(('dosage', 'form'),)` - which share a row on
+    medium and large screens, placed where the group's first field would be.
+    A name that is not a visible field of the form is ignored, so a group
+    survives a field being removed from the form per request.
+    """
+    groups = {}
+    for group in getattr(form, 'field_rows', ()):
+        present = tuple(name for name in group if name in form.fields)
+        for name in present:
+            groups[name] = present
+    visible = {field.name: field for field in form.visible_fields()}
+    rows, placed = [], set()
+    for field in form.visible_fields():
+        if field.name in placed:
+            continue
+        names = [name for name in groups.get(field.name, (field.name,)) if name in visible]
+        placed.update(names)
+        rows.append([visible[name] for name in names])
+    return rows
+
+
 # ── Empty state ─────────────────────────────────────────────────────────
 # Lumen's EmptyState: a message with a simple illustration for when there is
 # nothing to show. `_no_data.html` is the list-aware wrapper around it.

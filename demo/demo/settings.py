@@ -126,5 +126,9 @@ WISE_NAV_SECTIONS = [
     },
 ]
 
+# The trail above every page body (wise_core/components/_breadcrumbs.html),
+# built from WISE_NAV_SECTIONS and the page's parent record.
+WISE_BREADCRUMBS = True
+
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'

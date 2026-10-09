@@ -27,13 +27,19 @@ as a gallery via `WiseImageGalleryMixin`: one swipeable image with clickable
 thumbnails on tablet and desktop and indicator dots on a phone, rendered by
 `wise_core/components/_image_gallery.html`.
 """
+from collections import defaultdict
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.db import router
+from django.db.models.deletion import Collector, ProtectedError, RestrictedError
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse, reverse_lazy
+from django.urls import NoReverseMatch, reverse, reverse_lazy
+from django.utils.text import capfirst
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django.views.generic.base import ContextMixin
@@ -94,6 +100,14 @@ class WiseListView(OwnRecordsMixin, LoginRequiredMixin, PermissionRequiredMixin,
     `wise_core/components/_sortable_th.html`, which reads `current_sort` back
     out of this view's context.
 
+    Free-text search is a filter of its own: give the FilterSet a hidden
+    `q` CharFilter (`search_param`) wired to a method that ORs the
+    searchable columns. The view then hands the template `can_search` (and
+    `search_query`), so `wise_core/components/_search_bar.html` - which the
+    default `list_actions` block renders - appears by itself; the search is
+    kept out of `filter_kwargs_count` and the filter drawer on purpose, as
+    it has its own box and is not one of the drawer's fields.
+
     Set `create_url_name` to the URL name of this model's create page and the
     empty state (`wise_core/components/_no_data.html`) grows a "New <model>"
     button, and the list header can render its own from the same
@@ -106,6 +120,7 @@ class WiseListView(OwnRecordsMixin, LoginRequiredMixin, PermissionRequiredMixin,
     ordering = ['-pk']
     sortable_fields = ()
     create_url_name = None
+    search_param = 'q'
 
     def get_permission_required(self):
         return (permission_codename(self.model, 'view'),)
@@ -137,21 +152,28 @@ class WiseListView(OwnRecordsMixin, LoginRequiredMixin, PermissionRequiredMixin,
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['current_sort'] = self.get_current_sort()
-        context['filter_kwargs_count'] = len(
-            [key for key, value in self.request.GET.items() if value != '' and key in self.filterset.filters]
-        )
+        context['filter_kwargs_count'] = len(self.get_applied_filters())
         context['filter_kwarg'] = self.get_label_value_filter_kwargs()
+        context['can_search'] = self.search_param in self.filterset.filters
+        context['search_param'] = self.search_param
+        context['search_query'] = self.request.GET.get(self.search_param, '')
+        context['search_active'] = bool(context['can_search'] and context['search_query'])
         context['create_url'] = self.get_create_url() if self.can_add() else None
         context['model_verbose_name'] = self.model._meta.verbose_name
         context['model_verbose_name_plural'] = self.model._meta.verbose_name_plural
         return context
 
+    def get_applied_filters(self):
+        """
+        The filter fields the visitor has filled in - `{name: value}` - without
+        the free-text search, which has its own box and is not one of the
+        filter drawer's fields.
+        """
+        return {key: value for key, value in self.request.GET.items()
+                if value != '' and key in self.filterset.filters and key != self.search_param}
+
     def get_label_value_filter_kwargs(self):
-        kwargs = {}
-        for key, value in self.request.GET.items():
-            if value != '' and key in self.filterset.filters:
-                kwargs[self.filterset.filters[key].label] = value
-        return kwargs
+        return {self.filterset.filters[key].label: value for key, value in self.get_applied_filters().items()}
 
 
 class WiseDetailView(OwnRecordsMixin, LoginRequiredMixin, PermissionRequiredMixin, DetailView):
@@ -205,7 +227,110 @@ class WiseUpdateView(ValidationErrorFormMixin, OwnRecordsMixin, LoginRequiredMix
         return (permission_codename(self.model, 'change'),)
 
 
-class WiseDeleteView(OwnRecordsMixin, LoginRequiredMixin, PermissionRequiredMixin,
+class ProtectedDeleteMixin:
+    """
+    A record that other records still point at through an `on_delete=PROTECT`
+    (or `RESTRICT`) key is not deleted, and the visitor is told which ones -
+    a page instead of a server error. `WiseDeleteView` (and so every
+    `WiseParentDetailChildDeleteView`) already includes it.
+
+    The confirm page knows before the visitor presses Delete:
+    `get_context_data` asks Django's deletion collector what deleting the
+    record would run into - without deleting anything - and hands the
+    template `delete_blockers` (each kind of record in the way: its label,
+    its count and, when the visitor may view that kind, its first few as
+    links) and `delete_blocked_message`. `confirm_generic.html` /
+    `parent_child_confirm_generic.html` then render
+    `components/_delete_blockers.html` in place of the warning and leave the
+    Delete button out. A POST that reaches the database's refusal anyway (a
+    record added in between) is caught here and shows the same page.
+
+    `protected_message` is an optional sentence of the view's own, said
+    above the list ("This unit cannot be deleted: products use it."). A
+    record's link is its `get_absolute_url()`; override `get_blocker_url()`
+    for a kind of record that has no page of its own (an order line, whose
+    order is the page a person opens).
+    """
+    protected_message = None
+    # How many records of each kind the page names; the rest are counted.
+    blocker_sample_size = 5
+
+    def get_context_data(self, **kwargs):
+        if 'delete_blockers' not in kwargs:
+            kwargs['delete_blockers'] = self.describe_blockers(self.find_blockers(self.object))
+        if kwargs['delete_blockers']:
+            kwargs.setdefault('delete_blocked_message', self.get_protected_message())
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        try:
+            return super().form_valid(form)
+        except (ProtectedError, RestrictedError) as error:
+            blockers = self.describe_blockers(self.blocking_records(error))
+            return self.render_to_response(self.get_context_data(form=form, delete_blockers=blockers))
+
+    @staticmethod
+    def blocking_records(error):
+        if isinstance(error, ProtectedError):
+            return error.protected_objects
+        return error.restricted_objects
+
+    @classmethod
+    def find_blockers(cls, obj):
+        """The records that keep `obj` from being deleted - none when it can go. Deletes nothing."""
+        collector = Collector(using=router.db_for_write(obj.__class__, instance=obj), origin=obj)
+        try:
+            collector.collect([obj])
+        except (ProtectedError, RestrictedError) as error:
+            return cls.blocking_records(error)
+        return ()
+
+    def get_protected_message(self):
+        if self.protected_message:
+            return self.protected_message
+        message = gettext('%(record)s cannot be deleted: the records below still refer to it. '
+                          'Delete them or point them elsewhere first.') % {'record': capfirst(str(self.object))}
+        if any(field.name == 'is_active' for field in self.object._meta.concrete_fields):
+            message = '%s %s' % (message, gettext('You can also deactivate it instead.'))
+        return message
+
+    def describe_blockers(self, records):
+        """
+        The blocking records grouped by kind, for `_delete_blockers.html`:
+        each kind's name and count and - when the visitor may view that kind -
+        the first few of them, each with the page that shows it.
+        """
+        by_model = defaultdict(list)
+        for record in records:
+            by_model[record._meta.model].append(record)
+        user = self.request.user
+        groups = []
+        for model, items in by_model.items():
+            opts = model._meta
+            items.sort(key=lambda item: item.pk)
+            visible = user.has_perm(permission_codename(model, 'view'))
+            shown = items[:self.blocker_sample_size] if visible else []
+            groups.append({
+                'label': capfirst(opts.verbose_name if len(items) == 1 else opts.verbose_name_plural),
+                'count': len(items),
+                'records': [{'label': str(item), 'url': self.get_blocker_url(item)} for item in shown],
+                'more': len(items) - len(shown) if visible else 0,
+            })
+        groups.sort(key=lambda group: str(group['label']))
+        return groups
+
+    def get_blocker_url(self, record):
+        """The page that shows a blocking record, or None when it has none."""
+        get_url = getattr(record, 'get_absolute_url', None)
+        if get_url is None:
+            return None
+        try:
+            return get_url()
+        except NoReverseMatch:
+            return None
+
+
+class WiseDeleteView(ProtectedDeleteMixin, OwnRecordsMixin, LoginRequiredMixin, PermissionRequiredMixin,
                       SuccessMessageMixin, DeleteView):
     model = None
     login_url = reverse_lazy('login')

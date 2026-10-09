@@ -1,0 +1,23 @@
+{% load wise_icons %}
+{% comment %}
+The items of an actions menu, for `_record_actions.html` and
+`_row_actions.html`: pass `items` (the dicts `wise_actions.build_actions`
+returns). A destructive action gets a divider above it and the danger color;
+an action that changes the record when it runs is a POST form with a CSRF
+token, never a link.
+{% endcomment %}
+{% for action in items %}
+    {% if action.danger and not forloop.first %}<hr class="dropdown-divider">{% endif %}
+    {% if action.post %}
+        <form method="post" action="{{ action.url }}"{% if action.new_tab %} target="_blank"{% endif %}>
+            {% csrf_token %}
+            <button class="dropdown-item{% if action.danger %} dropdown-item-danger{% endif %}" type="submit" role="menuitem"{% if action.name %} name="{{ action.name }}" value="{{ action.value }}"{% endif %}>
+                {% lucide action.icon size=16 %}<span>{{ action.label }}</span>
+            </button>
+        </form>
+    {% else %}
+        <a class="dropdown-item{% if action.danger %} dropdown-item-danger{% endif %}" role="menuitem" href="{{ action.url }}"{% if action.new_tab %} target="_blank" rel="noopener"{% endif %}>
+            {% lucide action.icon size=16 %}<span>{{ action.label }}</span>
+        </a>
+    {% endif %}
+{% endfor %}

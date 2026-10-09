@@ -5,8 +5,20 @@ wrapper (form_generic.html does this already); pass `form=<the form>`.
 Extra bespoke fields (e.g. a gallery file input tacked on next to a
 ModelForm) can follow this include as sibling `.form-field` divs inside the
 same `.form-stack`.
+
+The form's media (`{{ form.media }}`) is rendered here, so a widget's own
+assets - an autocomplete's axios, the rich text editor's Quill - arrive with
+the form and a page never has to remember them. It renders nothing for a form
+whose widgets need no assets, which is most of them. (Don't also render
+`{{ form.media }}` in the page: the scripts would load twice.)
+
+Row grouping: a form may name groups of fields that share one row on medium
+and large screens - `field_rows = (('dosage', 'form'),)` on the form class,
+see the `field_rows` filter in wise_core/templatetags/wise_tags.py; every
+other field keeps a row of its own. On a phone every field is a row again.
 {% endcomment %}
-{% load wise_icons %}
+{% load wise_icons wise_tags %}
+{{ form.media }}
 {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
 {% if form.non_field_errors %}
     <div class="form-alert">
@@ -18,7 +30,9 @@ same `.form-stack`.
         </div>
     </div>
 {% endif %}
-{% for field in form.visible_fields %}
+{% for row in form|field_rows %}
+    {% if row|length > 1 %}<div class="grid grid-cols-1 items-start gap-4 {% if row|length == 2 %}md:grid-cols-2{% elif row|length == 3 %}md:grid-cols-3{% else %}md:grid-cols-4{% endif %}">{% endif %}
+    {% for field in row %}
     {% if field.field.widget.input_type == 'checkbox' %}
         <div class="form-field form-field-checkbox{% if field.errors %} form-field-error{% endif %}" data-field="{{ field.name }}">
             <label class="form-checkbox-label" for="{{ field.id_for_label }}">
@@ -46,4 +60,6 @@ same `.form-stack`.
             {% endif %}
         </div>
     {% endif %}
+    {% endfor %}
+    {% if row|length > 1 %}</div>{% endif %}
 {% endfor %}

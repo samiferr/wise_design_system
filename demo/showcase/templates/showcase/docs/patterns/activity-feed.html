@@ -1,0 +1,60 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons wise_tags %}
+{% block doc_title_tag %}Activity Feed{% endblock %}
+{% block doc_section %}Patterns{% endblock %}
+{% block doc_title %}Activity Feed{% endblock %}
+{% block doc_intro %}
+    A record's history as a list of cards - what happened, by whom and when, and what changed. Backed by
+     whatever log you keep.
+{% endblock %}
+{% block doc_body %}
+
+    <h2 class="mt-8">A record's history</h2>
+    <p class="text-gray-700">
+        Who created, changed or deleted what, and when, newest first: one card per change, with a Field / Before /
+        After table for an edit. As the last tab of a tabbed record (Overview, children, <strong>Activity</strong>)
+        it answers "what happened to this?" without leaving the record.
+    </p>
+    <div class="mt-4">
+        {% include 'wise_core/components/_activity_feed.html' with entries=doc_activity %}
+    </div>
+
+    <h2 class="mt-8">Feeding it</h2>
+    <p class="text-gray-700">
+        <code>_activity_feed.html</code> renders what it is handed and does not care where the log lives
+        (django-simple-history, an audit table, your own model): build a list of dicts and pass it as
+        <code>entries</code>. Put the feed in a tab like any other child page, with <code>_pagination.html</code> under
+        it for a long log.
+    </p>
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['entries'] = [
+        {
+            'action': entry.get_action_display(),     # the badge text
+            'badge': entry.badge,                     # green / orange / red / grey
+            'actor': entry.user,
+            'at': entry.created_at,
+            'updated': entry.action == 'updated',     # Before and After columns
+            'changes': [{'label': c.field, 'old': c.old, 'new': c.new} for c in entry.changes],
+        }
+        for entry in page_obj
+    ]
+    return context{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% include 'wise_core/components/_activity_feed.html' %}{% endverbatim %}{% endfilter %}</code></pre>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="card card-table mt-4 overflow-x-auto">
+        <table class="doc-props w-full">
+            <thead><tr><th>Key</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>action</code> / <code>badge</code></td><td>The badge: its text and colour (<code>green</code> created, <code>orange</code> updated, <code>red</code> deleted, <code>grey</code>).</td></tr>
+                <tr><td><code>actor</code> / <code>at</code></td><td>Who and when. <code>actor</code> is optional.</td></tr>
+                <tr><td><code>subject</code> / <code>detail</code></td><td>Optional: what the change touched when it is not the record itself ("Sale line" / "2 x Paracetamol").</td></tr>
+                <tr><td><code>updated</code></td><td>True for an edit: Before and After columns instead of one Value column.</td></tr>
+                <tr><td><code>changes</code></td><td>A list of <code>&#123;label, old, new&#125;</code>. Omit for an entry that only needs its badge.</td></tr>
+                <tr><td><code>empty_title</code> / <code>empty_text</code></td><td>Include arguments overriding the empty state's words.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

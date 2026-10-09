@@ -1,0 +1,35 @@
+{% load wise_icons i18n %}
+{% comment %}
+A record's actions inside its detail panel - see `record_actions` in
+wise_core/templatetags/wise_actions.py. The first action is a button; the
+rest are items of a menu behind a vertical-dots button (`details.dropdown.
+detail-panel-overflow`), a destructive one last in the danger color. A POST
+action (one that changes the record when it runs) is a form with a CSRF
+token, never a link.
+{% endcomment %}
+{% if main_action %}
+    {% with action=main_action %}
+        {% if action.post %}
+            <form method="post" action="{{ action.url }}"{% if action.new_tab %} target="_blank"{% endif %} class="contents">
+                {% csrf_token %}
+                <button class="btn btn-{{ action.style }}" type="submit"{% if action.name %} name="{{ action.name }}" value="{{ action.value }}"{% endif %}>
+                    {% lucide action.icon size=16 %}<span>{{ action.label }}</span>
+                </button>
+            </form>
+        {% else %}
+            <a class="btn btn-{{ action.style }}" href="{{ action.url }}"{% if action.new_tab %} target="_blank" rel="noopener"{% endif %}>
+                {% lucide action.icon size=16 %}<span>{{ action.label }}</span>
+            </a>
+        {% endif %}
+    {% endwith %}
+{% endif %}
+{% if more_actions %}
+    <details class="dropdown detail-panel-overflow">
+        <summary class="btn-icon btn-secondary" aria-label="{% trans 'More actions' %}" title="{% trans 'More actions' %}">
+            {% lucide "ellipsis-vertical" size=16 %}
+        </summary>
+        <div class="dropdown-panel" role="menu">
+            {% include 'wise_core/components/_action_menu_items.html' with items=more_actions %}
+        </div>
+    </details>
+{% endif %}

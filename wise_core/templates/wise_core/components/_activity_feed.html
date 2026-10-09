@@ -1,0 +1,73 @@
+{% load i18n wise_icons %}
+{% comment %}
+A record's activity: who created, changed or deleted what, and when, newest
+first - one card per change, a Field / Before / After table for an edit. It
+renders what it is handed and knows nothing about where the log lives
+(django-simple-history, an audit table, your own model), so the same feed
+serves them all.
+
+Pass `entries`, a list of dicts:
+
+    {'action': 'Updated',          # the badge's text
+     'badge': 'orange',            # badge colour: green (created), orange (updated), red (deleted), grey
+     'actor': 'Sami',              # who (optional)
+     'at': datetime,               # when
+     'subject': 'Sale line',       # optional: what the change touched, when it is not the record itself
+     'detail': '2 × Paracetamol',  # optional: and which one
+     'updated': True,              # an edit: Before and After columns instead of a single Value one
+     'changes': [{'label': 'Quantity', 'old': '1', 'new': '2'}]}   # optional
+
+Beside it, the usual `_pagination.html` for a long log. With no entries it
+shows an empty state, `empty_title` / `empty_text` overriding its words. The
+change table keeps its columns on a phone (`data-table-scroll`) so each entry
+stays one card rather than splitting into a card per field.
+{% endcomment %}
+<div class="space-y-3">
+    {% for entry in entries %}
+        <div class="card overflow-x-auto p-0">
+            <div class="flex flex-wrap items-center justify-between gap-2 p-4">
+                <div class="flex min-w-0 flex-wrap items-center gap-2">
+                    <span class="badge badge-{{ entry.badge|default:'grey' }}">{{ entry.action }}</span>
+                    {% if entry.subject %}
+                        <span class="text-body-s text-content-subdued">{{ entry.subject|capfirst }}</span>
+                        {% if entry.detail %}<span class="text-body-s">{{ entry.detail }}</span>{% endif %}
+                    {% endif %}
+                </div>
+                <div class="card-meta">
+                    {% if entry.actor %}{% lucide "user" size=14 %}<span>{{ entry.actor }}</span><span aria-hidden="true">·</span>{% endif %}
+                    <time datetime="{{ entry.at|date:'c' }}">{{ entry.at }}</time>
+                </div>
+            </div>
+            {% if entry.changes %}
+                <table class="data-table data-table-scroll">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Field" %}</th>
+                            {% if entry.updated %}
+                                <th>{% trans "Before" %}</th>
+                                <th>{% trans "After" %}</th>
+                            {% else %}
+                                <th>{% trans "Value" %}</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for change in entry.changes %}
+                            <tr>
+                                <td class="text-title-s" data-label="">{{ change.label|capfirst }}</td>
+                                {% if entry.updated %}
+                                    <td class="text-content-subdued">{{ change.old|default:"—"|linebreaksbr }}</td>
+                                {% endif %}
+                                <td>{{ change.new|default:"—"|linebreaksbr }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    {% empty %}
+        {% trans "No activity yet" as default_title %}
+        {% trans "Changes to this record will show up here." as default_text %}
+        {% include 'wise_core/components/_no_data.html' with title=empty_title|default:default_title text=empty_text|default:default_text illustration="empty" heading_level=4 %}
+    {% endfor %}
+</div>

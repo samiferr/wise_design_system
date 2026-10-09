@@ -1,0 +1,28 @@
+{% load wise_nav wise_icons i18n %}
+{% comment %}
+The app's breadcrumb trail, included above every page body by
+`wise_core/base.html` when `WISE_BREADCRUMBS = True` in settings. Markup is
+the design system's Breadcrumb (`nav.breadcrumb` > `.breadcrumb-item` /
+`.breadcrumb-separator`, an icon-only Home crumb named by `.sr-only` text,
+the current page a <span> with aria-current); which crumbs a page gets is
+decided by `breadcrumbs` in wise_core/templatetags/wise_nav.py. Renders
+nothing on the dashboard and on logged-out pages. Override the `breadcrumbs`
+block to place it yourself.
+{% endcomment %}
+{% breadcrumbs as crumbs %}
+{% if crumbs %}
+    <nav class="breadcrumb px-4 pt-4 sm:px-6 sm:pt-6" aria-label="{% trans 'Breadcrumb' %}">
+        {% for crumb in crumbs %}
+            {% if not forloop.first %}
+                <span class="breadcrumb-separator">{% lucide "chevron-right" size=14 %}</span>
+            {% endif %}
+            {% if crumb.url %}
+                <a class="breadcrumb-item" href="{{ crumb.url }}">
+                    {% if crumb.icon %}{% lucide crumb.icon size=14 %}<span class="sr-only">{{ crumb.label }}</span>{% else %}{{ crumb.label }}{% endif %}
+                </a>
+            {% else %}
+                <span class="breadcrumb-item" aria-current="page">{{ crumb.label }}</span>
+            {% endif %}
+        {% endfor %}
+    </nav>
+{% endif %}

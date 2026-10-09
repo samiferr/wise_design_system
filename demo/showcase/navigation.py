@@ -95,6 +95,7 @@ DOCS_NAV = [
         'icon': 'menu',
         'items': [
             {'title': 'Breadcrumb', 'slug': 'breadcrumb'},
+            {'title': 'Steps', 'slug': 'steps'},
             {'title': 'Pagination', 'slug': 'pagination'},
             {'title': 'Tab Group', 'slug': 'tab-group'},
             {'title': 'Tree', 'slug': 'tree'},
@@ -157,6 +158,10 @@ DOCS_NAV = [
             {'title': 'Simple Data Page', 'slug': 'simple-data-page'},
             {'title': 'Card List vs. Data Table', 'slug': 'list-view-toggle'},
             {'title': 'Tabbed Parent / Child', 'slug': 'parent-child-crud'},
+            {'title': 'List Page', 'slug': 'list-page'},
+            {'title': 'Record Actions', 'slug': 'record-actions'},
+            {'title': 'Protected Delete', 'slug': 'protected-delete'},
+            {'title': 'Activity Feed', 'slug': 'activity-feed'},
             {'title': 'Calendar', 'slug': 'calendar'},
         ],
     },

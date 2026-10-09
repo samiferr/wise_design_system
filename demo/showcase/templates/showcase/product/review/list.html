@@ -1,5 +1,5 @@
 {% extends 'wise_core/generic/parent_child_list_generic.html' %}
-{% load wise_icons %}
+{% load wise_icons wise_actions %}
 {% comment %}
 The Reviews tab - the same generic template as the Variants tab next door,
 rendering cards instead of a table. Two child models, one bar, one chrome.
@@ -8,12 +8,9 @@ rendering cards instead of a table. Two child models, one bar, one chrome.
 {% block parent_header %}{% include 'showcase/product/_header.html' %}{% endblock %}
 
 {% block list_actions %}
+    {% if can_search %}{% include 'wise_core/components/_search_bar.html' %}{% endif %}
     {% include 'wise_core/components/filter_button.html' %}
-    {% if create_url %}
-        <a class="btn btn-primary" href="{{ create_url }}">
-            {% lucide "plus" size=16 %}<span>New review</span>
-        </a>
-    {% endif %}
+    {% include 'wise_core/components/_create_button.html' with label="New review" %}
 {% endblock %}
 
 {% block card_item %}

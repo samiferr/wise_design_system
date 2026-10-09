@@ -1,0 +1,33 @@
+{% load wise_icons i18n %}
+{% comment %}
+The progress of a multi-step flow - the design system's Steps (`.steps`).
+Pass `steps`, a list of dicts (`wise_core.steps.wizard_steps()` builds it from
+the labels and the current step):
+
+    {'label': 'Identity', 'state': 'done'|'current'|'upcoming', 'number': 1,
+     'key': 'identity', 'url': '/...'}
+
+`url` (optional) makes a finished step's label a link back to it; `key`
+becomes `data-step`, for a script that moves the marks along as the visitor
+goes. Each marker carries both its number and its tick, one of them hidden,
+so such a script only has to toggle `hidden` (`data-role="step-number"` /
+`"step-done"`). The current step is `aria-current="step"` and a finished
+one's tick is announced as "Done", so the state is never colour alone.
+`label` (the `<ol>`'s accessible name) defaults to "Steps".
+{% endcomment %}
+<ol class="steps" aria-label="{{ label|default:_('Steps') }}" data-role="wizard-steps">
+    {% for step in steps %}
+        <li class="step{% if step.state == 'current' %} step-current{% elif step.state == 'done' %} step-done{% endif %}"
+            data-step="{{ step.key|default:forloop.counter }}"{% if step.state == 'current' %} aria-current="step"{% endif %}>
+            <span class="step-marker" data-role="step-mark">
+                <span data-role="step-number"{% if step.state == 'done' %} hidden{% endif %}>{{ step.number|default:forloop.counter }}</span>
+                <span data-role="step-done"{% if step.state != 'done' %} hidden{% endif %}>{% lucide "check" size="xs" label=_("Done") %}</span>
+            </span>
+            {% if step.url and step.state == 'done' %}
+                <a class="step-label" href="{{ step.url }}">{{ step.label }}</a>
+            {% else %}
+                <span class="step-label">{{ step.label }}</span>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ol>

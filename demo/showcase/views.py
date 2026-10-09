@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+
 from django.conf import settings
 from django.templatetags.static import static
 from django.urls import reverse_lazy
@@ -20,6 +22,7 @@ from wise_core.mixins import (
     WiseParentDetailView,
     WiseUpdateView,
 )
+from wise_core.steps import wizard_steps
 from wise_core.templatetags.wise_icons import LUMEN_NAMES
 
 from . import navigation
@@ -169,6 +172,73 @@ def _parent_child_context():
     }
 
 
+def _steps_context():
+    """The Steps page's previews: the helper the component's include is fed by."""
+    labels = ['Identity', 'Contact', 'Document', 'Review']
+    return {
+        'doc_steps': wizard_steps(labels, current=1),
+        'doc_steps_linked': wizard_steps(labels, current=2, urls=['#identity', '#contact', None, None]),
+        'doc_steps_first': wizard_steps(labels, current=0),
+    }
+
+
+def _record_actions_context():
+    """
+    The Record Actions page renders `_record_actions.html` itself with the
+    dicts `wise_actions.build_actions` would hand it, since a docs page has
+    neither a record nor a signed-in user to ask for permissions.
+    """
+    edit = {'label': 'Edit', 'icon': 'pencil', 'url': '#', 'style': 'secondary'}
+    duplicate = {'label': 'Duplicate', 'icon': 'copy', 'url': '#', 'style': 'secondary'}
+    printing = {'label': 'Print', 'icon': 'printer', 'url': '#', 'style': 'secondary', 'new_tab': True}
+    archive = {'label': 'Archive', 'icon': 'folder', 'url': '#', 'style': 'secondary', 'post': True}
+    delete = {'label': 'Delete', 'icon': 'trash-2', 'url': '#', 'style': 'outline-danger', 'danger': True}
+    approve = {'label': 'Approve', 'icon': 'check', 'url': '#', 'style': 'primary'}
+    return {
+        'doc_main_action': approve,
+        'doc_more_actions': [edit, printing, archive, delete],
+        'doc_row_actions': [edit, duplicate, delete],
+    }
+
+
+def _delete_blockers_context():
+    """The Protected Delete page's preview: what `ProtectedDeleteMixin` hands the template."""
+    return {
+        'delete_blocked_message': 'Stationery cannot be deleted: the records below still refer to it. '
+                                  'Delete them or point them elsewhere first.',
+        'delete_blockers': [
+            {'label': 'Products', 'count': 7, 'more': 2, 'records': [
+                {'label': 'Ballpoint pen (box of 12)', 'url': '#'},
+                {'label': 'Gel pen', 'url': '#'},
+                {'label': 'Highlighter set', 'url': '#'},
+                {'label': 'Marker, black', 'url': '#'},
+                {'label': 'Pencil HB', 'url': '#'},
+            ]},
+            {'label': 'Reviews', 'count': 1, 'more': 0, 'records': [{'label': 'Amira — 4/5', 'url': None}]},
+        ],
+    }
+
+
+def _activity_context():
+    """The Activity Feed page's preview: entries as a log of your own would hand them over."""
+    now = datetime.now(timezone.utc).replace(second=0, microsecond=0)
+    return {
+        'doc_activity': [
+            {'action': 'Updated', 'badge': 'orange', 'actor': 'Amira', 'at': now - timedelta(hours=2),
+             'updated': True, 'changes': [
+                 {'label': 'status', 'old': 'Draft', 'new': 'Approved'},
+                 {'label': 'notes', 'old': '', 'new': 'Checked against the delivery note.'},
+             ]},
+            {'action': 'Created', 'badge': 'green', 'actor': 'Sami', 'at': now - timedelta(days=1, hours=3),
+             'subject': 'order line', 'detail': '12 × Ballpoint pen', 'changes': [
+                 {'label': 'product', 'new': 'Ballpoint pen (box of 12)'},
+                 {'label': 'quantity', 'new': '12'},
+             ]},
+            {'action': 'Created', 'badge': 'green', 'actor': 'Sami', 'at': now - timedelta(days=1, hours=4)},
+        ],
+    }
+
+
 # Pages that need more than the static template. Keyed by (section, page).
 _FORM_PAGES = [
     'input', 'textarea', 'number-input', 'select', 'checkbox', 'radio', 'switch',
@@ -188,6 +258,10 @@ EXTRA_CONTEXT = {
     ('feedback', 'progress-ring'): _chart_context,
     ('patterns', 'simple-data-page'): _chart_context,
     ('patterns', 'parent-child-crud'): _parent_child_context,
+    ('navigation', 'steps'): _steps_context,
+    ('patterns', 'record-actions'): _record_actions_context,
+    ('patterns', 'protected-delete'): _delete_blockers_context,
+    ('patterns', 'activity-feed'): _activity_context,
 }
 EXTRA_CONTEXT.update({('forms', page): _kitchen_sink_context for page in _FORM_PAGES})
 EXTRA_CONTEXT.update({('data-viz', page): _chart_context for page in _CHART_PAGES})

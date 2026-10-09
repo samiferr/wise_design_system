@@ -160,3 +160,39 @@ matching the URL-naming convention the demo site's `showcase/urls.py` uses throu
 `product_delete_view`). Equivalent to `reverse("product_detail_view", kwargs={"pk": object.pk})`
 but with the model name as a runtime string, for a genuinely model-agnostic generic template that
 doesn't know which model it's rendering ahead of time.
+
+
+### `{{ form|field_rows }}` (filter)
+
+A form's visible fields as rows, for `_form_fields.html`. A form class may set `field_rows = (('dosage', 'form'),)`:
+the fields of a group share one row from the `md` breakpoint up (placed where the group's first field would be);
+every other field keeps a row of its own, and on a phone every field is a row again. `_form_fields.html` also
+renders `{{ form.media }}` - don't render it yourself too.
+
+## `wise_actions` — `{% load wise_actions %}`
+
+### `{% record_actions object %}` / `{% row_actions object %}`
+
+A record's actions, with the permission checks done for you. `record_actions` goes in the `detail_actions` block of a
+detail page: the first action is a button, the rest are items of an overflow menu behind a vertical-dots button
+(Delete last, in the danger colour). `row_actions` is the same menu for a table row (an empty `<th>` above it) and
+renders nothing when the visitor may do none of them.
+
+Edit and Delete appear with the model's `change` / `delete` permission, at `<model>_update_view` /
+`<model>_delete_view` unless `edit_url=` / `delete_url=` are given (a child record passes its own); `edit=False` /
+`delete=False` leave them out. `actions=[...]` come before Edit and `more_actions=[...]` between Edit and Delete;
+each is a dict with `label`, `url`, optional `icon`, `style`, `post` (a CSRF-protected POST form), `name` /
+`value`, `new_tab`, `danger` and `permission` (`'app.codename'`; the action is left out without it).
+
+## `wise_nav` — `{% load wise_nav %}`
+
+### `{% nav_tree as sections %}` and `{% breadcrumbs as crumbs %}`
+
+Both read `WISE_NAV_SECTIONS`. `nav_tree` resolves it for the request (the selected item, the open section,
+`staff_only` items hidden) for `nav_menu.html`; `breadcrumbs` builds the trail for `_breadcrumbs.html` (see
+Getting started). 
+
+## Steps — `wise_core.steps.wizard_steps(labels, current, urls=None, keys=None)`
+
+Builds the list `components/_steps.html` renders (the `.steps` component): steps before `current` are done, the
+one at `current` is current, the rest upcoming.

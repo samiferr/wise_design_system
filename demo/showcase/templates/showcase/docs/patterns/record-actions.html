@@ -1,0 +1,165 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons wise_tags %}
+{% block doc_title_tag %}Record Actions{% endblock %}
+{% block doc_section %}Patterns{% endblock %}
+{% block doc_title %}Record Actions{% endblock %}
+{% block doc_intro %}
+    What a visitor can do to a record - edit, delete, approve, print - kept in one place: the header of its
+     detail panel and the menu on each row of a list. One button, the rest behind a menu, so it fits a phone.
+{% endblock %}
+{% block doc_body %}
+
+    <h2 class="mt-8">See it live</h2>
+    <p class="text-gray-700">
+        Open any product (or one of its variants or reviews) and look at the detail panel's header; open
+        the list in table view for the row menu. Shrink the window to a phone width to see both stay on one row.
+    </p>
+    <div class="doc-section-grid">
+        <a class="card" href="{% url 'product_detail_view' pk=1 %}">
+            <div class="card-kicker">Detail panel</div>
+            <h3 class="card-title mt-1">A product</h3>
+            <p class="card-content mt-2">Edit is the button; Delete waits in the menu behind the dots.</p>
+        </a>
+        <a class="card" href="{% url 'product_list_view' %}?view=table">
+            <div class="card-kicker">Row menu</div>
+            <h3 class="card-title mt-1">Products as a table</h3>
+            <p class="card-content mt-2">On a phone each row is a card and its menu moves to the corner.</p>
+        </a>
+    </div>
+
+    <h2 class="mt-8">Actions live in the detail panel</h2>
+    <p class="text-gray-700">
+        A record's actions sit in the header of its detail panel, next to its title - not in the page's top bar,
+        which keeps only the back link. The first action is a button; every other one is an item of an overflow
+        menu behind a vertical-dots button, with a destructive action last in the danger colour. However many
+        actions a record has (approve, edit, print, archive, delete), the header stays one row, on a phone too.
+    </p>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex911" id="ex911-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex911" id="ex911-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex911-preview">Preview</label>
+        <label class="doc-example-tab" for="ex911-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
+            <div class="detail-panel">
+                <div class="detail-panel-header">
+                    <h2>Overview</h2>
+                    <div class="detail-panel-actions">
+                        {% include 'wise_core/components/_record_actions.html' with main_action=doc_main_action more_actions=doc_more_actions %}
+                    </div>
+                </div>
+                <table>
+                    <tr><th>Status</th><td>Draft</td></tr>
+                    <tr><th>Created by</th><td>Amira</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_actions %}
+
+{% block detail_actions %}
+    {% record_actions object %}
+{% endblock %}{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+    <p class="mt-2 text-gray-700">
+        <code>record_actions</code> works out which actions the visitor gets: Edit and Delete behind the model's
+        <code>change</code> / <code>delete</code> permission, at <code>&lt;model&gt;_update_view</code> and
+        <code>&lt;model&gt;_delete_view</code> (the naming the generic views already use). When the visitor may do
+        nothing, nothing renders - no empty dots button.
+    </p>
+
+    <h2 class="mt-8">On each table row</h2>
+    <div class="doc-example">
+    <input class="doc-example-radio" type="radio" name="ex912" id="ex912-preview" value="preview" checked>
+    <input class="doc-example-radio" type="radio" name="ex912" id="ex912-code" value="code">
+    <div class="doc-example-tabs" role="tablist">
+        <label class="doc-example-tab" for="ex912-preview">Preview</label>
+        <label class="doc-example-tab" for="ex912-code">Code</label>
+    </div>
+    <div class="doc-example-panel-preview">
+        <div class="doc-preview">
+            <div class="card card-table overflow-x-auto">
+                <table class="data-table">
+                    <thead><tr><th></th><th>Name</th></tr></thead>
+                    <tbody><tr>
+                        <td>{% include 'wise_core/components/_row_actions.html' with more_actions=doc_row_actions %}</td>
+                        <td>Ballpoint pen</td>
+                    </tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="doc-example-panel-code">
+        <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% load wise_actions %}
+
+<th></th>                           {# an empty header: the actions column #}
+...
+<td>{% row_actions item %}</td>{% endverbatim %}{% endfilter %}</code></pre>
+    </div>
+</div>
+    <p class="mt-2 text-gray-700">
+        Same arguments, same rules. On a phone a <code>.data-table</code> row is a card and this menu goes to
+        the card's top right corner by itself - give the column an empty <code>&lt;th&gt;</code> so it has no label.
+    </p>
+
+    <h2 class="mt-8">Your own actions</h2>
+    <p class="text-gray-700">
+        <code>actions</code> come before Edit (a workflow's transitions: Approve, Submit), <code>more_actions</code>
+        between Edit and Delete (Print, Duplicate). Each is a dict; a visitor lacking the action's own
+        <code>permission</code> never sees it.
+    </p>
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}# in the view
+def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['approve'] = [{
+        'label': _('Approve'), 'icon': 'check', 'style': 'primary',
+        'url': reverse('invoice_approve_view', args=[self.object.pk]),
+        'permission': 'billing.approve_invoice',
+    }]
+    context['print'] = [{
+        'label': _('Print'), 'icon': 'printer', 'new_tab': True,
+        'url': reverse('invoice_print_view', args=[self.object.pk]),
+    }]
+    return context{% endverbatim %}{% endfilter %}</code></pre>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% record_actions object actions=approve more_actions=print %}
+
+{# a child record under a tabbed parent carries the parent's pk in its URLs #}
+{% url 'line_update_view' parent_pk=parent_object.pk pk=object.pk as edit_url %}
+{% url 'line_delete_view' parent_pk=parent_object.pk pk=object.pk as delete_url %}
+{% record_actions object edit_url=edit_url delete_url=delete_url %}{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        An action that <em>changes the record when it runs</em> (archiving, printing that marks a document as sent)
+        is a POST form with a CSRF token, never a link: set <code>'post': True</code> and, if the view reads it,
+        <code>'name'</code> / <code>'value'</code>.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="card card-table mt-4 overflow-x-auto">
+        <table class="doc-props w-full">
+            <thead><tr><th>Key</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>label</code></td><td>The text.</td></tr>
+                <tr><td><code>url</code></td><td>Where it goes, or posts to.</td></tr>
+                <tr><td><code>icon</code></td><td>A Lucide icon name. Defaults to <code>arrow-right</code>.</td></tr>
+                <tr><td><code>style</code></td><td>The button style when it is the first action: <code>primary</code>, <code>secondary</code> (default), <code>danger</code>...</td></tr>
+                <tr><td><code>post</code></td><td>True: a POST form with a CSRF token. <code>name</code> / <code>value</code> are the submit button's.</td></tr>
+                <tr><td><code>new_tab</code></td><td>Opens in a new tab.</td></tr>
+                <tr><td><code>danger</code></td><td>A destructive action: danger colour, a divider above it in the menu.</td></tr>
+                <tr><td><code>permission</code></td><td><code>app.codename</code> the visitor must hold, or the action is left out.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="callout callout-info mt-4">
+        {% status_glyph "info" size=18 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">One accent action per view</div>
+            The first action takes the button; do not promote a second one. If a page has two equally important actions, one of them belongs on its own page.
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,5 +1,12 @@
 {% extends 'wise_core/base.html' %}
 {% load i18n %}
+{% comment %}
+A list page: icon + title + record count, and a header row of actions.
+The default `list_actions` is the whole standard row - the search box (when
+the view has a search filter, see `WiseListView`), the filter drawer's button
+and the "New" button (a floating action button on a phone) - so a list that
+only needs to fill in its rows overrides nothing but `list_body`.
+{% endcomment %}
 
 {% block body %}
     <div class="page-panel">
@@ -13,7 +20,9 @@
             </div>
             <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                 {% block list_actions %}
+                    {% if can_search %}{% include 'wise_core/components/_search_bar.html' %}{% endif %}
                     {% include 'wise_core/components/filter_button.html' %}
+                    {% include 'wise_core/components/_create_button.html' %}
                 {% endblock %}
             </div>
         </div>

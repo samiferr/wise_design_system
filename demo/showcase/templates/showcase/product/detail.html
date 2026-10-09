@@ -1,5 +1,5 @@
 {% extends 'wise_core/generic/parent_detail_generic.html' %}
-{% load wise_icons wise_tags %}
+{% load wise_icons wise_tags wise_actions %}
 {% comment %}
 A product's Overview tab. The header and the tab bar come from
 parent_detail_generic.html - all this template says is what the record's
@@ -16,6 +16,8 @@ WiseImageGalleryMixin on ProductDetailView).
         <div class="min-w-0">{{ block.super }}</div>
     </div>
 {% endblock %}
+
+{% block detail_actions %}{% record_actions object %}{% endblock %}
 
 {% block detail_rows %}
     <tr>
