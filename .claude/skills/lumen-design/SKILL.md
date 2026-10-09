@@ -80,6 +80,8 @@ Before writing markup, find the existing class. Full table with markup in
 | Progress | `.progress > .progress-value` / `.progress-ring`, `.spinner` |
 | Tooltip | `.tooltip[data-tooltip]` |
 | Image gallery (product photos) | `WiseImageGalleryMixin` on the view + `{% include 'wise_core/components/_image_gallery.html' %}` |
+| Steps (wizard progress) | `ol.steps` > `li.step(.step-current/.step-done)`; `wizard_steps()` + `_steps.html` |
+| Record actions (detail panel, table row) | `{% record_actions object %}` / `{% row_actions item %}` (`{% load wise_actions %}`): one button, the rest in an overflow menu |
 | List-page layout, forms, CRUD pages | the generic templates in `wise_core/templates/wise_core/generic/`; don't rebuild them |
 
 If nothing fits, build from tokens (below) and, if it's reusable, add it to `tokens.css` following

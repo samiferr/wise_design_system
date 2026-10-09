@@ -117,17 +117,22 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 | Accordion | `.accordion` > `details.accordion-item` > `summary` (+ `.accordion-chevron`) + `.accordion-content` |
 | Carousel | `.carousel` > `.carousel-track` > `.carousel-item`; `.carousel-nav` > `a.carousel-dot(.selected)` |
 | Image gallery (a record's photos) | Build in the view with `WiseImageGalleryMixin`, render with `{% include 'wise_core/components/_image_gallery.html' %}`; never hand-write it. → `.gallery` (`.gallery-rail`, `.gallery-cover`, `--gallery-ratio`) > `.gallery-stage` > `.gallery-slide`; `.gallery-thumbs` > `a.gallery-thumb(.selected)` (640px+); `.gallery-dots` > `.carousel-dot` (phones, indicator only); `.gallery-placeholder` | 16px stage on `background-layer-2` + `border-subtle`; 8px thumbnails, 2px `border-subtle` edge, `accent-background` when selected |
-| Toolbar | `.top-actions-header` with `.top-nav-item` actions (the CRUD back/edit/delete bar) |
+| Toolbar | `.top-actions-header` with the `.top-nav-item` **back link** only - a record's Edit / Delete / workflow actions live in its detail panel (below) |
+| Record actions | `{% record_actions object %}` in the `detail_actions` block: first action a button, the rest in `details.dropdown.detail-panel-overflow` behind a dots button, Delete last (`danger`); `{% row_actions item %}` for a table row. Never hand-write the buttons |
+| List header | `list_generic.html`'s default `list_actions`: `_search_bar.html` (when `can_search`) + `filter_button.html` (opens the `.drawer`) + `_create_button.html` (`btn-primary btn-fab`: a floating button below `sm`) |
+| Delete blocked | `ProtectedDeleteMixin` (built into `WiseDeleteView`) → `_delete_blockers.html` in place of the warning |
+| Activity feed | `_activity_feed.html` with `entries` (badge, actor, time, Before/After changes) |
 
 ## Navigation
 
 | Need | Wise |
 |---|---|
-| Side navigation | `wise_core/components/nav_menu.html`: `.menu-node > h3` (section heading, title-xs) + `a.menu-link(.selected)` rows (selected = `fill-neutral-hover`, bold `content-heading`) |
+| Side navigation | `wise_core/components/nav_menu.html` renders `WISE_NAV_SECTIONS` as the Tree (`nav_tree`): collapsible sections, `a.tree-leaf(.selected)`. (`.menu-node > h3` + `a.menu-link(.selected)` remain as classes) |
 | Tree nav | `.tree` > `details.tree-item` > `summary` + `.tree-item-children` > `a.tree-leaf(.selected)` |
 | Tabs | `.tab-bar` > `a.bar-item(.selected)` with optional icon and `.tab-count`; tabs are links (one URL per tab). Bold `title-s`, selected tab gets a 2px `content-heading` indicator |
 | Top app bar | `.top-bar` (mobile), `.top-bar-logo` |
-| Breadcrumb | `nav.breadcrumb` > `a.breadcrumb-item`, `.breadcrumb-separator` |
+| Breadcrumb | `nav.breadcrumb` > `a.breadcrumb-item`, `.breadcrumb-separator`; the whole trail for an app page: `WISE_BREADCRUMBS = True` (`{% breadcrumbs %}`, `_breadcrumbs.html`) |
+| Steps (wizard progress) | `ol.steps` > `li.step(.step-current / .step-done)` > `.step-marker` + `.step-label`; `wizard_steps()` + `_steps.html`. Spectrum's Steplist; below `sm` only the current label shows |
 | Pagination | Lumen's Pagination, rendered by `_pagination.html`: `.pagination-bar` > `.pagination-summary` ("Showing 21-40 of 312") + `nav.pagination` > chevron-only Previous / Next and numbered `a.pagination-link` pills (`.selected` + `aria-current="page"` = `neutral-background`, `.disabled`, `.pagination-gap` for ellipses); the run of pages is windowed by the `page_window` filter and every link keeps the other query parameters (`page_url`). Under a table it goes in the `.card-footer` |
 
 ## Selection & text inputs
@@ -154,7 +159,7 @@ Outlined segments with shared borders and round ends; the selected segment is fi
 
 | Need | Wise |
 |---|---|
-| Table | **Always inside a card**: `<div class="card card-table mt-4 overflow-x-auto">` > `table.data-table`, with no card header (the page's actions stay in the page header) and the pager in a `.card-footer`. `data-table`: 12px bold subdued headers (32px tall) over a 2px rule, 40px body-s rows (`.data-table-compact` 32px, `.data-table-spacious` 48px; Lumen's heights, as minimums), 12px cell padding, `row-hover` / `selected-subtle` row tints; sortable headers via `_sortable_th.html`; `.data-table-cards` = card rows below `sm` (labels from the headers via common.js, no toggle) |
+| Table | **Always inside a card**: `<div class="card card-table mt-4 overflow-x-auto">` > `table.data-table`, with no card header (the page's actions stay in the page header) and the pager in a `.card-footer`. `data-table`: 12px bold subdued headers (32px tall) over a 2px rule, 40px body-s rows (`.data-table-compact` 32px, `.data-table-spacious` 48px; Lumen's heights, as minimums), 12px cell padding, `row-hover` / `selected-subtle` row tints; sortable headers via `_sortable_th.html`; **every `.data-table` is card rows below `sm`** (labels from the headers via common.js, no toggle; a row-actions `{% row_actions %}` menu goes to the card's corner; `.data-table-scroll` opts a table out, `.data-table-cards` is a no-op marker) |
 | Record detail | `.detail-panel` (> `.detail-panel-header` > `.detail-panel-actions`, `table` of `th`/`td`); several actions: the main one as a button, the rest in `details.dropdown.detail-panel-overflow` behind an `ellipsis-vertical` `btn-icon` |
 | Avatar | `.avatar` (40px circle, neutral fill), `.avatar-sm`/`-lg`, `.avatar-square`, `.avatar-group` |
 | Charts | `<canvas class="chart-canvas" data-chart="{% chart_json cfg %}">` in a `.chart-frame`; series colors are the accent then Lumen step-900 hues (`wise_core/charts.py`) |

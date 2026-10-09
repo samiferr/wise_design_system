@@ -523,13 +523,14 @@ function wiseCloseDrawer(id) {
 }
 
 // ── Data table card rows ─────────────────────────────────────────────────────
-// `.data-table-cards` shows each row as a card on a phone, every cell as
-// "label  value" (see tokens.css). The label is the cell's `data-label`; give
-// every body cell without one the text of its column's header, following
-// colspans. Call wiseLabelTableCells(root) after inserting a table yourself.
+// A `.data-table` shows each row as a card on a phone, every cell as
+// "label  value" (see tokens.css; `.data-table-scroll` opts a table out). The
+// label is the cell's `data-label`; give every body cell without one the text
+// of its column's header, following colspans. Call wiseLabelTableCells(root)
+// after inserting a table yourself.
 
 function wiseLabelTableCells(root) {
-    (root || document).querySelectorAll('table.data-table-cards').forEach(function (table) {
+    (root || document).querySelectorAll('table.data-table:not(.data-table-scroll)').forEach(function (table) {
         var headerRow = table.tHead && table.tHead.rows[table.tHead.rows.length - 1]
         if (!headerRow) return
         var labels = []

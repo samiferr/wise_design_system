@@ -85,7 +85,8 @@
     <h2 class="mt-8">Or: one table that turns into cards on a phone</h2>
     <p class="mt-2 text-content-subdued">
         When a page should simply follow the screen - a table on a desk, cards on a phone, nothing to
-        toggle - add <code class="doc-code-inline">data-table-cards</code> to the table instead. Below the
+        toggle - just use a <code class="doc-code-inline">data-table</code>: every one does this
+        automatically (<code class="doc-code-inline">data-table-scroll</code> opts a table out). Below the
         <code class="doc-code-inline">sm</code> breakpoint each row becomes a card and each cell a
         "label value" line, from the same markup. <code class="doc-code-inline">common.js</code> labels every
         body cell with its column header (a cell's own <code class="doc-code-inline">data-label</code> wins; an
@@ -95,7 +96,7 @@
         after inserting such a table with JavaScript.
     </p>
     <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="card card-table mt-4 overflow-x-auto">
-    <table class="data-table data-table-cards">
+    <table class="data-table">
         <thead><tr><th></th><th>Name</th><th>Status</th></tr></thead>
         <tbody>
             {% for item in object_list %}

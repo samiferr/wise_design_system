@@ -1,0 +1,58 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons wise_tags %}
+{% block doc_title_tag %}Protected Delete{% endblock %}
+{% block doc_section %}Patterns{% endblock %}
+{% block doc_title %}Protected Delete{% endblock %}
+{% block doc_intro %}
+    Say why a record cannot be deleted before the visitor tries: the records still using it, by kind, with
+     links - instead of a server error after the click.
+{% endblock %}
+{% block doc_body %}
+
+    <h2 class="mt-8">What the visitor sees</h2>
+    <p class="text-gray-700">
+        A record that other records still point at through <code>on_delete=PROTECT</code> (or
+        <code>RESTRICT</code>) cannot be deleted. Instead of a server error after pressing Delete, the confirm
+        page says so up front: which kinds of record are in the way, how many, and - for kinds the visitor may view -
+        the first few as links. There is no Delete button to press.
+    </p>
+    <div class="detail-panel mt-4">
+        <div class="detail-panel-header"><h2>Delete Stationery</h2></div>
+        {% include 'wise_core/components/_delete_blockers.html' %}
+        <div class="form-actions"><span class="btn btn-secondary">Cancel</span></div>
+    </div>
+
+    <h2 class="mt-8">Nothing to add</h2>
+    <p class="text-gray-700">
+        <code>WiseDeleteView</code> (and so every <code>WiseParentDetailChildDeleteView</code>) includes
+        <code>ProtectedDeleteMixin</code>. On GET it asks Django's deletion collector what deleting the record would
+        run into - without deleting anything - and hands the template <code>delete_blockers</code>; the stock
+        <code>confirm_generic.html</code> / <code>parent_child_confirm_generic.html</code> render the list in place of
+        the warning. A POST that reaches the database's refusal anyway (a record added in between) is caught and shows
+        the same page.
+    </p>
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class UnitDeleteView(WiseDeleteView):
+    model = MeasureUnit
+    protected_message = _('This unit cannot be deleted: products use it.')   # optional
+    blocker_sample_size = 5                                                    # records named per kind{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The default sentence names the record and, when the model has an <code>is_active</code> field, suggests
+        deactivating it instead. A blocking kind with no page of its own (an order line, whose order is what a person
+        opens) overrides <code>get_blocker_url(record)</code>.
+    </p>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="card card-table mt-4 overflow-x-auto">
+        <table class="doc-props w-full">
+            <thead><tr><th>Name</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>delete_blockers</code></td><td>Template context: a list of <code>&#123;label, count, records: [&#123;label, url&#125;], more&#125;</code>, one per kind of blocking record. Empty when the record can go.</td></tr>
+                <tr><td><code>delete_blocked_message</code></td><td>Template context: the sentence said above the list.</td></tr>
+                <tr><td><code>protected_message</code></td><td>View attribute replacing the default sentence.</td></tr>
+                <tr><td><code>blocker_sample_size</code></td><td>View attribute: how many records of each kind are named (the rest are counted).</td></tr>
+                <tr><td><code>get_blocker_url(record)</code></td><td>View method: the link for a blocking record, or <code>None</code>.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

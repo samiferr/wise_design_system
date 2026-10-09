@@ -1,0 +1,32 @@
+{% load wise_icons i18n %}
+{% comment %}
+Why a record cannot be deleted: the records that still refer to it, by kind -
+see `ProtectedDeleteMixin` in wise_core/mixins.py, which builds
+`delete_blockers` and `delete_blocked_message`. Rendered by
+confirm_generic.html and parent_child_confirm_generic.html in place of the
+"are you sure?" warning, the Delete button being left out.
+{% endcomment %}
+<div class="callout callout-warning" data-role="delete-blockers">
+    {% status_glyph "notice" size=18 cls="callout-icon" %}
+    <div class="min-w-0 space-y-2">
+        <div class="callout-title">{% trans "This record cannot be deleted" %}</div>
+        <div>{{ delete_blocked_message }}</div>
+        <ul class="space-y-1">
+            {% for group in delete_blockers %}
+                <li>
+                    <span class="text-detail-m">{{ group.label }}</span>
+                    <span class="badge badge-grey">{{ group.count }}</span>
+                    {% if group.records %}
+                        <span class="text-content-subdued">:</span>
+                        {% for record in group.records %}
+                            {% if record.url %}<a class="text-accent-content no-underline hover:underline" href="{{ record.url }}">{{ record.label }}</a>{% else %}{{ record.label }}{% endif %}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                        {% if group.more %}
+                            <span class="text-content-subdued">{% blocktrans count more=group.more %}and {{ more }} more{% plural %}and {{ more }} more{% endblocktrans %}</span>
+                        {% endif %}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

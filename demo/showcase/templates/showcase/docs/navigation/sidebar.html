@@ -97,6 +97,18 @@
         button — for mobile. The menu markup itself doesn't change between the two.
     </p>
 
+    <div class="callout callout-info mt-8">
+        {% status_glyph "info" size=18 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">The shipped menu is now a Tree</div>
+            <code>nav_menu.html</code> renders <code>WISE_NAV_SECTIONS</code> as the <a class="text-action-600 underline" href="{% url 'docs_navigation_tree' %}">Tree</a>
+            (<code>nav_tree</code> resolves the selected item and the open section): sections collapse without JavaScript,
+            which keeps a long menu usable in the phone's slide-out. The <code>.menu-node</code> / <code>.menu-link</code>
+            classes below are still available for a hand-built menu. An item may set <code>staff_only</code>, and
+            <code>match</code> may be a list of prefixes.
+        </div>
+    </div>
+
     <h2 class="mt-8">Reference</h2>
     <div class="card card-table mt-4 overflow-x-auto">
         <table class="doc-props w-full">

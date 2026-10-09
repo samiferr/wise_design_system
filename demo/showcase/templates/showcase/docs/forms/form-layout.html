@@ -97,6 +97,20 @@
         </div>
     </div>
 
+    <h2 class="mt-8">Fields sharing a row</h2>
+    <p class="text-gray-700">
+        A form class may group fields that read as one thought - a dosage and its unit, a start and an end - with
+        <code>field_rows</code>. The fields of a group share one row from the <code>md</code> breakpoint up and are
+        separate rows again on a phone; every other field keeps its own row. <code>_form_fields.html</code> also renders
+        <code>{% verbatim %}{{ form.media }}{% endverbatim %}</code>, so a widget's scripts arrive with the form - don't render it twice.
+    </p>
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class MedicationForm(forms.ModelForm):
+    field_rows = (('dosage', 'unit'), ('start_date', 'end_date'))
+
+    class Meta:
+        model = Medication
+        fields = ['name', 'dosage', 'unit', 'start_date', 'end_date']{% endverbatim %}{% endfilter %}</code></pre>
+
     <h2 class="mt-8">Non-field errors</h2>
     <div class="doc-preview mt-4 max-w-lg">
         <div class="form-alert">

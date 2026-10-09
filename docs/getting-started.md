@@ -172,7 +172,7 @@ swap in your own brand, redefine the accent tokens (`--color-accent-background`,
 ```
 
 `base.html` renders flash messages, a responsive sidebar (desktop) / top bar + slide-out sidebar
-(mobile), and a `#modal_1` filter-panel slot. The sidebar's nav is driven entirely by a setting —
+(mobile), a filter drawer on every list page and, with `WISE_BREADCRUMBS = True`, a breadcrumb trail above the page body. The sidebar's nav is driven entirely by a setting —
 no project-specific links live in `wise_core`'s own templates:
 
 ```python
@@ -192,6 +192,14 @@ WISE_NAV_SECTIONS = [
 - `match` marks the item `.selected` when `request.resolver_match.url_name` starts with it. Anchored at
   the start, so a nested child route (`category_product_list_view`) highlights Categories rather than
   both Categories and Products.
+- `match` may also be a list of prefixes, and an item may set `"staff_only": True` to show it to
+  staff users only.
+- The sidebar renders the sections as the Tree (`nav_menu.html`): each section collapses without JS and
+  the one holding the current page is open.
+- `WISE_BREADCRUMBS = True` adds a breadcrumb trail above every page body (Home > nav entry > parent
+  record > tab > record > action), built from the same sections and the page's `parent_object` /
+  `selected_tab`. Set `breadcrumb_label` on a view for a page outside that pattern (`''` when the nav
+  entry already names it). It needs a URL named `home`.
 
 ## 4. Build a CRUD page (the "datatable" pattern)
 

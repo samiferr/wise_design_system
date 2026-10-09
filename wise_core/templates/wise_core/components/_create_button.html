@@ -1,0 +1,15 @@
+{% load i18n wise_icons %}
+{% comment %}
+A list page's main action - its "New <model>" button. It is the page's
+`create_url` (from `WiseListView.create_url_name`, already None for a visitor
+without the model's `add` permission), a normal primary button from the `sm`
+breakpoint up and, below it, a 56px floating action button at the bottom
+right (`.btn-fab`: the label stays for assistive technology, so the icon is
+required). One per page; secondary actions stay in the header row, which
+wraps. `label` overrides the text.
+{% endcomment %}
+{% if create_url %}
+    <a class="btn btn-primary btn-fab" href="{{ create_url }}">
+        {% lucide "plus" size=16 %}<span>{% if label %}{{ label }}{% else %}{% trans "New" %}{% endif %}</span>
+    </a>
+{% endif %}

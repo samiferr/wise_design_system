@@ -1,0 +1,19 @@
+{% load wise_icons i18n %}
+{% comment %}
+The menu on a table row - see `row_actions` in
+wise_core/templatetags/wise_actions.py. A vertical-dots icon button opening
+the row's actions; nothing at all when the visitor may take none. The panel
+opens to the right of the button on a wide screen (the cell sits at the
+table's left, beside the ID) and, on a phone, the row is a card and
+common.js keeps the panel on screen.
+{% endcomment %}
+{% if more_actions %}
+    <details class="dropdown row-actions">
+        <summary class="btn btn-ghost" aria-label="{% trans 'Row actions' %}" title="{% trans 'Row actions' %}">
+            {% lucide "ellipsis-vertical" size=16 %}
+        </summary>
+        <div class="dropdown-panel left-0 right-auto" role="menu">
+            {% include 'wise_core/components/_action_menu_items.html' with items=more_actions %}
+        </div>
+    </details>
+{% endif %}

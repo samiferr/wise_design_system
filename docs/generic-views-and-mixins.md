@@ -14,7 +14,7 @@ write `get_permission_required()` yourself for a plain model.
 
 | View | Django base | Permission | Notes |
 |---|---|---|---|
-| `WiseListView` | `django_filters.views.FilterView` | `view` | Paginated (`paginate_by`), filtered (`filterset_class`/`filterset_fields`), sortable (`sortable_fields`). This *is* the "datatable": pair it with `wise_core/generic/list_generic.html` and the `.data-table`/`.card` CSS. A table always sits in a `<div class="card card-table mt-4 overflow-x-auto">` (no card header; the actions stay in the page header) whose `.card-footer` holds the pager (`wise_core/components/_pagination.html`: Lumen's pagination, with a "Showing 21-40 of 312" summary). Context also gets `filter_kwargs_count` and `filter_kwarg` (the active filters as `{label: value}`, for the filter-panel badge), `current_sort` (the active `?sort=` value, or `None`), `create_url` (see below) and the model's `model_verbose_name`/`model_verbose_name_plural`. |
+| `WiseListView` | `django_filters.views.FilterView` | `view` | Paginated (`paginate_by`), filtered (`filterset_class`/`filterset_fields`), sortable (`sortable_fields`). This *is* the "datatable": pair it with `wise_core/generic/list_generic.html` and the `.data-table`/`.card` CSS. A table always sits in a `<div class="card card-table mt-4 overflow-x-auto">` (no card header; the actions stay in the page header) whose `.card-footer` holds the pager (`wise_core/components/_pagination.html`: Lumen's pagination, with a "Showing 21-40 of 312" summary). Context also gets `filter_kwargs_count` and `filter_kwarg` (the active filters as `{label: value}`, for the filter button's badge; the free-text search is not one of them), `can_search` / `search_query` / `search_active` (see below), `current_sort` (the active `?sort=` value, or `None`), `create_url` (see below) and the model's `model_verbose_name`/`model_verbose_name_plural`. |
 | `WiseDetailView` | `DetailView` | `view` | Pair with `wise_core/generic/detail_generic.html`. |
 | `WiseCreateView` | `CreateView` | `add` | Auto-populates `instance.created_by` from `request.user` if the model has that field (`AutoCreatedByMixin`). Catches a `ValidationError` raised from `form_valid()`/model `clean()`/`save()` and turns it into a form error instead of a 500 (`ValidationErrorFormMixin`) — on the field named in `error.params["field"]` if the model raised one with that param, else as a non-field error. |
 | `WiseUpdateView` | `UpdateView` | `change` | Same `ValidationError` handling as `WiseCreateView`. |
@@ -73,6 +73,22 @@ class ProductListView(WiseListView):
 
 `_pagination.html` renders nothing when the list is empty, so the message never sits above a dead
 "Page 1 / 1" pager.
+
+## Search: `WiseListView.search_param`
+
+Free-text search is a filter of its own. Give the FilterSet a hidden `q` `CharFilter` wired to a method that ORs
+the searchable columns (`search_param` renames the parameter) and the view reports `can_search`, so
+`list_generic.html`'s default `list_actions` shows `components/_search_bar.html` by itself. The search stays out
+of the filter drawer and of `filter_kwargs_count`, and an empty result says "Nothing matches your search"
+(`search_active`) instead of offering to create a first record. See the docs site's Patterns → List Page.
+
+## Protected deletes: `ProtectedDeleteMixin`
+
+`WiseDeleteView` (so every `WiseParentDetailChildDeleteView`) includes `ProtectedDeleteMixin`: a record that
+other records still point at through `PROTECT` / `RESTRICT` is not deleted - the confirm page lists the blocking
+records by kind (`delete_blockers`, `delete_blocked_message`; `components/_delete_blockers.html`), leaves the
+Delete button out, and a POST that reaches the database's refusal anyway shows the same page. Tune it with
+`protected_message`, `blocker_sample_size` and `get_blocker_url(record)`.
 
 ## `OwnRecordsMixin` — opt-in "my records only" scoping
 

@@ -1,0 +1,127 @@
+{% extends 'showcase/docs/_base.html' %}
+{% load wise_icons wise_tags %}
+{% block doc_title_tag %}List Page{% endblock %}
+{% block doc_section %}Patterns{% endblock %}
+{% block doc_title %}List Page{% endblock %}
+{% block doc_intro %}
+    A list that works on a phone as well as on a desk: search and filter on one row, a floating New button,
+     and rows that become cards - all from the generic list template, with almost nothing to write.
+{% endblock %}
+{% block doc_body %}
+
+    <h2 class="mt-8">See it live</h2>
+    <p class="text-gray-700">
+        The demo lists are built this way. Open one on a phone (or narrow this window) to see the search and
+        filter sharing a row, the floating New button and the rows as cards.
+    </p>
+    <div class="doc-section-grid">
+        <a class="card" href="{% url 'product_list_view' %}?view=table">
+            <div class="card-kicker">Search, filter, New</div>
+            <h3 class="card-title mt-1">Products</h3>
+            <p class="card-content mt-2">Try a search such as "pen" - it is not counted as a filter.</p>
+        </a>
+        <a class="card" href="{% url 'category_list_view' %}?view=table">
+            <div class="card-kicker">Table to cards</div>
+            <h3 class="card-title mt-1">Categories</h3>
+            <p class="card-content mt-2">The same table markup is a stack of cards below the <code>sm</code> breakpoint.</p>
+        </a>
+    </div>
+
+    <h2 class="mt-8">The header row</h2>
+    <p class="text-gray-700">
+        <code>list_generic.html</code>'s default <code>list_actions</code> is the whole standard row: the search box
+        (when the view has a search filter), the filter button and the page's main "New" action. A list that only
+        has rows to fill in overrides <code>list_body</code> and nothing else. On a phone the row spans the page:
+        search and filter always share one line (the search field fills what the filter button leaves) and any other
+        button wraps below.
+    </p>
+    <div class="doc-preview mt-4">
+        <div class="flex w-full flex-wrap items-center gap-2">
+            {% include 'wise_core/components/_search_bar.html' %}
+            <button type="button" class="btn btn-secondary btn-icon" aria-label="Filter">{% lucide "filter" size=16 %}</button>
+        </div>
+    </div>
+
+    <h2 class="mt-8">Search</h2>
+    <p class="text-gray-700">
+        Free-text search is a filter of its own: a hidden <code>q</code> field on the FilterSet that ORs the columns
+        worth searching. Because it is hidden it stays out of the filter drawer, and because
+        <code>WiseListView</code> knows it is the search it is not counted as an applied filter (the button's badge)
+        - and an empty result says "Nothing matches your search" rather than inviting a first record.
+    </p>
+    <pre class="doc-code"><code class="language-python">{% filter force_escape %}{% verbatim %}class ProductFilter(django_filters.FilterSet):
+    q = django_filters.CharFilter(method='search', label='Search', widget=forms.HiddenInput())
+    name = django_filters.CharFilter(lookup_expr='icontains', label='Name')
+
+    class Meta:
+        model = Product
+        fields = ['name', 'category']
+
+    def search(self, queryset, name, value):
+        return queryset.filter(Q(name__icontains=value) | Q(category__name__icontains=value)){% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        Another parameter name: set <code>search_param</code> on the view. The view hands the template
+        <code>can_search</code>, <code>search_query</code> and <code>search_active</code>.
+    </p>
+
+    <h2 class="mt-8">Filters open in a drawer</h2>
+    <p class="text-gray-700">
+        The filter button opens the Drawer (<code>_filter.html</code>), with the filter's fields rendered like
+        every other form and Reset / Apply in its footer. Nothing to wire: <code>wise_core/base.html</code>
+        includes it on every page that has a filter.
+    </p>
+
+    <h2 class="mt-8">New is a floating button on a phone</h2>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}{% include 'wise_core/components/_create_button.html' with label="New product" %}{% endverbatim %}{% endfilter %}</code></pre>
+    <p class="mt-2 text-gray-700">
+        The page's main action is a normal primary button from the <code>sm</code> breakpoint up and, below it, a
+        56px floating action button at the bottom right (<code>.btn-fab</code>). It appears only when the view has a
+        <code>create_url</code> (<code>create_url_name</code> on the view) and the visitor may add. One per page;
+        secondary actions stay in the header row, which wraps.
+    </p>
+
+    <h2 class="mt-8">Tables become cards on a phone</h2>
+    <p class="text-gray-700">
+        Every <code>.data-table</code> is, below <code>sm</code>, a list of cards - one per row, each cell a
+        "label value" line - with no toggle and no second template. The labels are the column headers
+        (<code>data-label</code> overrides one; <code>data-label=""</code> shows the value alone), sortable headers stay
+        as a row of sort links above the cards, and a row-actions menu goes to the card's corner.
+    </p>
+    <pre class="doc-code"><code class="language-django">{% filter force_escape %}{% verbatim %}<div class="card card-table mt-4 overflow-x-auto">
+    <table class="data-table">
+        <thead><tr><th></th><th>Name</th><th>Category</th></tr></thead>
+        <tbody>
+            {% for item in object_list %}
+                <tr>
+                    <td>{% row_actions item %}</td>
+                    <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
+                    <td>{{ item.category }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>{% endverbatim %}{% endfilter %}</code></pre>
+    <div class="callout callout-info mt-4">
+        {% status_glyph "info" size=18 cls="callout-icon" %}
+        <div>
+            <div class="callout-title">A table that must stay a table</div>
+            A wide grid of numbers, read across rather than row by row, opts out with <code>data-table-scroll</code> and scrolls sideways inside its card on a phone.
+        </div>
+    </div>
+
+    <h2 class="mt-8">Reference</h2>
+    <div class="card card-table mt-4 overflow-x-auto">
+        <table class="doc-props w-full">
+            <thead><tr><th>Name</th><th>Use</th></tr></thead>
+            <tbody>
+                <tr><td><code>search_param</code></td><td>View attribute: the query parameter of the search filter (default <code>q</code>).</td></tr>
+                <tr><td><code>can_search</code> / <code>search_query</code> / <code>search_active</code></td><td>Context: the view has a search filter; its current text; a search is applied.</td></tr>
+                <tr><td><code>_search_bar.html</code></td><td>The search field + button. <code>placeholder</code> overrides the hint.</td></tr>
+                <tr><td><code>_create_button.html</code></td><td>The main "New" action (floating on a phone). <code>label</code> overrides the text.</td></tr>
+                <tr><td><code>filter_button.html</code> / <code>_filter.html</code></td><td>The filter button with its applied count, and the drawer it opens.</td></tr>
+                <tr><td><code>data-table-scroll</code></td><td>Keeps a table a table on a phone.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

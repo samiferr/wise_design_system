@@ -1,8 +1,16 @@
-{% load wise_icons %}
-<div onclick="document.getElementById('modal_1').classList.remove('hidden')"
-     class="btn btn-secondary btn-icon relative">
-    {% lucide "filter" size=16 %}
-    {% if filter_kwargs_count != 0 %}
-        <span class="badge badge-red absolute -left-2 -top-1 shadow">{{ filter_kwargs_count }}</span>
-    {% endif %}
-</div>
+{% load wise_icons i18n %}
+{% comment %}
+The list header's filter button: an icon button with the applied-filter
+count, opening the filter drawer (`_filter.html`, which `wise_core/base.html`
+includes on every page that has a filter) through common.js's wiseOpenDrawer.
+Renders nothing on a page without a filter.
+{% endcomment %}
+{% if filter %}
+    <button type="button" class="btn btn-secondary btn-icon relative" onclick="wiseOpenDrawer('filter-drawer')"
+            aria-label="{% trans 'Filter' %}" title="{% trans 'Filter' %}">
+        {% lucide "filter" size=16 %}
+        {% if filter_kwargs_count %}
+            <span class="badge badge-red absolute -left-2 -top-1">{{ filter_kwargs_count }}</span>
+        {% endif %}
+    </button>
+{% endif %}
