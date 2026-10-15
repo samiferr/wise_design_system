@@ -3542,6 +3542,159 @@
         border-color: var(--color-border-hover);
     }
 
+    /* ── Properties (key/value editor) ───────────────────────────────────
+       wise_core.widgets.PropertiesWidget: a JSONField edited as a
+       Property | Value table. Like every table it sits in a table card
+       (`.card.card-table`, flush) and reads the data table's look - a
+       subdued title-xs header over a 2px rule, 1px dividers between rows,
+       16px insets at the card's edges - with one difference: its cells hold
+       controls, so rows are 48px (a 32px field plus 8px each side), there is
+       no hover tint, and the columns are fixed (property 36%, value the
+       rest, a remove-button column when free keys are allowed) so the
+       fields line up and never push the card wider. "Add property" sits in
+       the `.card-footer`. Every cell is an ordinary control, styled by the
+       text-field rules above (render it inside a .form-field, as
+       _form_fields.html does). On a phone each row becomes a block: the
+       property (and its remove button) above its value. Only the controls
+       that failed validation (aria-invalid, set by the widget) turn
+       negative: the field's errorlist below names them, so the rest keep
+       their normal border inside an errored .form-field. */
+    .property-list {
+        @apply w-full;
+    }
+
+    .property-table {
+        @apply w-full border-collapse text-body-s;
+        table-layout: fixed;
+    }
+
+    .property-table > thead > tr > th {
+        @apply px-3 text-left text-title-xs;
+        height: var(--component-height-100);
+        color: var(--color-content-subdued);
+        border-bottom: var(--border-width-200) solid var(--color-border-subtle);
+    }
+
+    .property-table .property-col-key {
+        width: 36%;
+    }
+
+    .property-table .property-col-action {
+        width: calc(var(--control-height-button) + 1.5rem);
+    }
+
+    .property-table > tbody > tr > td {
+        @apply px-3 py-2;
+        vertical-align: top;
+        color: var(--color-content-default);
+        border-bottom: var(--border-width-100) solid var(--color-border-subtle);
+    }
+
+    .property-table > tbody > tr:last-child > td {
+        border-bottom: 0;
+    }
+
+    .property-table > * > tr > :first-child {
+        padding-inline-start: 1rem;
+    }
+
+    .property-table > * > tr > :last-child {
+        padding-inline-end: 1rem;
+    }
+
+    /* Key label and remove button center on the first line of the value's
+       control, so a row still reads straight across when the value is a
+       textarea or a radio group. */
+    .property-key-label {
+        @apply flex items-center text-detail-m;
+        min-height: var(--control-height-md);
+        color: var(--color-content-default);
+    }
+
+    .property-value {
+        @apply min-w-0;
+    }
+
+    .property-value > .helptext {
+        @apply mt-1;
+    }
+
+    .property-value > :is(input[type="checkbox"], .switch) {
+        margin-block: calc((var(--control-height-md) - 1.25rem) / 2);
+    }
+
+    .property-action > .btn-icon {
+        @apply mx-auto flex;
+        margin-block: calc((var(--control-height-md) - var(--control-height-button)) / 2);
+    }
+
+    .property-table[hidden] {
+        display: none;
+    }
+
+    .property-empty {
+        @apply m-0 px-4 py-3 text-body-s;
+        color: var(--color-content-subdued);
+    }
+
+    @media (max-width: 639.98px) {
+        .property-table,
+        .property-table > tbody {
+            display: block;
+        }
+
+        .property-table > thead {
+            @apply sr-only;
+        }
+
+        .property-table > tbody > tr {
+            @apply grid items-start gap-x-2 gap-y-1 px-4 py-3;
+            grid-template-columns: minmax(0, 1fr) auto;
+            grid-template-areas: "key action" "value value";
+            border-bottom: var(--border-width-100) solid var(--color-border-subtle);
+        }
+
+        .property-table > tbody > tr:last-child {
+            border-bottom: 0;
+        }
+
+        /* :nth-child(n) outranks the desktop edge-inset rules above. */
+        .property-table > tbody > tr > td:nth-child(n) {
+            display: block;
+            padding: 0;
+            border: 0;
+        }
+
+        .property-key {
+            grid-area: key;
+        }
+
+        .property-value {
+            grid-area: value;
+        }
+
+        .property-action {
+            grid-area: action;
+        }
+    }
+
+    .form-field.form-field-error .property-row :where(input:not([type="checkbox"], [type="radio"], [type="file"]), select, textarea):not([aria-invalid="true"]) {
+        border-color: var(--color-border-field);
+        caret-color: var(--color-accent-content);
+    }
+
+    .form-field.form-field-error .property-row :where(input:not([type="checkbox"], [type="radio"], [type="file"]), select, textarea):not([aria-invalid="true"]):hover {
+        border-color: var(--color-border-hover);
+    }
+
+    .form-field.form-field-error .property-row :where(input:not([type="checkbox"], [type="radio"], [type="file"]), textarea):not([aria-invalid="true"]):focus {
+        border-color: var(--color-border-focus);
+    }
+
+    .form-field.form-field-error .property-row select:not([multiple], [aria-invalid="true"]) {
+        box-shadow: none;
+    }
+
     /* ── Input group ─────────────────────────────────────────────────────
        A field with an attached prefix/suffix (currency, unit, search icon,
        an inline button). Inner corners are squared so the group reads as

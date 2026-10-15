@@ -79,6 +79,7 @@ Before writing markup, find the existing class. Full table with markup in
 | Side-nav item | `.menu-link` (`.selected`), `.tree-leaf` |
 | Progress | `.progress > .progress-value` / `.progress-ring`, `.spinner` |
 | Tooltip | `.tooltip[data-tooltip]` |
+| Key/value editor for a `JSONField` | `PropertiesField(schema={...}, allow_extra=True)` from `wise_core.widgets` (a Property | Value table in a table card; values validated by ordinary form fields) |
 | Image gallery (product photos) | `WiseImageGalleryMixin` on the view + `{% include 'wise_core/components/_image_gallery.html' %}` |
 | Steps (wizard progress) | `ol.steps` > `li.step(.step-current/.step-done)`; `wizard_steps()` + `_steps.html` |
 | Record actions (detail panel, table row) | `{% record_actions object %}` / `{% row_actions item %}` (`{% load wise_actions %}`): one button, the rest in an overflow menu |
