@@ -16,6 +16,10 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+# The JSONField key/value editor lives in its own module; re-exported here so
+# every wise_core widget imports from one place.
+from .properties import JSONValueField, PropertiesField, PropertiesWidget  # noqa: F401
+
 
 class SwitchInput(forms.CheckboxInput):
     """A checkbox rendered as a switch. Posts and validates like a checkbox."""

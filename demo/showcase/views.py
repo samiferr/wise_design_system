@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
@@ -66,6 +67,32 @@ def _icons_context():
 def _kitchen_sink_context():
     """Every Forms page renders its control off this one unbound form."""
     return {'sink_form': KitchenSinkForm()}
+
+
+def _properties_context():
+    """
+    The Properties page shows the editor twice: filled from a stored dict (the
+    way an edit form meets a saved JSONField), and bound to a POST that fails
+    validation, so the per-row error state is visible without submitting.
+    """
+    stored = {'weight_kg': '1.250', 'color': 'steel', 'fragile': True, 'origin': 'FR', 'ports': 4}
+    invalid = KitchenSinkForm(prefix='invalid', data={
+        'invalid-properties': '', 'invalid-properties__s0': '-2', 'invalid-properties__s1': 'steel',
+        'invalid-properties__x0__key': 'origin', 'invalid-properties__x0__value': 'FR',
+        'invalid-properties__x1__key': 'color', 'invalid-properties__x1__value': 'red',
+    })
+    invalid.is_valid()
+    valid = KitchenSinkForm(data={
+        'properties': '', 'properties__s0': '1.25', 'properties__s1': 'steel', 'properties__s2': '2026-03-01',
+        'properties__s3': 'on', 'properties__x0__key': 'origin', 'properties__x0__value': 'FR',
+        'properties__x1__key': 'ports', 'properties__x1__value': '4',
+    })
+    valid.is_valid()
+    return {
+        'sink_form': KitchenSinkForm(initial={'properties': stored}),
+        'invalid_form': invalid,
+        'cleaned_json': json.dumps(valid.cleaned_data.get('properties'), indent=2),
+    }
 
 
 def _tree_context():
@@ -264,6 +291,7 @@ EXTRA_CONTEXT = {
     ('patterns', 'activity-feed'): _activity_context,
 }
 EXTRA_CONTEXT.update({('forms', page): _kitchen_sink_context for page in _FORM_PAGES})
+EXTRA_CONTEXT[('forms', 'properties-input')] = _properties_context
 EXTRA_CONTEXT.update({('data-viz', page): _chart_context for page in _CHART_PAGES})
 
 

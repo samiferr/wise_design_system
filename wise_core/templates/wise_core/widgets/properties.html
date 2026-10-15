@@ -1,0 +1,72 @@
+{% load wise_icons %}
+{% comment %}
+Template for wise_core.widgets.PropertiesWidget (PropertiesField): a key/value
+editor for a JSONField. Every row posts as ordinary inputs and validates on the
+server through its own form field; the script below only adds and removes
+free-form rows (cloning the blank row in the <template>, numbering it from
+data-next-index). Without JavaScript the existing rows still edit and post.
+{% endcomment %}
+<div class="property-list{% if widget.attrs.class %} {{ widget.attrs.class }}{% endif %}" id="{{ widget.base_id }}" data-properties
+     data-next-index="{{ widget.next_index }}"{% if widget.max_extra is not None %} data-max-extra="{{ widget.max_extra }}"{% endif %}>
+    <input type="hidden" name="{{ widget.name }}" value="">
+    <div class="property-rows" data-property-rows{% if not widget.rows %} hidden{% endif %}>
+        {% for row in widget.rows %}{% include 'wise_core/widgets/_property_row.html' with disabled=widget.disabled %}{% endfor %}
+    </div>
+    {% if widget.allow_extra %}
+        <p class="property-empty" data-property-empty{% if widget.rows %} hidden{% endif %}>{{ widget.empty_label }}</p>
+        {% if widget.template_row %}
+            <template data-property-template>{% include 'wise_core/widgets/_property_row.html' with row=widget.template_row disabled=False %}</template>
+            <div>
+                <button type="button" class="btn btn-secondary btn-sm" data-property-add
+                        {% if widget.max_extra is not None and widget.extra_count >= widget.max_extra %}disabled{% endif %}>
+                    {% lucide "plus" size="s" %}<span>{{ widget.add_label }}</span>
+                </button>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% if widget.template_row %}
+<script>
+    (function () {
+        var root = document.currentScript.previousElementSibling
+        if (!root || root.dataset.propertiesBound) return
+        root.dataset.propertiesBound = '1'
+        var rows = root.querySelector('[data-property-rows]')
+        var template = root.querySelector('template[data-property-template]')
+        var add = root.querySelector('[data-property-add]')
+        var empty = root.querySelector('[data-property-empty]')
+        var next = parseInt(root.dataset.nextIndex, 10) || 0
+        var max = root.dataset.maxExtra ? parseInt(root.dataset.maxExtra, 10) : Infinity
+
+        function sync() {
+            var extra = rows.querySelectorAll('[data-property-extra]').length
+            add.disabled = extra >= max
+            var any = !!rows.querySelector('[data-property-row]')
+            rows.hidden = !any
+            if (empty) empty.hidden = any
+        }
+
+        add.addEventListener('click', function () {
+            rows.insertAdjacentHTML('beforeend', template.innerHTML.replace(/__prefix__/g, String(next++)))
+            var key = rows.lastElementChild.querySelector('[data-property-key]')
+            if (key) key.focus()
+            sync()
+        })
+
+        rows.addEventListener('click', function (event) {
+            var remove = event.target.closest('[data-property-remove]')
+            if (!remove) return
+            var row = remove.closest('[data-property-row]')
+            // Hand focus to the next row's remove button (or the previous
+            // one's, or Add) so a keyboard user doesn't land on <body>.
+            var sibling = row.nextElementSibling || row.previousElementSibling
+            row.remove()
+            sync()
+            var target = sibling && sibling.querySelector('[data-property-remove]')
+            ;(target || add).focus()
+        })
+
+        sync()
+    })()
+</script>
+{% endif %}

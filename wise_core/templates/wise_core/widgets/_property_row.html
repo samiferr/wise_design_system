@@ -1,0 +1,21 @@
+{% load i18n wise_icons %}
+{% comment %}
+One row of wise_core.widgets.PropertiesWidget: key | value | action. A schema
+row's key is a <label> for its value; a free-form row has a key input and a
+remove button. Included by properties.html for every row and once more for the
+blank row inside its <template>.
+{% endcomment %}
+<div class="property-row{% if row.invalid %} is-invalid{% endif %}{% if row.is_checkbox %} property-row-checkbox{% endif %}" data-property-row{% if not row.fixed %} data-property-extra{% endif %}>
+    {% if row.fixed %}
+        <label class="property-key" for="{{ row.value_id }}">{{ row.label }}{% if row.required %}<span class="form-required">*</span>{% endif %}</label>
+    {% else %}
+        <div class="property-key">{{ row.key_html }}</div>
+    {% endif %}
+    <div class="property-value">{{ row.value_html }}</div>
+    <div class="property-action">
+        {% if not row.fixed and not disabled %}
+            <button type="button" class="btn btn-icon btn-ghost" data-property-remove aria-label="{% translate 'Remove property' %}">{% lucide "trash-2" size="s" %}</button>
+        {% endif %}
+    </div>
+    {% if row.help_text %}<span class="helptext property-help">{{ row.help_text|safe }}</span>{% endif %}
+</div>

@@ -212,3 +212,133 @@ class NavTests(DemoData, TestCase):
         html = self.client.get(self.product.get_absolute_url()).content.decode()
         self.assertIn('class="tree"', html)
         self.assertIn('class="tree-leaf selected"', html)
+
+
+class PropertiesFieldTests(DemoData, TestCase):
+    """wise_core.widgets.PropertiesField: a JSONField edited as key/value rows."""
+
+    def make_form(self, data=None, initial=None, **field_kwargs):
+        from wise_core.widgets import PropertiesField
+
+        field_kwargs.setdefault('allow_extra', True)
+
+        class SpecsForm(forms.Form):
+            specs = PropertiesField(schema={
+                'weight': forms.DecimalField(min_value=0, label='Weight (kg)'),
+                'color': forms.ChoiceField(choices=[('red', 'Red'), ('blue', 'Blue')], required=False),
+                'released': forms.DateField(required=False),
+                'fragile': forms.BooleanField(required=False),  # unchecked is stored as False
+                'category': forms.ModelChoiceField(Category.objects.all(), required=False),
+            }, **field_kwargs)
+
+        return SpecsForm(data=data, initial=initial)
+
+    def post(self, **values):
+        data = {'specs': ''}
+        data.update({f'specs__{k}': v for k, v in values.items()})
+        return data
+
+    def test_each_schema_value_is_cleaned_by_its_own_field_into_json(self):
+        form = self.make_form(self.post(s0='1.50', s1='blue', s2='2026-03-04', s3='on', s4=str(self.category.pk)))
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data['specs'], {
+            'weight': '1.50', 'color': 'blue', 'released': '2026-03-04', 'fragile': True,
+            'category': self.category.pk,
+        })
+
+    def test_schema_errors_are_prefixed_with_the_label_and_mark_only_that_row(self):
+        form = self.make_form(self.post(s0='-1', s1='green'))
+        self.assertFalse(form.is_valid())
+        errors = form.errors['specs']
+        self.assertIn('Weight (kg): Ensure this value is greater than or equal to 0.', errors)
+        self.assertTrue(any(e.startswith('Color: Select a valid choice.') for e in errors))
+        html = str(form['specs'])
+        self.assertIn('id="id_specs__s0" aria-invalid="true"', html)
+        self.assertNotIn('id="id_specs__s2" aria-invalid', html)
+
+    def test_a_required_schema_key_must_be_filled(self):
+        form = self.make_form(self.post(s0=''))
+        self.assertFalse(form.is_valid())
+        self.assertIn('Weight (kg): This field is required.', form.errors['specs'])
+
+    def test_free_rows_keep_their_posted_order_and_skip_blank_ones(self):
+        form = self.make_form(self.post(
+            s0='2', x7__key='zeta', x7__value='last', x2__key='alpha', x2__value='first',
+            x3__key='', x3__value='',
+        ))
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(list(form.cleaned_data['specs']), ['weight', 'fragile', 'alpha', 'zeta'])
+
+    def test_free_values_are_typed_json_unless_they_are_plain_text(self):
+        form = self.make_form(self.post(
+            s0='2', x0__key='ports', x0__value='4', x1__key='hdmi', x1__value='true',
+            x2__key='zip', x2__value='01234', x3__key='code', x3__value='"42"', x4__key='tags', x4__value='["a", "b"]',
+            x5__key='nan', x5__value='NaN',
+        ))
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data['specs'], {
+            'weight': '2', 'fragile': False,
+            'ports': 4, 'hdmi': True, 'zip': '01234', 'code': '42', 'tags': ['a', 'b'], 'nan': 'NaN',
+        })
+
+    def test_stored_values_round_trip_through_the_rendered_inputs(self):
+        html = str(self.make_form(initial={'specs': {'weight': '2', 'code': '42', 'tags': ['a'], 'zip': '01234'}})['specs'])
+        self.assertIn('value="&quot;42&quot;"', html)
+        self.assertIn('value="[&quot;a&quot;]"', html)
+        self.assertIn('value="01234"', html)
+
+    def test_duplicate_and_missing_keys_are_rejected(self):
+        form = self.make_form(self.post(
+            s0='1', x0__key='color', x0__value='x', x1__key='a', x1__value='1',
+            x2__key='a', x2__value='2', x3__key='', x3__value='orphan',
+        ))
+        self.assertFalse(form.is_valid())
+        errors = form.errors['specs']
+        self.assertIn('The key “color” is used more than once.', errors)
+        self.assertIn('The key “a” is used more than once.', errors)
+        self.assertIn('Enter a key for the value “orphan”.', errors)
+
+    def test_extra_keys_need_allow_extra(self):
+        form = self.make_form(self.post(s0='1', x0__key='rogue', x0__value='x'), allow_extra=False)
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data['specs'], {'weight': '1', 'fragile': False})
+        self.assertNotIn('data-property-add', str(form['specs']))
+
+    def test_max_extra_and_custom_key_and_value_fields(self):
+        form = self.make_form(
+            self.post(s0='1', x0__key='bad key', x0__value='3', x1__key='ok', x1__value='x', x2__key='more', x2__value='5'),
+            key_field=forms.SlugField(), extra_field=forms.IntegerField(), max_extra=1,
+        )
+        self.assertFalse(form.is_valid())
+        errors = form.errors['specs']
+        self.assertTrue(any(e.startswith('bad key: Enter a valid “slug”') for e in errors))
+        self.assertIn('ok: Enter a whole number.', errors)
+        self.assertIn('Add at most 1 custom properties.', errors)
+
+    def test_has_changed_compares_the_cleaned_dict(self):
+        initial = {'specs': {'weight': '1.50', 'color': 'red', 'fragile': False}}
+        self.assertFalse(self.make_form(self.post(s0='1.50', s1='red'), initial=initial).has_changed())
+        self.assertTrue(self.make_form(self.post(s0='2', s1='red'), initial=initial).has_changed())
+
+    def test_the_product_form_saves_specs_to_the_json_field(self):
+        self.client.force_login(make_user('admin', superuser=True))
+        url = reverse('product_update_view', args=[self.product.pk])
+        response = self.client.get(url)
+        self.assertContains(response, 'data-properties')
+        response = self.client.post(url, {
+            'name': self.product.name, 'category': self.category.pk, 'notes': '',
+            'specs': '', 'specs__s0': '0.250', 'specs__s1': 'black', 'specs__s2': '2',
+            'specs__x0__key': 'ink', 'specs__x0__value': 'blue',
+        })
+        self.assertEqual(response.status_code, 302, getattr(response, 'context', None) and response.context['form'].errors)
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.specs, {'weight_kg': '0.250', 'color': 'black', 'warranty_years': 2, 'fragile': False, 'ink': 'blue'})
+
+    def test_the_admin_edits_specs_with_the_same_field(self):
+        self.client.force_login(make_user('admin', superuser=True))
+        response = self.client.get(reverse('admin:showcase_product_change', args=[self.product.pk]))
+        self.assertContains(response, 'name="specs__s0"')
+
+    def test_docs_page_renders(self):
+        response = self.client.get(reverse('docs_forms_properties_input'))
+        self.assertContains(response, 'The key “color” is used more than once.')

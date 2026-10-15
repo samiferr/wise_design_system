@@ -6,6 +6,7 @@ from wise_core.widgets import (
     ColorInput,
     ComboboxInput,
     OTPField,
+    PropertiesField,
     RatingInput,
     SwitchInput,
 )
@@ -23,10 +24,37 @@ class CategoryForm(forms.ModelForm):
         }
 
 
+# The keys every product's `specs` JSONField knows about, each validated by an
+# ordinary form field. Keys outside it are allowed too (allow_extra=True) and
+# are stored as typed JSON - see docs/properties-widget.md.
+PRODUCT_SPECS_SCHEMA = {
+    'weight_kg': forms.DecimalField(label='Weight (kg)', min_value=0, decimal_places=3, required=False),
+    'color': forms.ChoiceField(
+        required=False,
+        choices=[('', '---------'), ('black', 'Black'), ('white', 'White'), ('steel', 'Steel')],
+    ),
+    'warranty_years': forms.IntegerField(label='Warranty (years)', min_value=0, max_value=10, required=False),
+    'website': forms.URLField(required=False),
+    'fragile': forms.BooleanField(required=False, widget=SwitchInput),
+}
+
+
+def product_specs_field():
+    return PropertiesField(
+        schema=PRODUCT_SPECS_SCHEMA,
+        allow_extra=True,
+        max_extra=10,
+        label='Specifications',
+        help_text='The known keys are validated by their own form fields; add any other key below.',
+    )
+
+
 class ProductForm(forms.ModelForm):
+    specs = product_specs_field()
+
     class Meta:
         model = Product
-        fields = ['name', 'category', 'rating', 'available_from', 'datasheet', 'notes']
+        fields = ['name', 'category', 'rating', 'available_from', 'datasheet', 'specs', 'notes']
         widgets = {
             # Backed by CategoryViewSet (showcase/api.py), registered as
             # 'category-api' on the demo's DRF router - see
@@ -50,9 +78,11 @@ class CategoryProductForm(forms.ModelForm):
     could point somewhere else.
     """
 
+    specs = product_specs_field()
+
     class Meta:
         model = Product
-        fields = ['name', 'rating', 'available_from', 'datasheet', 'notes']
+        fields = ['name', 'rating', 'available_from', 'datasheet', 'specs', 'notes']
         widgets = {
             'rating': RatingInput(),
             'available_from': forms.DateInput(attrs={'type': 'date'}),
@@ -194,4 +224,17 @@ class KitchenSinkForm(forms.Form):
     )
     description = forms.CharField(
         required=False, label='Description (rich text)', widget=RichTextInputWidget,
+    )
+    # A JSONField's key/value editor; the doc page renders it with initial data.
+    properties = PropertiesField(
+        required=False,
+        label='Properties',
+        schema={
+            'weight_kg': forms.DecimalField(label='Weight (kg)', min_value=0),
+            'color': forms.ChoiceField(choices=[('black', 'Black'), ('white', 'White'), ('steel', 'Steel')]),
+            'released': forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'})),
+            'fragile': forms.BooleanField(required=False, widget=SwitchInput),
+        },
+        allow_extra=True,
+        help_text='Weight and color are required; add any other key below.',
     )

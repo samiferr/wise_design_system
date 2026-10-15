@@ -37,6 +37,10 @@ class Product(models.Model):
     )
     available_from = models.DateField(null=True, blank=True)
     datasheet = models.FileField(upload_to='datasheets/', blank=True)
+    specs = models.JSONField(
+        'specifications', default=dict, blank=True,
+        help_text='Edited with wise_core PropertiesField: typed schema keys plus free-form ones.',
+    )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='+',
     )

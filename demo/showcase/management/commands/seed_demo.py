@@ -77,12 +77,17 @@ class Command(BaseCommand):
             )
             made[name] = category
 
+        # `specs` is a JSONField edited with PropertiesField (showcase/forms.py):
+        # the schema keys first, then free-form ones.
         products = [
-            ('Ballpoint pen (box of 12)', 'Stationery', '<p>Standard <strong>blue ink</strong>, medium tip.</p>', 4),
-            ('USB-C hub', 'Electronics', '<p>4 ports, includes HDMI passthrough.</p>', 5),
-            ('Standing desk', 'Furniture', '<p>Electric height adjustment, 120x60cm top.</p>', 3),
+            ('Ballpoint pen (box of 12)', 'Stationery', '<p>Standard <strong>blue ink</strong>, medium tip.</p>', 4,
+             {'weight_kg': '0.120', 'color': 'black', 'ink': 'blue', 'tip_mm': 0.7}),
+            ('USB-C hub', 'Electronics', '<p>4 ports, includes HDMI passthrough.</p>', 5,
+             {'weight_kg': '0.085', 'color': 'steel', 'warranty_years': 2, 'ports': 4, 'hdmi': True}),
+            ('Standing desk', 'Furniture', '<p>Electric height adjustment, 120x60cm top.</p>', 3,
+             {'weight_kg': '32.500', 'color': 'white', 'warranty_years': 5, 'fragile': True}),
         ]
-        for name, category_name, notes, rating in products:
+        for name, category_name, notes, rating, specs in products:
             product, _ = Product.objects.get_or_create(
                 name=name,
                 defaults={
@@ -96,6 +101,9 @@ class Command(BaseCommand):
             if product.rating is None:
                 product.rating = rating
                 product.save(update_fields=['rating'])
+            if not product.specs:
+                product.specs = specs
+                product.save(update_fields=['specs'])
 
         # Two child models per product, so the Products pages have real
         # tabs to switch between - see showcase/views.PRODUCT_TABS.

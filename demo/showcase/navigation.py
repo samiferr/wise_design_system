@@ -73,6 +73,7 @@ DOCS_NAV = [
             {'title': 'Autocomplete Input', 'slug': 'autocomplete-input'},
             {'title': 'Auto Suggest Input', 'slug': 'auto-suggest-input'},
             {'title': 'Rich Text Input', 'slug': 'rich-text-input'},
+            {'title': 'Properties Input', 'slug': 'properties-input'},
             {'title': 'Form Layout', 'slug': 'form-layout'},
         ],
     },

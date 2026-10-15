@@ -3542,6 +3542,93 @@
         border-color: var(--color-border-hover);
     }
 
+    /* ── Properties (key/value editor) ───────────────────────────────────
+       wise_core.widgets.PropertiesWidget: a JSONField edited as rows of
+       key | value | remove. Built from Lumen text fields - every cell is an
+       ordinary control, so it reads the text-field rules above (render it
+       inside a .form-field, as _form_fields.html does). A schema row's key
+       is a label; a free-form row's key is an input with a quiet remove
+       button. On a phone the key (and its button) sit above the value.
+       Only the controls that failed validation (aria-invalid, set by the
+       widget) turn negative: the field's errorlist below names them, so the
+       rest keep their normal border inside an errored .form-field. */
+    .property-list {
+        @apply flex flex-col items-start gap-3;
+    }
+
+    .property-rows {
+        @apply flex w-full flex-col gap-3;
+    }
+
+    .property-rows[hidden] {
+        display: none;
+    }
+
+    .property-row {
+        @apply grid w-full items-center gap-x-2 gap-y-1;
+        grid-template-columns: minmax(0, 1fr) var(--control-height-button);
+        grid-template-areas: "key action" "value value" "help help";
+    }
+
+    @media (min-width: 640px) {
+        .property-row {
+            grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) var(--control-height-button);
+            grid-template-areas: "key value action" ". help .";
+        }
+    }
+
+    .property-key {
+        @apply flex min-w-0 items-center;
+        grid-area: key;
+        min-height: var(--control-height-md);
+    }
+
+    label.property-key {
+        @apply text-detail-m;
+        color: var(--color-content-default);
+    }
+
+    .property-value {
+        @apply flex min-w-0 flex-col justify-center;
+        grid-area: value;
+        min-height: var(--control-height-md);
+    }
+
+    .property-row-checkbox .property-value {
+        @apply items-start;
+    }
+
+    .property-action {
+        @apply flex items-center justify-center;
+        grid-area: action;
+    }
+
+    .property-help {
+        grid-area: help;
+    }
+
+    .property-empty {
+        @apply m-0 text-body-s;
+        color: var(--color-content-subdued);
+    }
+
+    .form-field.form-field-error .property-row :where(input:not([type="checkbox"], [type="radio"], [type="file"]), select, textarea):not([aria-invalid="true"]) {
+        border-color: var(--color-border-field);
+        caret-color: var(--color-accent-content);
+    }
+
+    .form-field.form-field-error .property-row :where(input:not([type="checkbox"], [type="radio"], [type="file"]), select, textarea):not([aria-invalid="true"]):hover {
+        border-color: var(--color-border-hover);
+    }
+
+    .form-field.form-field-error .property-row :where(input:not([type="checkbox"], [type="radio"], [type="file"]), textarea):not([aria-invalid="true"]):focus {
+        border-color: var(--color-border-focus);
+    }
+
+    .form-field.form-field-error .property-row select:not([multiple], [aria-invalid="true"]) {
+        box-shadow: none;
+    }
+
     /* ── Input group ─────────────────────────────────────────────────────
        A field with an attached prefix/suffix (currency, unit, search icon,
        an inline button). Inner corners are squared so the group reads as

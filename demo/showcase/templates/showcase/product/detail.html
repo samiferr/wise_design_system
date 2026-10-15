@@ -37,6 +37,18 @@ WiseImageGalleryMixin on ProductDetailView).
         </td>
     </tr>
     <tr>
+        <th>{% get_field_verbose_name object "specs" %}</th>
+        <td>
+            {% if object.specs %}
+                <ul class="m-0 flex list-none flex-col gap-1 p-0">
+                    {% for key, value in object.specs.items %}
+                        <li><span class="text-content-subdued">{{ key }}</span> {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}—{% endif %}
+        </td>
+    </tr>
+    <tr>
         <th>{% get_field_verbose_name object "notes" %}</th>
         <td class="font-normal text-sm">{{ object.notes|safe }}</td>
     </tr>
