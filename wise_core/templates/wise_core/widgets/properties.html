@@ -1,22 +1,33 @@
-{% load wise_icons %}
+{% load i18n wise_icons %}
 {% comment %}
 Template for wise_core.widgets.PropertiesWidget (PropertiesField): a key/value
-editor for a JSONField. Every row posts as ordinary inputs and validates on the
-server through its own form field; the script below only adds and removes
-free-form rows (cloning the blank row in the <template>, numbering it from
-data-next-index). Without JavaScript the existing rows still edit and post.
+editor for a JSONField, laid out as a Property | Value table in a table card
+with "Add property" in the card footer. Every row posts as ordinary inputs and
+validates on the server through its own form field; the script below only
+adds and removes free-form rows (cloning the blank row in the <template>,
+numbering it from data-next-index). Without JavaScript the existing rows still
+edit and post.
 {% endcomment %}
-<div class="property-list{% if widget.attrs.class %} {{ widget.attrs.class }}{% endif %}" id="{{ widget.base_id }}" data-properties
+<div class="property-list card card-table{% if widget.attrs.class %} {{ widget.attrs.class }}{% endif %}" id="{{ widget.base_id }}" data-properties
      data-next-index="{{ widget.next_index }}"{% if widget.max_extra is not None %} data-max-extra="{{ widget.max_extra }}"{% endif %}>
     <input type="hidden" name="{{ widget.name }}" value="">
-    <div class="property-rows" data-property-rows{% if not widget.rows %} hidden{% endif %}>
-        {% for row in widget.rows %}{% include 'wise_core/widgets/_property_row.html' with disabled=widget.disabled %}{% endfor %}
-    </div>
+    <table class="property-table" data-property-table{% if not widget.rows %} hidden{% endif %}>
+        <thead>
+            <tr>
+                <th scope="col" class="property-col-key">{{ widget.key_header }}</th>
+                <th scope="col">{{ widget.value_header }}</th>
+                {% if widget.has_actions %}<th scope="col" class="property-col-action"><span class="sr-only">{% translate 'Actions' %}</span></th>{% endif %}
+            </tr>
+        </thead>
+        <tbody data-property-rows>
+            {% for row in widget.rows %}{% include 'wise_core/widgets/_property_row.html' with has_actions=widget.has_actions %}{% endfor %}
+        </tbody>
+    </table>
     {% if widget.allow_extra %}
         <p class="property-empty" data-property-empty{% if widget.rows %} hidden{% endif %}>{{ widget.empty_label }}</p>
         {% if widget.template_row %}
-            <template data-property-template>{% include 'wise_core/widgets/_property_row.html' with row=widget.template_row disabled=False %}</template>
-            <div>
+            <template data-property-template>{% include 'wise_core/widgets/_property_row.html' with row=widget.template_row has_actions=True %}</template>
+            <div class="card-footer property-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-property-add
                         {% if widget.max_extra is not None and widget.extra_count >= widget.max_extra %}disabled{% endif %}>
                     {% lucide "plus" size="s" %}<span>{{ widget.add_label }}</span>
@@ -31,6 +42,7 @@ data-next-index). Without JavaScript the existing rows still edit and post.
         var root = document.currentScript.previousElementSibling
         if (!root || root.dataset.propertiesBound) return
         root.dataset.propertiesBound = '1'
+        var table = root.querySelector('[data-property-table]')
         var rows = root.querySelector('[data-property-rows]')
         var template = root.querySelector('template[data-property-template]')
         var add = root.querySelector('[data-property-add]')
@@ -42,7 +54,7 @@ data-next-index). Without JavaScript the existing rows still edit and post.
             var extra = rows.querySelectorAll('[data-property-extra]').length
             add.disabled = extra >= max
             var any = !!rows.querySelector('[data-property-row]')
-            rows.hidden = !any
+            table.hidden = !any
             if (empty) empty.hidden = any
         }
 

@@ -4,8 +4,8 @@
 {% block doc_section %}Forms{% endblock %}
 {% block doc_title %}Properties Input{% endblock %}
 {% block doc_intro %}
-    A key/value editor for a model's <code>JSONField</code>. Each known key is an ordinary Django
-    form field on its own row, rendered by that field's widget and validated by its
+    A key/value editor for a model's <code>JSONField</code>, laid out as a Property | Value table.
+    Each known key is an ordinary Django form field on its own row, rendered by that field's widget and validated by its
     <code>clean()</code>; free-form keys can be added and removed. <code>cleaned_data</code> is a
     plain dict, ready to save.
 {% endblock %}
@@ -110,10 +110,13 @@ class ProductForm(forms.ModelForm):
         <table class="doc-props w-full">
             <thead><tr><th>Class</th><th>Use</th></tr></thead>
             <tbody>
-                <tr><td><code>property-list</code></td><td>The widget's container.</td></tr>
-                <tr><td><code>property-row</code></td><td>One key | value | action row; <code>.is-invalid</code> when it failed validation.</td></tr>
-                <tr><td><code>property-key</code></td><td>The key cell: a label for a schema row, an input for a free one.</td></tr>
-                <tr><td><code>property-value</code></td><td>The value cell, holding the field's own widget.</td></tr>
+                <tr><td><code>property-list card card-table</code></td><td>The widget's container: a flush table card.</td></tr>
+                <tr><td><code>property-table</code></td><td>The Property | Value table (fixed columns; stacked rows on a phone).</td></tr>
+                <tr><td><code>property-row</code></td><td>One property; <code>.is-invalid</code> when it failed validation.</td></tr>
+                <tr><td><code>property-key</code></td><td>The key cell: a <code>property-key-label</code> for a schema row, an input for a free one.</td></tr>
+                <tr><td><code>property-value</code></td><td>The value cell, holding the field's own widget and its help text.</td></tr>
+                <tr><td><code>property-action</code></td><td>The remove button of a free row.</td></tr>
+                <tr><td><code>card-footer property-footer</code></td><td>Holds <strong>Add property</strong>.</td></tr>
             </tbody>
         </table>
     </div>

@@ -315,6 +315,25 @@ class PropertiesFieldTests(DemoData, TestCase):
         self.assertIn('ok: Enter a whole number.', errors)
         self.assertIn('Add at most 1 custom properties.', errors)
 
+    def test_renders_a_property_value_table_in_a_table_card(self):
+        from wise_core.widgets import PropertiesField, PropertiesWidget
+
+        class SettingsWidget(PropertiesWidget):
+            key_header = 'Setting'
+
+        class SettingsForm(forms.Form):
+            settings = PropertiesField(schema={'digest': forms.CharField()}, widget=SettingsWidget)
+
+        html = str(SettingsForm()['settings'])
+        self.assertIn('class="property-list card card-table"', html)
+        self.assertInHTML('<th scope="col" class="property-col-key">Setting</th>', html)
+        self.assertIn('<label class="property-key-label" for="id_settings__s0">Digest', html)
+        self.assertNotIn('property-col-action', html)  # no free keys, no remove column
+
+        html = str(self.make_form()['specs'])
+        self.assertIn('property-col-action', html)
+        self.assertIn('class="card-footer property-footer"', html)
+
     def test_has_changed_compares_the_cleaned_dict(self):
         initial = {'specs': {'weight': '1.50', 'color': 'red', 'fragile': False}}
         self.assertFalse(self.make_form(self.post(s0='1.50', s1='red'), initial=initial).has_changed())

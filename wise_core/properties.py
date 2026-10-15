@@ -92,12 +92,14 @@ class JSONValueField(forms.CharField):
 
 class PropertiesWidget(forms.Widget):
     """
-    Renders a `PropertiesField` as one key/value row per property.
+    Renders a `PropertiesField` as a Property | Value table in a table card,
+    one row per property.
 
     Schema rows show the key as a label and the value as the schema field's own
     widget. Free-form rows (`allow_extra=True`) show a key input, a value input
-    (the `extra_field`'s widget) and a remove button; "Add property" clones a
-    blank one from a `<template>`. Everything posts as ordinary form inputs:
+    (the `extra_field`'s widget) and a remove button; "Add property", in the
+    card footer, clones a blank one from a `<template>`. Everything posts as
+    ordinary form inputs:
 
         <name>                  presence marker (always posted, empty)
         <name>__s<i>            value of the i-th schema key
@@ -112,6 +114,8 @@ class PropertiesWidget(forms.Widget):
     template_name = 'wise_core/widgets/properties.html'
     add_label = _('Add property')
     empty_label = _('No properties yet.')
+    key_header = _('Property')
+    value_header = _('Value')
     key_placeholder = _('Key')
     value_placeholder = _('Value')
 
@@ -201,8 +205,11 @@ class PropertiesWidget(forms.Widget):
             'next_index': next_index,
             'max_extra': self.max_extra,
             'extra_count': sum(1 for r in rows if not r.fixed),
+            'has_actions': self.allow_extra and not disabled,
             'add_label': self.add_label,
             'empty_label': self.empty_label,
+            'key_header': self.key_header,
+            'value_header': self.value_header,
         })
         # The container is a <div>: the per-row inputs carry their own names,
         # so the outer `required`/`maxlength`/... attrs have nowhere to go.

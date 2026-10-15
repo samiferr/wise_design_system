@@ -5,6 +5,11 @@
 widget and is validated by that field's `clean()`. Free-form keys can be added and removed.
 `cleaned_data[name]` is a plain JSON-native `dict`, ready to save.
 
+It renders as a **Property | Value table** in a table card (Lumen's rule: a table always sits in a
+card): a subdued header row, one row per property with 1px dividers, the schema keys first as
+labels, then the free-form keys as inputs with a remove button, and **Add property** in the card
+footer. On a phone each row becomes a block, the property above its value.
+
 Live example: `/docs/forms/properties-input/` on the demo site, and the **Specifications** field
 on `/demo/products/<pk>/update/`.
 
@@ -15,7 +20,7 @@ wise_core/
 ├── templates/wise_core/widgets/
 │   ├── properties.html                             # container, <template> row, add/remove script (inline)
 │   └── _property_row.html                          # one key | value | remove row
-└── static/wise_core/css/tokens.css                 # .property-list, .property-row, .property-key, .property-value
+└── static/wise_core/css/tokens.css                 # .property-list, .property-table, .property-row, .property-key, ...
 ```
 
 No new app and no `{{ form.media }}`: it ships with `wise_core`, and its script (add and remove
@@ -314,7 +319,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 Validation, saving and adding/removing rows all work there. The admin doesn't load the design
 system's stylesheet (and shouldn't: Tailwind's base layer would restyle the whole admin), so the
-rows stack with the admin's own input styles instead of the key | value grid.
+table renders with the admin's own input styles, without the table card.
 
 ### Validating the same payload in an API
 
@@ -387,6 +392,37 @@ existing rows edit and post with JavaScript disabled (only adding and removing r
 each row with its field and returns the dict. The field hands its `schema`, `allow_extra`,
 `extra_field`, `key_field` and `max_extra` to the widget the same way `ChoiceField` hands its
 choices to a `Select`.
+
+Markup (all classes in `tokens.css`; don't hand-write it):
+
+```html
+<div class="property-list card card-table" id="id_specs" data-properties>
+  <input type="hidden" name="specs" value="">
+  <table class="property-table">
+    <thead><tr><th class="property-col-key">Property</th><th>Value</th><th class="property-col-action">…</th></tr></thead>
+    <tbody>
+      <tr class="property-row">                       <!-- .is-invalid when it failed -->
+        <td class="property-key"><label class="property-key-label" for="id_specs__s0">Weight (kg)</label></td>
+        <td class="property-value"><input name="specs__s0" …><span class="helptext">…</span></td>
+        <td class="property-action"></td>             <!-- a remove btn-icon on a free row -->
+      </tr>
+    </tbody>
+  </table>
+  <p class="property-empty" hidden>No properties yet.</p>
+  <div class="card-footer property-footer"><button class="btn btn-secondary btn-sm">Add property</button></div>
+</div>
+```
+
+The header labels come from `PropertiesWidget.key_header` / `value_header` ("Property" / "Value");
+subclass the widget to rename them:
+
+```python
+class SettingsWidget(PropertiesWidget):
+    key_header = "Setting"
+    add_label = "Add setting"
+
+settings = PropertiesField(schema={...}, widget=SettingsWidget)
+```
 
 Accessibility: a schema row's key is a `<label>` for its control; a free row's inputs are labelled
 "Key" and "Value" and the remove button "Remove property". Adding a row focuses its key input;
