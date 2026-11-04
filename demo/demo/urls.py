@@ -6,6 +6,7 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('wise/', include('wise_core.urls')),   # wise_set_appearance
     path('', include('showcase.urls')),
 ]
 

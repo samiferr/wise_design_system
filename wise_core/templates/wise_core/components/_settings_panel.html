@@ -2,8 +2,12 @@
 {% comment %}
 Live design-token settings drawer, two tabs:
 
-  - Settings: four controls - theme (light / dark), accent color, rounding
-    and card shadow. Each calls one of the wiseSet*() helpers in common.js,
+  - Settings: the appearance (Lumen / Tangerine - a whole design language,
+    see docs/appearances.md; shown when the `appearance` context processor
+    is installed), then four controls - theme (light / dark), accent color,
+    rounding and card shadow. The appearance is stored in a cookie the
+    server reads (wiseSetAppearance()); accent and rounding are Lumen-only
+    axes, so their groups carry .wise-lumen-only and hide under Tangerine. Each calls one of the wiseSet*() helpers in common.js,
     which writes one `data-*` attribute on <html> and persists it to
     localStorage - see the axis list at the top of tokens.css. The page
     background, density and type are deliberately not settings. The button
@@ -61,6 +65,21 @@ one) to opt out.
                 {% trans "Every control here flips one design token at runtime - no reload, no server round-trip. Your choices are remembered on this device." %}
             </p>
 
+            {% if wise_appearances|length > 1 %}
+            <div role="group" aria-labelledby="wise-pref-appearance">
+                <div id="wise-pref-appearance" class="form-label mb-2">{% trans "Appearance" %}</div>
+                <div class="flex flex-wrap gap-2">
+                    {% for choice in wise_appearances %}
+                    <button type="button" class="btn btn-secondary" data-wise-pref="appearance" data-wise-value="{{ choice.value }}"
+                            aria-pressed="{% if choice.selected %}true{% else %}false{% endif %}" onclick="wiseSetAppearance('{{ choice.value|escapejs }}')">{{ choice.label }}</button>
+                    {% endfor %}
+                </div>
+                <p class="wise-tangerine-only mt-2 text-xs text-content-subdued">
+                    {% trans "Tangerine has fixed colors and square corners, so accent color and rounding do not apply." %}
+                </p>
+            </div>
+            {% endif %}
+
             <div role="group" aria-labelledby="wise-pref-theme">
                 <div id="wise-pref-theme" class="form-label mb-2">{% trans "Theme" %}</div>
                 <div class="flex flex-wrap gap-2">
@@ -69,7 +88,7 @@ one) to opt out.
                 </div>
             </div>
 
-            <div role="group" aria-labelledby="wise-pref-palette">
+            <div class="wise-lumen-only" role="group" aria-labelledby="wise-pref-palette">
                 <div id="wise-pref-palette" class="form-label mb-2">{% trans "Accent color" %}</div>
                 <div class="flex flex-wrap gap-2">
                     <button type="button" class="btn btn-secondary" data-wise-pref="palette" data-wise-value="" aria-pressed="false" onclick="wiseSetPalette('')"><span class="color-dot" style="background-color: var(--lumen-swatch-blue)" aria-hidden="true"></span>{% trans "Blue" %}</button>
@@ -79,7 +98,7 @@ one) to opt out.
                 </div>
             </div>
 
-            <div role="group" aria-labelledby="wise-pref-radius">
+            <div class="wise-lumen-only" role="group" aria-labelledby="wise-pref-radius">
                 <div id="wise-pref-radius" class="form-label mb-2">{% trans "Rounding" %}</div>
                 <div class="flex flex-wrap gap-2">
                     <button type="button" class="btn btn-secondary" data-wise-pref="radius" data-wise-value="" aria-pressed="false" onclick="wiseSetRadius('')">{% trans "Default" %}</button>
@@ -100,7 +119,7 @@ one) to opt out.
             <div class="card">
                 <div class="card-kicker">{% trans "Live preview" %}</div>
                 <h3 class="card-title mt-1">{% trans "This card follows your settings" %}</h3>
-                <p class="card-content mt-1">{% trans "Accent, rounding and shadow update instantly - no reload." %}</p>
+                <p class="card-content mt-1">{% trans "Appearance, accent, rounding and shadow update instantly - no reload." %}</p>
                 <div class="mt-3 flex flex-wrap items-center gap-2">
                     <button class="btn btn-primary" type="button">{% trans "Primary" %}</button>
                     <span class="badge badge-action">{% trans "Badge" %}</span>
@@ -109,7 +128,7 @@ one) to opt out.
             </div>
 
             <button type="button" class="btn btn-secondary w-full justify-center" onclick="
-                wiseSetTheme('');wiseSetPalette('');wiseSetRadius('');wiseSetShadow('')">
+                {% if wise_appearances|length > 1 %}wiseSetAppearance('');{% endif %}wiseSetTheme('');wiseSetPalette('');wiseSetRadius('');wiseSetShadow('')">
                 {% lucide "power" size=16 %}<span>{% trans "Reset to defaults" %}</span>
             </button>
         </div>

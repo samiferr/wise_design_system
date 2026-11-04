@@ -31,6 +31,7 @@ DOCS_NAV = [
         'items': [
             {'title': 'Overview', 'slug': 'overview'},
             {'title': 'Built-in Themes', 'slug': 'built-in-themes'},
+            {'title': 'Appearances', 'slug': 'appearances'},
             {'title': 'Color Palettes', 'slug': 'color-palettes'},
             {'title': 'Design Tokens', 'slug': 'design-tokens'},
             {'title': 'Customizing & Theming', 'slug': 'customizing'},

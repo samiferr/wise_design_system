@@ -361,3 +361,92 @@ class PropertiesFieldTests(DemoData, TestCase):
     def test_docs_page_renders(self):
         response = self.client.get(reverse('docs_forms_properties_input'))
         self.assertContains(response, 'The key “color” is used more than once.')
+
+
+class AppearanceTests(TestCase):
+    """Lumen / Tangerine switching: wise_core.appearance, middleware, view."""
+
+    home = '/docs/'
+
+    def test_default_is_lumen(self):
+        response = self.client.get(self.home)
+        self.assertContains(response, 'data-appearance="lumen"')
+        self.assertIn('Cookie', response.headers['Vary'])
+
+    def test_the_cookie_picks_the_appearance(self):
+        self.client.cookies['wise_appearance'] = 'tangerine'
+        response = self.client.get(self.home)
+        self.assertContains(response, 'data-appearance="tangerine"')
+        self.assertEqual(response.wsgi_request.appearance, 'tangerine')
+
+    def test_an_unknown_cookie_falls_back_to_the_default(self):
+        self.client.cookies['wise_appearance'] = 'neon'
+        response = self.client.get(self.home)
+        self.assertContains(response, 'data-appearance="lumen"')
+
+    def test_the_query_parameter_wins_and_is_remembered(self):
+        self.client.cookies['wise_appearance'] = 'lumen'
+        response = self.client.get(self.home + '?appearance=tangerine')
+        self.assertContains(response, 'data-appearance="tangerine"')
+        self.assertEqual(response.cookies['wise_appearance'].value, 'tangerine')
+        response = self.client.get(self.home)
+        self.assertContains(response, 'data-appearance="tangerine"')
+
+    def test_the_settings_panel_offers_every_appearance(self):
+        response = self.client.get(self.home)
+        self.assertContains(response, 'data-wise-pref="appearance" data-wise-value="lumen"')
+        self.assertContains(response, 'data-wise-pref="appearance" data-wise-value="tangerine"')
+
+    def test_set_appearance_sets_the_cookie_and_redirects_to_next(self):
+        response = self.client.post(reverse('wise_set_appearance'), {'appearance': 'tangerine', 'next': '/docs/'})
+        self.assertRedirects(response, '/docs/', fetch_redirect_response=False)
+        self.assertEqual(response.cookies['wise_appearance'].value, 'tangerine')
+        self.assertEqual(self.client.session['wise_appearance'], 'tangerine')
+
+    def test_set_appearance_drops_the_query_parameter_from_next(self):
+        response = self.client.post(reverse('wise_set_appearance'),
+                                    {'appearance': 'lumen', 'next': '/docs/?appearance=tangerine&page=2'})
+        self.assertRedirects(response, '/docs/?page=2', fetch_redirect_response=False)
+
+    def test_set_appearance_ignores_an_offsite_next(self):
+        response = self.client.post(reverse('wise_set_appearance'),
+                                    {'appearance': 'tangerine', 'next': 'https://evil.example/'})
+        self.assertRedirects(response, '/', fetch_redirect_response=False)
+
+    def test_set_appearance_answers_fetch_with_204(self):
+        response = self.client.post(reverse('wise_set_appearance'), {'appearance': 'lumen'},
+                                    HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 204)
+
+    def test_set_appearance_rejects_unknown_values_and_get(self):
+        self.assertEqual(self.client.post(reverse('wise_set_appearance'), {'appearance': 'neon'}).status_code, 400)
+        self.assertEqual(self.client.get(reverse('wise_set_appearance')).status_code, 405)
+
+    def test_set_appearance_sends_the_signal(self):
+        from wise_core.appearance import appearance_changed
+
+        received = []
+
+        def receiver(sender, request, appearance, **kwargs):
+            received.append(appearance)
+
+        appearance_changed.connect(receiver)
+        try:
+            self.client.post(reverse('wise_set_appearance'), {'appearance': 'tangerine'})
+        finally:
+            appearance_changed.disconnect(receiver)
+        self.assertEqual(received, ['tangerine'])
+
+    @override_settings(WISE_APPEARANCE_RESOLVER='showcase.tests.resolve_tangerine')
+    def test_the_resolver_hook_applies_without_a_cookie(self):
+        self.assertContains(self.client.get(self.home), 'data-appearance="tangerine"')
+        self.client.cookies['wise_appearance'] = 'lumen'
+        self.assertContains(self.client.get(self.home), 'data-appearance="lumen"')
+
+    @override_settings(WISE_APPEARANCES=[('tangerine', 'Tangerine')], WISE_DEFAULT_APPEARANCE='lumen')
+    def test_a_default_that_is_not_offered_falls_back_to_the_first_choice(self):
+        self.assertContains(self.client.get(self.home), 'data-appearance="tangerine"')
+
+
+def resolve_tangerine(request):
+    return 'tangerine'

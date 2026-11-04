@@ -61,6 +61,11 @@ TEMPLATES = [{
 LOGIN_URL = "login"
 ```
 
+Optional: to let visitors switch between the **Lumen** and **Tangerine** appearances, also add
+`"wise_core.middleware.AppearanceMiddleware"` after `SessionMiddleware`, the
+`"wise_core.context_processors.appearance"` context processor and `path("wise/", include("wise_core.urls"))`.
+See [appearances.md](appearances.md).
+
 ## 2. Build the CSS
 
 Tailwind v4 needs to scan your templates (`@source`) to know which utility classes to generate, so

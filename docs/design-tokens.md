@@ -258,6 +258,10 @@ context.
 
 ## Switchable axes
 
+> Above these four sits the **appearance**, a whole design language (Lumen, the default, or
+> Tangerine), chosen per visitor on the server and rendered as `data-appearance` on `<html>`. Under
+> Tangerine, `data-palette` and `data-radius` are ignored. See [appearances.md](appearances.md).
+
 Four independent attributes on `<html>`, each redefining a handful of tokens at runtime (no rebuild,
 no second stylesheet). They compose freely, because each touches a different tier: the accent re-points
 the accent scale, theme re-points which step each semantic token reads. Nothing else is a setting - not

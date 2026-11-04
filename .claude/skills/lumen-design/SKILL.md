@@ -133,6 +133,15 @@ on touch). JS setters: `wiseSetTheme()` etc. in `wise_core/static/wise_core/js/c
 Anything you build must look right under **every** combination, which it will as long as it only reads
 tokens.
 
+**Appearances.** Above the axes sits `data-appearance`: `lumen` (default) or `tangerine` (square,
+Ubuntu Sans, Vanilla-derived; `wise_core/static/wise_core/css/appearances/tangerine.css`). It is
+rendered on the server from a cookie (`wise_core.middleware.AppearanceMiddleware`, the `appearance`
+context processor, `base.html`) and switched with `wiseSetAppearance()` or a POST to
+`wise_set_appearance`. Under Tangerine, `data-palette` and `data-radius` are ignored. Because it
+re-points the same system tokens, markup that only reads tokens works in both. Check new UI in
+Tangerine too, and never hardcode a radius, font or border width that an appearance would need to
+change. Guide: `docs/appearances.md`.
+
 ## Rebranding / new accent
 
 The palette is generated, not hand-picked. Lumen's hues live in `scripts/lumen-scales.json`; each accent

@@ -1,0 +1,533 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Wise Design System — the Tangerine appearance.
+
+   Tangerine is a clean, square-cornered system for dense productivity
+   software, built from the values of Canonical's open-source Vanilla
+   framework 4.59.0: a small gray palette and four status colors, Ubuntu
+   Sans, an 8px unit, 1.5px borders and 3px bars, 37px controls with no
+   rounding at all, and a 3px focus outline drawn inside the edge. The
+   source of truth is the Tangerine design system
+   (https://claude.ai/artifact/APTcw3L1RY7xkfiwdsqjnR) - every value below
+   is copied from its tokens.json.
+
+   How an appearance works
+   -----------------------
+   An appearance is a whole design language, one level above the four
+   switchable axes (theme, palette, radius, shadow). It is selected by one
+   attribute on <html>:
+
+       <html data-appearance="tangerine">
+
+   which `wise_core.middleware.AppearanceMiddleware` + `base.html` render
+   server-side from the visitor's cookie (so there is no flash), and
+   `wiseSetAppearance()` in common.js switches at runtime. Lumen is the
+   default and has no rules of its own - it is everything in tokens.css.
+
+   This file only *re-points* the Lumen system tokens (the tier-2
+   --color-*, --text-*, --corner-radius-*, --shadow-*, --control-height-*
+   names every component reads) and adds a short list of shape overrides
+   for the few things tokens cannot express (fields with only a bottom
+   border, the green main action, square badges, thin headings). Component
+   class names are unchanged - a template written for Lumen renders in
+   Tangerine with no edits. See docs/appearances.md.
+
+   Composition with the other axes:
+     data-theme    honoured - Tangerine has its own light and dark values.
+     data-palette  ignored  - Tangerine's colors are fixed (Vanilla has one
+                   link blue and a green main action, not an accent axis).
+     data-radius   ignored  - Tangerine is square by definition.
+     data-shadow   honoured - flat (default, outlined panels), soft, elevated.
+
+   This file is imported at the very END of tokens.css on purpose: its
+   selectors have the same specificity as Lumen's own axis blocks
+   (`:root[data-theme="dark"]`, `:root[data-radius="sharp"]`), so it must
+   come after them to win.
+
+   Tangerine's colors, type scale, spacing, borders and component
+   measurements are taken from Vanilla framework (LGPL-3.0). Tangerine is
+   an independent system, not affiliated with or endorsed by Canonical;
+   Ubuntu and Canonical are Canonical Ltd's trademarks. Ubuntu Sans is used
+   under the Ubuntu Font Licence 1.0 - see ../../font/UbuntuSans-UFL.txt.
+
+   (The font URLs below are relative to the *built* stylesheet,
+   wise_core/static/wise_core/css/tailwind.css - Tailwind inlines this file
+   and does not rewrite url()s - which is why they read ../font/ like the
+   ones in tokens.css.)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Ubuntu Sans / Ubuntu Sans Mono, latin subsets, variable. A browser only
+   downloads them once a page actually uses the family, so Lumen visitors
+   never pay for them. */
+@font-face {
+    font-family: "Ubuntu Sans";
+    font-style: normal;
+    font-weight: 100 800;
+    font-display: swap;
+    src: url("../font/UbuntuSans-Variable.woff2") format("woff2-variations");
+}
+
+@font-face {
+    font-family: "Ubuntu Sans";
+    font-style: italic;
+    font-weight: 100 800;
+    font-display: swap;
+    src: url("../font/UbuntuSans-Italic-Variable.woff2") format("woff2-variations");
+}
+
+@font-face {
+    font-family: "Ubuntu Sans Mono";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("../font/UbuntuSansMono-Variable.woff2") format("woff2-variations");
+}
+
+/* ── Light (and the theme-independent tokens) ──────────────────────────── */
+
+:root[data-appearance="tangerine"] {
+    /* Tangerine's own names, for project CSS that wants to talk Vanilla. */
+    --tangerine-color-ubuntu: #e95420;
+    --tangerine-button-positive: #0e8420;
+    --tangerine-button-positive-hover: #0c6d1a;
+    --tangerine-button-positive-active: #0a5f17;
+    --tangerine-button-positive-text: #ffffff;
+    --tangerine-button-brand: #e95420;
+    --tangerine-button-brand-hover: #da4816;
+    --tangerine-button-brand-active: #cc4414;
+    --tangerine-focus-positive: #003008;
+    --tangerine-input-border-thickness: 1.5px;
+    --tangerine-bar-thickness: 0.1875rem;
+    --tangerine-radius-pill: 1rem;
+    --tangerine-radius-bar: 0.1875rem;
+
+    /* Typeface: Ubuntu Sans for everything, Ubuntu Sans Mono for code. */
+    --font-brand: "Ubuntu Sans", "Ubuntu variable", "Ubuntu", -apple-system, "Segoe UI", Roboto, Oxygen, Cantarell,
+    "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    --font-mono: "Ubuntu Sans Mono", "Ubuntu Mono variable", "Ubuntu Mono", Consolas, Monaco, Courier, monospace;
+
+    /* Type: Vanilla's bold is 550, not 700/800, and its labels and buttons
+       are regular. Sizes keep Lumen's scale so layouts do not reflow; the
+       heading *elements* get Vanilla's sizes in the base block below. */
+    --text-heading-xxs--font-weight: 550;
+    --text-heading-xs--font-weight: 550;
+    --text-heading-s--font-weight: 550;
+    --text-heading-m--font-weight: 550;
+    --text-heading-l--font-weight: 550;
+    --text-heading-xl--font-weight: 550;
+    --text-heading-xxl--font-weight: 550;
+    --text-heading-xxxl--font-weight: 550;
+    --text-heading-xxxxl--font-weight: 550;
+    --text-title-xs--font-weight: 550;
+    --text-title-s--font-weight: 550;
+    --text-title-m--font-weight: 550;
+    --text-title-l--font-weight: 550;
+    --text-title-xl--font-weight: 550;
+    --text-title-xxl--font-weight: 550;
+    --text-title-xxxl--font-weight: 550;
+    --text-detail-xs--font-weight: 400;
+    --text-detail-s--font-weight: 400;
+    --text-detail-m--font-weight: 400;
+    --text-detail-l--font-weight: 400;
+    --text-detail-xl--font-weight: 400;
+
+    /* Surfaces: Tangerine's "panel surfaces" layer - white panels with a
+       1.5px outline on the light gray `surface-page` (background-alt). */
+    --color-background-base: #f7f7f7;
+    --color-background-layer-1: #ffffff;
+    --color-background-layer-2: #ffffff;
+    --color-background-elevated: #ffffff;
+
+    /* Hover -> background-hover, pressed / selected -> background-active. */
+    --color-fill-neutral-hover: #f2f2f2;
+    --color-fill-neutral-down: #ebebeb;
+    --color-fill-neutral-subtle: #f7f7f7;
+    --color-row-hover: rgba(0, 0, 0, 0.05);
+    --color-selected-subtle: rgba(0, 0, 0, 0.08);
+    --color-selected-subtle-hover: rgba(0, 0, 0, 0.11);
+
+    --color-fill-disabled: #f5f5f5;
+    --color-border-disabled: rgba(0, 0, 0, 0.1);
+
+    /* Text: text-default for body, labels and headings alike; text-muted
+       (60% black, as a solid so charts and contrast checks can read it). */
+    --color-content-heading: #000000;
+    --color-content-default: #000000;
+    --color-content-subdued: #666666;
+    --color-content-disabled: #a6a6a6;
+
+    /* Borders: border-high-contrast outlines controls, border-default
+       outlines panels and cards. Fields have only a bottom border. */
+    --color-border-default: #707070;
+    --color-border-hover: #111111;
+    --color-border-subtle: rgba(0, 0, 0, 0.2);
+    --color-border-focus: #000000;
+    --color-border-field: #707070;
+    --color-fill-picker: #f5f5f5;
+    --color-fill-picker-hover: #ebebeb;
+    --color-negative-border: #c7162b;
+    --color-negative-border-hover: #a11223;
+    --color-border-popover: transparent;
+
+    /* "On" controls and links are link-default blue; the main action is
+       the green positive button (see .btn-primary below). */
+    --color-accent-background: #0066cc;
+    --color-accent-background-hover: #0059b3;
+    --color-accent-background-down: #004d99;
+    --color-accent-content: #0066cc;
+    --color-on-accent: #ffffff;
+    --color-accent-subtle: #e6eff9;
+    --color-on-accent-subtle: #24598f;
+
+    --color-neutral-background: #111111;
+    --color-on-neutral: #ffffff;
+    --color-neutral-subtle: #f2f2f2;
+
+    /* Status: information (blue), positive (green), caution (amber),
+       negative (red). The caution amber as text is 3.0:1 - Tangerine keeps
+       Vanilla's value exact; never set notice text on its own. */
+    --color-informative-background: #24598f;
+    --color-informative-content: #24598f;
+    --color-positive-background: #0e8420;
+    --color-positive-content: #0e8420;
+    --color-notice-background: #cc7900;
+    --color-on-notice: #000000;
+    --color-notice-content: #cc7900;
+    --color-negative-background: #c7162b;
+    --color-negative-background-hover: #b01326;
+    --color-negative-background-down: #a21223;
+    --color-negative-content: #c7162b;
+
+    --color-informative-subtle: rgba(0, 99, 199, 0.1);
+    --color-positive-subtle: rgba(10, 189, 37, 0.1);
+    --color-notice-subtle: rgba(199, 90, 0, 0.1);
+    --color-negative-subtle: rgba(199, 0, 20, 0.1);
+
+    --color-inverse-success: #62a36c;
+    --color-inverse-warning: #c48831;
+    --color-inverse-error: #d17b85;
+
+    --color-tertiary: #7d42b8;
+    --color-on-tertiary: #ffffff;
+
+    --color-focus-ring: #2e96ff;
+    --color-overlay: rgba(17, 17, 17, 0.85);
+
+    /* Shape: square. Everything that reads the corner scale goes to 0,
+       pills included; the few round marks are restored below. */
+    --corner-radius-75: 0px;
+    --corner-radius-100: 0px;
+    --corner-radius-200: 0px;
+    --corner-radius-300: 0px;
+    --corner-radius-400: 0px;
+    --corner-radius-500: 0px;
+    --corner-radius-600: 0px;
+    --corner-radius-700: 0px;
+    --corner-radius-800: 0px;
+    --corner-radius-full: 0px;
+
+    /* Borders: 1.5px wherever something is outlined. */
+    --border-width-200: 1.5px;
+
+    /* Only floating things cast a shadow. */
+    --shadow-emphasized: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 2px 2px -1px rgba(0, 0, 0, 0.15), 0 0 3px 0 rgba(0, 0, 0, 0.2);
+    --shadow-elevated: 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 2px 2px -1px rgba(0, 0, 0, 0.15), 0 0 3px 0 rgba(0, 0, 0, 0.2);
+    --shadow-dragged: 0 0 2rem 0 rgba(0, 0, 0, 0.2);
+
+    /* Motion: Vanilla's ease-out. */
+    --ease-standard: cubic-bezier(0.215, 0.61, 0.355, 1);
+    --ease-enter: cubic-bezier(0.215, 0.61, 0.355, 1);
+    --default-transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+
+    /* Focus: a 3px outline drawn inside the edge. */
+    --focus-ring-width: 3px;
+    --focus-ring-offset: -3px;
+
+    /* Sizes: 37px controls (a 1.5rem line plus 0.41rem above and below),
+       29px dense, 16px side padding. */
+    --control-height-sm: 1.82rem;
+    --control-height-md: 2.32rem;
+    --control-height-lg: 2.75rem;
+    --control-height-button: 2.32rem;
+    --control-padding-x-button: 1rem;
+    --control-padding-y: 0.41rem;
+
+    color-scheme: light;
+}
+
+/* ── Dark ──────────────────────────────────────────────────────────────── */
+
+:root[data-appearance="tangerine"][data-theme="dark"] {
+    --tangerine-button-positive: #008013;
+    --tangerine-button-positive-hover: #00660f;
+    --tangerine-button-positive-active: #00570d;
+
+    --color-background-base: #202020;
+    --color-background-layer-1: #262626;
+    --color-background-layer-2: #262626;
+    --color-background-elevated: #262626;
+
+    --color-fill-neutral-hover: #313131;
+    --color-fill-neutral-down: #373737;
+    --color-fill-neutral-subtle: #202020;
+    --color-row-hover: rgba(255, 255, 255, 0.05);
+    --color-selected-subtle: rgba(255, 255, 255, 0.1);
+    --color-selected-subtle-hover: rgba(255, 255, 255, 0.14);
+
+    --color-fill-disabled: #2f2f2f;
+    --color-border-disabled: rgba(255, 255, 255, 0.1);
+
+    --color-content-heading: #ffffff;
+    --color-content-default: #ffffff;
+    --color-content-subdued: #a8a8a8;
+    --color-content-disabled: #5f5f5f;
+
+    --color-border-default: #939393;
+    --color-border-hover: #d9d9d9;
+    --color-border-subtle: rgba(255, 255, 255, 0.2);
+    --color-border-focus: #ffffff;
+    --color-border-field: #939393;
+    --color-fill-picker: #2f2f2f;
+    --color-fill-picker-hover: #373737;
+    --color-negative-border: #d17b85;
+    --color-negative-border-hover: #e0a3aa;
+    --color-border-popover: rgba(255, 255, 255, 0.2);
+
+    --color-accent-background: #0066cc;
+    --color-accent-background-hover: #1a75d1;
+    --color-accent-background-down: #3385d6;
+    --color-accent-content: #6699cc;
+    --color-on-accent: #ffffff;
+    --color-accent-subtle: #1f3c5c;
+    --color-on-accent-subtle: #ffffff;
+
+    --color-neutral-background: #f7f7f7;
+    --color-on-neutral: #000000;
+    --color-neutral-subtle: #474747;
+
+    --color-informative-background: #24598f;
+    --color-informative-content: #5ea6ed;
+    --color-positive-background: #008013;
+    --color-positive-content: #62a36c;
+    --color-notice-background: #c48831;
+    --color-on-notice: #000000;
+    --color-notice-content: #c48831;
+    --color-negative-background: #a11223;
+    --color-negative-background-hover: #8a0f1e;
+    --color-negative-background-down: #7c0e1b;
+    --color-negative-content: #d17b85;
+
+    --color-informative-subtle: rgba(0, 127, 255, 0.2);
+    --color-positive-subtle: rgba(10, 189, 37, 0.2);
+    --color-notice-subtle: rgba(255, 115, 0, 0.2);
+    --color-negative-subtle: rgba(255, 102, 120, 0.2);
+
+    --color-inverse-success: #0e8420;
+    --color-inverse-warning: #995e00;
+    --color-inverse-error: #c7162b;
+
+    --color-tertiary: #7d42b8;
+
+    --color-focus-ring: #99ccff;
+
+    --shadow-emphasized: 0 1px 1px 0 rgba(0, 0, 0, 0.5), 0 2px 2px -1px rgba(0, 0, 0, 0.5), 0 0 3px 0 rgba(0, 0, 0, 0.6);
+    --shadow-elevated: 0 1px 1px 0 rgba(0, 0, 0, 0.5), 0 2px 2px -1px rgba(0, 0, 0, 0.5), 0 0 3px 0 rgba(0, 0, 0, 0.6);
+    --shadow-dragged: 0 0 2rem 0 rgba(0, 0, 0, 0.6);
+
+    color-scheme: dark;
+}
+
+/* ── Touch ───────────────────────────────────────────────────────────────
+   Tangerine's `touch-target` (44px) on a coarse pointer. Restated here
+   because the rule above outranks tokens.css's own coarse-pointer block. */
+
+@media (pointer: coarse) {
+    :root[data-appearance="tangerine"] {
+        --control-height-sm: 2.32rem;
+        --control-height-md: 2.75rem;
+        --control-height-lg: 2.75rem;
+        --control-height-button: 2.75rem;
+        --list-item-height: 2.75rem;
+        --menu-item-height: 2.75rem;
+    }
+}
+
+/* ── Base: heading elements ──────────────────────────────────────────────
+   Vanilla alternates heading weights - h1/h3 550, a thin 180 h2 (the
+   Ubuntu signature, for section titles), a light 275 h4 (dialog, drawer and
+   empty-state titles). Sizes are Vanilla's below-1036px steps, which suit
+   application pages; a marketing hero keeps its own text-heading-* class. */
+
+@layer base {
+    :root[data-appearance="tangerine"] h1 {
+        font-size: 2rem;
+        line-height: 2.5rem;
+        font-weight: 550;
+    }
+
+    :root[data-appearance="tangerine"] h2 {
+        font-size: 2rem;
+        line-height: 2.5rem;
+        font-weight: 180;
+    }
+
+    :root[data-appearance="tangerine"] h3 {
+        font-size: 1.5rem;
+        line-height: 2rem;
+        font-weight: 550;
+    }
+
+    :root[data-appearance="tangerine"] h4 {
+        font-size: 1.5rem;
+        line-height: 2rem;
+        font-weight: 275;
+    }
+
+    :root[data-appearance="tangerine"] h5 {
+        font-size: 1rem;
+        line-height: 1.5rem;
+        font-weight: 550;
+    }
+
+    :root[data-appearance="tangerine"] h6 {
+        font-size: 1rem;
+        line-height: 1.5rem;
+        font-weight: 400;
+        font-style: italic;
+    }
+
+    :root[data-appearance="tangerine"] b,
+    :root[data-appearance="tangerine"] strong {
+        font-weight: 550;
+    }
+
+    :root[data-appearance="tangerine"] ::selection {
+        background: rgba(46, 150, 255, 0.3);
+    }
+}
+
+/* ── Components: what tokens cannot express ─────────────────────────────
+   Inside @layer components so utilities in a template still win. */
+
+@layer components {
+    /* Buttons: square, 1.5px border, regular 16/24 label (14/20 small). */
+    :root[data-appearance="tangerine"] .btn {
+        font-size: 1rem;
+        line-height: 1.5rem;
+        font-weight: 400;
+    }
+
+    :root[data-appearance="tangerine"] .btn-sm {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+
+    /* The main action is Vanilla's green positive button. */
+    :root[data-appearance="tangerine"] :is(.btn-primary, .btn-filled) {
+        background-color: var(--tangerine-button-positive);
+        color: var(--tangerine-button-positive-text);
+    }
+
+    :root[data-appearance="tangerine"] :is(.btn-primary, .btn-filled):hover {
+        background-color: var(--tangerine-button-positive-hover);
+    }
+
+    :root[data-appearance="tangerine"] :is(.btn-primary, .btn-filled):active {
+        background-color: var(--tangerine-button-positive-active);
+    }
+
+    :root[data-appearance="tangerine"] :is(.btn-primary, .btn-filled):focus-visible {
+        outline-color: var(--tangerine-focus-positive);
+    }
+
+    /* Fields, text areas and selects: a background-inputs fill with only a
+       1.5px border-high-contrast bottom border. An invalid one tints
+       negative. Focus draws the 3px inside outline like everything else. */
+    :root[data-appearance="tangerine"] :is(
+        .input, .select, .textarea, .otp-input,
+        .form-field :where(input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"], [type="reset"], [type="hidden"], [type="file"], [type="color"], [type="range"], .btn, .switch), select, textarea),
+        .filter-container :where(input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"], [type="reset"], [type="hidden"], [type="file"], [type="color"], [type="range"], .btn, .switch), select, textarea)
+    ) {
+        background-color: var(--color-fill-picker);
+        border-width: 0 0 var(--border-width-200) 0;
+        border-style: solid;
+        border-color: var(--color-border-field);
+        font-size: 1rem;
+    }
+
+    :root[data-appearance="tangerine"] :is(
+        .input, .select, .textarea, .otp-input,
+        .form-field :where(input, select, textarea),
+        .filter-container :where(input, select, textarea)
+    ):focus-visible {
+        outline: var(--focus-ring-width) solid var(--focus-ring-color);
+        outline-offset: var(--focus-ring-offset);
+    }
+
+    :root[data-appearance="tangerine"] :is(.input, .select, .textarea, .form-field :where(input, select, textarea))[aria-invalid="true"],
+    :root[data-appearance="tangerine"] .form-field-error :where(input, select, textarea) {
+        background-color: var(--color-negative-subtle);
+    }
+
+    /* Checkboxes, radios and switches draw the outline outside the box. */
+    :root[data-appearance="tangerine"] :is(input[type="checkbox"], input[type="radio"], .switch):focus-visible {
+        outline-offset: 1.5px;
+    }
+
+    /* Round marks stay round: the switch track is a pill, its handle, step
+       markers and avatars are circles, progress tracks have 3px ends. */
+    :root[data-appearance="tangerine"] .switch {
+        border-radius: var(--tangerine-radius-pill);
+    }
+
+    :root[data-appearance="tangerine"] .switch::after,
+    :root[data-appearance="tangerine"] :is(.step-marker, .avatar) {
+        border-radius: 9999px;
+    }
+
+    :root[data-appearance="tangerine"] :is(.progress, .progress-value, .progress-bar) {
+        border-radius: var(--tangerine-radius-bar);
+    }
+
+    /* Cards and panels: a 1.5px border-default outline. */
+    :root[data-appearance="tangerine"] .card {
+        border-width: var(--tangerine-input-border-thickness);
+    }
+
+    /* Tabs: a 1px hairline under the row, a 3px bar under the current tab. */
+    :root[data-appearance="tangerine"] .tab-bar {
+        box-shadow: inset 0 -1px 0 var(--color-border-subtle);
+    }
+
+    :root[data-appearance="tangerine"] .tab-bar .bar-item {
+        font-weight: 400;
+        font-size: 1rem;
+    }
+
+    :root[data-appearance="tangerine"] .tab-bar .bar-item.selected::after {
+        height: var(--tangerine-bar-thickness);
+    }
+
+    /* Table headers and badges: x-small, 12/16 at 550; headers uppercase. */
+    :root[data-appearance="tangerine"] .data-table th {
+        font-size: 0.75rem;
+        line-height: 1rem;
+        font-weight: 550;
+        text-transform: uppercase;
+    }
+
+    :root[data-appearance="tangerine"] .badge {
+        font-size: 0.75rem;
+        line-height: 1rem;
+        font-weight: 550;
+    }
+
+    /* The design settings panel: accent color and rounding are Lumen-only
+       axes - Tangerine's colors are fixed and its corners square. */
+    :root[data-appearance="tangerine"] .wise-lumen-only {
+        display: none;
+    }
+
+    :root:not([data-appearance="tangerine"]) .wise-tangerine-only {
+        display: none;
+    }
+}
