@@ -4716,3 +4716,15 @@
         display: none !important;
     }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Appearances
+   ══════════════════════════════════════════════════════════════════════
+   Whole alternative design languages, selected by `data-appearance` on
+   <html> (rendered server-side by wise_core.middleware.AppearanceMiddleware
+   + base.html; see docs/appearances.md). Lumen - everything above - is the
+   default and needs no attribute. Imported LAST on purpose: an appearance
+   re-points the same tokens as the axis blocks above, with selectors of the
+   same specificity, so it has to come after them to win. Tailwind inlines
+   these imports wherever they sit. */
+@import "./appearances/tangerine.css";

@@ -37,6 +37,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # Lumen / Tangerine: sets request.appearance from the visitor's cookie
+    # (see docs/appearances.md).
+    'wise_core.middleware.AppearanceMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -58,6 +61,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'wise_core.context_processors.nav',
+                'wise_core.context_processors.appearance',
                 'showcase.context_processors.site_chrome',
                 'showcase.context_processors.docs_nav',
             ],
@@ -132,3 +136,10 @@ WISE_BREADCRUMBS = True
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# The appearances a visitor can pick from the design settings panel (and
+# POST to wise_set_appearance). These are wise_core's defaults, spelled out
+# so the demo documents them - see docs/appearances.md.
+WISE_APPEARANCES = [('lumen', 'Lumen'), ('tangerine', 'Tangerine')]
+WISE_DEFAULT_APPEARANCE = 'lumen'

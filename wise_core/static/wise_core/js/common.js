@@ -113,7 +113,11 @@ function wiseSetPreference(name, value) {
 function wiseSyncPreferenceButtons() {
     var root = document.documentElement
     var buttons = document.querySelectorAll('[data-wise-pref]')
-    var fallback = function (key) { return key === 'theme' ? 'light' : '' }
+    var fallback = function (key) {
+        if (key === 'theme') return 'light'
+        if (key === 'appearance') return wiseAppearanceConfig().fallback
+        return ''
+    }
     var offered = {}
     buttons.forEach(function (button) {
         var key = button.getAttribute('data-wise-pref')
@@ -147,6 +151,36 @@ function wiseSetShadow(shadow) {
     wiseSetPreference('wise-shadow', shadow)
 }
 
+// ── Appearance switching ────────────────────────────────────────────────────
+// An appearance is a whole design language (Lumen, Tangerine - see
+// docs/appearances.md), one attribute on <html>: data-appearance. Unlike the
+// four axes above it lives in a *cookie*, not localStorage, because the
+// server renders it (wise_core.middleware.AppearanceMiddleware + base.html) -
+// that is what keeps the first paint right on every page, and what lets a
+// project read the choice in Python (request.appearance). Switching here is
+// instant: the attribute flips, the cookie is written for the next request,
+// and a `wise:appearancechange` event fires for anything that cares.
+// wiseSetAppearance('') clears the choice back to WISE_DEFAULT_APPEARANCE.
+function wiseAppearanceConfig() {
+    var config = window.WISE_APPEARANCE || {}
+    return {
+        cookie: config.cookie || 'wise_appearance',
+        fallback: config.fallback || 'lumen',
+        maxAge: config.maxAge || 60 * 60 * 24 * 365,
+    }
+}
+
+function wiseSetAppearance(appearance) {
+    var config = wiseAppearanceConfig()
+    var value = appearance || config.fallback
+    document.documentElement.setAttribute('data-appearance', value)
+    var secure = location.protocol === 'https:' ? '; Secure' : ''
+    document.cookie = config.cookie + '=' + (appearance ? encodeURIComponent(appearance) : '') +
+        '; Path=/; Max-Age=' + (appearance ? config.maxAge : 0) + '; SameSite=Lax' + secure
+    wiseSyncPreferenceButtons()
+    document.dispatchEvent(new CustomEvent('wise:appearancechange', {detail: {appearance: value}}))
+}
+
 function wiseToggleTheme() {
     var current = document.documentElement.getAttribute('data-theme')
     wiseSetTheme(current === 'dark' ? 'light' : 'dark')
@@ -177,7 +211,7 @@ var WISE_EXPORT_TOKENS = [
 
 function wiseBuildTokenExport() {
     var root = document.documentElement
-    var attrs = ['theme', 'palette', 'radius', 'shadow']
+    var attrs = ['appearance', 'theme', 'palette', 'radius', 'shadow']
         .map(function (key) {
             var value = root.getAttribute('data-' + key)
             return value ? 'data-' + key + '="' + value + '"' : null

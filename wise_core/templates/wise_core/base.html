@@ -1,6 +1,12 @@
 {% load static i18n %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+{% comment %}
+data-appearance: the design language (Lumen, Tangerine - see
+docs/appearances.md), rendered server-side from the visitor's cookie by
+wise_core.middleware.AppearanceMiddleware / the `appearance` context
+processor, so the first paint is already in the right appearance.
+{% endcomment %}
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}"{% with appearance=wise_appearance|default:request.appearance %}{% if appearance %} data-appearance="{{ appearance }}"{% endif %}{% endwith %}>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,8 +18,16 @@
         purpose - a deferred script would run after first paint. Override
         this block with an empty one to opt a project out of the switching
         entirely.
+
+        The appearance is not in localStorage: the server renders it on
+        <html> from a cookie. WISE_APPEARANCE only tells wiseSetAppearance()
+        (common.js) which cookie to write and what the default is.
         {% endcomment %}
         <script>
+            window.WISE_APPEARANCE = {
+                cookie: "{{ wise_appearance_cookie|default:'wise_appearance'|escapejs }}",
+                fallback: "{{ wise_appearance_default|default:'lumen'|escapejs }}"
+            };
             (function () {
                 try {
                     ['theme', 'palette', 'radius', 'shadow'].forEach(function (key) {
